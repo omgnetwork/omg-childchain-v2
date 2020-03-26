@@ -9,10 +9,12 @@
 # move said applications out of the umbrella.
 import Config
 
-# Sample configuration:
-#
-#     config :logger, :console,
-#       level: :info,
-#       format: "$date $time [$level] $metadata$message\n",
-#       metadata: [:user_id]
-#
+config :engine, Engine.Repo,
+  database: "engine_repo",
+  username: "omisego_dev",
+  password: "omisego_dev",
+  hostname: "localhost"
+
+config :engine, ecto_repos: [Engine.Repo]
+
+import_config "#{Mix.env()}.exs"
