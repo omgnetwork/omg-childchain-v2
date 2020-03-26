@@ -43,7 +43,7 @@ defmodule Engine.MixProject do
       {:ecto_sql, "~> 3.1"},
       {:ex_machina, "~> 2.4"},
       {:ex_plasma, git: "https://github.com/omisego/ex_plasma.git"},
-      {:postgrex, "~> 0.14"},
+      {:postgrex, "~> 0.14"}
     ]
   end
 
