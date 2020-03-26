@@ -30,7 +30,7 @@ defmodule Engine.MixProject do
       # NB: Think about adding a seed routine here
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "test": ["ecto.reset", "test"]
+      test: ["ecto.reset", "test"]
     ]
   end
 

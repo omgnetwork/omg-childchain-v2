@@ -18,10 +18,6 @@ defmodule Engine.TransactionTest do
     end
 
     test "validates input utxos are unspent" do
-      %Engine.Utxo{}
-      |> Engine.Utxo.changeset(params_for(:input_utxo, blknum: 10))
-      |> Engine.Repo.insert()
-
       {result, changeset} =
         :transaction
         |> params_for(inputs: [build(:spent_utxo, blknum: 10)])
