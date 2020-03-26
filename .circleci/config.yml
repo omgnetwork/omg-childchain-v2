@@ -27,6 +27,12 @@ jobs:
     working_directory: ~/childchain
     docker:
       - image: circleci/elixir:1.10.2
+      - image: circleci/postgres:9.6.12-alpine
+        environment:
+          POSTGRES_USER: omisego_dev
+          POSTGRES_PASSWORD: omisego_dev
+          POSTGRES_DB: engine_repo_test
+          CIRLCECI: true
     environment:
       MIX_ENV=test
     steps:
@@ -35,4 +41,12 @@ jobs:
       - restore_cache:
           key: v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run: mix test --exclude skip --exclude integration
-      - run: mix coveralls.circle
+
+workflows:
+  version: 2
+  build-test-lint:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build

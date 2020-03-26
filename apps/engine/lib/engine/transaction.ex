@@ -51,12 +51,9 @@ defmodule Engine.Transaction do
     end
   end
 
-  @doc """
-  Validates that the given changesets inputs are correct. To create a transaction with inputs:
-
-    * The utxo position for the input must exist.
-    * The utxo position for the input must not have been spent.
-  """
+  # Validates that the given changesets inputs are correct. To create a transaction with inputs:
+  #   * The utxo position for the input must exist.
+  #   * The utxo position for the input must not have been spent.
   defp validate_usable_inputs(changeset) do
     positions =
       changeset

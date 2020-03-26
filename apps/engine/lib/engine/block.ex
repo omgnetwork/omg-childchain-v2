@@ -5,7 +5,6 @@ defmodule Engine.Block do
 
   use Ecto.Schema
 
-  import Ecto.Changeset
   import Ecto.Query, only: [from: 2]
 
   schema "blocks" do
