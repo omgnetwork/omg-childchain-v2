@@ -29,8 +29,10 @@ defmodule Engine.Operations.Deposit do
   Inserts a deposit event, recreating the transaction and forming the associated block,
   transaction, and UTXOs.
   """
-  #@spec insert_event(event()) ::
-  def insert_event(%{root_chain_txhash: _, log_index: _, blknum: _, amount: _, currency: _, owner: _} = event) do
+  # @spec insert_event(event()) ::
+  def insert_event(
+        %{root_chain_txhash: _, log_index: _, blknum: _, amount: _, currency: _, owner: _} = event
+      ) do
     utxo = %ExPlasma.Utxo{
       blknum: event.blknum,
       txindex: 0,

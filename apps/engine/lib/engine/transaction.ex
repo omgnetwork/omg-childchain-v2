@@ -1,12 +1,19 @@
 defmodule Engine.Transaction do
   @moduledoc """
-  Transaction model.
+  The Transaction Schema. This contains all transactions being sent to the Network
+  with the Wire Transaction Format. There exists two paths for which transactions
+  can appear in the network:
+
+  * Through the childchain as a payment/transfer transaction.
+  * Through the contracts as a deposit transaction.
   """
 
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query, only: [from: 2]
 
+  # This is the currently accepted protocol via the Wire Transaction Format.
+  # The metadata MUST be set this value currently.
   @default_metadata <<0::160>>
 
   @error_messages [
@@ -26,22 +33,25 @@ defmodule Engine.Transaction do
     timestamps(type: :utc_datetime)
   end
 
+  @doc """
+  Insert a Transaction into the DB. This can be a tx_bytes(RLP encoded bytes) or
+  a Transaction struct/map.
+  """
+  # @spec insert(any()) :: %__MODULE__{}
   def insert(params) do
     %__MODULE__{} |> changeset(params) |> Engine.Repo.insert()
   end
 
-  defp changeset(struct, %{} = params) do
-    struct
-    |> Engine.Repo.preload(:inputs)
-    |> Engine.Repo.preload(:outputs)
-    |> cast(params, [:tx_type, :tx_data, :metadata])
-    |> validate_required([:tx_type, :tx_data, :metadata])
-    |> cast_assoc(:inputs)
-    |> cast_assoc(:outputs)
-    |> validate_usable_inputs()
-  end
+  @doc """
+  Generate a changeset for a Transaction. This will validate:
 
-  defp changeset(struct, txbytes) when is_binary(txbytes) do
+  * tx_type, tx_data, metadata exists
+  * if given inputs, that it exists and is unspent
+  """
+  @spec changeset(%__MODULE__{}, map() | binary()) :: Ecto.Changeset.t()
+  def changeset(struct \\ %__MODULE__{}, params \\ %{})
+
+  def changeset(struct, txbytes) when is_binary(txbytes) do
     case ExPlasma.decode(txbytes) do
       {:ok, transaction} ->
         changeset(struct, params_from_ex_plasma(transaction))
@@ -51,29 +61,49 @@ defmodule Engine.Transaction do
     end
   end
 
+  def changeset(struct, %{} = params) do
+    struct
+    |> Engine.Repo.preload(:inputs)
+    |> Engine.Repo.preload(:outputs)
+    |> cast(params, [:tx_type, :tx_data, :metadata])
+    |> validate_required([:tx_type, :tx_data, :metadata])
+    |> cast_assoc(:inputs)
+    |> cast_assoc(:outputs)
+    |> validate_spendable_inputs()
+  end
+
   # Validates that the given changesets inputs are correct. To create a transaction with inputs:
   #   * The utxo position for the input must exist.
   #   * The utxo position for the input must not have been spent.
-  defp validate_usable_inputs(changeset) do
-    positions =
-      changeset
-      |> get_field(:inputs)
-      |> Enum.map(&ExPlasma.Utxo.pos/1)
+  defp validate_spendable_inputs(changeset) do
+    input_positions = get_input_positions(changeset)
 
-    query =
-      from(u in Engine.Utxo,
-        where: u.pos in ^positions and is_nil(u.spending_transaction_id),
-        limit: 4
-      )
+    unspent_positions =
+      input_positions
+      |> query_for_unspent_utxos()
+      |> Engine.Repo.all()
 
-    result = Engine.Repo.all(query)
+    case input_positions -- unspent_positions do
+      [missing_inputs] ->
+        add_error(changeset, :inputs, "input utxos #{missing_inputs} are missing or spent")
 
-    if length(positions) != length(result) do
-      missing_inputs = Enum.join(positions -- Enum.map(result, & &1.pos), ",")
-      add_error(changeset, :inputs, "input utxos #{missing_inputs} are missing or spent")
-    else
-      put_assoc(changeset, :inputs, result)
+      [] ->
+        changeset
     end
+  end
+
+  # The base struct of the Transaction does not contain the calculated utxo position.
+  # So we run the UTXO through ExPlasma to do the calculation for the position.
+  defp get_input_positions(changeset) do
+    changeset |> get_field(:inputs) |> Enum.map(&ExPlasma.Utxo.pos/1)
+  end
+
+  defp query_for_unspent_utxos(positions) do
+    from(u in Engine.Utxo,
+      where: u.pos in ^positions and is_nil(u.spending_transaction_id),
+      limit: 4,
+      select: u.pos
+    )
   end
 
   defp params_from_ex_plasma(struct) do

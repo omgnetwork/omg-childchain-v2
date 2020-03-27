@@ -12,7 +12,7 @@ defmodule Engine.BlockTest do
       insert(:transaction)
       insert(:transaction)
 
-      {block_id, total_records} = Block.form_block()
+      {:ok, {block_id, total_records}} = Block.form_block()
 
       query = from(t in Engine.Transaction, where: t.block_id == ^block_id)
       size = query |> Engine.Repo.all() |> length()
