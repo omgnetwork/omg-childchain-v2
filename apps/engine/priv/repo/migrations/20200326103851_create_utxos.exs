@@ -14,7 +14,7 @@ defmodule Engine.Repo.Migrations.CreateUtxos do
       add :output_type, :integer, default: 1
       add :owner, :binary
       add :currency, :binary
-      add :amount, :integer, null: false, default: 0
+      add :amount, :bigint, null: false, default: 0
 
       add :creating_transaction_id, references(:transactions)
       add :spending_transaction_id, references(:transactions)

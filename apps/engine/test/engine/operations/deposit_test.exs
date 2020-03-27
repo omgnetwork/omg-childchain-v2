@@ -19,6 +19,9 @@ defmodule Engine.Operations.DepositTest do
           <<84, 133, 148, 16, 138, 47, 89, 9, 12, 99, 34, 212, 19, 11, 55, 155, 143, 238, 249, 66,
             56, 169, 15, 72, 105, 33, 184, 110, 48, 23, 144, 38>>
       }
+
+      assert {:ok, transaction} = Engine.Operations.Deposit.insert_event(deposit_event)
+      assert transaction.block.number == 3
     end
   end
 end

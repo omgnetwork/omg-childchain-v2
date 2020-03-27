@@ -14,10 +14,14 @@ defmodule Engine.Operations.Deposit do
     - blknum 2000, this is the next submitted childchain block, containing non-deposit transactions
   """
 
+  import Ecto.Changeset
+
   @type address_binary :: <<_::160>>
 
+  @type tx_hash() :: <<_::256>>
+
   @type event() :: %{
-          root_chain_txhash: Crypto.hash_t(),
+          root_chain_txhash: tx_hash(),
           log_index: non_neg_integer(),
           blknum: non_neg_integer(),
           currency: address_binary(),
@@ -29,10 +33,8 @@ defmodule Engine.Operations.Deposit do
   Inserts a deposit event, recreating the transaction and forming the associated block,
   transaction, and UTXOs.
   """
-  # @spec insert_event(event()) ::
-  def insert_event(
-        %{root_chain_txhash: _, log_index: _, blknum: _, amount: _, currency: _, owner: _} = event
-      ) do
+  @spec insert_event(event()) :: %Engine.Transaction{}
+  def insert_event(%{root_chain_txhash: _, log_index: _, blknum: _, amount: _, currency: _, owner: _} = event) do
     utxo = %ExPlasma.Utxo{
       blknum: event.blknum,
       txindex: 0,
@@ -42,11 +44,12 @@ defmodule Engine.Operations.Deposit do
       amount: event.amount
     }
 
-    {:ok, deposit} = ExPlasma.Transactions.Deposit.new(utxo)
+    {:ok, deposit} = ExPlasma.Transaction.Deposit.new(utxo)
+    tx_bytes = ExPlasma.encode(deposit)
 
-    # generate a block ecto
-    # generate the utxo ecto
-    # generate the transaction ecto
-    # mark it all as confirmed
+    %Engine.Transaction{}
+    |> Engine.Transaction.changeset(tx_bytes)
+    |> put_change(:block, %Engine.Block{number: event.blknum})
+    |> Engine.Repo.insert()
   end
 end
