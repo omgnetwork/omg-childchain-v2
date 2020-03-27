@@ -34,7 +34,9 @@ defmodule Engine.Operations.Deposit do
   transaction, and UTXOs.
   """
   @spec insert_event(event()) :: %Engine.Transaction{}
-  def insert_event(%{root_chain_txhash: _, log_index: _, blknum: _, amount: _, currency: _, owner: _} = event) do
+  def insert_event(
+        %{root_chain_txhash: _, log_index: _, blknum: _, amount: _, currency: _, owner: _} = event
+      ) do
     utxo = %ExPlasma.Utxo{
       blknum: event.blknum,
       txindex: 0,
