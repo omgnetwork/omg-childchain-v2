@@ -1,0 +1,17 @@
+ErrorSchema:
+  description: The object schema for an error
+  type: object
+  properties:
+    object:
+      type: string
+    code:
+      type: string
+    description:
+      type: string
+    messages:
+      type: object
+  required:
+    - object
+    - code
+    - description
+    - messages
