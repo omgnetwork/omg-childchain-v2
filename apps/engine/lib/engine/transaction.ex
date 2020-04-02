@@ -1,7 +1,7 @@
 defmodule Engine.Transaction do
   @moduledoc """
   The Transaction Schema. This contains all transactions being sent to the Network
-  with the Wire Transaction Format. There exists two paths for which transactions
+  with the Generic Transaction Format. There exists two paths for which transactions
   can appear in the network:
 
   * Through the childchain as a payment/transfer transaction.
@@ -12,7 +12,7 @@ defmodule Engine.Transaction do
   import Ecto.Changeset
   import Ecto.Query, only: [from: 2]
 
-  # This is the currently accepted protocol via the Wire Transaction Format.
+  # This is the currently accepted protocol via the Generic Transaction Format.
   # The metadata MUST be set this value currently.
   @default_metadata <<0::160>>
 
@@ -49,8 +49,6 @@ defmodule Engine.Transaction do
   * if given inputs, that it exists and is unspent
   """
   @spec changeset(%__MODULE__{}, map() | binary()) :: Ecto.Changeset.t()
-  def changeset(struct \\ %__MODULE__{}, params \\ %{})
-
   def changeset(struct, txbytes) when is_binary(txbytes) do
     case ExPlasma.decode(txbytes) do
       {:ok, transaction} ->
