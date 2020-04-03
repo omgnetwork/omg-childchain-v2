@@ -30,13 +30,16 @@ defmodule Engine.Operations.Deposit do
         }
 
   @doc """
-  Inserts a deposit event, recreating the transaction and forming the associated block,
-  transaction, and UTXOs.
+  Inserts deposit events, recreating the transaction and forming the associated block,
+  transaction, and UTXOs. This will wrap all the build deposits into one DB transaction.
   """
-  @spec insert_event(event()) :: %Engine.Transaction{}
-  def insert_event(
-        %{root_chain_txhash: _, log_index: _, blknum: _, amount: _, currency: _, owner: _} = event
-      ) do
+  @spec insert_event(list()) :: {:ok, map()} | {:error, :atom, any(), any()}
+  def insert_event(events) when is_list(events), do: do_insert(Ecto.Multi.new(), events)
+
+  defp do_insert(multi, [event | tail]), do: multi |> build_deposit(event) |> do_insert(tail)
+  defp do_insert(multi, []), do: Engine.Repo.transaction(multi)
+
+  defp build_deposit(multi, %{} = event) do
     utxo = %ExPlasma.Utxo{
       blknum: event.blknum,
       txindex: 0,
@@ -49,9 +52,11 @@ defmodule Engine.Operations.Deposit do
     {:ok, deposit} = ExPlasma.Transaction.Deposit.new(utxo)
     tx_bytes = ExPlasma.encode(deposit)
 
-    %Engine.Transaction{}
-    |> Engine.Transaction.changeset(tx_bytes)
-    |> put_change(:block, %Engine.Block{number: event.blknum})
-    |> Engine.Repo.insert()
+    changeset =
+      %Engine.Transaction{}
+      |> Engine.Transaction.changeset(tx_bytes)
+      |> put_change(:block, %Engine.Block{number: event.blknum})
+
+    Ecto.Multi.insert(multi, "deposit-blknum-#{event.blknum}", changeset)
   end
 end
