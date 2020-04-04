@@ -16,6 +16,9 @@ defmodule Engine.Operations.Deposit do
 
   import Ecto.Changeset
 
+  alias Engine.Transaction
+  alias ExPlasma.Transaction.Deposit, as: ExDeposit
+
   @type address_binary :: <<_::160>>
 
   @type tx_hash() :: <<_::256>>
@@ -49,12 +52,12 @@ defmodule Engine.Operations.Deposit do
       amount: event.amount
     }
 
-    {:ok, deposit} = ExPlasma.Transaction.Deposit.new(utxo)
+    {:ok, deposit} = ExDeposit.new(utxo)
     tx_bytes = ExPlasma.encode(deposit)
 
     changeset =
-      %Engine.Transaction{}
-      |> Engine.Transaction.changeset(tx_bytes)
+      %Transaction{}
+      |> Transaction.changeset(tx_bytes)
       |> put_change(:block, %Engine.Block{number: event.blknum})
 
     Ecto.Multi.insert(multi, "deposit-blknum-#{event.blknum}", changeset)

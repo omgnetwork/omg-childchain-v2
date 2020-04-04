@@ -3,6 +3,8 @@ defmodule Engine.Operations.DepositTest do
 
   use ExUnit.Case, async: true
 
+  alias Engine.Operations.Deposit
+
   describe "deposit/1" do
     test "generates a confirmed transaction, block and utxo for the deposit" do
       deposit_event = %{
@@ -20,8 +22,7 @@ defmodule Engine.Operations.DepositTest do
             56, 169, 15, 72, 105, 33, 184, 110, 48, 23, 144, 38>>
       }
 
-      assert {:ok, %{"deposit-blknum-3" => transaction}} =
-               Engine.Operations.Deposit.insert_event([deposit_event])
+      assert {:ok, %{"deposit-blknum-3" => transaction}} = Deposit.insert_event([deposit_event])
 
       assert transaction.block.number == 3
     end
@@ -60,7 +61,7 @@ defmodule Engine.Operations.DepositTest do
     ]
 
     assert {:ok, %{"deposit-blknum-6" => transaction6, "deposit-blknum-5" => transaction5}} =
-             Engine.Operations.Deposit.insert_event(deposit_events)
+             Deposit.insert_event(deposit_events)
 
     assert transaction5.block.number == 5
     assert transaction6.block.number == 6
