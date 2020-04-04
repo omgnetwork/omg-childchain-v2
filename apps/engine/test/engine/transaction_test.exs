@@ -1,10 +1,9 @@
 defmodule Engine.TransactionTest do
   use ExUnit.Case, async: true
   doctest Engine.Transaction
+  import Engine.Factory
 
   alias Engine.Transaction
-
-  import Engine.Factory
 
   describe "insert/1" do
     test "validates input utxos exist" do

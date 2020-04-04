@@ -156,22 +156,23 @@
         #
         # Controversial and experimental checks (opt-in, just replace `false` with `[]`)
         #
+        {Credo.Check.Readability.StrictModuleLayout, []},
+        {Credo.Check.Readability.SinglePipe, []},
         {Credo.Check.Consistency.MultiAliasImportRequireUse, false},
         {Credo.Check.Consistency.UnusedVariableNames, false},
         {Credo.Check.Design.DuplicatedCode, false},
         {Credo.Check.Readability.AliasAs, false},
         {Credo.Check.Readability.MultiAlias, false},
         {Credo.Check.Readability.Specs, false},
-        {Credo.Check.Readability.SinglePipe, false},
         {Credo.Check.Refactor.ABCSize, false},
         {Credo.Check.Refactor.AppendSingleItem, false},
-        {Credo.Check.Refactor.DoubleBooleanNegation, false},
+        {Credo.Check.Refactor.DoubleBooleanNegation, []},
         {Credo.Check.Refactor.ModuleDependencies, false},
-        {Credo.Check.Refactor.NegatedIsNil, false},
-        {Credo.Check.Refactor.PipeChainStart, false},
-        {Credo.Check.Refactor.VariableRebinding, false},
+        {Credo.Check.Refactor.NegatedIsNil, []},
+        {Credo.Check.Refactor.PipeChainStart, []},
+        {Credo.Check.Refactor.VariableRebinding, []},
         {Credo.Check.Warning.MapGetUnsafePass, false},
-        {Credo.Check.Warning.UnsafeToAtom, false}
+        {Credo.Check.Warning.UnsafeToAtom, []}
 
         #
         # Custom checks can be created using `mix credo.gen.check`.
