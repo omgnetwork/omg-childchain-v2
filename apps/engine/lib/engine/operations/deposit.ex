@@ -34,7 +34,7 @@ defmodule Engine.Operations.Deposit do
   transaction, and UTXOs. This will wrap all the build deposits into one DB transaction.
   """
   @spec insert_event(list()) :: {:ok, map()} | {:error, :atom, any(), any()}
-  def insert_event(events) when is_list(events), do: do_insert(Ecto.Multi.new(), events)
+  def insert_event(events), do: do_insert(Ecto.Multi.new(), events)
 
   defp do_insert(multi, [event | tail]), do: multi |> build_deposit(event) |> do_insert(tail)
   defp do_insert(multi, []), do: Engine.Repo.transaction(multi)
