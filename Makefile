@@ -4,3 +4,7 @@ ENV_TEST ?= env MIX_ENV=test
 
 test:
 	$(ENV_TEST) mix test --exclude integration
+
+### git setup
+hooks:
+	git config core.hooksPath .githooks
