@@ -44,6 +44,7 @@ defmodule Engine.Block do
 
   # Since we use `Repo.update_all/2`, we need to return
   # it a list of all transaction IDs we want to associate with.
-  defp query_for_unassociated_txn_ids(),
-    do: from(t in Engine.Transaction, where: is_nil(t.block_id), select: t.id)
+  defp query_for_unassociated_txn_ids() do
+    from(t in Engine.Transaction, where: is_nil(t.block_id), select: t.id)
+  end
 end
