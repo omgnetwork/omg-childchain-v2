@@ -4,7 +4,6 @@ defmodule Engine.Block do
   """
 
   use Ecto.Schema
-
   import Ecto.Query, only: [from: 2]
 
   schema "blocks" do
@@ -21,27 +20,31 @@ defmodule Engine.Block do
   attaches free transactions into a new block, awaiting for submission to the contract
   later on.
   """
-  @spec form_block() :: {non_neg_integer, non_neg_integer}
+  @spec form_block() :: {:ok, tuple()} | {:error, any()}
   def form_block() do
-    # NB: We grab the query first and return the IDs to work around ecto's
-    # update_all not being able to accept `limit`.
-    query = from(t in Engine.Transaction, where: is_nil(t.block_id), limit: 25)
-    txn_ids = query |> Engine.Repo.all() |> Enum.map(& &1.id)
-    pending_query = from(t in Engine.Transaction, where: t.id in ^txn_ids)
+    with {:ok, block} <- insert_new_block(),
+         {total_records, _} <- update_pending_transactions(block) do
+      {:ok, {block.id, total_records}}
+    end
+  end
 
-    # Create a new Block for us to map to.
-    {:ok, block} = Engine.Repo.insert(%__MODULE__{})
+  # Create a new block for us to associate with.
+  defp insert_new_block(), do: Engine.Repo.insert(%__MODULE__{})
 
-    # NB: We explicitly bump the updated_at field here as update_all does not
-    # do that for us.
-    {total_records, _} =
-      Engine.Repo.update_all(pending_query,
-        set: [
-          block_id: block.id,
-          updated_at: NaiveDateTime.utc_now()
-        ]
-      )
+  # Associate all 'free' pending transactions
+  # to the given block
+  defp update_pending_transactions(block) do
+    Engine.Repo.update_all(query_for_unassociated_txn_ids(),
+      set: [
+        block_id: block.id,
+        updated_at: NaiveDateTime.utc_now()
+      ]
+    )
+  end
 
-    {block.id, total_records}
+  # Since we use `Repo.update_all/2`, we need to return
+  # it a list of all transaction IDs we want to associate with.
+  defp query_for_unassociated_txn_ids() do
+    from(t in Engine.Transaction, where: is_nil(t.block_id), select: t.id)
   end
 end
