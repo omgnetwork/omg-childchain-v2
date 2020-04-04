@@ -3,7 +3,7 @@ defmodule Engine.Factory do
 
   use ExMachina.Ecto, repo: Engine.Repo
 
-  def deposit_factory do
+  def deposit_factory() do
     %Engine.Transaction{
       tx_type: 1,
       tx_data: 0,
@@ -12,7 +12,7 @@ defmodule Engine.Factory do
     }
   end
 
-  def transaction_factory do
+  def transaction_factory() do
     %Engine.Transaction{
       tx_type: 1,
       tx_data: 0,
@@ -22,7 +22,7 @@ defmodule Engine.Factory do
     }
   end
 
-  def input_utxo_factory do
+  def input_utxo_factory() do
     %Engine.Utxo{
       blknum: :rand.uniform(100),
       txindex: 0,
@@ -33,7 +33,7 @@ defmodule Engine.Factory do
     }
   end
 
-  def spent_utxo_factory do
+  def spent_utxo_factory() do
     %Engine.Utxo{
       blknum: :rand.uniform(100),
       txindex: 0,
@@ -45,7 +45,7 @@ defmodule Engine.Factory do
     }
   end
 
-  def output_utxo_factory do
+  def output_utxo_factory() do
     %Engine.Utxo{
       owner: <<1::160>>,
       currency: <<0::160>>,

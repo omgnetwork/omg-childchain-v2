@@ -2,10 +2,10 @@ defmodule Engine.BlockTest do
   use ExUnit.Case, async: true
   doctest Engine.Block
 
-  alias Engine.Block
-
   import Engine.Factory
   import Ecto.Query, only: [from: 2]
+
+  alias Engine.Block
 
   describe "form_block/0" do
     test "forms a block from the existing pending transactions" do

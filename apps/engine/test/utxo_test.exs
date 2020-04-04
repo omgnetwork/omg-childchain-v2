@@ -36,7 +36,7 @@ defmodule Engine.UtxoTest do
     end
 
     test "validates that the utxo position is unique" do
-      changeset =
+      utxo_changeset_1 =
         Utxo.changeset(%Utxo{}, %{
           blknum: 1,
           txindex: 0,
@@ -45,10 +45,10 @@ defmodule Engine.UtxoTest do
           amount: 1
         })
 
-      assert changeset.valid?
-      Repo.insert(changeset)
+      assert utxo_changeset_1.valid?()
+      Repo.insert(utxo_changeset_1)
 
-      changeset =
+      utxo_changeset_2 =
         Utxo.changeset(%Utxo{}, %{
           blknum: 1,
           txindex: 0,
@@ -58,13 +58,15 @@ defmodule Engine.UtxoTest do
         })
 
       # refute changeset.valid? # NB: why doesn't ecto check the unique constraint here?
-      assert {:error, _} = Repo.insert(changeset)
+      assert {:error, _} = Repo.insert(utxo_changeset_2)
     end
   end
 
   test "set_position/2 builds a utxo position" do
-    changeset = Utxo.changeset(%Utxo{}, %{})
-    changeset = Utxo.set_position(changeset, %{blknum: 1, txindex: 0, oindex: 0})
+    changeset =
+      %Utxo{}
+      |> Utxo.changeset(%{})
+      |> Utxo.set_position(%{blknum: 1, txindex: 0, oindex: 0})
 
     assert 1_000_000_000 == changeset.changes[:pos]
     assert 1 == changeset.changes[:blknum]
