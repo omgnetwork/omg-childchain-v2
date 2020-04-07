@@ -32,6 +32,8 @@ defmodule Engine.Utxo do
     field(:currency, :binary, default: @default_eth_address)
     field(:amount, :integer, default: 0)
 
+    field(:state, :string)
+
     belongs_to(:spending_transaction, Engine.Transaction)
     belongs_to(:creating_transaction, Engine.Transaction)
 

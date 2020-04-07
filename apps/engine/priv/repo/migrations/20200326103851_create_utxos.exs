@@ -16,6 +16,8 @@ defmodule Engine.Repo.Migrations.CreateUtxos do
       add :currency, :binary
       add :amount, :bigint, null: false, default: 0
 
+      add :state, :string, default: ""
+
       add :creating_transaction_id, references(:transactions)
       add :spending_transaction_id, references(:transactions)
 

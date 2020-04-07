@@ -3,12 +3,31 @@ defmodule Engine.Factory do
 
   use ExMachina.Ecto, repo: Engine.Repo
 
-  def deposit_factory() do
+  def deposit_transaction_factory(attrs) do
+    %{blknum: blknum} = attrs
     %Engine.Transaction{
       tx_type: 1,
       tx_data: 0,
       metadata: <<0::160>>,
-      outputs: build(:output_utxo)
+      inputs: [],
+      outputs: build(:output_utxo, %{
+        blknum: blknum || :rand.uniform(100) + 1,
+        txindex: 0,
+        oindex: 0
+      })
+    }
+  end
+
+  def deposit_block_factory() do
+    # NB: Hax to ensure we don't use whole numbers, which are
+    # the non-deposit blocks
+    blknum = :rand.uniform(100) + 1
+
+    %Engine.Block{
+      number: blknum,
+      transactions: build(:deposit_transaction, %{
+        blknum: blknum
+      })
     }
   end
 
@@ -23,8 +42,10 @@ defmodule Engine.Factory do
   end
 
   def input_utxo_factory() do
+    blknum = :rand.uniform(100)
+
     %Engine.Utxo{
-      blknum: :rand.uniform(100),
+      blknum: blknum,
       txindex: 0,
       oindex: 0,
       owner: <<1::160>>,
