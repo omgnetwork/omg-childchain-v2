@@ -1,4 +1,4 @@
-defmodule Engine.Operations.Deposit do
+defmodule Engine.Callbacks.Deposit do
   @moduledoc """
   Contains the business logic of persisting a deposit event and creating the
   appropriate block, transaction and UTXO. For context, a deposit is made
@@ -36,11 +36,11 @@ defmodule Engine.Operations.Deposit do
   Inserts deposit events, recreating the transaction and forming the associated block,
   transaction, and UTXOs. This will wrap all the build deposits into one DB transaction.
   """
-  @spec insert_event(list()) :: {:ok, map()} | {:error, :atom, any(), any()}
-  def insert_event(events), do: do_insert(Ecto.Multi.new(), events)
+  @spec callback(list()) :: {:ok, map()} | {:error, :atom, any(), any()}
+  def callback(events), do: do_callback(Ecto.Multi.new(), events)
 
-  defp do_insert(multi, [event | tail]), do: multi |> build_deposit(event) |> do_insert(tail)
-  defp do_insert(multi, []), do: Engine.Repo.transaction(multi)
+  defp do_callback(multi, [event | tail]), do: multi |> build_deposit(event) |> do_callback(tail)
+  defp do_callback(multi, []), do: Engine.Repo.transaction(multi)
 
   defp build_deposit(multi, %{} = event) do
     utxo = %ExPlasma.Utxo{
