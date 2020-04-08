@@ -5,16 +5,18 @@ defmodule Engine.Factory do
 
   def deposit_transaction_factory(attrs) do
     %{blknum: blknum} = attrs
+
     %Engine.Transaction{
       tx_type: 1,
       tx_data: 0,
       metadata: <<0::160>>,
       inputs: [],
-      outputs: build(:output_utxo, %{
-        blknum: blknum || :rand.uniform(100) + 1,
-        txindex: 0,
-        oindex: 0
-      })
+      outputs:
+        build(:output_utxo, %{
+          blknum: blknum || :rand.uniform(100) + 1,
+          txindex: 0,
+          oindex: 0
+        })
     }
   end
 
@@ -25,9 +27,10 @@ defmodule Engine.Factory do
 
     %Engine.Block{
       number: blknum,
-      transactions: build(:deposit_transaction, %{
-        blknum: blknum
-      })
+      transactions:
+        build(:deposit_transaction, %{
+          blknum: blknum
+        })
     }
   end
 

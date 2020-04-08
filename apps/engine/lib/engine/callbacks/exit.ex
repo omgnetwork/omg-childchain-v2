@@ -10,10 +10,12 @@ defmodule Engine.Callbacks.Exit do
   @doc """
   Gather all the UTXO positions in the list of exit events.
   """
-  #@spec callback(map()) ::
+  # @spec callback(map()) ::
   def callback(events), do: do_callback([], events)
 
-  defp do_callback(positions, [event | tail]), do: positions |> mark_exiting_utxo(event) |> do_callback(tail)
+  defp do_callback(positions, [event | tail]),
+    do: positions |> mark_exiting_utxo(event) |> do_callback(tail)
+
   defp do_callback(positions, []), do: update_positions_as_exiting(positions)
 
   # Grab's all the UTXO positions.
@@ -28,14 +30,16 @@ defmodule Engine.Callbacks.Exit do
   end
 
   defp update_positions_as_exiting(positions) do
-    query = from(u in Engine.Utxo,
-      where: u.pos in ^positions and not u.state in ["spent", "exited"]
-    )
+    query =
+      from(u in Engine.Utxo,
+        where: u.pos in ^positions and u.state not in ["spent", "exited"]
+      )
 
     Engine.Repo.update_all(query,
       set: [
         state: "exited",
         updated_at: NaiveDateTime.utc_now()
-      ])
+      ]
+    )
   end
 end
