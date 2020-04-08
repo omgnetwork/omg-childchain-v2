@@ -8,7 +8,7 @@ defmodule Engine.Callbacks.ExitTest do
 
   describe "callback/1" do
     test "marks utxos that are exiting" do
-      utxo = insert(:input_utxo, pos: 10000)
+      utxo = insert(:input_utxo, pos: 1)
 
       exit_events = [
         %{
@@ -37,8 +37,8 @@ defmodule Engine.Callbacks.ExitTest do
     end
 
     test "marks multiple utxos as exiting" do
-      utxo = insert(:input_utxo, pos: 10002)
-      utxo2 = insert(:input_utxo, pos: 10003)
+      utxo = insert(:input_utxo, pos: 2)
+      utxo2 = insert(:input_utxo, pos: 3)
 
       exit_events = [
         %{

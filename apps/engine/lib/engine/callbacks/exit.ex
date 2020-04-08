@@ -7,10 +7,23 @@ defmodule Engine.Callbacks.Exit do
 
   import Ecto.Query, only: [from: 2]
 
+  @type event() :: %{
+          call_data: %{
+            output_tx: binary(),
+            utxo_pos: non_neg_integer()
+          },
+          eth_height: non_neg_integer(),
+          event_signature: String.t(),
+          exit_id: non_neg_integer(),
+          log_index: non_neg_integer(),
+          owner: binary(),
+          root_chain_txhash: binary()
+        }
+
   @doc """
   Gather all the UTXO positions in the list of exit events.
   """
-  # @spec callback(map()) ::
+  @spec callback(list()) :: tuple()
   def callback(events), do: do_callback([], events)
 
   defp do_callback(positions, [event | tail]),
