@@ -1,7 +1,7 @@
 defmodule Engine.Ethereum.Monitor.AlarmHandlerTest do
   @moduledoc false
   use ExUnit.Case, async: true
-  import ExUnit.CaptureLog, only: [capture_log: 1]
+
   alias Engine.Ethereum.Monitor.AlarmHandler
 
   test "that init creates a state" do
@@ -12,10 +12,8 @@ defmodule Engine.Ethereum.Monitor.AlarmHandlerTest do
     clear_alarm_event = {:clear_alarm, {:ethereum_connection_error, %{}}}
     alarm_handler = %AlarmHandler{consumer: self()}
 
-    capture_log(fn ->
-      AlarmHandler.handle_event(clear_alarm_event, alarm_handler)
-      assert_receive {:"$gen_cast", :start_child}
-    end)
+    AlarmHandler.handle_event(clear_alarm_event, alarm_handler)
+    assert_receive {:"$gen_cast", :start_child}
   end
 
   test "that when some other event arrives we ignore it (we don't receive any messages)" do
