@@ -7,8 +7,6 @@ defmodule Engine.Application do
 
   def start(_type, _args) do
     children = [
-      # Starts a worker by calling: Engine.Worker.start_link(arg)
-      # {Engine.Worker, arg}
       {Engine.Repo, []}
     ]
 
