@@ -1,4 +1,4 @@
-defmodule Engine.Ethereum.MonitorTest do
+defmodule Engine.Ethereum.Monitor.ChildTest do
   @moduledoc false
 
   import ExUnit.CaptureLog, only: [capture_log: 1]

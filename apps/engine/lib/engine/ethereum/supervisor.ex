@@ -14,6 +14,7 @@ defmodule Engine.Ethereum.Supervisor do
   def init(_args) do
     # RootChain.get_root_deployment_height()
     {:ok, contract_deployment_height} = {:ok, 30}
+    child_args = [[contract_deployment_height: contract_deployment_height]]
 
     children = [
       {Monitor,
@@ -21,9 +22,7 @@ defmodule Engine.Ethereum.Supervisor do
          alarm: Alarm,
          child_spec: %{
            id: SyncSupervisor,
-           start:
-             {SyncSupervisor, :start_link,
-              [[contract_deployment_height: contract_deployment_height]]},
+           start: {SyncSupervisor, :start_link, child_args},
            restart: :permanent,
            type: :supervisor
          }
