@@ -4,6 +4,10 @@ defmodule Engine.Ethereum.Monitor.AlarmHandlerTest do
   import ExUnit.CaptureLog, only: [capture_log: 1]
   alias Engine.Ethereum.Monitor.AlarmHandler
 
+  test "that init creates a state" do
+    assert AlarmHandler.init(consumer: :yolo) == {:ok, %AlarmHandler{consumer: :yolo}}
+  end
+
   test "that when a clear ethereum connection error alarm arrives we send a message to the consumer" do
     clear_alarm_event = {:clear_alarm, {:ethereum_connection_error, %{}}}
     alarm_handler = %AlarmHandler{consumer: self()}
