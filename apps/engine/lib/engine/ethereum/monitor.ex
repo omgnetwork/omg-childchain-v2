@@ -6,9 +6,9 @@ defmodule Engine.Ethereum.Monitor do
   children if they're dead.
   """
   use GenServer
-  require Logger
-
   alias Engine.Ethereum.Monitor.Child
+
+  require Logger
 
   def health_checkin() do
     GenServer.cast(__MODULE__, :health_checkin)
@@ -18,7 +18,7 @@ defmodule Engine.Ethereum.Monitor do
   defstruct alarm_module: nil, child: nil
 
   def start_link(args) do
-    GenServer.start_link(__MODULE__, args, name: __MODULE__)
+    GenServer.start_link(__MODULE__, args, name: Keyword.get(args, :name, __MODULE__))
   end
 
   def init(args) when is_list(args) do

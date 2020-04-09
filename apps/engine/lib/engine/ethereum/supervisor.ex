@@ -3,9 +3,10 @@ defmodule Engine.Ethereum.Supervisor do
    Etherereum capabilities top level supervisor.
   """
   use Supervisor
-  require Logger
 
   alias Engine.Ethereum.Monitor
+  alias Engine.Ethereum.Monitor.AlarmHandler
+  require Logger
 
   def start_link(args) do
     Supervisor.start_link(__MODULE__, args, name: __MODULE__)
@@ -25,7 +26,8 @@ defmodule Engine.Ethereum.Supervisor do
            start: {SyncSupervisor, :start_link, child_args},
            restart: :permanent,
            type: :supervisor
-         }
+         },
+         alarm_handler: AlarmHandler
        ]}
     ]
 
