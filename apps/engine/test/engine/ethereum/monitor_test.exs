@@ -8,8 +8,13 @@ defmodule Engine.Ethereum.MonitorTest do
   alias Engine.Ethereum.Monitor.AlarmHandler
 
   setup_all do
+    Application.ensure_all_started(:sasl)
     _ = Application.stop(:logger)
-    on_exit(fn -> Application.ensure_all_started(:logger) end)
+
+    on_exit(fn ->
+      _ = Application.stop(:sasl)
+      Application.ensure_all_started(:logger)
+    end)
   end
 
   test "that a child process gets restarted after alarm is cleared" do
