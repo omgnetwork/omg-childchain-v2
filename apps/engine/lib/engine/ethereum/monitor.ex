@@ -8,25 +8,13 @@ defmodule Engine.Ethereum.Monitor do
   use GenServer
   require Logger
 
-  alias Engine.Ethereum.Monitor.Start
+  alias Engine.Ethereum.Monitor.Child
 
   def health_checkin() do
     GenServer.cast(__MODULE__, :health_checkin)
   end
 
-  defmodule Child do
-    @moduledoc false
-    @type t :: %__MODULE__{
-            pid: pid(),
-            spec: {module(), term()} | map()
-          }
-    defstruct pid: nil, spec: nil
-  end
-
-  @type t :: %__MODULE__{
-          alarm_module: module(),
-          child: Child.t()
-        }
+  @type t :: %__MODULE__{alarm_module: module(), child: Child.t()}
   defstruct alarm_module: nil, child: nil
 
   def start_link(args) do
@@ -72,7 +60,7 @@ defmodule Engine.Ethereum.Monitor do
 
   @spec start_child(Child.t() | Supervisor.child_spec()) :: Child.t()
   defp start_child(child) do
-    Start.start_child(child)
+    Child.start(child)
   end
 
   @spec subscribe_to_alarms(module(), module()) :: :gen_event.add_handler_ret()
