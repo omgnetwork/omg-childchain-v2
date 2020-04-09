@@ -15,8 +15,6 @@ defmodule Engine.Ethereum.Monitor.AlarmHandler do
     {:ok, %__MODULE__{consumer: consumer}}
   end
 
-  def handle_call(_request, state), do: {:ok, :ok, state}
-
   def handle_event({:clear_alarm, {:ethereum_connection_error, _}}, state) do
     alarm = :ethereum_connection_error
     _ = Logger.warn("#{alarm} alarm was cleared. Beginning to restart processes.")
@@ -27,7 +25,6 @@ defmodule Engine.Ethereum.Monitor.AlarmHandler do
 
   # flush
   def handle_event(event, state) do
-    _ = Logger.info("#{__MODULE__} got event: #{inspect(event)}. Ignoring.")
     {:ok, state}
   end
 end
