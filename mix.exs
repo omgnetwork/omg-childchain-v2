@@ -1,12 +1,26 @@
 defmodule Childchain.MixProject do
   use Mix.Project
-
+  @sha String.replace(elem(System.cmd("git", ["rev-parse", "--short=7", "HEAD"]), 0), "\n", "")
+  @version "#{String.trim(File.read!("VERSION"))}" <> "+" <> @sha
   def project do
     [
       apps_path: "apps",
-      version: "0.1.0",
+      version: @version,
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      releases: [
+        childchain: [
+          steps: steps(),
+          version: @version,
+          applications: [
+            tools: :permanent,
+            runtime_tools: :permanent,
+            engine: :permanent,
+            rpc: :permanent
+          ],
+          config_providers: []
+        ]
+      ]
     ]
   end
 
@@ -20,5 +34,12 @@ defmodule Childchain.MixProject do
       {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
+  end
+
+  defp steps() do
+    case Mix.env() do
+      :prod -> [:assemble, :tar]
+      _ -> [:assemble]
+    end
   end
 end
