@@ -20,4 +20,4 @@ erl_crash.dump
 *.ez
 
 #asdf elixir and erlang version spec
-.tool_versions
+.tool-versions
