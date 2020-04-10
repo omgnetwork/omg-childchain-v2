@@ -48,11 +48,11 @@ s6-env REPLACE_OS_VARS=yes
 ## Known commands
 ##
 ifelse { test $1 == "full_local" } {
-  /bin/bash -c "/app/bin/childchain eval \"Engine.ReleaseTasks.InitPostgresqlDB.run()\" && /app/bin/childchain start"
+  /bin/bash -c "/app/bin/childchain eval \"Engine.ReleaseTasks.InitPostgresqlDB.migrate()\" && /app/bin/childchain start"
 }
 
 ifelse { test $1 == "full_local_start_iex" } {
-  /bin/bash -c "/app/bin/childchain eval \"Engine.ReleaseTasks.InitPostgresqlDB.run()\" && /app/bin/childchain start_iex"
+  /bin/bash -c "/app/bin/childchain eval \"Engine.ReleaseTasks.InitPostgresqlDB.migrate()\" && /app/bin/childchain start_iex"
 }
 
 ## Fallback; if we're not running the known command, just run it as is.

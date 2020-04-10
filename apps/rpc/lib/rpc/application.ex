@@ -4,15 +4,11 @@ defmodule Rpc.Application do
   @moduledoc false
 
   use Application
+  require Logger
 
   def start(_type, _args) do
-    children = [
-      # Starts a worker by calling: Rpc.Worker.start_link(arg)
-      # {Rpc.Worker, arg}
-    ]
-
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
+    children = []
+    _ = Logger.info("Starting #{__MODULE__}")
     opts = [strategy: :one_for_one, name: Rpc.Supervisor]
     Supervisor.start_link(children, opts)
   end

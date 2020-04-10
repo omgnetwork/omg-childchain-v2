@@ -13,7 +13,8 @@ config :engine, Engine.Repo,
   database: "engine_repo",
   username: "omisego_dev",
   password: "omisego_dev",
-  hostname: "localhost"
+  hostname: "localhost",
+  backoff_type: :stop
 
 config :engine, ecto_repos: [Engine.Repo]
 
