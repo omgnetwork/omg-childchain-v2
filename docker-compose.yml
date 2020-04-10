@@ -8,4 +8,15 @@ services:
     environment:
       POSTGRES_USER: omisego_dev
       POSTGRES_PASSWORD: omisego_dev
-      POSTGRES_DB: omisego_dev
+      POSTGRES_DB: engine_repo
+  childchain:
+    image: omisego/childchain:latest
+    command: "full_local"
+    container_name: childchain
+    restart: always
+    ports:
+      - "9656:9656"
+    environment:
+      DATABASE_URL: "postgres"
+    expose:
+      - "9656"

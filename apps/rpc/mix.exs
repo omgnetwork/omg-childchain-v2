@@ -26,7 +26,6 @@ defmodule Rpc.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:cabbage, "~> 0.3.0", only: [:test]},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.0"}
       # {:dep_from_hexpm, "~> 0.3.0"},

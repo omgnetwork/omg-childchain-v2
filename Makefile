@@ -1,6 +1,6 @@
 ENV_TEST ?= env MIX_ENV=test
 CHILDCHAIN_IMAGE_NAME  ?= "omisego/childchain:latest"
-IMAGE_BUILDER   ?= "omisegoimages/elixir-omg-builder:stable-20200407"
+IMAGE_BUILDER   ?= "omisegoimages/childchain-builder:dev-90c05cb"
 IMAGE_BUILD_DIR ?= $(PWD)
 ENV_DEV         ?= env MIX_ENV=dev
 ENV_TEST        ?= env MIX_ENV=test
