@@ -1,7 +1,7 @@
 FROM alpine:3.11
 
 LABEL maintainer="OmiseGO Team <omg@omise.co>"
-LABEL description="Official image for OmiseGO (Child Chain) Plasma Network"
+LABEL description="Official image for OmiseGO (Childchain) Plasma Network"
 
 ENV LANG=C.UTF-8
 
@@ -24,12 +24,10 @@ RUN set -xe \
 
 ## Application
 ##
-#rocksdb needs libstdc++
 RUN apk add --update --no-cache --virtual .childchain-runtime \
         bash \
         libressl \
         libressl-dev \
-        libstdc++ \
         lksctp-tools
 
 #libsecp256k1
