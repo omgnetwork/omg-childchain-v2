@@ -29,7 +29,7 @@ defmodule Engine.Ethereum.Monitor do
     Process.flag(:trap_exit, true)
     # we raise the alarms first, because we get a health checkin when all
     # sub processes of the supervisor are ready to go
-    _ = alarm_module.set(alarm_module.main_supervisor_halted(__MODULE__))
+    # _ = alarm_module.set(alarm_module.main_supervisor_halted(__MODULE__))
     {:ok, %__MODULE__{alarm_module: alarm_module, child: start_child(child_spec)}}
   end
 
@@ -38,7 +38,8 @@ defmodule Engine.Ethereum.Monitor do
   # We declare the sytem unhealthy
   def handle_info({:EXIT, _from, reason}, state) do
     _ = Logger.error("Childchain supervisor crashed. Raising alarm. Reason #{inspect(reason)}")
-    state.alarm_module.set(state.alarm_module.main_supervisor_halted(__MODULE__))
+
+    # state.alarm_module.set(state.alarm_module.main_supervisor_halted(__MODULE__))
 
     {:noreply, state}
   end
@@ -46,7 +47,7 @@ defmodule Engine.Ethereum.Monitor do
   # alarm has cleared, we can now begin restarting supervisor child
   def handle_cast(:health_checkin, state) do
     _ = Logger.info("Got a health checkin... clearing alarm main_supervisor_halted.")
-    _ = state.alarm_module.clear(state.alarm_module.main_supervisor_halted(__MODULE__))
+    # _ = state.alarm_module.clear(state.alarm_module.main_supervisor_halted(__MODULE__))
     {:noreply, state}
   end
 

@@ -17,12 +17,7 @@ defmodule Childchain.MixProject do
         childchain: [
           steps: steps(),
           version: @version,
-          applications: [
-            tools: :permanent,
-            runtime_tools: :permanent,
-            engine: :permanent,
-            rpc: :permanent
-          ],
+          applications: tools() ++ [engine: :permanent, rpc: :permanent],
           config_providers: []
         ]
       ]
@@ -51,13 +46,24 @@ defmodule Childchain.MixProject do
   end
 
   defp dialyzer() do
+    paths =
+      "apps"
+      |> File.ls!()
+      |> Enum.map(fn app -> "_build#{docker()}/#{Mix.env()}/lib/#{app}/ebin" end)
+
     [
       flags: [:error_handling, :race_conditions, :underspecs, :unknown, :unmatched_returns],
       ignore_warnings: "dialyzer.ignore-warnings",
       list_unused_filters: true,
       plt_add_apps: [],
-      paths:
-        Enum.map(File.ls!("apps"), fn app -> "_build#{docker()}/#{Mix.env()}/lib/#{app}/ebin" end)
+      paths: paths
     ]
+  end
+
+  defp tools() do
+    case Mix.env() do
+      :prod -> [tools: :permanent, runtime_tools: :permanent]
+      _ -> [observer: :permanent, wx: :permanent, tools: :permanent, runtime_tools: :permanent]
+    end
   end
 end
