@@ -1,3 +1,7 @@
+MAKEFLAGS += --silent
+OVERRIDING_START ?= start_iex
+SNAPSHOT ?= SNAPSHOT_MIX_EXIT_PERIOD_SECONDS_20
+BAREBUILD_ENV ?= dev
 ENV_TEST ?= env MIX_ENV=test
 CHILDCHAIN_IMAGE_NAME  ?= "omisego/childchain:latest"
 IMAGE_BUILDER   ?= "omisegoimages/childchain-builder:dev-90c05cb"
@@ -62,6 +66,18 @@ build-test: deps-childchain
 	$(ENV_TEST) mix compile
 
 .PHONY: build-prod build-dev build-test
+
+#
+# Baremetal
+#
+
+start-childchain:
+	echo "Building Childchain" && \
+	make build-childchain-${BAREBUILD_ENV} && \
+	rm -f ./_build/${BAREBUILD_ENV}/rel/childchain/var/sys.config || true && \
+	echo "Init Childchain DB" && \
+	_build/${BAREBUILD_ENV}/rel/childchain/bin/childchain eval "Engine.ReleaseTasks.InitPostgresqlDB.migrate()"
+	_build/${BAREBUILD_ENV}/rel/childchain/bin/childchain $(OVERRIDING_START)
 
 #
 # Docker

@@ -1,7 +1,9 @@
 defmodule Childchain.MixProject do
   use Mix.Project
+
   @sha String.replace(elem(System.cmd("git", ["rev-parse", "--short=7", "HEAD"]), 0), "\n", "")
   @version "#{String.trim(File.read!("VERSION"))}" <> "+" <> @sha
+
   def project do
     [
       apps_path: "apps",
@@ -10,6 +12,7 @@ defmodule Childchain.MixProject do
       build_path: "_build" <> docker(),
       deps_path: "deps" <> docker(),
       deps: deps(),
+      dialyzer: dialyzer(),
       releases: [
         childchain: [
           steps: steps(),
@@ -26,11 +29,6 @@ defmodule Childchain.MixProject do
     ]
   end
 
-  # Dependencies listed here are available only for this
-  # project and cannot be accessed from applications inside
-  # the apps folder.
-  #
-  # Run "mix help deps" for examples and options.
   defp deps do
     [
       {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
@@ -38,12 +36,28 @@ defmodule Childchain.MixProject do
     ]
   end
 
-  defp docker(), do: if(System.get_env("DOCKER"), do: "_docker", else: "")
+  defp docker() do
+    case System.get_env("DOCKER") do
+      nil -> ""
+      _ -> "_docker"
+    end
+  end
 
   defp steps() do
     case Mix.env() do
       :prod -> [:assemble, :tar]
       _ -> [:assemble]
     end
+  end
+
+  defp dialyzer() do
+    [
+      flags: [:error_handling, :race_conditions, :underspecs, :unknown, :unmatched_returns],
+      ignore_warnings: "dialyzer.ignore-warnings",
+      list_unused_filters: true,
+      plt_add_apps: [],
+      paths:
+        Enum.map(File.ls!("apps"), fn app -> "_build#{docker()}/#{Mix.env()}/lib/#{app}/ebin" end)
+    ]
   end
 end
