@@ -7,6 +7,8 @@ defmodule Childchain.MixProject do
       apps_path: "apps",
       version: @version,
       start_permanent: Mix.env() == :prod,
+      build_path: "_build" <> docker(),
+      deps_path: "deps" <> docker(),
       deps: deps(),
       releases: [
         childchain: [
@@ -35,6 +37,8 @@ defmodule Childchain.MixProject do
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
   end
+
+  defp docker(), do: if(System.get_env("DOCKER"), do: "_docker", else: "")
 
   defp steps() do
     case Mix.env() do

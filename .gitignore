@@ -21,3 +21,9 @@ erl_crash.dump
 
 #asdf elixir and erlang version spec
 .tool-versions
+
+# The directory Mix will write compiled artifacts to when in docker.
+/_build_docker/
+
+# The directory Mix downloads your dependencies sources to when in docker.
+/deps_docker/

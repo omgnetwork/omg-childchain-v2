@@ -7,8 +7,19 @@ defmodule Engine.Application do
   require Logger
 
   def start(_type, _args) do
+    child_args = []
+
     children = [
-      {Engine.Repo, []}
+      {Engine.Repo.Monitor,
+       [
+         alarm: Alarm,
+         child_spec: %{
+           id: Engine.Repo,
+           start: {Engine.Repo, :start_link, child_args},
+           restart: :permanent,
+           type: :worker
+         }
+       ]}
     ]
 
     _ = Logger.info("Starting #{__MODULE__}")

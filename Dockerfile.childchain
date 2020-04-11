@@ -49,7 +49,7 @@ RUN set -xe \
  && chmod +x /childchain_entrypoint
 
 ARG release_version
-ADD _build/prod/childchain-${release_version}.tar.gz /app
+ADD _build_docker/prod/childchain-${release_version}.tar.gz /app
 RUN chown -R "${uid}:${gid}" /app
 WORKDIR /app
 
