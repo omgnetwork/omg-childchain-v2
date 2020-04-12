@@ -30,6 +30,7 @@ defmodule Engine.Ethereum.Monitor do
     # we raise the alarms first, because we get a health checkin when all
     # sub processes of the supervisor are ready to go
     # _ = alarm_module.set(alarm_module.main_supervisor_halted(__MODULE__))
+    _ = Logger.info("Starting #{__MODULE__} with child #{child_spec.id}")
     {:ok, %__MODULE__{alarm_module: alarm_module, child: start_child(child_spec)}}
   end
 

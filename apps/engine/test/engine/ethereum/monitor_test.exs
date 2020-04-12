@@ -17,6 +17,20 @@ defmodule Engine.Ethereum.MonitorTest do
     end)
   end
 
+  test "that init/1 creates state and starts the child " do
+    child_spec = ChildProcess.prepare_child(:test_init_1)
+
+    {:ok, %Monitor{alarm_module: alarm_module, child: child}} =
+      Monitor.init(alarm_handler: AlarmHandler, alarm: Alarm, child_spec: child_spec)
+
+    assert is_atom(alarm_module)
+    exports = Keyword.fetch!(alarm_module.module_info, :exports)
+    assert Keyword.fetch!(exports, :set) == 1
+    assert Keyword.fetch!(exports, :clear) == 1
+    assert Keyword.fetch!(exports, :main_supervisor_halted) == 1
+    assert Process.alive?(child.pid)
+  end
+
   test "that a child process gets restarted after alarm is cleared" do
     child_process_name = :child_process_name_1
     monitor_name = :monitor_name_1

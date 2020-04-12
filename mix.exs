@@ -1,8 +1,20 @@
 defmodule Childchain.MixProject do
   use Mix.Project
 
-  @sha String.replace(elem(System.cmd("git", ["rev-parse", "--short=7", "HEAD"]), 0), "\n", "")
-  @version "#{String.trim(File.read!("VERSION"))}" <> "+" <> @sha
+  @sha String.replace(
+         elem(
+           System.cmd("git", [
+             "rev-parse",
+             "--short=7",
+             "HEAD"
+           ]),
+           0
+         ),
+         "\n",
+         ""
+       )
+  @version "#{String.trim(File.read!("VERSION"))}" <>
+             "+" <> @sha
 
   def project do
     [
@@ -49,10 +61,18 @@ defmodule Childchain.MixProject do
     paths =
       "apps"
       |> File.ls!()
-      |> Enum.map(fn app -> "_build#{docker()}/#{Mix.env()}/lib/#{app}/ebin" end)
+      |> Enum.map(fn app ->
+        "_build#{docker()}/#{Mix.env()}/lib/#{app}/ebin"
+      end)
 
     [
-      flags: [:error_handling, :race_conditions, :underspecs, :unknown, :unmatched_returns],
+      flags: [
+        :error_handling,
+        :race_conditions,
+        :underspecs,
+        :unknown,
+        :unmatched_returns
+      ],
       ignore_warnings: "dialyzer.ignore-warnings",
       list_unused_filters: true,
       plt_add_apps: [],
@@ -62,8 +82,16 @@ defmodule Childchain.MixProject do
 
   defp tools() do
     case Mix.env() do
-      :prod -> [tools: :permanent, runtime_tools: :permanent]
-      _ -> [observer: :permanent, wx: :permanent, tools: :permanent, runtime_tools: :permanent]
+      :prod ->
+        [tools: :permanent, runtime_tools: :permanent]
+
+      _ ->
+        [
+          observer: :permanent,
+          wx: :permanent,
+          tools: :permanent,
+          runtime_tools: :permanent
+        ]
     end
   end
 end
