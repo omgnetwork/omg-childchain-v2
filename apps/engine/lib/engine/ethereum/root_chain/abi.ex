@@ -39,8 +39,6 @@ defmodule Engine.Ethereum.RootChain.Abi do
         topic -> Encoding.from_hex(topic)
       end)
 
-    data = Encoding.from_hex(log["data"])
-
     {event_spec, data} =
       ABI.Event.find_and_decode(
         event_specs,
@@ -48,7 +46,7 @@ defmodule Engine.Ethereum.RootChain.Abi do
         Enum.at(topics, 1),
         Enum.at(topics, 2),
         Enum.at(topics, 3),
-        data
+        Encoding.from_hex(log["data"])
       )
 
     data

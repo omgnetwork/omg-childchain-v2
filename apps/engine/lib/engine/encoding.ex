@@ -13,6 +13,8 @@
 # limitations under the License.
 
 defmodule Engine.Encoding do
+  @moduledoc false
+
   @spec to_hex(binary | non_neg_integer) :: binary
   def to_hex(non_hex)
 
