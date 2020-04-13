@@ -5,7 +5,7 @@ jobs:
     working_directory: ~/childchain
     docker:
       - image: circleci/elixir:1.10.2
-      - image: circleci/postgres:9.6.12-alpine
+      - image: circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: omisego_dev
           POSTGRES_PASSWORD: omisego_dev
@@ -18,7 +18,7 @@ jobs:
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
           key: v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
-      - run: mix do deps.get, compile --warnings-as-errors --ignore-module-conflict --force
+      - run: mix do deps.get, compile --warnings-as-errors --force
       - save_cache:
           key: v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
           paths:
@@ -29,7 +29,7 @@ jobs:
     working_directory: ~/childchain
     docker:
       - image: circleci/elixir:1.10.2
-      - image: circleci/postgres:9.6.12-alpine
+      - image: circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: omisego_dev
           POSTGRES_PASSWORD: omisego_dev

@@ -14,47 +14,44 @@ defmodule Engine.Ethereum.Monitor do
     GenServer.cast(__MODULE__, :health_checkin)
   end
 
-  @type t :: %__MODULE__{alarm_module: module(), child: Child.t()}
-  defstruct alarm_module: nil, child: nil
+  @type t :: %__MODULE__{child: Child.t()}
+  defstruct child: nil
 
   def start_link(args) do
-    GenServer.start_link(__MODULE__, args, name: Keyword.get(args, :name, __MODULE__))
+    {server_opts, opts} = Keyword.split(args, [:name])
+    GenServer.start_link(__MODULE__, opts, server_opts)
   end
 
-  def init(args) when is_list(args) do
-    alarm_module = Keyword.fetch!(args, :alarm)
-    alarm_handler = Keyword.fetch!(args, :alarm_handler)
-    child_spec = Keyword.fetch!(args, :child_spec)
+  def init(otps) do
+    alarm_handler = Keyword.fetch!(otps, :alarm_handler)
+    child_spec = Keyword.fetch!(otps, :child_spec)
     subscribe_to_alarms(alarm_handler, __MODULE__)
     Process.flag(:trap_exit, true)
     # we raise the alarms first, because we get a health checkin when all
     # sub processes of the supervisor are ready to go
-    _ = alarm_module.set(alarm_module.main_supervisor_halted(__MODULE__))
-    {:ok, %__MODULE__{alarm_module: alarm_module, child: start_child(child_spec)}}
+    :telemetry.execute([:monitor, :main_ethereum_supervisor_halted, :set], %{reason: :init}, %{})
+    _ = Logger.info("Starting #{__MODULE__} with child #{child_spec.id}")
+    {:ok, %__MODULE__{child: start_child(child_spec)}}
   end
 
   # There's a supervisor below us that did the needed restarts for it's children
   # so we do not attempt to restart the exit from the supervisor, if the alarm clears, we restart it then.
   # We declare the sytem unhealthy
   def handle_info({:EXIT, _from, reason}, state) do
-    _ = Logger.error("Childchain supervisor crashed. Raising alarm. Reason #{inspect(reason)}")
-    state.alarm_module.set(state.alarm_module.main_supervisor_halted(__MODULE__))
+    :telemetry.execute([:monitor, :main_ethereum_supervisor_halted, :set], %{reason: reason}, %{})
 
     {:noreply, state}
   end
 
   # alarm has cleared, we can now begin restarting supervisor child
   def handle_cast(:health_checkin, state) do
-    _ = Logger.info("Got a health checkin... clearing alarm main_supervisor_halted.")
-    _ = state.alarm_module.clear(state.alarm_module.main_supervisor_halted(__MODULE__))
+    :telemetry.execute([:monitor, :main_ethereum_supervisor_halted, :clear], %{}, %{})
     {:noreply, state}
   end
 
   # alarm has cleared, we can now begin restarting supervisor child
   def handle_cast(:start_child, state) do
     child = state.child
-    _ = Logger.info("Monitor is restarting child #{inspect(child)}.")
-
     {:noreply, %{state | child: start_child(child)}}
   end
 

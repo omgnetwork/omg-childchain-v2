@@ -7,14 +7,10 @@ defmodule Engine.Ethereum.MonitorTest do
   alias Engine.Ethereum.Monitor
   alias Engine.Ethereum.Monitor.AlarmHandler
 
-  setup_all do
-    Application.ensure_all_started(:sasl)
-    _ = Application.stop(:logger)
-
-    on_exit(fn ->
-      _ = Application.stop(:sasl)
-      Application.ensure_all_started(:logger)
-    end)
+  test "that init/1 creates state and starts the child " do
+    child_spec = ChildProcess.prepare_child(:test_init_1)
+    {:ok, %Monitor{child: child}} = Monitor.init(child_spec: child_spec, alarm_handler: AlarmHandler)
+    assert Process.alive?(child.pid)
   end
 
   test "that a child process gets restarted after alarm is cleared" do
@@ -22,13 +18,7 @@ defmodule Engine.Ethereum.MonitorTest do
     monitor_name = :monitor_name_1
     child = ChildProcess.prepare_child(child_process_name)
 
-    {:ok, monitor_pid} =
-      Monitor.start_link(
-        name: monitor_name,
-        alarm: Alarm,
-        child_spec: child,
-        alarm_handler: AlarmHandler
-      )
+    {:ok, monitor_pid} = Monitor.start_link(name: monitor_name, child_spec: child, alarm_handler: AlarmHandler)
 
     _ = Process.unlink(monitor_pid)
     {:links, [child_pid]} = Process.info(monitor_pid, :links)

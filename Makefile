@@ -1,3 +1,7 @@
+MAKEFLAGS += --silent
+OVERRIDING_START ?= start_iex
+SNAPSHOT ?= SNAPSHOT_MIX_EXIT_PERIOD_SECONDS_20
+BAREBUILD_ENV ?= dev
 ENV_TEST ?= env MIX_ENV=test
 CHILDCHAIN_IMAGE_NAME  ?= "omisego/childchain:latest"
 IMAGE_BUILDER   ?= "omisegoimages/childchain-builder:dev-90c05cb"
@@ -5,6 +9,12 @@ IMAGE_BUILD_DIR ?= $(PWD)
 ENV_DEV         ?= env MIX_ENV=dev
 ENV_TEST        ?= env MIX_ENV=test
 ENV_PROD        ?= env MIX_ENV=prod
+
+clean-childchain:
+	rm -rf _build/*
+	rm -rf deps/*
+	rm -rf _build_docker/*
+	rm -rf deps_docker/*
 
 #
 # Setting-up
@@ -58,6 +68,18 @@ build-test: deps-childchain
 .PHONY: build-prod build-dev build-test
 
 #
+# Baremetal
+#
+
+start-childchain:
+	echo "Building Childchain" && \
+	make build-childchain-${BAREBUILD_ENV} && \
+	rm -f ./_build/${BAREBUILD_ENV}/rel/childchain/var/sys.config || true && \
+	echo "Init Childchain DB" && \
+	_build/${BAREBUILD_ENV}/rel/childchain/bin/childchain eval "Engine.ReleaseTasks.InitPostgresqlDB.migrate()"
+	_build/${BAREBUILD_ENV}/rel/childchain/bin/childchain $(OVERRIDING_START)
+
+#
 # Docker
 #
 docker-childchain-prod:
@@ -80,9 +102,13 @@ docker-childchain: docker-childchain-prod docker-childchain-build
 docker-push: docker
 	docker push $(CHILDCHAIN_IMAGE_NAME)
 
+docker-remote-childchain:
+	docker exec -it childchain /app/bin/childchain remote
+
 operator_api_specs:
 	swagger-cli bundle -r -t yaml -o apps/rpc/priv/swagger/operator_api_specs.yaml apps/rpc/priv/swagger/operator_api_specs/swagger.yaml
 
 ### git setup
 hooks:
 	git config core.hooksPath .githooks
+
