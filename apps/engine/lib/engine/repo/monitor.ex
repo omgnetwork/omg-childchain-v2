@@ -3,6 +3,12 @@ defmodule Engine.Repo.Monitor do
   This module restarts it's children if the Postgres Repo client
   connectivity is dropped.
   It tries to connect to postgres with random re-tries.
+  Backoff can be tuned by passing:
+   @default_type :rand_exp
+   @min          1_000
+   @max          30_000
+   configure this by sending backoff_min or backoff_max
+  Read more: DBConnection.Backoff
   """
   use GenServer
   alias DBConnection.Backoff
@@ -10,52 +16,54 @@ defmodule Engine.Repo.Monitor do
 
   require Logger
 
+  def handle_event([:ecto, :repo, :init], _, _, %{monitor: monitor}) do
+    GenServer.cast(monitor, :ack)
+  end
+
   @type t :: %__MODULE__{
-          alarm_module: module(),
           child: Child.t(),
-          backoff: map()
+          backoff: map(),
+          health_check_after_crash: non_neg_integer()
         }
-  defstruct alarm_module: nil,
-            child: nil,
-            backoff: nil
+  defstruct [:child, :backoff, :health_check_after_crash]
 
   def start_link(args) do
     GenServer.start_link(__MODULE__, args, name: Keyword.get(args, :name, __MODULE__))
   end
 
-  def init(args) do
-    alarm_module = Keyword.fetch!(args, :alarm)
-    child_spec = Keyword.fetch!(args, :child_spec)
+  def init(opts) do
+    {backoff, opts} = Keyword.split(opts, [:backoff_min, :backoff_max, :type])
+    child_spec = Keyword.fetch!(opts, :child_spec)
+    name = Keyword.get(opts, :name, __MODULE__)
+    health_check_after_crash = Keyword.get(opts, :health_check_after_crash, 1000)
     Process.flag(:trap_exit, true)
-    # we raise the alarms first, and check if PG is up
-    # _ = alarm_module.set(alarm_module.db_connection_lost(__MODULE__))
+    :ok = :telemetry.execute([:monitor, :db_connection_lost, :set], %{reason: :init}, %{})
+    :ok = :telemetry.attach("repo-init-#{name}", [:ecto, :repo, :init], &handle_event/4, %{monitor: self()})
     _ = Logger.info("Starting #{__MODULE__} with child #{child_spec.id}")
-    # @default_type :rand_exp
-    # @min          1_000
-    # @max          30_000
-    # configure this by sending backoff_min or backoff_max
-    backoff = Backoff.new(args)
+    backoff_state = Backoff.new(backoff)
     child = start_child(child_spec)
-
-    {:ok, %__MODULE__{backoff: backoff, alarm_module: alarm_module, child: child}}
+    {:ok, %__MODULE__{child: child, backoff: backoff_state, health_check_after_crash: health_check_after_crash}}
   end
 
-  def handle_info({:timeout, _crash_recover_timer, :crash_recover}, state) do
-    _ =
-      case Process.alive?(state.child.pid) do
-        true ->
-          Logger.info("DB supervisor back. Clearing alarm.")
+  def handle_cast(:ack, state) do
+    {:noreply, state, state.health_check_after_crash}
+  end
 
-        _ ->
-          :ok
-      end
+  def handle_info(:timeout, state) do
+    case Process.alive?(state.child.pid) do
+      true ->
+        :ok = :telemetry.execute([:monitor, :db_connection_lost, :clear], %{}, %{})
+        backoff = Backoff.reset(state.backoff)
+        {:noreply, %{state | backoff: backoff}}
 
-    {:noreply, state}
+      _ ->
+        {:noreply, state}
+    end
   end
 
   def handle_info({:timeout, _restart_timer, :restart}, state) do
     child = start_child(state.child)
-    {:noreply, %{state| child: child}}
+    {:noreply, %{state | child: child}}
   end
 
   # There's a supervisor below us that did the needed restarts for it's children
@@ -64,11 +72,13 @@ defmodule Engine.Repo.Monitor do
   def handle_info({:EXIT, _from, reason}, state) do
     {timeout, backoff} = Backoff.backoff(state.backoff)
     _restart_timer = start_timer(timeout, :restart)
-    _crash_recover_timer = start_timer(timeout + 1000, :crash_recover)
-    _ = Logger.error("DB supervisor crashed. Raising alarm. Reason #{inspect(reason)}. Reconnect in #{timeout}.")
-
-    # state.alarm_module.set(state.alarm_module.db_connection_lost(__MODULE__))
+    :ok = :telemetry.execute([:monitor, :db_connection_lost, :set], %{reason: reason, timeout: timeout}, %{})
     {:noreply, %{state | backoff: backoff}}
+  end
+
+  def terminate(_reason, _state) do
+    {:registered_name, name} = Process.info(self(), :registered_name)
+    :telemetry.detach("repo-init-#{name}")
   end
 
   @spec start_child(Child.t() | Supervisor.child_spec()) :: Child.t()

@@ -2,104 +2,95 @@ defmodule Engine.Repo.MonitorTest do
   @moduledoc false
   use ExUnit.Case, async: true
 
-  alias __MODULE__.Alarm
   alias __MODULE__.ChildProcess
   alias Engine.Repo.Monitor
 
-  setup_all do
-    Application.ensure_all_started(:sasl)
-    _ = Application.stop(:logger)
-
-    on_exit(fn ->
-      _ = Application.stop(:sasl)
-      Application.ensure_all_started(:logger)
-    end)
+  test "that init/1 creates state and starts the child ", %{test: test_name} do
+    child_spec = Engine.Repo.child_spec(pool_size: 1, name: :test_1)
+    {:ok, monitor} = Monitor.init(name: test_name, child_spec: child_spec)
+    assert Process.alive?(monitor.child.pid)
+    assert is_map(monitor.backoff)
   end
 
-  test "that init/1 creates state and starts the child " do
-    child_spec = ChildProcess.prepare_child(:test_init_1)
+  test "killed repo gets restarted in backoff time", %{test: test_name} do
+    child_spec = Engine.Repo.child_spec(pool_size: 1, name: :test_repo_22)
+    backoff_min = 10
+    backoff_max = 50
+    health_check_after_crash = 10
 
-    {:ok, %Monitor{alarm_module: alarm_module, child: child}} =
-      Monitor.init(alarm: Alarm, child_spec: child_spec)
+    {:ok, monitor_pid} =
+      Monitor.start_link(
+        name: test_name,
+        child_spec: child_spec,
+        backoff_min: backoff_min,
+        backoff_max: backoff_max,
+        health_check_after_crash: health_check_after_crash
+      )
 
-    assert is_atom(alarm_module)
-    exports = Keyword.fetch!(alarm_module.module_info, :exports)
-    assert Keyword.fetch!(exports, :set) == 1
-    assert Keyword.fetch!(exports, :clear) == 1
-    assert Keyword.fetch!(exports, :db_connection_lost) == 1
-    assert Process.alive?(child.pid)
+    repo_pid = Process.whereis(:test_repo_22)
+    :erlang.trace(monitor_pid, true, [:receive])
+    find_and_stop(:test_repo_22)
+
+    # we get an exit message, which producess a timeout message of backoff amount, the underlying Repo sends :ack after
+    # which we clear the alarm
+
+    assert_receive {:trace, ^monitor_pid, :receive, {:EXIT, ^repo_pid, :find_and_stop}}
+    assert_receive {:trace, ^monitor_pid, :receive, {:timeout, _ref, :restart}}, backoff_max + backoff_min
+    # internal OTP msg
+    assert_receive {:trace, ^monitor_pid, :receive, {:ack, new_repo_pid, {:ok, new_repo_pid}}}
+    assert_receive {:trace, ^monitor_pid, :receive, {:"$gen_cast", :ack}}
+    assert_receive {:trace, ^monitor_pid, :receive, :timeout}
+    assert :sys.get_state(monitor_pid).child.pid == new_repo_pid
   end
 
-  # test "that a child process gets restarted after alarm is cleared" do
-  #   child_process_name = :child_process_name_1
-  #   monitor_name = :monitor_name_1
-  #   child = ChildProcess.prepare_child(child_process_name)
+  test "monitor can survive a restart", %{test: test_name} do
+    child_spec = Engine.Repo.child_spec(pool_size: 1, name: :test_repo_3)
+    backoff_min = 10
+    backoff_max = 50
+    health_check_after_crash = 10
 
-  #   {:ok, monitor_pid} =
-  #     Monitor.start_link(
-  #       name: monitor_name,
-  #       alarm: Alarm,
-  #       child_spec: child,
-  #       alarm_handler: AlarmHandler
-  #     )
+    {:ok, temp_monitor_pid} =
+      Monitor.start_link(
+        name: test_name,
+        child_spec: child_spec,
+        backoff_min: backoff_min,
+        backoff_max: backoff_max,
+        health_check_after_crash: health_check_after_crash
+      )
 
-  #   _ = Process.unlink(monitor_pid)
-  #   {:links, [child_pid]} = Process.info(monitor_pid, :links)
-  #   :erlang.trace(monitor_pid, true, [:receive])
+    :ok = GenServer.stop(temp_monitor_pid)
 
-  #   # the child is now killed
+    {:ok, monitor_pid} =
+      Monitor.start_link(
+        name: test_name,
+        child_spec: child_spec,
+        backoff_min: backoff_min,
+        backoff_max: backoff_max,
+        health_check_after_crash: health_check_after_crash
+      )
 
-  #   true = Process.exit(Process.whereis(child_process_name), :kill)
+    repo_pid = Process.whereis(:test_repo_3)
+    :erlang.trace(monitor_pid, true, [:receive])
+    find_and_stop(:test_repo_3)
 
-  #   # we prove that we're linked to the child process and that when it gets killed
-  #   # we get the trap exit message
-  #   assert_receive {:trace, ^monitor_pid, :receive, {:EXIT, ^child_pid, :killed}}, 5_000
-  #   {:links, links} = Process.info(monitor_pid, :links)
-  #   assert Enum.empty?(links) == true
+    # we get an exit message, which producess a timeout message of backoff amount, the underlying Repo sends :ack after
+    # which we clear the alarm
 
-  #   # now we can clear the alarm and let the monitor restart the child process
-  #   # and trace that the child process gets started
+    assert_receive {:trace, ^monitor_pid, :receive, {:EXIT, ^repo_pid, :find_and_stop}}
+    assert_receive {:trace, ^monitor_pid, :receive, {:timeout, _ref, :restart}}, backoff_max + backoff_min
+    # internal OTP msg
+    assert_receive {:trace, ^monitor_pid, :receive, {:ack, new_repo_pid, {:ok, new_repo_pid}}}
+    assert_receive {:trace, ^monitor_pid, :receive, {:"$gen_cast", :ack}}
+    assert_receive {:trace, ^monitor_pid, :receive, :timeout}
+    assert :sys.get_state(monitor_pid).child.pid == new_repo_pid
+  end
 
-  #   clear_alarm_event = {:clear_alarm, {:ethereum_connection_error, %{}}}
-  #   _ = AlarmHandler.handle_event(clear_alarm_event, %AlarmHandler{consumer: monitor_name})
-  #   assert_receive {:trace, ^monitor_pid, :receive, {:"$gen_cast", :start_child}}
-  #   # turning trace off
-  #   :erlang.trace(monitor_pid, false, [:receive])
-  #   # we now assert that our child was re-attached to the monitor
-  #   assert_receive :done
-  #   Process.sleep(100)
-  #   {:links, children} = Process.info(monitor_pid, :links)
-  #   assert Enum.count(children) == 1
-  # end
-
-  # test "that a child process does not get restarted if an alarm is cleared but it was not down" do
-  #   child_process_name = :child_process_name_2
-  #   monitor_name = :monitor_name_2
-  #   child = ChildProcess.prepare_child(child_process_name)
-
-  #   {:ok, monitor_pid} =
-  #     Monitor.start_link(
-  #       name: monitor_name,
-  #       alarm: Alarm,
-  #       child_spec: child,
-  #       alarm_handler: AlarmHandler
-  #     )
-
-  #   :erlang.trace(monitor_pid, true, [:receive])
-  #   {:links, links} = Process.info(monitor_pid, :links)
-
-  #   # now we clear the alarm and let the monitor restart the child processes
-  #   # in our case the child is alive so init should NOT be called
-
-  #   clear_alarm_event = {:clear_alarm, {:ethereum_connection_error, %{}}}
-  #   _ = AlarmHandler.handle_event(clear_alarm_event, %AlarmHandler{consumer: monitor_name})
-
-  #   assert_receive {:trace, ^monitor_pid, :receive, {:"$gen_cast", :start_child}}, 1500
-  #   :erlang.trace(monitor_pid, false, [:receive])
-  #   # at this point we're just verifying that we didn't restart or start
-  #   # another child
-  #   assert Process.info(monitor_pid, :links) == {:links, links}
-  # end
+  defp find_and_stop(name) do
+    case Process.whereis(name) do
+      pid when is_pid(pid) -> Supervisor.stop(pid, :find_and_stop, 100)
+      nil -> find_and_stop(name)
+    end
+  end
 
   defmodule ChildProcess do
     @moduledoc """
@@ -123,24 +114,6 @@ defmodule Engine.Repo.MonitorTest do
     end
 
     def terminate(_reason, _) do
-      :ok
-    end
-  end
-
-  defmodule Alarm do
-    @moduledoc """
-    Mocking a SASL alarm
-    """
-
-    def set(_) do
-      :ok
-    end
-
-    def clear(_) do
-      :ok
-    end
-
-    def db_connection_lost(_) do
       :ok
     end
   end
