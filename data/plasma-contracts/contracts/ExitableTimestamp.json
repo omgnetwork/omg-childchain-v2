@@ -1,0 +1,1474 @@
+{
+  "contractName": "ExitableTimestamp",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/utils/ExitableTimestamp.sol\":\"ExitableTimestamp\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/utils/ExitableTimestamp.sol\":{\"keccak256\":\"0xa260a221f3cbfc8c38ffec23a873b9f8e95fbb64fefc976f0d0b3ea2a3c04053\",\"urls\":[\"bzz-raw://9941590544c8d8f5008d202ad6feecca0ba684e7b029d48a1a8feb59fd10fd82\",\"dweb:/ipfs/QmVnR9YfhhGb5aJt9M6AmVP75RrTirDLQxxQftQoCdzgvJ\"]},\"openzeppelin-solidity/contracts/math/Math.sol\":{\"keccak256\":\"0x4b5aa451e4e8801478708f94b118a7821c0500d676255eaf89fc78c14856ce4e\",\"urls\":[\"bzz-raw://bed15b3f35ed05505efc8fb5cb01d06c52230fbcaadf4ed24a85b1ac2f15f33c\",\"dweb:/ipfs/QmS6tW81u8E4tvzVfVuqEuMCkdwAozQ6pKJPRBR4JEVmQp\"]}},\"version\":1}",
+  "bytecode": "0x60556023600b82828239805160001a607314601657fe5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a7231582074f657c14c1a0955699415de816f7d6faeaa468cb8f75b78af41e3fca87e542f64736f6c634300050b0032",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a7231582074f657c14c1a0955699415de816f7d6faeaa468cb8f75b78af41e3fca87e542f64736f6c634300050b0032",
+  "sourceMap": "82:1580:70:-;;132:2:-1;166:7;155:9;146:7;137:37;255:7;249:14;246:1;241:23;235:4;232:33;222:2;;269:9;222:2;293:9;290:1;283:20;323:4;314:7;306:22;347:7;338;331:24",
+  "deployedSourceMap": "82:1580:70:-;;;;;;;;",
+  "source": "pragma solidity 0.5.11;\n\nimport \"openzeppelin-solidity/contracts/math/Math.sol\";\n\nlibrary ExitableTimestamp {\n    struct Calculator {\n        uint256 minExitPeriod;\n    }\n\n    /**\n     * @notice Calculates the exitable timestamp for a mined transaction\n     * @dev This is the main function when asking for exitable timestamp in most cases.\n     *      The only exception is to calculate the exitable timestamp for a deposit output in standard exit.\n     *      Should use the function 'calculateDepositTxOutputExitableTimestamp' for that case.\n     */\n    function calculateTxExitableTimestamp(\n        Calculator memory _calculator,\n        uint256 _now,\n        uint256 _blockTimestamp\n    )\n        internal\n        pure\n        returns (uint64)\n    {\n        return uint64(Math.max(_blockTimestamp + (_calculator.minExitPeriod * 2), _now + _calculator.minExitPeriod));\n    }\n\n    /**\n     * @notice Calculates the exitable timestamp for deposit transaction output for standard exit\n     * @dev This function should only be used in standard exit for calculating exitable timestamp of a deposit output.\n     *      For in-fight exit, the priority of a input tx which is a deposit tx should still be using the another function 'calculateTxExitableTimestamp'.\n     *      See discussion here: https://git.io/Je4N5\n     *      Reason of deposit output has different exitable timestamp: https://git.io/JecCV\n     */\n    function calculateDepositTxOutputExitableTimestamp(\n        Calculator memory _calculator,\n        uint256 _now\n    )\n        internal\n        pure\n        returns (uint64)\n    {\n        return uint64(_now + _calculator.minExitPeriod);\n    }\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/utils/ExitableTimestamp.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/utils/ExitableTimestamp.sol",
+    "exportedSymbols": {
+      "ExitableTimestamp": [
+        11177
+      ]
+    },
+    "id": 11178,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 11126,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:70"
+      },
+      {
+        "absolutePath": "openzeppelin-solidity/contracts/math/Math.sol",
+        "file": "openzeppelin-solidity/contracts/math/Math.sol",
+        "id": 11127,
+        "nodeType": "ImportDirective",
+        "scope": 11178,
+        "sourceUnit": 16459,
+        "src": "25:55:70",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 11177,
+        "linearizedBaseContracts": [
+          11177
+        ],
+        "name": "ExitableTimestamp",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "ExitableTimestamp.Calculator",
+            "id": 11130,
+            "members": [
+              {
+                "constant": false,
+                "id": 11129,
+                "name": "minExitPeriod",
+                "nodeType": "VariableDeclaration",
+                "scope": 11130,
+                "src": "142:21:70",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 11128,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "142:7:70",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "Calculator",
+            "nodeType": "StructDefinition",
+            "scope": 11177,
+            "src": "114:56:70",
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 11158,
+              "nodeType": "Block",
+              "src": "754:125:70",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "arguments": [
+                          {
+                            "argumentTypes": null,
+                            "commonType": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            },
+                            "id": 11150,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "leftExpression": {
+                              "argumentTypes": null,
+                              "id": 11144,
+                              "name": "_blockTimestamp",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 11136,
+                              "src": "787:15:70",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "+",
+                            "rightExpression": {
+                              "argumentTypes": null,
+                              "components": [
+                                {
+                                  "argumentTypes": null,
+                                  "commonType": {
+                                    "typeIdentifier": "t_uint256",
+                                    "typeString": "uint256"
+                                  },
+                                  "id": 11148,
+                                  "isConstant": false,
+                                  "isLValue": false,
+                                  "isPure": false,
+                                  "lValueRequested": false,
+                                  "leftExpression": {
+                                    "argumentTypes": null,
+                                    "expression": {
+                                      "argumentTypes": null,
+                                      "id": 11145,
+                                      "name": "_calculator",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": [],
+                                      "referencedDeclaration": 11132,
+                                      "src": "806:11:70",
+                                      "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_Calculator_$11130_memory_ptr",
+                                        "typeString": "struct ExitableTimestamp.Calculator memory"
+                                      }
+                                    },
+                                    "id": 11146,
+                                    "isConstant": false,
+                                    "isLValue": true,
+                                    "isPure": false,
+                                    "lValueRequested": false,
+                                    "memberName": "minExitPeriod",
+                                    "nodeType": "MemberAccess",
+                                    "referencedDeclaration": 11129,
+                                    "src": "806:25:70",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_uint256",
+                                      "typeString": "uint256"
+                                    }
+                                  },
+                                  "nodeType": "BinaryOperation",
+                                  "operator": "*",
+                                  "rightExpression": {
+                                    "argumentTypes": null,
+                                    "hexValue": "32",
+                                    "id": 11147,
+                                    "isConstant": false,
+                                    "isLValue": false,
+                                    "isPure": true,
+                                    "kind": "number",
+                                    "lValueRequested": false,
+                                    "nodeType": "Literal",
+                                    "src": "834:1:70",
+                                    "subdenomination": null,
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_rational_2_by_1",
+                                      "typeString": "int_const 2"
+                                    },
+                                    "value": "2"
+                                  },
+                                  "src": "806:29:70",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_uint256",
+                                    "typeString": "uint256"
+                                  }
+                                }
+                              ],
+                              "id": 11149,
+                              "isConstant": false,
+                              "isInlineArray": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "nodeType": "TupleExpression",
+                              "src": "805:31:70",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "src": "787:49:70",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          {
+                            "argumentTypes": null,
+                            "commonType": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            },
+                            "id": 11154,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "leftExpression": {
+                              "argumentTypes": null,
+                              "id": 11151,
+                              "name": "_now",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 11134,
+                              "src": "838:4:70",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "+",
+                            "rightExpression": {
+                              "argumentTypes": null,
+                              "expression": {
+                                "argumentTypes": null,
+                                "id": 11152,
+                                "name": "_calculator",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 11132,
+                                "src": "845:11:70",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_struct$_Calculator_$11130_memory_ptr",
+                                  "typeString": "struct ExitableTimestamp.Calculator memory"
+                                }
+                              },
+                              "id": 11153,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberName": "minExitPeriod",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 11129,
+                              "src": "845:25:70",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "src": "838:32:70",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            },
+                            {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": null,
+                            "id": 11142,
+                            "name": "Math",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 16458,
+                            "src": "778:4:70",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_type$_t_contract$_Math_$16458_$",
+                              "typeString": "type(library Math)"
+                            }
+                          },
+                          "id": 11143,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "max",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 16408,
+                          "src": "778:8:70",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$",
+                            "typeString": "function (uint256,uint256) pure returns (uint256)"
+                          }
+                        },
+                        "id": 11155,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "functionCall",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "778:93:70",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "id": 11141,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "lValueRequested": false,
+                      "nodeType": "ElementaryTypeNameExpression",
+                      "src": "771:6:70",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_uint64_$",
+                        "typeString": "type(uint64)"
+                      },
+                      "typeName": "uint64"
+                    },
+                    "id": 11156,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "typeConversion",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "771:101:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint64",
+                      "typeString": "uint64"
+                    }
+                  },
+                  "functionReturnParameters": 11140,
+                  "id": 11157,
+                  "nodeType": "Return",
+                  "src": "764:108:70"
+                }
+              ]
+            },
+            "documentation": "@notice Calculates the exitable timestamp for a mined transaction\n@dev This is the main function when asking for exitable timestamp in most cases.\n     The only exception is to calculate the exitable timestamp for a deposit output in standard exit.\n     Should use the function 'calculateDepositTxOutputExitableTimestamp' for that case.",
+            "id": 11159,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "calculateTxExitableTimestamp",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11137,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11132,
+                  "name": "_calculator",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11159,
+                  "src": "604:29:70",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Calculator_$11130_memory_ptr",
+                    "typeString": "struct ExitableTimestamp.Calculator"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 11131,
+                    "name": "Calculator",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 11130,
+                    "src": "604:10:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Calculator_$11130_storage_ptr",
+                      "typeString": "struct ExitableTimestamp.Calculator"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11134,
+                  "name": "_now",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11159,
+                  "src": "643:12:70",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11133,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "643:7:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11136,
+                  "name": "_blockTimestamp",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11159,
+                  "src": "665:23:70",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11135,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "665:7:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "594:100:70"
+            },
+            "returnParameters": {
+              "id": 11140,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11139,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11159,
+                  "src": "742:6:70",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint64",
+                    "typeString": "uint64"
+                  },
+                  "typeName": {
+                    "id": 11138,
+                    "name": "uint64",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "742:6:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint64",
+                      "typeString": "uint64"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "741:8:70"
+            },
+            "scope": 11177,
+            "src": "557:322:70",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 11175,
+              "nodeType": "Block",
+              "src": "1596:64:70",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "id": 11172,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "id": 11169,
+                          "name": "_now",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11163,
+                          "src": "1620:4:70",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "+",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "expression": {
+                            "argumentTypes": null,
+                            "id": 11170,
+                            "name": "_calculator",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 11161,
+                            "src": "1627:11:70",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_struct$_Calculator_$11130_memory_ptr",
+                              "typeString": "struct ExitableTimestamp.Calculator memory"
+                            }
+                          },
+                          "id": 11171,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "minExitPeriod",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 11129,
+                          "src": "1627:25:70",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "src": "1620:32:70",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "id": 11168,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "lValueRequested": false,
+                      "nodeType": "ElementaryTypeNameExpression",
+                      "src": "1613:6:70",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_uint64_$",
+                        "typeString": "type(uint64)"
+                      },
+                      "typeName": "uint64"
+                    },
+                    "id": 11173,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "typeConversion",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1613:40:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint64",
+                      "typeString": "uint64"
+                    }
+                  },
+                  "functionReturnParameters": 11167,
+                  "id": 11174,
+                  "nodeType": "Return",
+                  "src": "1606:47:70"
+                }
+              ]
+            },
+            "documentation": "@notice Calculates the exitable timestamp for deposit transaction output for standard exit\n@dev This function should only be used in standard exit for calculating exitable timestamp of a deposit output.\n     For in-fight exit, the priority of a input tx which is a deposit tx should still be using the another function 'calculateTxExitableTimestamp'.\n     See discussion here: https://git.io/Je4N5\n     Reason of deposit output has different exitable timestamp: https://git.io/JecCV",
+            "id": 11176,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "calculateDepositTxOutputExitableTimestamp",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11164,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11161,
+                  "name": "_calculator",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11176,
+                  "src": "1479:29:70",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Calculator_$11130_memory_ptr",
+                    "typeString": "struct ExitableTimestamp.Calculator"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 11160,
+                    "name": "Calculator",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 11130,
+                    "src": "1479:10:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Calculator_$11130_storage_ptr",
+                      "typeString": "struct ExitableTimestamp.Calculator"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11163,
+                  "name": "_now",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11176,
+                  "src": "1518:12:70",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11162,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1518:7:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1469:67:70"
+            },
+            "returnParameters": {
+              "id": 11167,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11166,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11176,
+                  "src": "1584:6:70",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint64",
+                    "typeString": "uint64"
+                  },
+                  "typeName": {
+                    "id": 11165,
+                    "name": "uint64",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1584:6:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint64",
+                      "typeString": "uint64"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1583:8:70"
+            },
+            "scope": 11177,
+            "src": "1419:241:70",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 11178,
+        "src": "82:1580:70"
+      }
+    ],
+    "src": "0:1663:70"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/utils/ExitableTimestamp.sol",
+    "exportedSymbols": {
+      "ExitableTimestamp": [
+        11177
+      ]
+    },
+    "id": 11178,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 11126,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:70"
+      },
+      {
+        "absolutePath": "openzeppelin-solidity/contracts/math/Math.sol",
+        "file": "openzeppelin-solidity/contracts/math/Math.sol",
+        "id": 11127,
+        "nodeType": "ImportDirective",
+        "scope": 11178,
+        "sourceUnit": 16459,
+        "src": "25:55:70",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 11177,
+        "linearizedBaseContracts": [
+          11177
+        ],
+        "name": "ExitableTimestamp",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "ExitableTimestamp.Calculator",
+            "id": 11130,
+            "members": [
+              {
+                "constant": false,
+                "id": 11129,
+                "name": "minExitPeriod",
+                "nodeType": "VariableDeclaration",
+                "scope": 11130,
+                "src": "142:21:70",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 11128,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "142:7:70",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "Calculator",
+            "nodeType": "StructDefinition",
+            "scope": 11177,
+            "src": "114:56:70",
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 11158,
+              "nodeType": "Block",
+              "src": "754:125:70",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "arguments": [
+                          {
+                            "argumentTypes": null,
+                            "commonType": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            },
+                            "id": 11150,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "leftExpression": {
+                              "argumentTypes": null,
+                              "id": 11144,
+                              "name": "_blockTimestamp",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 11136,
+                              "src": "787:15:70",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "+",
+                            "rightExpression": {
+                              "argumentTypes": null,
+                              "components": [
+                                {
+                                  "argumentTypes": null,
+                                  "commonType": {
+                                    "typeIdentifier": "t_uint256",
+                                    "typeString": "uint256"
+                                  },
+                                  "id": 11148,
+                                  "isConstant": false,
+                                  "isLValue": false,
+                                  "isPure": false,
+                                  "lValueRequested": false,
+                                  "leftExpression": {
+                                    "argumentTypes": null,
+                                    "expression": {
+                                      "argumentTypes": null,
+                                      "id": 11145,
+                                      "name": "_calculator",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": [],
+                                      "referencedDeclaration": 11132,
+                                      "src": "806:11:70",
+                                      "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_Calculator_$11130_memory_ptr",
+                                        "typeString": "struct ExitableTimestamp.Calculator memory"
+                                      }
+                                    },
+                                    "id": 11146,
+                                    "isConstant": false,
+                                    "isLValue": true,
+                                    "isPure": false,
+                                    "lValueRequested": false,
+                                    "memberName": "minExitPeriod",
+                                    "nodeType": "MemberAccess",
+                                    "referencedDeclaration": 11129,
+                                    "src": "806:25:70",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_uint256",
+                                      "typeString": "uint256"
+                                    }
+                                  },
+                                  "nodeType": "BinaryOperation",
+                                  "operator": "*",
+                                  "rightExpression": {
+                                    "argumentTypes": null,
+                                    "hexValue": "32",
+                                    "id": 11147,
+                                    "isConstant": false,
+                                    "isLValue": false,
+                                    "isPure": true,
+                                    "kind": "number",
+                                    "lValueRequested": false,
+                                    "nodeType": "Literal",
+                                    "src": "834:1:70",
+                                    "subdenomination": null,
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_rational_2_by_1",
+                                      "typeString": "int_const 2"
+                                    },
+                                    "value": "2"
+                                  },
+                                  "src": "806:29:70",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_uint256",
+                                    "typeString": "uint256"
+                                  }
+                                }
+                              ],
+                              "id": 11149,
+                              "isConstant": false,
+                              "isInlineArray": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "nodeType": "TupleExpression",
+                              "src": "805:31:70",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "src": "787:49:70",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          {
+                            "argumentTypes": null,
+                            "commonType": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            },
+                            "id": 11154,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "leftExpression": {
+                              "argumentTypes": null,
+                              "id": 11151,
+                              "name": "_now",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 11134,
+                              "src": "838:4:70",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "+",
+                            "rightExpression": {
+                              "argumentTypes": null,
+                              "expression": {
+                                "argumentTypes": null,
+                                "id": 11152,
+                                "name": "_calculator",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 11132,
+                                "src": "845:11:70",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_struct$_Calculator_$11130_memory_ptr",
+                                  "typeString": "struct ExitableTimestamp.Calculator memory"
+                                }
+                              },
+                              "id": 11153,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberName": "minExitPeriod",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 11129,
+                              "src": "845:25:70",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "src": "838:32:70",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            },
+                            {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": null,
+                            "id": 11142,
+                            "name": "Math",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 16458,
+                            "src": "778:4:70",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_type$_t_contract$_Math_$16458_$",
+                              "typeString": "type(library Math)"
+                            }
+                          },
+                          "id": 11143,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "max",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 16408,
+                          "src": "778:8:70",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_internal_pure$_t_uint256_$_t_uint256_$returns$_t_uint256_$",
+                            "typeString": "function (uint256,uint256) pure returns (uint256)"
+                          }
+                        },
+                        "id": 11155,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "functionCall",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "778:93:70",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "id": 11141,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "lValueRequested": false,
+                      "nodeType": "ElementaryTypeNameExpression",
+                      "src": "771:6:70",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_uint64_$",
+                        "typeString": "type(uint64)"
+                      },
+                      "typeName": "uint64"
+                    },
+                    "id": 11156,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "typeConversion",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "771:101:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint64",
+                      "typeString": "uint64"
+                    }
+                  },
+                  "functionReturnParameters": 11140,
+                  "id": 11157,
+                  "nodeType": "Return",
+                  "src": "764:108:70"
+                }
+              ]
+            },
+            "documentation": "@notice Calculates the exitable timestamp for a mined transaction\n@dev This is the main function when asking for exitable timestamp in most cases.\n     The only exception is to calculate the exitable timestamp for a deposit output in standard exit.\n     Should use the function 'calculateDepositTxOutputExitableTimestamp' for that case.",
+            "id": 11159,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "calculateTxExitableTimestamp",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11137,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11132,
+                  "name": "_calculator",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11159,
+                  "src": "604:29:70",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Calculator_$11130_memory_ptr",
+                    "typeString": "struct ExitableTimestamp.Calculator"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 11131,
+                    "name": "Calculator",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 11130,
+                    "src": "604:10:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Calculator_$11130_storage_ptr",
+                      "typeString": "struct ExitableTimestamp.Calculator"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11134,
+                  "name": "_now",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11159,
+                  "src": "643:12:70",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11133,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "643:7:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11136,
+                  "name": "_blockTimestamp",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11159,
+                  "src": "665:23:70",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11135,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "665:7:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "594:100:70"
+            },
+            "returnParameters": {
+              "id": 11140,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11139,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11159,
+                  "src": "742:6:70",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint64",
+                    "typeString": "uint64"
+                  },
+                  "typeName": {
+                    "id": 11138,
+                    "name": "uint64",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "742:6:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint64",
+                      "typeString": "uint64"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "741:8:70"
+            },
+            "scope": 11177,
+            "src": "557:322:70",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 11175,
+              "nodeType": "Block",
+              "src": "1596:64:70",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "id": 11172,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "id": 11169,
+                          "name": "_now",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11163,
+                          "src": "1620:4:70",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "+",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "expression": {
+                            "argumentTypes": null,
+                            "id": 11170,
+                            "name": "_calculator",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 11161,
+                            "src": "1627:11:70",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_struct$_Calculator_$11130_memory_ptr",
+                              "typeString": "struct ExitableTimestamp.Calculator memory"
+                            }
+                          },
+                          "id": 11171,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "minExitPeriod",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 11129,
+                          "src": "1627:25:70",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "src": "1620:32:70",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "id": 11168,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "lValueRequested": false,
+                      "nodeType": "ElementaryTypeNameExpression",
+                      "src": "1613:6:70",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_uint64_$",
+                        "typeString": "type(uint64)"
+                      },
+                      "typeName": "uint64"
+                    },
+                    "id": 11173,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "typeConversion",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1613:40:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint64",
+                      "typeString": "uint64"
+                    }
+                  },
+                  "functionReturnParameters": 11167,
+                  "id": 11174,
+                  "nodeType": "Return",
+                  "src": "1606:47:70"
+                }
+              ]
+            },
+            "documentation": "@notice Calculates the exitable timestamp for deposit transaction output for standard exit\n@dev This function should only be used in standard exit for calculating exitable timestamp of a deposit output.\n     For in-fight exit, the priority of a input tx which is a deposit tx should still be using the another function 'calculateTxExitableTimestamp'.\n     See discussion here: https://git.io/Je4N5\n     Reason of deposit output has different exitable timestamp: https://git.io/JecCV",
+            "id": 11176,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "calculateDepositTxOutputExitableTimestamp",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11164,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11161,
+                  "name": "_calculator",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11176,
+                  "src": "1479:29:70",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Calculator_$11130_memory_ptr",
+                    "typeString": "struct ExitableTimestamp.Calculator"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 11160,
+                    "name": "Calculator",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 11130,
+                    "src": "1479:10:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Calculator_$11130_storage_ptr",
+                      "typeString": "struct ExitableTimestamp.Calculator"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11163,
+                  "name": "_now",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11176,
+                  "src": "1518:12:70",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11162,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1518:7:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1469:67:70"
+            },
+            "returnParameters": {
+              "id": 11167,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11166,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11176,
+                  "src": "1584:6:70",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint64",
+                    "typeString": "uint64"
+                  },
+                  "typeName": {
+                    "id": 11165,
+                    "name": "uint64",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1584:6:70",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint64",
+                      "typeString": "uint64"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1583:8:70"
+            },
+            "scope": 11177,
+            "src": "1419:241:70",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 11178,
+        "src": "82:1580:70"
+      }
+    ],
+    "src": "0:1663:70"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.776Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

@@ -1,0 +1,1231 @@
+{
+  "contractName": "SpyEthVaultForExitGame",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "depositVerifiers",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_verifier",
+          "type": "address"
+        }
+      ],
+      "name": "setDepositVerifier",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "SAFE_GAS_STIPEND",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getEffectiveDepositVerifier",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "_depositTx",
+          "type": "bytes"
+        }
+      ],
+      "name": "deposit",
+      "outputs": [],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "newDepositVerifierMaturityTimestamp",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "safeGasStipend",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract PlasmaFramework",
+          "name": "_framework",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "target",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "EthWithdrawCalled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "EthWithdrawn",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "WithdrawFailed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "depositor",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "blknum",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "DepositCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "nextDepositVerifier",
+          "type": "address"
+        }
+      ],
+      "name": "SetDepositVerifierCalled",
+      "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address payable",
+          "name": "_target",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "withdraw",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"depositVerifiers\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_verifier\",\"type\":\"address\"}],\"name\":\"setDepositVerifier\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"SAFE_GAS_STIPEND\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getEffectiveDepositVerifier\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"_depositTx\",\"type\":\"bytes\"}],\"name\":\"deposit\",\"outputs\":[],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"newDepositVerifierMaturityTimestamp\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"safeGasStipend\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address payable\",\"name\":\"_target\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"withdraw\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract PlasmaFramework\",\"name\":\"_framework\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"EthWithdrawCalled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"receiver\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"EthWithdrawn\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"receiver\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"WithdrawFailed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"depositor\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"blknum\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"DepositCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"nextDepositVerifier\",\"type\":\"address\"}],\"name\":\"SetDepositVerifierCalled\",\"type\":\"event\"}],\"devdoc\":{\"methods\":{\"deposit(bytes)\":{\"params\":{\"_depositTx\":\"RLP-encoded transaction to act as the deposit\"}},\"getEffectiveDepositVerifier()\":{\"return\":\"Contract address of the deposit verifier\"},\"setDepositVerifier(address)\":{\"details\":\"emit SetDepositVerifierCalledWhen one contract is already set, the next one is effective after 2 * MIN_EXIT_PERIOD.     This is to protect deposit transactions already in mempool,     and also make sure user only needs to SE within first week when invalid vault is registered.     *      see: https://github.com/omisego/plasma-contracts/issues/412          https://github.com/omisego/plasma-contracts/issues/173\",\"params\":{\"_verifier\":\"Address of the verifier contract\"}}}},\"userdoc\":{\"methods\":{\"deposit(bytes)\":{\"notice\":\"Allows a user to deposit ETH into the contract Once the deposit is recognized, the owner may transact on the OmiseGO Network\"},\"getEffectiveDepositVerifier()\":{\"notice\":\"Retrieves the currently effective deposit verifier contract address\"},\"setDepositVerifier(address)\":{\"notice\":\"Sets the deposit verifier contract, which may be called only by the operator\"},\"withdraw(address,uint256)\":{\"notice\":\"override for test \"}}}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/exits/dummyVaults/SpyEthVaultForExitGame.sol\":\"SpyEthVaultForExitGame\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/exits/dummyVaults/SpyEthVaultForExitGame.sol\":{\"keccak256\":\"0x621e349a4301c57d759a5a20fc867f9de9680f8322ab6475f50cb2574d300f87\",\"urls\":[\"bzz-raw://130365cd0970b0db1d01bdb3ed48f44e5e288aa84d2a0a04fde9d9e70e6619c7\",\"dweb:/ipfs/QmQrDUNk9PavmBSNtYFHSDxWZdtLUHfGCyUZf7ReHVGoR2\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/BlockController.sol\":{\"keccak256\":\"0xac302eceee96e5a83b7fdfb43d23389f516ff4b7322e5e094d7ad0b3be177c0b\",\"urls\":[\"bzz-raw://cf36aec949574838af497c6448000226d20aea4d0a787c746dd10775166df8a3\",\"dweb:/ipfs/QmQvD1DZfeidC1xiC3fnzTbCcgTTG9MuN6NNwKn965bVvC\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/ExitGameController.sol\":{\"keccak256\":\"0x4afed31e54ae47674ccf2ca4c9a6fe57e3e3f6519bf3b3fc997eed708405c4a0\",\"urls\":[\"bzz-raw://dc82f473933be3817ba0bc07da0dc9fb488dc1f34195d132e6ba274d190bdcee\",\"dweb:/ipfs/QmdADCXHRKRjWqLMcRmtSpyzz9bti9cod7Poa8M7TW6QKJ\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/PlasmaFramework.sol\":{\"keccak256\":\"0x4b017fa7cae50fcf79803255fe0ffe8183e8f3934d9ac46a48235986f4714179\",\"urls\":[\"bzz-raw://30974a631b8c13aedea212390fcc1cf75472dc3f49a9c52eb33fc07c04b545e1\",\"dweb:/ipfs/QmT15Bw5NtE7b1RvVcmRXcGkEAL9BpbbgKwMtJBphXTbLd\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/Protocol.sol\":{\"keccak256\":\"0x81e37c136c340d917e370c58894761aee710bbef727414685490e405bc0f18e8\",\"urls\":[\"bzz-raw://7a54192b587531dd1adc33202479142afdf116385bab22daa153b8d4439d7333\",\"dweb:/ipfs/QmT37F3SCsWLf93okFrx1LUUr6c2zXCj28u2sjXXFBef2X\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/interfaces/IExitProcessor.sol\":{\"keccak256\":\"0x93c31f7c8ff69c80bd30f9296a7b2059affedadefc0c2cfb5c992eb1f1885fa2\",\"urls\":[\"bzz-raw://d56cb65fd67b07cec3bb17f48c064df4ea892780bf21d87d717e6581feb92ffd\",\"dweb:/ipfs/QmZZGPdSSN81c2P1CBnrCQD9mRWntPUPUjm4vCgWsBqS14\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/models/BlockModel.sol\":{\"keccak256\":\"0x7d26be621a43e2b8855f6c71f91c886d3b48ed809f421a1eee9c165c803d0cf7\",\"urls\":[\"bzz-raw://850b2acb61d96e9eb09d8bf24617ecf47aa948d6754b2d09d0e0d2b949193a2d\",\"dweb:/ipfs/QmW8yoi4jZxHAJf4bNjtt3nGckaWUEX92ZbgrKpoRHJGRM\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/registries/ExitGameRegistry.sol\":{\"keccak256\":\"0x4695a609c60b6be59bbc49ed6d3b14725bcc2efcecd083f8cabbcd3ddb399e68\",\"urls\":[\"bzz-raw://d31ca9188c426bbb2e8cf0fca61a9d451497408ddb4708cfc78d543b75fcb274\",\"dweb:/ipfs/QmawYeD9CCd5chGoB62zVKpk5Q9zJxhUUGJu7hUaCF5JXM\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/registries/VaultRegistry.sol\":{\"keccak256\":\"0x7786b4b8b043026655fa872f11ec747ef600100cc73da38369e1e2fd5047c95a\",\"urls\":[\"bzz-raw://b957490e53281e516290455b78722627f5536e0bd6b9bc17777f3f7a93ed9b14\",\"dweb:/ipfs/QmbUEwWfkTCSPPNEjAJUEXwgCCY9cBPgAKJagRbYQ3PSLE\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/ExitPriority.sol\":{\"keccak256\":\"0x18a6c6b1f8c072e693d855bc8991ea4c51951f9058fd116253a1b8ccb6fc1647\",\"urls\":[\"bzz-raw://a22420b5f647d6108be8a3de23b5dd561f65b12dd804ead7edf5384407a506f3\",\"dweb:/ipfs/QmTd986YDqtwQ1eXqUP4esUBKxGthieXJWkQTsMJzewXgA\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/PriorityQueue.sol\":{\"keccak256\":\"0xf46de2038d5fbc06f1aba7f36e7e02ead27485044ccf25afc2b9ad84ea705991\",\"urls\":[\"bzz-raw://a23fd7ad08f351743c7599fa546a0b54586e7e319c00c3e9d41c3aa10546ec5d\",\"dweb:/ipfs/QmWH32SoQmhyy7CE8u8g412e1AosogVE3eEBjrAh9MABvb\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/Quarantine.sol\":{\"keccak256\":\"0x1b685ea3de626e3d8961d0e384a67c3e87752874784cc2e59777857d130f2390\",\"urls\":[\"bzz-raw://28c30354aa580476f230c4d8e151d34337b923caabc6bccfe560d75ef37d446e\",\"dweb:/ipfs/Qmf9nCYFBhHDyMgHmxX5pSkqLpqb2W3XffPopdkJTHmnAA\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/OnlyFromAddress.sol\":{\"keccak256\":\"0x54d4cb74bf5c448bb383ff4ffce898473739a5ba015e439dae1c092c70df943f\",\"urls\":[\"bzz-raw://5c9efbe363534d6746573b9b0dda687d257272c3ce0123b6a45bc7eef55a40b4\",\"dweb:/ipfs/QmZPLF1bKdU6DAZZcxWfMudUwzeubLxsSk14x8hvUMj15X\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/PosLib.sol\":{\"keccak256\":\"0xd47b38ef93cf913b6b7a3bf608dec2c084108d090cc02b222da3d8eb39819d5f\",\"urls\":[\"bzz-raw://c42d551c21adfa400d08108673b29e4bd1eec70aaa469287571071df3f8f0bc1\",\"dweb:/ipfs/Qmepq632azqUDHt5ypVwmkTfeQG8uP1HYw8x1H3Hdg9K6R\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/SafeEthTransfer.sol\":{\"keccak256\":\"0xe707370228eea8c9c613472dd4d44df94ba631892bc74077cf5af24097944aad\",\"urls\":[\"bzz-raw://803b2c876f40f8d8dbcbca8b6cde233d73a98c4d2384c90e259da1c169225de9\",\"dweb:/ipfs/QmZkb1kHBmFb4jGgZepfAJsiZM6beQJiS9x319QZxExiB4\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/vaults/EthVault.sol\":{\"keccak256\":\"0x97b047f61e71f24f0febf094358731d4a61e27219c43162776fff4c37d28948f\",\"urls\":[\"bzz-raw://4d8139071bb54c50fea28af039741b9621d7f92ffb689c74ecb105a315555f7e\",\"dweb:/ipfs/QmaHVjgpcqThQ4MtdnEKQ7HECJrRBRaLd24Exa3oKZj8T5\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/vaults/Vault.sol\":{\"keccak256\":\"0x2db04ba824e64bb121c7a3733654774198011c3b5a264a068c24146dc359444f\",\"urls\":[\"bzz-raw://c047c9e255606d272deccb90edf90ad3eb1bc65780726a91b16792e8e469f577\",\"dweb:/ipfs/QmP6rJfCpRdgbEDaYMr7wgHxM8PyBSk5KAdtVTbkSRXYyF\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/vaults/verifiers/IEthDepositVerifier.sol\":{\"keccak256\":\"0x32e47ecde587dae08d902c081bf9e871137aa5ef049354220cd0360d5deb8e47\",\"urls\":[\"bzz-raw://dfcc1f319dc9131d6a07ae9c867225c66be262e871939d82ab66fd630dd4395f\",\"dweb:/ipfs/Qmef9deSffr7LGBhqqjKSNfqEPNj267WrY2ysXWq9YgZUy\"]},\"openzeppelin-solidity/contracts/math/SafeMath.sol\":{\"keccak256\":\"0x4ccf2d7b51873db1ccfd54ca2adae5eac3b184f9699911ed4490438419f1c690\",\"urls\":[\"bzz-raw://d62d769b2219d5de39013093412623e624fa887f871826ea3bae6052ee893610\",\"dweb:/ipfs/QmV3yVktya1s617QmuzQR2CfuJgUi3dR2xEZY9ecmqZ2G1\"]},\"openzeppelin-solidity/contracts/utils/Address.sol\":{\"keccak256\":\"0xf3358e5819ca73357abd6c90bdfffd0474af54364897f6b3e3234c4b71fbe9a1\",\"urls\":[\"bzz-raw://75ae8d04454d1511a2ed986cc8585736f05c5c25280683b3d24712a9f414a4bf\",\"dweb:/ipfs/Qmb3kNCoBUZdah1AgBBD4zMk898j5Qw8ahT1w5cCMYp5Y3\"]}},\"version\":1}",
+  "bytecode": "0x60806040527f800000000000000000000000000000000000000000000000000000000000000060135534801561003457600080fd5b50604051610a57380380610a578339818101604052602081101561005757600080fd5b5051600080546001600160a01b0319166001600160a01b038316179055806108fc8161008161009c565b61008f906001906010610162565b5050601455506101d99050565b6100a46101a0565b6100ac6101a0565b6040805160006020808301829052602180840183905284518085039091018152604190930190935281519190920120905b601081101561015957818382601081106100f357fe5b60209081029190910191909152604080517f010000000000000000000000000000000000000000000000000000000000000081840152602181018590526041808201959095528151808203909501855260610190528251920191909120906001016100dd565b50909150505b90565b8260108101928215610190579160200282015b82811115610190578251825591602001919060010190610175565b5061019c9291506101bf565b5090565b6040518061020001604052806010906020820280388339509192915050565b61015f91905b8082111561019c57600081556001016101c5565b61086f806101e86000396000f3fe60806040526004361061007b5760003560e01c806398b1e06a1161004e57806398b1e06a14610137578063a7e5994f146101a7578063ccbd2176146101bc578063f3fef3a3146101d15761007b565b806302e9b07b146100805780632c6ce78b146100c6578063513f3132146100fb57806352518b7f14610122575b600080fd5b34801561008c57600080fd5b506100aa600480360360208110156100a357600080fd5b503561020a565b604080516001600160a01b039092168252519081900360200190f35b3480156100d257600080fd5b506100f9600480360360208110156100e957600080fd5b50356001600160a01b0316610227565b005b34801561010757600080fd5b50610110610459565b60408051918252519081900360200190f35b34801561012e57600080fd5b506100aa61045f565b6100f96004803603602081101561014d57600080fd5b81019060208101813564010000000081111561016857600080fd5b82018360208201111561017a57600080fd5b8035906020019184600183028401116401000000008311171561019c57600080fd5b50909250905061048e565b3480156101b357600080fd5b5061011061060d565b3480156101c857600080fd5b50610110610613565b3480156101dd57600080fd5b506100f9600480360360408110156101f457600080fd5b506001600160a01b038135169060200135610619565b6011816002811061021757fe5b01546001600160a01b0316905081565b6000809054906101000a90046001600160a01b03166001600160a01b0316634b0a72bc6040518163ffffffff1660e01b815260040160206040518083038186803b15801561027457600080fd5b505afa158015610288573d6000803e3d6000fd5b505050506040513d602081101561029e57600080fd5b5051336001600160a01b038216146102fd576040805162461bcd60e51b815260206004820152601e60248201527f43616c6c6572206164647265737320697320756e617574686f72697a65640000604482015290519081900360640190fd5b6001600160a01b0382166103425760405162461bcd60e51b815260040180806020018281038252602f8152602001806107eb602f913960400191505060405180910390fd5b6011546001600160a01b0316156103fd5761035b61045f565b601180546001600160a01b03199081166001600160a01b0393841617909155601280549091168483161790556000546040805163d4a2b4ef60e01b81529051919092169163d4a2b4ef916004808301926020929190829003018186803b1580156103c457600080fd5b505afa1580156103d8573d6000803e3d6000fd5b505050506040513d60208110156103ee57600080fd5b50516002024201601355610419565b601180546001600160a01b0319166001600160a01b0384161790555b604080516001600160a01b038416815290517f11e5a7570e0de4b31179f8c9cf5e8a1e6cfd23731ec7a5a06e3006d71dd321fd9181900360200190a15050565b6108fc81565b600060135442101561048257601160005b01546001600160a01b0316905061048b565b60116001610470565b90565b600061049861045f565b90506001600160a01b0381166104df5760405162461bcd60e51b815260040180806020018281038252602181526020018061081a6021913960400191505060405180910390fd5b806001600160a01b031663aee150c7848434336040518563ffffffff1660e01b81526004018080602001848152602001836001600160a01b03166001600160a01b031681526020018281038252868682818152602001925080828437600081840152601f19601f8201169050808301925050509550505050505060006040518083038186803b15801561057157600080fd5b505afa158015610585573d6000803e3d6000fd5b5050505060006105ca84848080601f01602080910402602001604051908101604052809392919081815260200183838082843760009201919091525061066192505050565b604080513481529051919250600091839133917f18569122d84f30025bb8dffb33563f1bdbfb9637f21552b11b8305686e9cb3079181900360200190a450505050565b60135481565b60145481565b604080516001600160a01b03841681526020810183905281517fee4487b5c1d45460b17ed59d36e9325b3a068eb57ceb61b537348bf9f2f80290929181900390910190a15050565b60008061066d836106f3565b60008054604080516317cb58d360e31b815260048101859052905193945091926001600160a01b039091169163be5ac69891602480830192602092919082900301818787803b1580156106bf57600080fd5b505af11580156106d3573d6000803e3d6000fd5b505050506040513d60208110156106e957600080fd5b5051949350505050565b60405160006020808301828152845192938493849387939260210191908401908083835b602083106107365780518252601f199092019160209182019101610717565b6001836020036101000a0380198251168184511680821785525050505050509050019250505060405160208183030381529060405280519060200120905060008090505b60108110156107e357600160f81b826001836010811061079657fe5b0154604080516001600160f81b031990941660208086019190915260218501939093526041808501929092528051808503909201825260619093019092528151910120915060010161077a565b509291505056fe43616e6e6f742073657420616e20656d7074792061646472657373206173206465706f7369742076657269666965724465706f73697420766572696669657220686173206e6f74206265656e20736574a265627a7a7231582077deb80575e6cfe6247927f8747956ecd32682dacc7d70b2af359de0e060f63e64736f6c634300050b0032",
+  "deployedBytecode": "0x60806040526004361061007b5760003560e01c806398b1e06a1161004e57806398b1e06a14610137578063a7e5994f146101a7578063ccbd2176146101bc578063f3fef3a3146101d15761007b565b806302e9b07b146100805780632c6ce78b146100c6578063513f3132146100fb57806352518b7f14610122575b600080fd5b34801561008c57600080fd5b506100aa600480360360208110156100a357600080fd5b503561020a565b604080516001600160a01b039092168252519081900360200190f35b3480156100d257600080fd5b506100f9600480360360208110156100e957600080fd5b50356001600160a01b0316610227565b005b34801561010757600080fd5b50610110610459565b60408051918252519081900360200190f35b34801561012e57600080fd5b506100aa61045f565b6100f96004803603602081101561014d57600080fd5b81019060208101813564010000000081111561016857600080fd5b82018360208201111561017a57600080fd5b8035906020019184600183028401116401000000008311171561019c57600080fd5b50909250905061048e565b3480156101b357600080fd5b5061011061060d565b3480156101c857600080fd5b50610110610613565b3480156101dd57600080fd5b506100f9600480360360408110156101f457600080fd5b506001600160a01b038135169060200135610619565b6011816002811061021757fe5b01546001600160a01b0316905081565b6000809054906101000a90046001600160a01b03166001600160a01b0316634b0a72bc6040518163ffffffff1660e01b815260040160206040518083038186803b15801561027457600080fd5b505afa158015610288573d6000803e3d6000fd5b505050506040513d602081101561029e57600080fd5b5051336001600160a01b038216146102fd576040805162461bcd60e51b815260206004820152601e60248201527f43616c6c6572206164647265737320697320756e617574686f72697a65640000604482015290519081900360640190fd5b6001600160a01b0382166103425760405162461bcd60e51b815260040180806020018281038252602f8152602001806107eb602f913960400191505060405180910390fd5b6011546001600160a01b0316156103fd5761035b61045f565b601180546001600160a01b03199081166001600160a01b0393841617909155601280549091168483161790556000546040805163d4a2b4ef60e01b81529051919092169163d4a2b4ef916004808301926020929190829003018186803b1580156103c457600080fd5b505afa1580156103d8573d6000803e3d6000fd5b505050506040513d60208110156103ee57600080fd5b50516002024201601355610419565b601180546001600160a01b0319166001600160a01b0384161790555b604080516001600160a01b038416815290517f11e5a7570e0de4b31179f8c9cf5e8a1e6cfd23731ec7a5a06e3006d71dd321fd9181900360200190a15050565b6108fc81565b600060135442101561048257601160005b01546001600160a01b0316905061048b565b60116001610470565b90565b600061049861045f565b90506001600160a01b0381166104df5760405162461bcd60e51b815260040180806020018281038252602181526020018061081a6021913960400191505060405180910390fd5b806001600160a01b031663aee150c7848434336040518563ffffffff1660e01b81526004018080602001848152602001836001600160a01b03166001600160a01b031681526020018281038252868682818152602001925080828437600081840152601f19601f8201169050808301925050509550505050505060006040518083038186803b15801561057157600080fd5b505afa158015610585573d6000803e3d6000fd5b5050505060006105ca84848080601f01602080910402602001604051908101604052809392919081815260200183838082843760009201919091525061066192505050565b604080513481529051919250600091839133917f18569122d84f30025bb8dffb33563f1bdbfb9637f21552b11b8305686e9cb3079181900360200190a450505050565b60135481565b60145481565b604080516001600160a01b03841681526020810183905281517fee4487b5c1d45460b17ed59d36e9325b3a068eb57ceb61b537348bf9f2f80290929181900390910190a15050565b60008061066d836106f3565b60008054604080516317cb58d360e31b815260048101859052905193945091926001600160a01b039091169163be5ac69891602480830192602092919082900301818787803b1580156106bf57600080fd5b505af11580156106d3573d6000803e3d6000fd5b505050506040513d60208110156106e957600080fd5b5051949350505050565b60405160006020808301828152845192938493849387939260210191908401908083835b602083106107365780518252601f199092019160209182019101610717565b6001836020036101000a0380198251168184511680821785525050505050509050019250505060405160208183030381529060405280519060200120905060008090505b60108110156107e357600160f81b826001836010811061079657fe5b0154604080516001600160f81b031990941660208086019190915260218501939093526041808501929092528051808503909201825260619093019092528151910120915060010161077a565b509291505056fe43616e6e6f742073657420616e20656d7074792061646472657373206173206465706f7369742076657269666965724465706f73697420766572696669657220686173206e6f74206265656e20736574a265627a7a7231582077deb80575e6cfe6247927f8747956ecd32682dacc7d70b2af359de0e060f63e64736f6c634300050b0032",
+  "sourceMap": "122:439:9:-;;;1015:8:98;962:61;;310:88:9;8:9:-1;5:2;;;30:1;27;20:12;5:2;310:88:9;;;;;;;;;;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;310:88:9;1114:9:98;:22;;-1:-1:-1;;;;;;1114:22:98;-1:-1:-1;;;;;1114:22:98;;;;;310:88:9;215:4;310:88;1159:15:98;:13;:15::i;:::-;1146:28;;:10;;:28;;:::i;:::-;-1:-1:-1;;680:14:97;:32;-1:-1:-1;122:439:9;;-1:-1:-1;122:439:9;1294:378:98;1341:18;;:::i;:::-;1371:25;;:::i;:::-;1435:39;;;1406:16;1435:39;;;;;;;;;;;;;;;;26:21:-1;;;22:32;;;6:49;;1435:39:98;;;;;;;1425:50;;;;;;;;1485:158;1506:2;1502:1;:6;1485:158;;;1541:8;1529:6;1536:1;1529:9;;;;;;;;;;;;;;;:20;;;;1584:47;;;1601:9;1584:47;;;;;;;;;;;;;;;;;;;;26:21:-1;;;22:32;;;6:49;;1584:47:98;;;;1574:58;;;;;;;;;456:4;1510:3;1485:158;;;-1:-1:-1;1659:6:98;;-1:-1:-1;;1294:378:98;;:::o;122:439:9:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;122:439:9;;;-1:-1:-1;122:439:9;:::i;:::-;;;:::o;:::-;;;;;;;;;;;29:2:-1;21:6;17:15;117:4;105:10;97:6;88:34;-1:-1;122:439:9;;;-1:-1:-1;;122:439:9:o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "122:439:9:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;922:34:98;;8:9:-1;5:2;;;30:1;27;20:12;5:2;922:34:98;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;922:34:98;;:::i;:::-;;;;-1:-1:-1;;;;;922:34:98;;;;;;;;;;;;;;2670:560;;8:9:-1;5:2;;;30:1;27;20:12;5:2;2670:560:98;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;2670:560:98;-1:-1:-1;;;;;2670:560:98;;:::i;:::-;;172:47:9;;8:9:-1;5:2;;;30:1;27;20:12;5:2;172:47:9;;;:::i;:::-;;;;;;;;;;;;;;;;3391:240:98;;8:9:-1;5:2;;;30:1;27;20:12;5:2;3391:240:98;;;:::i;959:449:97:-;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;959:449:97;;;;;;;;21:11:-1;5:28;;2:2;;;46:1;43;36:12;2:2;959:449:97;;35:9:-1;28:4;12:14;8:25;5:40;2:2;;;58:1;55;48:12;2:2;959:449:97;;;;;;100:9:-1;95:1;81:12;77:20;67:8;63:35;60:50;39:11;25:12;22:29;11:107;8:2;;;131:1;128;121:12;8:2;-1:-1;959:449:97;;-1:-1:-1;959:449:97;-1:-1:-1;959:449:97;:::i;962:61:98:-;;8:9:-1;5:2;;;30:1;27;20:12;5:2;962:61:98;;;:::i;544:29:97:-;;8:9:-1;5:2;;;30:1;27;20:12;5:2;544:29:97;;;:::i;433:126:9:-;;8:9:-1;5:2;;;30:1;27;20:12;5:2;433:126:9;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;;;;;;433:126:9;;;;;;;;:::i;922:34:98:-;;;;;;;;;;;;-1:-1:-1;;;;;922:34:98;;-1:-1:-1;922:34:98;:::o;2670:560::-;2733:9;;;;;;;;;-1:-1:-1;;;;;2733:9:98;-1:-1:-1;;;;;2733:23:98;;:25;;;;;;;;;;;;;;;;;;;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;2733:25:98;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;2733:25:98;;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;2733:25:98;109:10:91;-1:-1:-1;;;;;109:20:91;;;101:63;;;;;-1:-1:-1;;;101:63:91;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;2778:23:98;;2770:83;;;;-1:-1:-1;;;2770:83:98;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2868:16;:19;-1:-1:-1;;;;;2868:19:98;:33;2864:309;;2939:29;:27;:29::i;:::-;2917:16;:51;;-1:-1:-1;;;;;;2917:51:98;;;-1:-1:-1;;;;;2917:51:98;;;;;;;2982:19;:31;;;;;;;;;;;-1:-1:-1;3075:9:98;:25;;;-1:-1:-1;;;3075:25:98;;;;:9;;;;;:23;;:25;;;;;;;;;;;;;;:9;:25;;;5:2:-1;;;;30:1;27;20:12;5:2;3075:25:98;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;3075:25:98;;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;3075:25:98;3071:1;:29;3065:3;:35;3027;:73;2864:309;;;3131:16;:31;;-1:-1:-1;;;;;;3131:31:98;-1:-1:-1;;;;;3131:31:98;;;;;2864:309;3188:35;;;-1:-1:-1;;;;;3188:35:98;;;;;;;;;;;;;;;2670:560;;:::o;172:47:9:-;215:4;172:47;:::o;3391:240:98:-;3451:7;3480:35;;3474:3;:41;3470:155;;;3538:16;3555:1;3538:19;;;-1:-1:-1;;;;;3538:19:98;;-1:-1:-1;3531:26:98;;3470:155;3595:16;3612:1;3595:19;;3470:155;3391:240;:::o;959:449:97:-;1030:23;1056:35;:33;:35::i;:::-;1030:61;-1:-1:-1;;;;;;1109:29:97;;1101:75;;;;-1:-1:-1;;;1101:75:97;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1207:15;-1:-1:-1;;;;;1187:43:97;;1231:10;;1243:9;1254:10;1187:78;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;1187:78:97;-1:-1:-1;;;;;1187:78:97;;;;;;;;;;;;;;;;;;;;30:3:-1;22:6;14;1:33;99:1;93:3;85:6;81:16;74:27;137:4;133:9;126:4;121:3;117:14;113:30;106:37;;169:3;161:6;157:16;147:26;;1187:78:97;;;;;;;;;;;;;;;;;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;1187:78:97;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;1187:78:97;;;;1275:14;1292:36;1317:10;;1292:36;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;30:3:-1;22:6;14;1:33;99:1;81:16;;74:27;;;;-1:-1;1292:24:97;;-1:-1:-1;;;1292:36:97:i;:::-;1344:57;;;1391:9;1344:57;;;;1275:53;;-1:-1:-1;1387:1:97;;1275:53;;1359:10;;1344:57;;;;;;;;;959:449;;;;:::o;962:61:98:-;;;;:::o;544:29:97:-;;;;:::o;433:126:9:-;517:35;;;-1:-1:-1;;;;;517:35:9;;;;;;;;;;;;;;;;;;;;;;;433:126;;:::o;3802:240:98:-;3872:7;3891:12;3906:30;3926:9;3906:19;:30::i;:::-;3947:21;3971:9;;:34;;;-1:-1:-1;;;3971:34:98;;;;;;;;;;3891:45;;-1:-1:-1;3947:21:98;;-1:-1:-1;;;;;3971:9:98;;;;:28;;:34;;;;;;;;;;;;;;3947:21;3971:9;:34;;;5:2:-1;;;;30:1;27;20:12;5:2;3971:34:98;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;3971:34:98;;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;3971:34:98;;3802:240;-1:-1:-1;;;;3802:240:98:o;4048:316::-;4167:38;;4123:7;4167:38;;;;;;;;;4123:7;;;;;;4195:9;;4167:38;;;;;;;;;;;36:153:-1;66:2;61:3;58:11;36:153;;176:10;;164:23;;-1:-1;;139:12;;;;98:2;89:12;;;;114;36:153;;;274:1;267:3;263:2;259:12;254:3;250:22;246:30;315:4;311:9;305:3;299:10;295:26;356:4;350:3;344:10;340:21;389:7;380;377:20;372:3;365:33;3:399;;;4167:38:98;;;;;;;;;;;;49:4:-1;39:7;30;26:21;22:32;13:7;6:49;4167:38:98;;;4157:49;;;;;;4142:64;;4221:6;4230:1;4221:10;;4216:121;4237:2;4233:1;:6;4216:121;;;-1:-1:-1;;;4305:4:98;456;4322:1;4311:13;;;;;;;;;4277:48;;;-1:-1:-1;;;;;;4277:48:98;;;;;;;;;;;;;;;;;;;;;;;;;;;;26:21:-1;;;22:32;;;6:49;;4277:48:98;;;;;;;4267:59;;;;;;-1:-1:-1;4277:48:98;4241:3;4216:121;;;-1:-1:-1;4353:4:98;4048:316;-1:-1:-1;;4048:316:98:o",
+  "source": "pragma solidity 0.5.11;\n\nimport \"../../../src/vaults/EthVault.sol\";\nimport \"../../../src/framework/PlasmaFramework.sol\";\n\ncontract SpyEthVaultForExitGame is EthVault {\n    uint256 public constant SAFE_GAS_STIPEND = 2300;\n\n    event EthWithdrawCalled(\n        address target,\n        uint256 amount\n    );\n\n    constructor(PlasmaFramework _framework) public EthVault(_framework, SAFE_GAS_STIPEND) {}\n\n    /** override for test */\n    function withdraw(address payable _target, uint256 _amount) external {\n        emit EthWithdrawCalled(_target, _amount);\n    }\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/exits/dummyVaults/SpyEthVaultForExitGame.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/exits/dummyVaults/SpyEthVaultForExitGame.sol",
+    "exportedSymbols": {
+      "SpyEthVaultForExitGame": [
+        663
+      ]
+    },
+    "id": 664,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 626,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:9"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/vaults/EthVault.sol",
+        "file": "../../../src/vaults/EthVault.sol",
+        "id": 627,
+        "nodeType": "ImportDirective",
+        "scope": 664,
+        "sourceUnit": 15540,
+        "src": "25:42:9",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/PlasmaFramework.sol",
+        "file": "../../../src/framework/PlasmaFramework.sol",
+        "id": 628,
+        "nodeType": "ImportDirective",
+        "scope": 664,
+        "sourceUnit": 12299,
+        "src": "68:52:9",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 629,
+              "name": "EthVault",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 15539,
+              "src": "157:8:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_EthVault_$15539",
+                "typeString": "contract EthVault"
+              }
+            },
+            "id": 630,
+            "nodeType": "InheritanceSpecifier",
+            "src": "157:8:9"
+          }
+        ],
+        "contractDependencies": [
+          14437,
+          15539,
+          15809
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 663,
+        "linearizedBaseContracts": [
+          663,
+          15539,
+          15809,
+          14437
+        ],
+        "name": "SpyEthVaultForExitGame",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": true,
+            "id": 633,
+            "name": "SAFE_GAS_STIPEND",
+            "nodeType": "VariableDeclaration",
+            "scope": 663,
+            "src": "172:47:9",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 631,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "172:7:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "32333030",
+              "id": 632,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "215:4:9",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_2300_by_1",
+                "typeString": "int_const 2300"
+              },
+              "value": "2300"
+            },
+            "visibility": "public"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 639,
+            "name": "EthWithdrawCalled",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 638,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 635,
+                  "indexed": false,
+                  "name": "target",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 639,
+                  "src": "259:14:9",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 634,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "259:7:9",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 637,
+                  "indexed": false,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 639,
+                  "src": "283:14:9",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 636,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "283:7:9",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "249:54:9"
+            },
+            "src": "226:78:9"
+          },
+          {
+            "body": {
+              "id": 648,
+              "nodeType": "Block",
+              "src": "396:2:9",
+              "statements": []
+            },
+            "documentation": null,
+            "id": 649,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [
+              {
+                "arguments": [
+                  {
+                    "argumentTypes": null,
+                    "id": 644,
+                    "name": "_framework",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 641,
+                    "src": "366:10:9",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                      "typeString": "contract PlasmaFramework"
+                    }
+                  },
+                  {
+                    "argumentTypes": null,
+                    "id": 645,
+                    "name": "SAFE_GAS_STIPEND",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 633,
+                    "src": "378:16:9",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  }
+                ],
+                "id": 646,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 643,
+                  "name": "EthVault",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 15539,
+                  "src": "357:8:9",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_type$_t_contract$_EthVault_$15539_$",
+                    "typeString": "type(contract EthVault)"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "357:38:9"
+              }
+            ],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 642,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 641,
+                  "name": "_framework",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 649,
+                  "src": "322:26:9",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                    "typeString": "contract PlasmaFramework"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 640,
+                    "name": "PlasmaFramework",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 12298,
+                    "src": "322:15:9",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                      "typeString": "contract PlasmaFramework"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "321:28:9"
+            },
+            "returnParameters": {
+              "id": 647,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "396:0:9"
+            },
+            "scope": 663,
+            "src": "310:88:9",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 661,
+              "nodeType": "Block",
+              "src": "502:57:9",
+              "statements": [
+                {
+                  "eventCall": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 657,
+                        "name": "_target",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 651,
+                        "src": "535:7:9",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 658,
+                        "name": "_amount",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 653,
+                        "src": "544:7:9",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "id": 656,
+                      "name": "EthWithdrawCalled",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 639,
+                      "src": "517:17:9",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_event_nonpayable$_t_address_$_t_uint256_$returns$__$",
+                        "typeString": "function (address,uint256)"
+                      }
+                    },
+                    "id": 659,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "517:35:9",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 660,
+                  "nodeType": "EmitStatement",
+                  "src": "512:40:9"
+                }
+              ]
+            },
+            "documentation": "override for test ",
+            "id": 662,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "withdraw",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 654,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 651,
+                  "name": "_target",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 662,
+                  "src": "451:23:9",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address_payable",
+                    "typeString": "address payable"
+                  },
+                  "typeName": {
+                    "id": 650,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "451:15:9",
+                    "stateMutability": "payable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address_payable",
+                      "typeString": "address payable"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 653,
+                  "name": "_amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 662,
+                  "src": "476:15:9",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 652,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "476:7:9",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "450:42:9"
+            },
+            "returnParameters": {
+              "id": 655,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "502:0:9"
+            },
+            "scope": 663,
+            "src": "433:126:9",
+            "stateMutability": "nonpayable",
+            "superFunction": 15538,
+            "visibility": "external"
+          }
+        ],
+        "scope": 664,
+        "src": "122:439:9"
+      }
+    ],
+    "src": "0:562:9"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/exits/dummyVaults/SpyEthVaultForExitGame.sol",
+    "exportedSymbols": {
+      "SpyEthVaultForExitGame": [
+        663
+      ]
+    },
+    "id": 664,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 626,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:9"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/vaults/EthVault.sol",
+        "file": "../../../src/vaults/EthVault.sol",
+        "id": 627,
+        "nodeType": "ImportDirective",
+        "scope": 664,
+        "sourceUnit": 15540,
+        "src": "25:42:9",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/PlasmaFramework.sol",
+        "file": "../../../src/framework/PlasmaFramework.sol",
+        "id": 628,
+        "nodeType": "ImportDirective",
+        "scope": 664,
+        "sourceUnit": 12299,
+        "src": "68:52:9",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 629,
+              "name": "EthVault",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 15539,
+              "src": "157:8:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_EthVault_$15539",
+                "typeString": "contract EthVault"
+              }
+            },
+            "id": 630,
+            "nodeType": "InheritanceSpecifier",
+            "src": "157:8:9"
+          }
+        ],
+        "contractDependencies": [
+          14437,
+          15539,
+          15809
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 663,
+        "linearizedBaseContracts": [
+          663,
+          15539,
+          15809,
+          14437
+        ],
+        "name": "SpyEthVaultForExitGame",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": true,
+            "id": 633,
+            "name": "SAFE_GAS_STIPEND",
+            "nodeType": "VariableDeclaration",
+            "scope": 663,
+            "src": "172:47:9",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 631,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "172:7:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "32333030",
+              "id": 632,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "215:4:9",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_2300_by_1",
+                "typeString": "int_const 2300"
+              },
+              "value": "2300"
+            },
+            "visibility": "public"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 639,
+            "name": "EthWithdrawCalled",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 638,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 635,
+                  "indexed": false,
+                  "name": "target",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 639,
+                  "src": "259:14:9",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 634,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "259:7:9",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 637,
+                  "indexed": false,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 639,
+                  "src": "283:14:9",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 636,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "283:7:9",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "249:54:9"
+            },
+            "src": "226:78:9"
+          },
+          {
+            "body": {
+              "id": 648,
+              "nodeType": "Block",
+              "src": "396:2:9",
+              "statements": []
+            },
+            "documentation": null,
+            "id": 649,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [
+              {
+                "arguments": [
+                  {
+                    "argumentTypes": null,
+                    "id": 644,
+                    "name": "_framework",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 641,
+                    "src": "366:10:9",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                      "typeString": "contract PlasmaFramework"
+                    }
+                  },
+                  {
+                    "argumentTypes": null,
+                    "id": 645,
+                    "name": "SAFE_GAS_STIPEND",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 633,
+                    "src": "378:16:9",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  }
+                ],
+                "id": 646,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 643,
+                  "name": "EthVault",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 15539,
+                  "src": "357:8:9",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_type$_t_contract$_EthVault_$15539_$",
+                    "typeString": "type(contract EthVault)"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "357:38:9"
+              }
+            ],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 642,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 641,
+                  "name": "_framework",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 649,
+                  "src": "322:26:9",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                    "typeString": "contract PlasmaFramework"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 640,
+                    "name": "PlasmaFramework",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 12298,
+                    "src": "322:15:9",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                      "typeString": "contract PlasmaFramework"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "321:28:9"
+            },
+            "returnParameters": {
+              "id": 647,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "396:0:9"
+            },
+            "scope": 663,
+            "src": "310:88:9",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 661,
+              "nodeType": "Block",
+              "src": "502:57:9",
+              "statements": [
+                {
+                  "eventCall": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 657,
+                        "name": "_target",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 651,
+                        "src": "535:7:9",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 658,
+                        "name": "_amount",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 653,
+                        "src": "544:7:9",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "id": 656,
+                      "name": "EthWithdrawCalled",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 639,
+                      "src": "517:17:9",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_event_nonpayable$_t_address_$_t_uint256_$returns$__$",
+                        "typeString": "function (address,uint256)"
+                      }
+                    },
+                    "id": 659,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "517:35:9",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 660,
+                  "nodeType": "EmitStatement",
+                  "src": "512:40:9"
+                }
+              ]
+            },
+            "documentation": "override for test ",
+            "id": 662,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "withdraw",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 654,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 651,
+                  "name": "_target",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 662,
+                  "src": "451:23:9",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address_payable",
+                    "typeString": "address payable"
+                  },
+                  "typeName": {
+                    "id": 650,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "451:15:9",
+                    "stateMutability": "payable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address_payable",
+                      "typeString": "address payable"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 653,
+                  "name": "_amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 662,
+                  "src": "476:15:9",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 652,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "476:7:9",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "450:42:9"
+            },
+            "returnParameters": {
+              "id": 655,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "502:0:9"
+            },
+            "scope": 663,
+            "src": "433:126:9",
+            "stateMutability": "nonpayable",
+            "superFunction": 15538,
+            "visibility": "external"
+          }
+        ],
+        "scope": 664,
+        "src": "122:439:9"
+      }
+    ],
+    "src": "0:562:9"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.483Z",
+  "devdoc": {
+    "methods": {
+      "deposit(bytes)": {
+        "params": {
+          "_depositTx": "RLP-encoded transaction to act as the deposit"
+        }
+      },
+      "getEffectiveDepositVerifier()": {
+        "return": "Contract address of the deposit verifier"
+      },
+      "setDepositVerifier(address)": {
+        "details": "emit SetDepositVerifierCalledWhen one contract is already set, the next one is effective after 2 * MIN_EXIT_PERIOD.     This is to protect deposit transactions already in mempool,     and also make sure user only needs to SE within first week when invalid vault is registered.     *      see: https://github.com/omisego/plasma-contracts/issues/412          https://github.com/omisego/plasma-contracts/issues/173",
+        "params": {
+          "_verifier": "Address of the verifier contract"
+        }
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {
+      "deposit(bytes)": {
+        "notice": "Allows a user to deposit ETH into the contract Once the deposit is recognized, the owner may transact on the OmiseGO Network"
+      },
+      "getEffectiveDepositVerifier()": {
+        "notice": "Retrieves the currently effective deposit verifier contract address"
+      },
+      "setDepositVerifier(address)": {
+        "notice": "Sets the deposit verifier contract, which may be called only by the operator"
+      },
+      "withdraw(address,uint256)": {
+        "notice": "override for test "
+      }
+    }
+  }
+}

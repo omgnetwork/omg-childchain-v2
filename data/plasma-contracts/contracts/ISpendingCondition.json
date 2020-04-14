@@ -1,0 +1,532 @@
+{
+  "contractName": "ISpendingCondition",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "inputTx",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint256",
+          "name": "utxoPos",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "spendingTx",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint16",
+          "name": "inputIndex",
+          "type": "uint16"
+        },
+        {
+          "internalType": "bytes",
+          "name": "witness",
+          "type": "bytes"
+        }
+      ],
+      "name": "verify",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"inputTx\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"utxoPos\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"spendingTx\",\"type\":\"bytes\"},{\"internalType\":\"uint16\",\"name\":\"inputIndex\",\"type\":\"uint16\"},{\"internalType\":\"bytes\",\"name\":\"witness\",\"type\":\"bytes\"}],\"name\":\"verify\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"For the interface design and discussion, see the following GH issue     https://github.com/omisego/plasma-contracts/issues/214\",\"methods\":{\"verify(bytes,uint256,bytes,uint16,bytes)\":{\"params\":{\"inputIndex\":\"The input index of the spending tx that points to the output\",\"inputTx\":\"Encoded input transaction, in bytes\",\"spendingTx\":\"Spending transaction, in bytes\",\"utxoPos\":\"Position of the utxo\",\"witness\":\"The witness data of the spending condition\"}}}},\"userdoc\":{\"methods\":{\"verify(bytes,uint256,bytes,uint16,bytes)\":{\"notice\":\"Verifies the spending condition\"}},\"notice\":\"Interface of the spending condition\"}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/interfaces/ISpendingCondition.sol\":\"ISpendingCondition\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/interfaces/ISpendingCondition.sol\":{\"keccak256\":\"0xb8b546d44dc9fd210e4f3b2d5adbad81a2c0f1d39ac6646ecb1d90a3f8204473\",\"urls\":[\"bzz-raw://a6f5211cd589f7d9d70ad0f6e2ccd62bf2dcfe6883b91318b2169be107047ae1\",\"dweb:/ipfs/QmdGFznAejCmEdELxR3Rb66vLuzo7NjZs7jcwFfu2CKu2V\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity 0.5.11;\n\n/**\n * @notice Interface of the spending condition\n * @dev For the interface design and discussion, see the following GH issue\n *      https://github.com/omisego/plasma-contracts/issues/214\n */\ninterface ISpendingCondition {\n\n    /**\n     * @notice Verifies the spending condition\n     * @param inputTx Encoded input transaction, in bytes\n     * @param utxoPos Position of the utxo\n     * @param spendingTx Spending transaction, in bytes\n     * @param inputIndex The input index of the spending tx that points to the output\n     * @param witness The witness data of the spending condition\n     */\n    function verify(\n        bytes calldata inputTx,\n        uint256 utxoPos,\n        bytes calldata spendingTx,\n        uint16 inputIndex,\n        bytes calldata witness\n    ) external view returns (bool);\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/interfaces/ISpendingCondition.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/interfaces/ISpendingCondition.sol",
+    "exportedSymbols": {
+      "ISpendingCondition": [
+        3780
+      ]
+    },
+    "id": 3781,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3764,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:45"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": "@notice Interface of the spending condition\n@dev For the interface design and discussion, see the following GH issue\n     https://github.com/omisego/plasma-contracts/issues/214",
+        "fullyImplemented": false,
+        "id": 3780,
+        "linearizedBaseContracts": [
+          3780
+        ],
+        "name": "ISpendingCondition",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": "@notice Verifies the spending condition\n@param inputTx Encoded input transaction, in bytes\n@param utxoPos Position of the utxo\n@param spendingTx Spending transaction, in bytes\n@param inputIndex The input index of the spending tx that points to the output\n@param witness The witness data of the spending condition",
+            "id": 3779,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "verify",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3775,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3766,
+                  "name": "inputTx",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3779,
+                  "src": "651:22:45",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 3765,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "651:5:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3768,
+                  "name": "utxoPos",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3779,
+                  "src": "683:15:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3767,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "683:7:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3770,
+                  "name": "spendingTx",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3779,
+                  "src": "708:25:45",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 3769,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "708:5:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3772,
+                  "name": "inputIndex",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3779,
+                  "src": "743:17:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  },
+                  "typeName": {
+                    "id": 3771,
+                    "name": "uint16",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "743:6:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint16",
+                      "typeString": "uint16"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3774,
+                  "name": "witness",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3779,
+                  "src": "770:22:45",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 3773,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "770:5:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "641:157:45"
+            },
+            "returnParameters": {
+              "id": 3778,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3777,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3779,
+                  "src": "822:4:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 3776,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "822:4:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "821:6:45"
+            },
+            "scope": 3780,
+            "src": "626:202:45",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 3781,
+        "src": "219:611:45"
+      }
+    ],
+    "src": "0:831:45"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/interfaces/ISpendingCondition.sol",
+    "exportedSymbols": {
+      "ISpendingCondition": [
+        3780
+      ]
+    },
+    "id": 3781,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3764,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:45"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": "@notice Interface of the spending condition\n@dev For the interface design and discussion, see the following GH issue\n     https://github.com/omisego/plasma-contracts/issues/214",
+        "fullyImplemented": false,
+        "id": 3780,
+        "linearizedBaseContracts": [
+          3780
+        ],
+        "name": "ISpendingCondition",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": "@notice Verifies the spending condition\n@param inputTx Encoded input transaction, in bytes\n@param utxoPos Position of the utxo\n@param spendingTx Spending transaction, in bytes\n@param inputIndex The input index of the spending tx that points to the output\n@param witness The witness data of the spending condition",
+            "id": 3779,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "verify",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3775,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3766,
+                  "name": "inputTx",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3779,
+                  "src": "651:22:45",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 3765,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "651:5:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3768,
+                  "name": "utxoPos",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3779,
+                  "src": "683:15:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3767,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "683:7:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3770,
+                  "name": "spendingTx",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3779,
+                  "src": "708:25:45",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 3769,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "708:5:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3772,
+                  "name": "inputIndex",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3779,
+                  "src": "743:17:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  },
+                  "typeName": {
+                    "id": 3771,
+                    "name": "uint16",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "743:6:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint16",
+                      "typeString": "uint16"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3774,
+                  "name": "witness",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3779,
+                  "src": "770:22:45",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 3773,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "770:5:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "641:157:45"
+            },
+            "returnParameters": {
+              "id": 3778,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3777,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3779,
+                  "src": "822:4:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 3776,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "822:4:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "821:6:45"
+            },
+            "scope": 3780,
+            "src": "626:202:45",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 3781,
+        "src": "219:611:45"
+      }
+    ],
+    "src": "0:831:45"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.643Z",
+  "devdoc": {
+    "details": "For the interface design and discussion, see the following GH issue     https://github.com/omisego/plasma-contracts/issues/214",
+    "methods": {
+      "verify(bytes,uint256,bytes,uint16,bytes)": {
+        "params": {
+          "inputIndex": "The input index of the spending tx that points to the output",
+          "inputTx": "Encoded input transaction, in bytes",
+          "spendingTx": "Spending transaction, in bytes",
+          "utxoPos": "Position of the utxo",
+          "witness": "The witness data of the spending condition"
+        }
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {
+      "verify(bytes,uint256,bytes,uint16,bytes)": {
+        "notice": "Verifies the spending condition"
+      }
+    },
+    "notice": "Interface of the spending condition"
+  }
+}

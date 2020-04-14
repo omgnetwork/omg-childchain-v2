@@ -1,0 +1,537 @@
+{
+  "contractName": "IErc20DepositVerifier",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "depositTx",
+          "type": "bytes"
+        },
+        {
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "vault",
+          "type": "address"
+        }
+      ],
+      "name": "verify",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"depositTx\",\"type\":\"bytes\"},{\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"vault\",\"type\":\"address\"}],\"name\":\"verify\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"verify(bytes,address,address)\":{\"params\":{\"depositTx\":\"The deposit transaction\",\"sender\":\"The owner of the deposit transaction\",\"vault\":\"The address of the Erc20Vault contract\"},\"return\":\"Verified (owner, token, amount) of the deposit ERC20 token data\"}}},\"userdoc\":{\"methods\":{\"verify(bytes,address,address)\":{\"notice\":\"Verifies a deposit transaction\"}}}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/vaults/verifiers/IErc20DepositVerifier.sol\":\"IErc20DepositVerifier\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/vaults/verifiers/IErc20DepositVerifier.sol\":{\"keccak256\":\"0xb9fdb4eb58e0fdb99331aa279586d9832c235bd4d814eecf522e80df0878e1fa\",\"urls\":[\"bzz-raw://579e40e92506f413c80b229af603a38073bd38ae85cfe0634046b4579b8a43f8\",\"dweb:/ipfs/QmZBnfJT52kV3QzdCoWf3ykbeCnb9E6syVuW1DvnwRjqXC\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity 0.5.11;\n\ninterface IErc20DepositVerifier {\n    /**\n     * @notice Verifies a deposit transaction\n     * @param depositTx The deposit transaction\n     * @param sender The owner of the deposit transaction\n     * @param vault The address of the Erc20Vault contract\n     * @return Verified (owner, token, amount) of the deposit ERC20 token data\n     */\n    function verify(bytes calldata depositTx, address sender, address vault)\n        external\n        view\n        returns (address owner, address token, uint256 amount);\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/vaults/verifiers/IErc20DepositVerifier.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/vaults/verifiers/IErc20DepositVerifier.sol",
+    "exportedSymbols": {
+      "IErc20DepositVerifier": [
+        16111
+      ]
+    },
+    "id": 16112,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 16095,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:101"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 16111,
+        "linearizedBaseContracts": [
+          16111
+        ],
+        "name": "IErc20DepositVerifier",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": "@notice Verifies a deposit transaction\n@param depositTx The deposit transaction\n@param sender The owner of the deposit transaction\n@param vault The address of the Erc20Vault contract\n@return Verified (owner, token, amount) of the deposit ERC20 token data",
+            "id": 16110,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "verify",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 16102,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 16097,
+                  "name": "depositTx",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 16110,
+                  "src": "385:24:101",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 16096,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "385:5:101",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 16099,
+                  "name": "sender",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 16110,
+                  "src": "411:14:101",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 16098,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "411:7:101",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 16101,
+                  "name": "vault",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 16110,
+                  "src": "427:13:101",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 16100,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "427:7:101",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "384:57:101"
+            },
+            "returnParameters": {
+              "id": 16109,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 16104,
+                  "name": "owner",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 16110,
+                  "src": "489:13:101",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 16103,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "489:7:101",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 16106,
+                  "name": "token",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 16110,
+                  "src": "504:13:101",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 16105,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "504:7:101",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 16108,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 16110,
+                  "src": "519:14:101",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 16107,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "519:7:101",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "488:46:101"
+            },
+            "scope": 16111,
+            "src": "369:166:101",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 16112,
+        "src": "25:512:101"
+      }
+    ],
+    "src": "0:538:101"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/vaults/verifiers/IErc20DepositVerifier.sol",
+    "exportedSymbols": {
+      "IErc20DepositVerifier": [
+        16111
+      ]
+    },
+    "id": 16112,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 16095,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:101"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 16111,
+        "linearizedBaseContracts": [
+          16111
+        ],
+        "name": "IErc20DepositVerifier",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": "@notice Verifies a deposit transaction\n@param depositTx The deposit transaction\n@param sender The owner of the deposit transaction\n@param vault The address of the Erc20Vault contract\n@return Verified (owner, token, amount) of the deposit ERC20 token data",
+            "id": 16110,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "verify",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 16102,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 16097,
+                  "name": "depositTx",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 16110,
+                  "src": "385:24:101",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 16096,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "385:5:101",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 16099,
+                  "name": "sender",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 16110,
+                  "src": "411:14:101",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 16098,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "411:7:101",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 16101,
+                  "name": "vault",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 16110,
+                  "src": "427:13:101",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 16100,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "427:7:101",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "384:57:101"
+            },
+            "returnParameters": {
+              "id": 16109,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 16104,
+                  "name": "owner",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 16110,
+                  "src": "489:13:101",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 16103,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "489:7:101",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 16106,
+                  "name": "token",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 16110,
+                  "src": "504:13:101",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 16105,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "504:7:101",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 16108,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 16110,
+                  "src": "519:14:101",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 16107,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "519:7:101",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "488:46:101"
+            },
+            "scope": 16111,
+            "src": "369:166:101",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 16112,
+        "src": "25:512:101"
+      }
+    ],
+    "src": "0:538:101"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.857Z",
+  "devdoc": {
+    "methods": {
+      "verify(bytes,address,address)": {
+        "params": {
+          "depositTx": "The deposit transaction",
+          "sender": "The owner of the deposit transaction",
+          "vault": "The address of the Erc20Vault contract"
+        },
+        "return": "Verified (owner, token, amount) of the deposit ERC20 token data"
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {
+      "verify(bytes,address,address)": {
+        "notice": "Verifies a deposit transaction"
+      }
+    }
+  }
+}

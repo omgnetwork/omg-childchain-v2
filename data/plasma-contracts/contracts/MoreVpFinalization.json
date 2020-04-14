@@ -1,0 +1,3656 @@
+{
+  "contractName": "MoreVpFinalization",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"details\":\"This library assumes that the tx is of the GenericTransaction format\",\"methods\":{}},\"userdoc\":{\"methods\":{},\"notice\":\"Library to check finalization for MoreVP protocol\"}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/utils/MoreVpFinalization.sol\":\"MoreVpFinalization\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/utils/MoreVpFinalization.sol\":{\"keccak256\":\"0xf1975686c18d21ea0401daad5ac9e983f1bb683228df150250ddbb5b89086565\",\"urls\":[\"bzz-raw://531490ead9bdd8403e93c9e1d903b712e9b2b4015e71367e3cdb54c8d7bd6849\",\"dweb:/ipfs/QmZtTffxLdWMqeLmvyPrF3DLXfn3cX9qkC4hUAdKze9D6b\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/BlockController.sol\":{\"keccak256\":\"0xac302eceee96e5a83b7fdfb43d23389f516ff4b7322e5e094d7ad0b3be177c0b\",\"urls\":[\"bzz-raw://cf36aec949574838af497c6448000226d20aea4d0a787c746dd10775166df8a3\",\"dweb:/ipfs/QmQvD1DZfeidC1xiC3fnzTbCcgTTG9MuN6NNwKn965bVvC\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/ExitGameController.sol\":{\"keccak256\":\"0x4afed31e54ae47674ccf2ca4c9a6fe57e3e3f6519bf3b3fc997eed708405c4a0\",\"urls\":[\"bzz-raw://dc82f473933be3817ba0bc07da0dc9fb488dc1f34195d132e6ba274d190bdcee\",\"dweb:/ipfs/QmdADCXHRKRjWqLMcRmtSpyzz9bti9cod7Poa8M7TW6QKJ\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/PlasmaFramework.sol\":{\"keccak256\":\"0x4b017fa7cae50fcf79803255fe0ffe8183e8f3934d9ac46a48235986f4714179\",\"urls\":[\"bzz-raw://30974a631b8c13aedea212390fcc1cf75472dc3f49a9c52eb33fc07c04b545e1\",\"dweb:/ipfs/QmT15Bw5NtE7b1RvVcmRXcGkEAL9BpbbgKwMtJBphXTbLd\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/Protocol.sol\":{\"keccak256\":\"0x81e37c136c340d917e370c58894761aee710bbef727414685490e405bc0f18e8\",\"urls\":[\"bzz-raw://7a54192b587531dd1adc33202479142afdf116385bab22daa153b8d4439d7333\",\"dweb:/ipfs/QmT37F3SCsWLf93okFrx1LUUr6c2zXCj28u2sjXXFBef2X\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/interfaces/IExitProcessor.sol\":{\"keccak256\":\"0x93c31f7c8ff69c80bd30f9296a7b2059affedadefc0c2cfb5c992eb1f1885fa2\",\"urls\":[\"bzz-raw://d56cb65fd67b07cec3bb17f48c064df4ea892780bf21d87d717e6581feb92ffd\",\"dweb:/ipfs/QmZZGPdSSN81c2P1CBnrCQD9mRWntPUPUjm4vCgWsBqS14\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/models/BlockModel.sol\":{\"keccak256\":\"0x7d26be621a43e2b8855f6c71f91c886d3b48ed809f421a1eee9c165c803d0cf7\",\"urls\":[\"bzz-raw://850b2acb61d96e9eb09d8bf24617ecf47aa948d6754b2d09d0e0d2b949193a2d\",\"dweb:/ipfs/QmW8yoi4jZxHAJf4bNjtt3nGckaWUEX92ZbgrKpoRHJGRM\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/registries/ExitGameRegistry.sol\":{\"keccak256\":\"0x4695a609c60b6be59bbc49ed6d3b14725bcc2efcecd083f8cabbcd3ddb399e68\",\"urls\":[\"bzz-raw://d31ca9188c426bbb2e8cf0fca61a9d451497408ddb4708cfc78d543b75fcb274\",\"dweb:/ipfs/QmawYeD9CCd5chGoB62zVKpk5Q9zJxhUUGJu7hUaCF5JXM\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/registries/VaultRegistry.sol\":{\"keccak256\":\"0x7786b4b8b043026655fa872f11ec747ef600100cc73da38369e1e2fd5047c95a\",\"urls\":[\"bzz-raw://b957490e53281e516290455b78722627f5536e0bd6b9bc17777f3f7a93ed9b14\",\"dweb:/ipfs/QmbUEwWfkTCSPPNEjAJUEXwgCCY9cBPgAKJagRbYQ3PSLE\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/ExitPriority.sol\":{\"keccak256\":\"0x18a6c6b1f8c072e693d855bc8991ea4c51951f9058fd116253a1b8ccb6fc1647\",\"urls\":[\"bzz-raw://a22420b5f647d6108be8a3de23b5dd561f65b12dd804ead7edf5384407a506f3\",\"dweb:/ipfs/QmTd986YDqtwQ1eXqUP4esUBKxGthieXJWkQTsMJzewXgA\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/PriorityQueue.sol\":{\"keccak256\":\"0xf46de2038d5fbc06f1aba7f36e7e02ead27485044ccf25afc2b9ad84ea705991\",\"urls\":[\"bzz-raw://a23fd7ad08f351743c7599fa546a0b54586e7e319c00c3e9d41c3aa10546ec5d\",\"dweb:/ipfs/QmWH32SoQmhyy7CE8u8g412e1AosogVE3eEBjrAh9MABvb\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/Quarantine.sol\":{\"keccak256\":\"0x1b685ea3de626e3d8961d0e384a67c3e87752874784cc2e59777857d130f2390\",\"urls\":[\"bzz-raw://28c30354aa580476f230c4d8e151d34337b923caabc6bccfe560d75ef37d446e\",\"dweb:/ipfs/Qmf9nCYFBhHDyMgHmxX5pSkqLpqb2W3XffPopdkJTHmnAA\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/transactions/GenericTransaction.sol\":{\"keccak256\":\"0xde90e8614329838d210c19607920c7332be57982790763884a7ff62511771871\",\"urls\":[\"bzz-raw://85887bc1789f94197c0476e9b3580aab2330f6988623883eaa857e1f5b82f0e5\",\"dweb:/ipfs/QmcNTkDNpibtRGmxWCpNj6n3HLpsAgmiKKQvDZSNJGT4Bg\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/Merkle.sol\":{\"keccak256\":\"0xc9c85f7e0009969fc557bf1a91448451477f69883c7d597da44e5bb0b2ac9242\",\"urls\":[\"bzz-raw://a8362bcf5933531e5d67086413702449fcb986a54b628863af7096c0ee944d92\",\"dweb:/ipfs/QmdMtjvhgP9wUydTo23SqeqxPrbQ3EBtFv61tCifAHtqKJ\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/OnlyFromAddress.sol\":{\"keccak256\":\"0x54d4cb74bf5c448bb383ff4ffce898473739a5ba015e439dae1c092c70df943f\",\"urls\":[\"bzz-raw://5c9efbe363534d6746573b9b0dda687d257272c3ce0123b6a45bc7eef55a40b4\",\"dweb:/ipfs/QmZPLF1bKdU6DAZZcxWfMudUwzeubLxsSk14x8hvUMj15X\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/PosLib.sol\":{\"keccak256\":\"0xd47b38ef93cf913b6b7a3bf608dec2c084108d090cc02b222da3d8eb39819d5f\",\"urls\":[\"bzz-raw://c42d551c21adfa400d08108673b29e4bd1eec70aaa469287571071df3f8f0bc1\",\"dweb:/ipfs/Qmepq632azqUDHt5ypVwmkTfeQG8uP1HYw8x1H3Hdg9K6R\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/RLPReader.sol\":{\"keccak256\":\"0x83a578c149e11e4c03d222bc2ae7226f8b448c308b6bf8167b6c53719b68f722\",\"urls\":[\"bzz-raw://792d3afbbc68be381e4981d2f62a5720033967544b5cb750052dc62d273f3587\",\"dweb:/ipfs/QmUemf7AhGu3SWu86NQ6YW2HcNAzQSoT5BpwGqqasFyzH5\"]},\"openzeppelin-solidity/contracts/math/SafeMath.sol\":{\"keccak256\":\"0x4ccf2d7b51873db1ccfd54ca2adae5eac3b184f9699911ed4490438419f1c690\",\"urls\":[\"bzz-raw://d62d769b2219d5de39013093412623e624fa887f871826ea3bae6052ee893610\",\"dweb:/ipfs/QmV3yVktya1s617QmuzQR2CfuJgUi3dR2xEZY9ecmqZ2G1\"]},\"openzeppelin-solidity/contracts/utils/Address.sol\":{\"keccak256\":\"0xf3358e5819ca73357abd6c90bdfffd0474af54364897f6b3e3234c4b71fbe9a1\",\"urls\":[\"bzz-raw://75ae8d04454d1511a2ed986cc8585736f05c5c25280683b3d24712a9f414a4bf\",\"dweb:/ipfs/Qmb3kNCoBUZdah1AgBBD4zMk898j5Qw8ahT1w5cCMYp5Y3\"]}},\"version\":1}",
+  "bytecode": "0x60636023600b82828239805160001a607314601657fe5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea365627a7a72315820b0af4a2950ff8993350b553772e7d7335ac76276e875d136dcdfd8113b7c19c66c6578706572696d656e74616cf564736f6c634300050b0040",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea365627a7a72315820b0af4a2950ff8993350b553772e7d7335ac76276e875d136dcdfd8113b7c19c66c6578706572696d656e74616cf564736f6c634300050b0040",
+  "sourceMap": "409:1777:71:-;;132:2:-1;166:7;155:9;146:7;137:37;255:7;249:14;246:1;241:23;235:4;232:33;222:2;;269:9;222:2;293:9;290:1;283:20;323:4;314:7;306:22;347:7;338;331:24",
+  "deployedSourceMap": "409:1777:71:-;;;;;;;;",
+  "source": "pragma solidity 0.5.11;\npragma experimental ABIEncoderV2;\n\nimport \"../../framework/PlasmaFramework.sol\";\nimport \"../../framework/Protocol.sol\";\nimport \"../../utils/Merkle.sol\";\nimport \"../../utils/PosLib.sol\";\nimport \"../../transactions/GenericTransaction.sol\";\n\n/**\n * @notice Library to check finalization for MoreVP protocol\n * @dev This library assumes that the tx is of the GenericTransaction format\n */\nlibrary MoreVpFinalization {\n    using PosLib for PosLib.Position;\n\n    /**\n    * @notice Checks whether a transaction is \"standard finalized\".\n    *         For MoreVP, it means the transaction should be included in a plasma block.\n    */\n    function isStandardFinalized(\n        PlasmaFramework framework,\n        bytes memory txBytes,\n        PosLib.Position memory txPos,\n        bytes memory inclusionProof\n    )\n        internal\n        view\n        returns (bool)\n    {\n        require(txPos.outputIndex == 0, \"Invalid transaction position\");\n        GenericTransaction.Transaction memory genericTx = GenericTransaction.decode(txBytes);\n        uint8 protocol = framework.protocols(genericTx.txType);\n        require(protocol == Protocol.MORE_VP(), \"MoreVpFinalization: not a MoreVP protocol tx\");\n\n        (bytes32 root,) = framework.blocks(txPos.blockNum);\n        require(root != bytes32(\"\"), \"Failed to get the root hash of the block num\");\n\n        return Merkle.checkMembership(\n            txBytes, txPos.txIndex, root, inclusionProof\n        );\n    }\n\n    /**\n    * @notice Checks whether a transaction is \"protocol finalized\"\n    *         For MoreVP, since it allows in-flight tx, so only checks for the existence of the transaction\n    */\n    function isProtocolFinalized(\n        PlasmaFramework framework,\n        bytes memory txBytes\n    )\n        internal\n        view\n        returns (bool)\n    {\n        if (txBytes.length == 0) {\n            return false;\n        }\n\n        GenericTransaction.Transaction memory genericTx = GenericTransaction.decode(txBytes);\n        uint8 protocol = framework.protocols(genericTx.txType);\n        require(protocol == Protocol.MORE_VP(), \"MoreVpFinalization: not a MoreVP protocol tx\");\n\n        return true;\n    }\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/utils/MoreVpFinalization.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/utils/MoreVpFinalization.sol",
+    "exportedSymbols": {
+      "MoreVpFinalization": [
+        11309
+      ]
+    },
+    "id": 11310,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 11179,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:71"
+      },
+      {
+        "id": 11180,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "24:33:71"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/PlasmaFramework.sol",
+        "file": "../../framework/PlasmaFramework.sol",
+        "id": 11181,
+        "nodeType": "ImportDirective",
+        "scope": 11310,
+        "sourceUnit": 12299,
+        "src": "59:45:71",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/Protocol.sol",
+        "file": "../../framework/Protocol.sol",
+        "id": 11182,
+        "nodeType": "ImportDirective",
+        "scope": 11310,
+        "sourceUnit": 12340,
+        "src": "105:38:71",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/Merkle.sol",
+        "file": "../../utils/Merkle.sol",
+        "id": 11183,
+        "nodeType": "ImportDirective",
+        "scope": 11310,
+        "sourceUnit": 14421,
+        "src": "144:32:71",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/PosLib.sol",
+        "file": "../../utils/PosLib.sol",
+        "id": 11184,
+        "nodeType": "ImportDirective",
+        "scope": 11310,
+        "sourceUnit": 14622,
+        "src": "177:32:71",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/transactions/GenericTransaction.sol",
+        "file": "../../transactions/GenericTransaction.sol",
+        "id": 11185,
+        "nodeType": "ImportDirective",
+        "scope": 11310,
+        "sourceUnit": 13624,
+        "src": "210:51:71",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": "@notice Library to check finalization for MoreVP protocol\n@dev This library assumes that the tx is of the GenericTransaction format",
+        "fullyImplemented": true,
+        "id": 11309,
+        "linearizedBaseContracts": [
+          11309
+        ],
+        "name": "MoreVpFinalization",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "id": 11188,
+            "libraryName": {
+              "contractScope": null,
+              "id": 11186,
+              "name": "PosLib",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 14621,
+              "src": "448:6:71",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_PosLib_$14621",
+                "typeString": "library PosLib"
+              }
+            },
+            "nodeType": "UsingForDirective",
+            "src": "442:33:71",
+            "typeName": {
+              "contractScope": null,
+              "id": 11187,
+              "name": "PosLib.Position",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 14464,
+              "src": "459:15:71",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_Position_$14464_storage_ptr",
+                "typeString": "struct PosLib.Position"
+              }
+            }
+          },
+          {
+            "body": {
+              "id": 11261,
+              "nodeType": "Block",
+              "src": "885:590:71",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_uint16",
+                          "typeString": "uint16"
+                        },
+                        "id": 11205,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "expression": {
+                            "argumentTypes": null,
+                            "id": 11202,
+                            "name": "txPos",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 11194,
+                            "src": "903:5:71",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                              "typeString": "struct PosLib.Position memory"
+                            }
+                          },
+                          "id": 11203,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "outputIndex",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 14463,
+                          "src": "903:17:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint16",
+                            "typeString": "uint16"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "==",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "hexValue": "30",
+                          "id": 11204,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "number",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "924:1:71",
+                          "subdenomination": null,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_rational_0_by_1",
+                            "typeString": "int_const 0"
+                          },
+                          "value": "0"
+                        },
+                        "src": "903:22:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "496e76616c6964207472616e73616374696f6e20706f736974696f6e",
+                        "id": 11206,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "927:30:71",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_5bac331c7301f0bfcbc449789f7a86b2a27b865f14be93601a619395a1eee889",
+                          "typeString": "literal_string \"Invalid transaction position\""
+                        },
+                        "value": "Invalid transaction position"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_5bac331c7301f0bfcbc449789f7a86b2a27b865f14be93601a619395a1eee889",
+                          "typeString": "literal_string \"Invalid transaction position\""
+                        }
+                      ],
+                      "id": 11201,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "895:7:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 11207,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "895:63:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 11208,
+                  "nodeType": "ExpressionStatement",
+                  "src": "895:63:71"
+                },
+                {
+                  "assignments": [
+                    11212
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 11212,
+                      "name": "genericTx",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 11261,
+                      "src": "968:47:71",
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Transaction_$13436_memory_ptr",
+                        "typeString": "struct GenericTransaction.Transaction"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 11211,
+                        "name": "GenericTransaction.Transaction",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 13436,
+                        "src": "968:30:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Transaction_$13436_storage_ptr",
+                          "typeString": "struct GenericTransaction.Transaction"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 11217,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 11215,
+                        "name": "txBytes",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11192,
+                        "src": "1044:7:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 11213,
+                        "name": "GenericTransaction",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 13623,
+                        "src": "1018:18:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_GenericTransaction_$13623_$",
+                          "typeString": "type(library GenericTransaction)"
+                        }
+                      },
+                      "id": 11214,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "decode",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 13550,
+                      "src": "1018:25:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_bytes_memory_ptr_$returns$_t_struct$_Transaction_$13436_memory_ptr_$",
+                        "typeString": "function (bytes memory) pure returns (struct GenericTransaction.Transaction memory)"
+                      }
+                    },
+                    "id": 11216,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1018:34:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Transaction_$13436_memory_ptr",
+                      "typeString": "struct GenericTransaction.Transaction memory"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "968:84:71"
+                },
+                {
+                  "assignments": [
+                    11219
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 11219,
+                      "name": "protocol",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 11261,
+                      "src": "1062:14:71",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint8",
+                        "typeString": "uint8"
+                      },
+                      "typeName": {
+                        "id": 11218,
+                        "name": "uint8",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1062:5:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint8",
+                          "typeString": "uint8"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 11225,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 11222,
+                          "name": "genericTx",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11212,
+                          "src": "1099:9:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Transaction_$13436_memory_ptr",
+                            "typeString": "struct GenericTransaction.Transaction memory"
+                          }
+                        },
+                        "id": 11223,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "txType",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 13425,
+                        "src": "1099:16:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 11220,
+                        "name": "framework",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11190,
+                        "src": "1079:9:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                          "typeString": "contract PlasmaFramework"
+                        }
+                      },
+                      "id": 11221,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "protocols",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 12562,
+                      "src": "1079:19:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_uint8_$",
+                        "typeString": "function (uint256) view external returns (uint8)"
+                      }
+                    },
+                    "id": 11224,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1079:37:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1062:54:71"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_uint8",
+                          "typeString": "uint8"
+                        },
+                        "id": 11231,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "id": 11227,
+                          "name": "protocol",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11219,
+                          "src": "1134:8:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint8",
+                            "typeString": "uint8"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "==",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "arguments": [],
+                          "expression": {
+                            "argumentTypes": [],
+                            "expression": {
+                              "argumentTypes": null,
+                              "id": 11228,
+                              "name": "Protocol",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 12339,
+                              "src": "1146:8:71",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_type$_t_contract$_Protocol_$12339_$",
+                                "typeString": "type(library Protocol)"
+                              }
+                            },
+                            "id": 11229,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "MORE_VP",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 12322,
+                            "src": "1146:16:71",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_pure$__$returns$_t_uint8_$",
+                              "typeString": "function () pure returns (uint8)"
+                            }
+                          },
+                          "id": 11230,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1146:18:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint8",
+                            "typeString": "uint8"
+                          }
+                        },
+                        "src": "1134:30:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "4d6f7265567046696e616c697a6174696f6e3a206e6f742061204d6f726556502070726f746f636f6c207478",
+                        "id": 11232,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1166:46:71",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_f5354c58f3204687ba573209d45a49ce871ef5ce842032f062fc3a1307fdada2",
+                          "typeString": "literal_string \"MoreVpFinalization: not a MoreVP protocol tx\""
+                        },
+                        "value": "MoreVpFinalization: not a MoreVP protocol tx"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_f5354c58f3204687ba573209d45a49ce871ef5ce842032f062fc3a1307fdada2",
+                          "typeString": "literal_string \"MoreVpFinalization: not a MoreVP protocol tx\""
+                        }
+                      ],
+                      "id": 11226,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "1126:7:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 11233,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1126:87:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 11234,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1126:87:71"
+                },
+                {
+                  "assignments": [
+                    11236,
+                    null
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 11236,
+                      "name": "root",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 11261,
+                      "src": "1225:12:71",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bytes32",
+                        "typeString": "bytes32"
+                      },
+                      "typeName": {
+                        "id": 11235,
+                        "name": "bytes32",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1225:7:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    null
+                  ],
+                  "id": 11242,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 11239,
+                          "name": "txPos",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11194,
+                          "src": "1259:5:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                            "typeString": "struct PosLib.Position memory"
+                          }
+                        },
+                        "id": 11240,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "blockNum",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 14459,
+                        "src": "1259:14:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint64",
+                          "typeString": "uint64"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint64",
+                          "typeString": "uint64"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 11237,
+                        "name": "framework",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11190,
+                        "src": "1242:9:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                          "typeString": "contract PlasmaFramework"
+                        }
+                      },
+                      "id": 11238,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "blocks",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 11374,
+                      "src": "1242:16:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_bytes32_$_t_uint256_$",
+                        "typeString": "function (uint256) view external returns (bytes32,uint256)"
+                      }
+                    },
+                    "id": 11241,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1242:32:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_bytes32_$_t_uint256_$",
+                      "typeString": "tuple(bytes32,uint256)"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1224:50:71"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        },
+                        "id": 11248,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "id": 11244,
+                          "name": "root",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11236,
+                          "src": "1292:4:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bytes32",
+                            "typeString": "bytes32"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "!=",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "",
+                              "id": 11246,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "string",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1308:2:71",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+                                "typeString": "literal_string \"\""
+                              },
+                              "value": ""
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_stringliteral_c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+                                "typeString": "literal_string \"\""
+                              }
+                            ],
+                            "id": 11245,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "lValueRequested": false,
+                            "nodeType": "ElementaryTypeNameExpression",
+                            "src": "1300:7:71",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_type$_t_bytes32_$",
+                              "typeString": "type(bytes32)"
+                            },
+                            "typeName": "bytes32"
+                          },
+                          "id": 11247,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "typeConversion",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1300:11:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bytes32",
+                            "typeString": "bytes32"
+                          }
+                        },
+                        "src": "1292:19:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "4661696c656420746f206765742074686520726f6f742068617368206f662074686520626c6f636b206e756d",
+                        "id": 11249,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1313:46:71",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_658e749b69fe9ff30ff145b919b481d6c3b458680ffe1b4b2873a460ddca46ec",
+                          "typeString": "literal_string \"Failed to get the root hash of the block num\""
+                        },
+                        "value": "Failed to get the root hash of the block num"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_658e749b69fe9ff30ff145b919b481d6c3b458680ffe1b4b2873a460ddca46ec",
+                          "typeString": "literal_string \"Failed to get the root hash of the block num\""
+                        }
+                      ],
+                      "id": 11243,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "1284:7:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 11250,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1284:76:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 11251,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1284:76:71"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 11254,
+                        "name": "txBytes",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11192,
+                        "src": "1414:7:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 11255,
+                          "name": "txPos",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11194,
+                          "src": "1423:5:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                            "typeString": "struct PosLib.Position memory"
+                          }
+                        },
+                        "id": 11256,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "txIndex",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 14461,
+                        "src": "1423:13:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint16",
+                          "typeString": "uint16"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 11257,
+                        "name": "root",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11236,
+                        "src": "1438:4:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 11258,
+                        "name": "inclusionProof",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11196,
+                        "src": "1444:14:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        },
+                        {
+                          "typeIdentifier": "t_uint16",
+                          "typeString": "uint16"
+                        },
+                        {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        },
+                        {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 11252,
+                        "name": "Merkle",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 14420,
+                        "src": "1378:6:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_Merkle_$14420_$",
+                          "typeString": "type(library Merkle)"
+                        }
+                      },
+                      "id": 11253,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "checkMembership",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 14419,
+                      "src": "1378:22:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_bytes_memory_ptr_$_t_uint256_$_t_bytes32_$_t_bytes_memory_ptr_$returns$_t_bool_$",
+                        "typeString": "function (bytes memory,uint256,bytes32,bytes memory) pure returns (bool)"
+                      }
+                    },
+                    "id": 11259,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1378:90:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "functionReturnParameters": 11200,
+                  "id": 11260,
+                  "nodeType": "Return",
+                  "src": "1371:97:71"
+                }
+              ]
+            },
+            "documentation": "@notice Checks whether a transaction is \"standard finalized\".\n        For MoreVP, it means the transaction should be included in a plasma block.",
+            "id": 11262,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isStandardFinalized",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11197,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11190,
+                  "name": "framework",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11262,
+                  "src": "691:25:71",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                    "typeString": "contract PlasmaFramework"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 11189,
+                    "name": "PlasmaFramework",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 12298,
+                    "src": "691:15:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                      "typeString": "contract PlasmaFramework"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11192,
+                  "name": "txBytes",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11262,
+                  "src": "726:20:71",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 11191,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "726:5:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11194,
+                  "name": "txPos",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11262,
+                  "src": "756:28:71",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                    "typeString": "struct PosLib.Position"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 11193,
+                    "name": "PosLib.Position",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 14464,
+                    "src": "756:15:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$14464_storage_ptr",
+                      "typeString": "struct PosLib.Position"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11196,
+                  "name": "inclusionProof",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11262,
+                  "src": "794:27:71",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 11195,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "794:5:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "681:146:71"
+            },
+            "returnParameters": {
+              "id": 11200,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11199,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11262,
+                  "src": "875:4:71",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 11198,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "875:4:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "874:6:71"
+            },
+            "scope": 11309,
+            "src": "653:822:71",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 11307,
+              "nodeType": "Block",
+              "src": "1828:356:71",
+              "statements": [
+                {
+                  "condition": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 11274,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 11271,
+                        "name": "txBytes",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11266,
+                        "src": "1842:7:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      },
+                      "id": 11272,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "length",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": null,
+                      "src": "1842:14:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "==",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "hexValue": "30",
+                      "id": 11273,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1860:1:71",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_0_by_1",
+                        "typeString": "int_const 0"
+                      },
+                      "value": "0"
+                    },
+                    "src": "1842:19:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "falseBody": null,
+                  "id": 11278,
+                  "nodeType": "IfStatement",
+                  "src": "1838:62:71",
+                  "trueBody": {
+                    "id": 11277,
+                    "nodeType": "Block",
+                    "src": "1863:37:71",
+                    "statements": [
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "hexValue": "66616c7365",
+                          "id": 11275,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "bool",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "1884:5:71",
+                          "subdenomination": null,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          },
+                          "value": "false"
+                        },
+                        "functionReturnParameters": 11270,
+                        "id": 11276,
+                        "nodeType": "Return",
+                        "src": "1877:12:71"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "assignments": [
+                    11282
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 11282,
+                      "name": "genericTx",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 11307,
+                      "src": "1910:47:71",
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Transaction_$13436_memory_ptr",
+                        "typeString": "struct GenericTransaction.Transaction"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 11281,
+                        "name": "GenericTransaction.Transaction",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 13436,
+                        "src": "1910:30:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Transaction_$13436_storage_ptr",
+                          "typeString": "struct GenericTransaction.Transaction"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 11287,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 11285,
+                        "name": "txBytes",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11266,
+                        "src": "1986:7:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 11283,
+                        "name": "GenericTransaction",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 13623,
+                        "src": "1960:18:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_GenericTransaction_$13623_$",
+                          "typeString": "type(library GenericTransaction)"
+                        }
+                      },
+                      "id": 11284,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "decode",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 13550,
+                      "src": "1960:25:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_bytes_memory_ptr_$returns$_t_struct$_Transaction_$13436_memory_ptr_$",
+                        "typeString": "function (bytes memory) pure returns (struct GenericTransaction.Transaction memory)"
+                      }
+                    },
+                    "id": 11286,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1960:34:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Transaction_$13436_memory_ptr",
+                      "typeString": "struct GenericTransaction.Transaction memory"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1910:84:71"
+                },
+                {
+                  "assignments": [
+                    11289
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 11289,
+                      "name": "protocol",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 11307,
+                      "src": "2004:14:71",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint8",
+                        "typeString": "uint8"
+                      },
+                      "typeName": {
+                        "id": 11288,
+                        "name": "uint8",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "2004:5:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint8",
+                          "typeString": "uint8"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 11295,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 11292,
+                          "name": "genericTx",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11282,
+                          "src": "2041:9:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Transaction_$13436_memory_ptr",
+                            "typeString": "struct GenericTransaction.Transaction memory"
+                          }
+                        },
+                        "id": 11293,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "txType",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 13425,
+                        "src": "2041:16:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 11290,
+                        "name": "framework",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11264,
+                        "src": "2021:9:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                          "typeString": "contract PlasmaFramework"
+                        }
+                      },
+                      "id": 11291,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "protocols",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 12562,
+                      "src": "2021:19:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_uint8_$",
+                        "typeString": "function (uint256) view external returns (uint8)"
+                      }
+                    },
+                    "id": 11294,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2021:37:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "2004:54:71"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_uint8",
+                          "typeString": "uint8"
+                        },
+                        "id": 11301,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "id": 11297,
+                          "name": "protocol",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11289,
+                          "src": "2076:8:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint8",
+                            "typeString": "uint8"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "==",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "arguments": [],
+                          "expression": {
+                            "argumentTypes": [],
+                            "expression": {
+                              "argumentTypes": null,
+                              "id": 11298,
+                              "name": "Protocol",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 12339,
+                              "src": "2088:8:71",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_type$_t_contract$_Protocol_$12339_$",
+                                "typeString": "type(library Protocol)"
+                              }
+                            },
+                            "id": 11299,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "MORE_VP",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 12322,
+                            "src": "2088:16:71",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_pure$__$returns$_t_uint8_$",
+                              "typeString": "function () pure returns (uint8)"
+                            }
+                          },
+                          "id": 11300,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "2088:18:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint8",
+                            "typeString": "uint8"
+                          }
+                        },
+                        "src": "2076:30:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "4d6f7265567046696e616c697a6174696f6e3a206e6f742061204d6f726556502070726f746f636f6c207478",
+                        "id": 11302,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "2108:46:71",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_f5354c58f3204687ba573209d45a49ce871ef5ce842032f062fc3a1307fdada2",
+                          "typeString": "literal_string \"MoreVpFinalization: not a MoreVP protocol tx\""
+                        },
+                        "value": "MoreVpFinalization: not a MoreVP protocol tx"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_f5354c58f3204687ba573209d45a49ce871ef5ce842032f062fc3a1307fdada2",
+                          "typeString": "literal_string \"MoreVpFinalization: not a MoreVP protocol tx\""
+                        }
+                      ],
+                      "id": 11296,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "2068:7:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 11303,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2068:87:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 11304,
+                  "nodeType": "ExpressionStatement",
+                  "src": "2068:87:71"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "hexValue": "74727565",
+                    "id": 11305,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "bool",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "2173:4:71",
+                    "subdenomination": null,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    },
+                    "value": "true"
+                  },
+                  "functionReturnParameters": 11270,
+                  "id": 11306,
+                  "nodeType": "Return",
+                  "src": "2166:11:71"
+                }
+              ]
+            },
+            "documentation": "@notice Checks whether a transaction is \"protocol finalized\"\n        For MoreVP, since it allows in-flight tx, so only checks for the existence of the transaction",
+            "id": 11308,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isProtocolFinalized",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11267,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11264,
+                  "name": "framework",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11308,
+                  "src": "1709:25:71",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                    "typeString": "contract PlasmaFramework"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 11263,
+                    "name": "PlasmaFramework",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 12298,
+                    "src": "1709:15:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                      "typeString": "contract PlasmaFramework"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11266,
+                  "name": "txBytes",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11308,
+                  "src": "1744:20:71",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 11265,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1744:5:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1699:71:71"
+            },
+            "returnParameters": {
+              "id": 11270,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11269,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11308,
+                  "src": "1818:4:71",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 11268,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1818:4:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1817:6:71"
+            },
+            "scope": 11309,
+            "src": "1671:513:71",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 11310,
+        "src": "409:1777:71"
+      }
+    ],
+    "src": "0:2187:71"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/utils/MoreVpFinalization.sol",
+    "exportedSymbols": {
+      "MoreVpFinalization": [
+        11309
+      ]
+    },
+    "id": 11310,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 11179,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:71"
+      },
+      {
+        "id": 11180,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "24:33:71"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/PlasmaFramework.sol",
+        "file": "../../framework/PlasmaFramework.sol",
+        "id": 11181,
+        "nodeType": "ImportDirective",
+        "scope": 11310,
+        "sourceUnit": 12299,
+        "src": "59:45:71",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/Protocol.sol",
+        "file": "../../framework/Protocol.sol",
+        "id": 11182,
+        "nodeType": "ImportDirective",
+        "scope": 11310,
+        "sourceUnit": 12340,
+        "src": "105:38:71",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/Merkle.sol",
+        "file": "../../utils/Merkle.sol",
+        "id": 11183,
+        "nodeType": "ImportDirective",
+        "scope": 11310,
+        "sourceUnit": 14421,
+        "src": "144:32:71",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/PosLib.sol",
+        "file": "../../utils/PosLib.sol",
+        "id": 11184,
+        "nodeType": "ImportDirective",
+        "scope": 11310,
+        "sourceUnit": 14622,
+        "src": "177:32:71",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/transactions/GenericTransaction.sol",
+        "file": "../../transactions/GenericTransaction.sol",
+        "id": 11185,
+        "nodeType": "ImportDirective",
+        "scope": 11310,
+        "sourceUnit": 13624,
+        "src": "210:51:71",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": "@notice Library to check finalization for MoreVP protocol\n@dev This library assumes that the tx is of the GenericTransaction format",
+        "fullyImplemented": true,
+        "id": 11309,
+        "linearizedBaseContracts": [
+          11309
+        ],
+        "name": "MoreVpFinalization",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "id": 11188,
+            "libraryName": {
+              "contractScope": null,
+              "id": 11186,
+              "name": "PosLib",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 14621,
+              "src": "448:6:71",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_PosLib_$14621",
+                "typeString": "library PosLib"
+              }
+            },
+            "nodeType": "UsingForDirective",
+            "src": "442:33:71",
+            "typeName": {
+              "contractScope": null,
+              "id": 11187,
+              "name": "PosLib.Position",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 14464,
+              "src": "459:15:71",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_Position_$14464_storage_ptr",
+                "typeString": "struct PosLib.Position"
+              }
+            }
+          },
+          {
+            "body": {
+              "id": 11261,
+              "nodeType": "Block",
+              "src": "885:590:71",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_uint16",
+                          "typeString": "uint16"
+                        },
+                        "id": 11205,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "expression": {
+                            "argumentTypes": null,
+                            "id": 11202,
+                            "name": "txPos",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 11194,
+                            "src": "903:5:71",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                              "typeString": "struct PosLib.Position memory"
+                            }
+                          },
+                          "id": 11203,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "outputIndex",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 14463,
+                          "src": "903:17:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint16",
+                            "typeString": "uint16"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "==",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "hexValue": "30",
+                          "id": 11204,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "number",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "924:1:71",
+                          "subdenomination": null,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_rational_0_by_1",
+                            "typeString": "int_const 0"
+                          },
+                          "value": "0"
+                        },
+                        "src": "903:22:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "496e76616c6964207472616e73616374696f6e20706f736974696f6e",
+                        "id": 11206,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "927:30:71",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_5bac331c7301f0bfcbc449789f7a86b2a27b865f14be93601a619395a1eee889",
+                          "typeString": "literal_string \"Invalid transaction position\""
+                        },
+                        "value": "Invalid transaction position"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_5bac331c7301f0bfcbc449789f7a86b2a27b865f14be93601a619395a1eee889",
+                          "typeString": "literal_string \"Invalid transaction position\""
+                        }
+                      ],
+                      "id": 11201,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "895:7:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 11207,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "895:63:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 11208,
+                  "nodeType": "ExpressionStatement",
+                  "src": "895:63:71"
+                },
+                {
+                  "assignments": [
+                    11212
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 11212,
+                      "name": "genericTx",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 11261,
+                      "src": "968:47:71",
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Transaction_$13436_memory_ptr",
+                        "typeString": "struct GenericTransaction.Transaction"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 11211,
+                        "name": "GenericTransaction.Transaction",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 13436,
+                        "src": "968:30:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Transaction_$13436_storage_ptr",
+                          "typeString": "struct GenericTransaction.Transaction"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 11217,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 11215,
+                        "name": "txBytes",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11192,
+                        "src": "1044:7:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 11213,
+                        "name": "GenericTransaction",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 13623,
+                        "src": "1018:18:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_GenericTransaction_$13623_$",
+                          "typeString": "type(library GenericTransaction)"
+                        }
+                      },
+                      "id": 11214,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "decode",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 13550,
+                      "src": "1018:25:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_bytes_memory_ptr_$returns$_t_struct$_Transaction_$13436_memory_ptr_$",
+                        "typeString": "function (bytes memory) pure returns (struct GenericTransaction.Transaction memory)"
+                      }
+                    },
+                    "id": 11216,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1018:34:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Transaction_$13436_memory_ptr",
+                      "typeString": "struct GenericTransaction.Transaction memory"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "968:84:71"
+                },
+                {
+                  "assignments": [
+                    11219
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 11219,
+                      "name": "protocol",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 11261,
+                      "src": "1062:14:71",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint8",
+                        "typeString": "uint8"
+                      },
+                      "typeName": {
+                        "id": 11218,
+                        "name": "uint8",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1062:5:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint8",
+                          "typeString": "uint8"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 11225,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 11222,
+                          "name": "genericTx",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11212,
+                          "src": "1099:9:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Transaction_$13436_memory_ptr",
+                            "typeString": "struct GenericTransaction.Transaction memory"
+                          }
+                        },
+                        "id": 11223,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "txType",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 13425,
+                        "src": "1099:16:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 11220,
+                        "name": "framework",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11190,
+                        "src": "1079:9:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                          "typeString": "contract PlasmaFramework"
+                        }
+                      },
+                      "id": 11221,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "protocols",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 12562,
+                      "src": "1079:19:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_uint8_$",
+                        "typeString": "function (uint256) view external returns (uint8)"
+                      }
+                    },
+                    "id": 11224,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1079:37:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1062:54:71"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_uint8",
+                          "typeString": "uint8"
+                        },
+                        "id": 11231,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "id": 11227,
+                          "name": "protocol",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11219,
+                          "src": "1134:8:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint8",
+                            "typeString": "uint8"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "==",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "arguments": [],
+                          "expression": {
+                            "argumentTypes": [],
+                            "expression": {
+                              "argumentTypes": null,
+                              "id": 11228,
+                              "name": "Protocol",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 12339,
+                              "src": "1146:8:71",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_type$_t_contract$_Protocol_$12339_$",
+                                "typeString": "type(library Protocol)"
+                              }
+                            },
+                            "id": 11229,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "MORE_VP",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 12322,
+                            "src": "1146:16:71",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_pure$__$returns$_t_uint8_$",
+                              "typeString": "function () pure returns (uint8)"
+                            }
+                          },
+                          "id": 11230,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1146:18:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint8",
+                            "typeString": "uint8"
+                          }
+                        },
+                        "src": "1134:30:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "4d6f7265567046696e616c697a6174696f6e3a206e6f742061204d6f726556502070726f746f636f6c207478",
+                        "id": 11232,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1166:46:71",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_f5354c58f3204687ba573209d45a49ce871ef5ce842032f062fc3a1307fdada2",
+                          "typeString": "literal_string \"MoreVpFinalization: not a MoreVP protocol tx\""
+                        },
+                        "value": "MoreVpFinalization: not a MoreVP protocol tx"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_f5354c58f3204687ba573209d45a49ce871ef5ce842032f062fc3a1307fdada2",
+                          "typeString": "literal_string \"MoreVpFinalization: not a MoreVP protocol tx\""
+                        }
+                      ],
+                      "id": 11226,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "1126:7:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 11233,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1126:87:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 11234,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1126:87:71"
+                },
+                {
+                  "assignments": [
+                    11236,
+                    null
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 11236,
+                      "name": "root",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 11261,
+                      "src": "1225:12:71",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bytes32",
+                        "typeString": "bytes32"
+                      },
+                      "typeName": {
+                        "id": 11235,
+                        "name": "bytes32",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1225:7:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    null
+                  ],
+                  "id": 11242,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 11239,
+                          "name": "txPos",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11194,
+                          "src": "1259:5:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                            "typeString": "struct PosLib.Position memory"
+                          }
+                        },
+                        "id": 11240,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "blockNum",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 14459,
+                        "src": "1259:14:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint64",
+                          "typeString": "uint64"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint64",
+                          "typeString": "uint64"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 11237,
+                        "name": "framework",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11190,
+                        "src": "1242:9:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                          "typeString": "contract PlasmaFramework"
+                        }
+                      },
+                      "id": 11238,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "blocks",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 11374,
+                      "src": "1242:16:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_bytes32_$_t_uint256_$",
+                        "typeString": "function (uint256) view external returns (bytes32,uint256)"
+                      }
+                    },
+                    "id": 11241,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1242:32:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_bytes32_$_t_uint256_$",
+                      "typeString": "tuple(bytes32,uint256)"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1224:50:71"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        },
+                        "id": 11248,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "id": 11244,
+                          "name": "root",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11236,
+                          "src": "1292:4:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bytes32",
+                            "typeString": "bytes32"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "!=",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "",
+                              "id": 11246,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "string",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1308:2:71",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+                                "typeString": "literal_string \"\""
+                              },
+                              "value": ""
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_stringliteral_c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+                                "typeString": "literal_string \"\""
+                              }
+                            ],
+                            "id": 11245,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "lValueRequested": false,
+                            "nodeType": "ElementaryTypeNameExpression",
+                            "src": "1300:7:71",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_type$_t_bytes32_$",
+                              "typeString": "type(bytes32)"
+                            },
+                            "typeName": "bytes32"
+                          },
+                          "id": 11247,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "typeConversion",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1300:11:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bytes32",
+                            "typeString": "bytes32"
+                          }
+                        },
+                        "src": "1292:19:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "4661696c656420746f206765742074686520726f6f742068617368206f662074686520626c6f636b206e756d",
+                        "id": 11249,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1313:46:71",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_658e749b69fe9ff30ff145b919b481d6c3b458680ffe1b4b2873a460ddca46ec",
+                          "typeString": "literal_string \"Failed to get the root hash of the block num\""
+                        },
+                        "value": "Failed to get the root hash of the block num"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_658e749b69fe9ff30ff145b919b481d6c3b458680ffe1b4b2873a460ddca46ec",
+                          "typeString": "literal_string \"Failed to get the root hash of the block num\""
+                        }
+                      ],
+                      "id": 11243,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "1284:7:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 11250,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1284:76:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 11251,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1284:76:71"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 11254,
+                        "name": "txBytes",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11192,
+                        "src": "1414:7:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 11255,
+                          "name": "txPos",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11194,
+                          "src": "1423:5:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                            "typeString": "struct PosLib.Position memory"
+                          }
+                        },
+                        "id": 11256,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "txIndex",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 14461,
+                        "src": "1423:13:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint16",
+                          "typeString": "uint16"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 11257,
+                        "name": "root",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11236,
+                        "src": "1438:4:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 11258,
+                        "name": "inclusionProof",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11196,
+                        "src": "1444:14:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        },
+                        {
+                          "typeIdentifier": "t_uint16",
+                          "typeString": "uint16"
+                        },
+                        {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        },
+                        {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 11252,
+                        "name": "Merkle",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 14420,
+                        "src": "1378:6:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_Merkle_$14420_$",
+                          "typeString": "type(library Merkle)"
+                        }
+                      },
+                      "id": 11253,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "checkMembership",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 14419,
+                      "src": "1378:22:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_bytes_memory_ptr_$_t_uint256_$_t_bytes32_$_t_bytes_memory_ptr_$returns$_t_bool_$",
+                        "typeString": "function (bytes memory,uint256,bytes32,bytes memory) pure returns (bool)"
+                      }
+                    },
+                    "id": 11259,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1378:90:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "functionReturnParameters": 11200,
+                  "id": 11260,
+                  "nodeType": "Return",
+                  "src": "1371:97:71"
+                }
+              ]
+            },
+            "documentation": "@notice Checks whether a transaction is \"standard finalized\".\n        For MoreVP, it means the transaction should be included in a plasma block.",
+            "id": 11262,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isStandardFinalized",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11197,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11190,
+                  "name": "framework",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11262,
+                  "src": "691:25:71",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                    "typeString": "contract PlasmaFramework"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 11189,
+                    "name": "PlasmaFramework",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 12298,
+                    "src": "691:15:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                      "typeString": "contract PlasmaFramework"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11192,
+                  "name": "txBytes",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11262,
+                  "src": "726:20:71",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 11191,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "726:5:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11194,
+                  "name": "txPos",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11262,
+                  "src": "756:28:71",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                    "typeString": "struct PosLib.Position"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 11193,
+                    "name": "PosLib.Position",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 14464,
+                    "src": "756:15:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$14464_storage_ptr",
+                      "typeString": "struct PosLib.Position"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11196,
+                  "name": "inclusionProof",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11262,
+                  "src": "794:27:71",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 11195,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "794:5:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "681:146:71"
+            },
+            "returnParameters": {
+              "id": 11200,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11199,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11262,
+                  "src": "875:4:71",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 11198,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "875:4:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "874:6:71"
+            },
+            "scope": 11309,
+            "src": "653:822:71",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 11307,
+              "nodeType": "Block",
+              "src": "1828:356:71",
+              "statements": [
+                {
+                  "condition": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 11274,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 11271,
+                        "name": "txBytes",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11266,
+                        "src": "1842:7:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      },
+                      "id": 11272,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "length",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": null,
+                      "src": "1842:14:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "==",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "hexValue": "30",
+                      "id": 11273,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1860:1:71",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_0_by_1",
+                        "typeString": "int_const 0"
+                      },
+                      "value": "0"
+                    },
+                    "src": "1842:19:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "falseBody": null,
+                  "id": 11278,
+                  "nodeType": "IfStatement",
+                  "src": "1838:62:71",
+                  "trueBody": {
+                    "id": 11277,
+                    "nodeType": "Block",
+                    "src": "1863:37:71",
+                    "statements": [
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "hexValue": "66616c7365",
+                          "id": 11275,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "bool",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "1884:5:71",
+                          "subdenomination": null,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          },
+                          "value": "false"
+                        },
+                        "functionReturnParameters": 11270,
+                        "id": 11276,
+                        "nodeType": "Return",
+                        "src": "1877:12:71"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "assignments": [
+                    11282
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 11282,
+                      "name": "genericTx",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 11307,
+                      "src": "1910:47:71",
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Transaction_$13436_memory_ptr",
+                        "typeString": "struct GenericTransaction.Transaction"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 11281,
+                        "name": "GenericTransaction.Transaction",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 13436,
+                        "src": "1910:30:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Transaction_$13436_storage_ptr",
+                          "typeString": "struct GenericTransaction.Transaction"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 11287,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 11285,
+                        "name": "txBytes",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11266,
+                        "src": "1986:7:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 11283,
+                        "name": "GenericTransaction",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 13623,
+                        "src": "1960:18:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_GenericTransaction_$13623_$",
+                          "typeString": "type(library GenericTransaction)"
+                        }
+                      },
+                      "id": 11284,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "decode",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 13550,
+                      "src": "1960:25:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_bytes_memory_ptr_$returns$_t_struct$_Transaction_$13436_memory_ptr_$",
+                        "typeString": "function (bytes memory) pure returns (struct GenericTransaction.Transaction memory)"
+                      }
+                    },
+                    "id": 11286,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1960:34:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Transaction_$13436_memory_ptr",
+                      "typeString": "struct GenericTransaction.Transaction memory"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1910:84:71"
+                },
+                {
+                  "assignments": [
+                    11289
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 11289,
+                      "name": "protocol",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 11307,
+                      "src": "2004:14:71",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint8",
+                        "typeString": "uint8"
+                      },
+                      "typeName": {
+                        "id": 11288,
+                        "name": "uint8",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "2004:5:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint8",
+                          "typeString": "uint8"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 11295,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 11292,
+                          "name": "genericTx",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11282,
+                          "src": "2041:9:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Transaction_$13436_memory_ptr",
+                            "typeString": "struct GenericTransaction.Transaction memory"
+                          }
+                        },
+                        "id": 11293,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "txType",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 13425,
+                        "src": "2041:16:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 11290,
+                        "name": "framework",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11264,
+                        "src": "2021:9:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                          "typeString": "contract PlasmaFramework"
+                        }
+                      },
+                      "id": 11291,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "protocols",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 12562,
+                      "src": "2021:19:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_view$_t_uint256_$returns$_t_uint8_$",
+                        "typeString": "function (uint256) view external returns (uint8)"
+                      }
+                    },
+                    "id": 11294,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2021:37:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "2004:54:71"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_uint8",
+                          "typeString": "uint8"
+                        },
+                        "id": 11301,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "id": 11297,
+                          "name": "protocol",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 11289,
+                          "src": "2076:8:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint8",
+                            "typeString": "uint8"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "==",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "arguments": [],
+                          "expression": {
+                            "argumentTypes": [],
+                            "expression": {
+                              "argumentTypes": null,
+                              "id": 11298,
+                              "name": "Protocol",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 12339,
+                              "src": "2088:8:71",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_type$_t_contract$_Protocol_$12339_$",
+                                "typeString": "type(library Protocol)"
+                              }
+                            },
+                            "id": 11299,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "MORE_VP",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 12322,
+                            "src": "2088:16:71",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_pure$__$returns$_t_uint8_$",
+                              "typeString": "function () pure returns (uint8)"
+                            }
+                          },
+                          "id": 11300,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "2088:18:71",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint8",
+                            "typeString": "uint8"
+                          }
+                        },
+                        "src": "2076:30:71",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "4d6f7265567046696e616c697a6174696f6e3a206e6f742061204d6f726556502070726f746f636f6c207478",
+                        "id": 11302,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "2108:46:71",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_f5354c58f3204687ba573209d45a49ce871ef5ce842032f062fc3a1307fdada2",
+                          "typeString": "literal_string \"MoreVpFinalization: not a MoreVP protocol tx\""
+                        },
+                        "value": "MoreVpFinalization: not a MoreVP protocol tx"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_f5354c58f3204687ba573209d45a49ce871ef5ce842032f062fc3a1307fdada2",
+                          "typeString": "literal_string \"MoreVpFinalization: not a MoreVP protocol tx\""
+                        }
+                      ],
+                      "id": 11296,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "2068:7:71",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 11303,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2068:87:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 11304,
+                  "nodeType": "ExpressionStatement",
+                  "src": "2068:87:71"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "hexValue": "74727565",
+                    "id": 11305,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "bool",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "2173:4:71",
+                    "subdenomination": null,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    },
+                    "value": "true"
+                  },
+                  "functionReturnParameters": 11270,
+                  "id": 11306,
+                  "nodeType": "Return",
+                  "src": "2166:11:71"
+                }
+              ]
+            },
+            "documentation": "@notice Checks whether a transaction is \"protocol finalized\"\n        For MoreVP, since it allows in-flight tx, so only checks for the existence of the transaction",
+            "id": 11308,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isProtocolFinalized",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11267,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11264,
+                  "name": "framework",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11308,
+                  "src": "1709:25:71",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                    "typeString": "contract PlasmaFramework"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 11263,
+                    "name": "PlasmaFramework",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 12298,
+                    "src": "1709:15:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                      "typeString": "contract PlasmaFramework"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11266,
+                  "name": "txBytes",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11308,
+                  "src": "1744:20:71",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 11265,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1744:5:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1699:71:71"
+            },
+            "returnParameters": {
+              "id": 11270,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11269,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11308,
+                  "src": "1818:4:71",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 11268,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1818:4:71",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1817:6:71"
+            },
+            "scope": 11309,
+            "src": "1671:513:71",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 11310,
+        "src": "409:1777:71"
+      }
+    ],
+    "src": "0:2187:71"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.777Z",
+  "devdoc": {
+    "details": "This library assumes that the tx is of the GenericTransaction format",
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {},
+    "notice": "Library to check finalization for MoreVP protocol"
+  }
+}

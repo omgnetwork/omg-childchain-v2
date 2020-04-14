@@ -1,0 +1,1435 @@
+{
+  "contractName": "FailFastReentrancyGuardAttacker",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract PlasmaFramework",
+          "name": "plasmaFramework",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "RemoteCallFailed",
+      "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "guardedLocal",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "guardedRemote",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[],\"name\":\"guardedRemote\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"guardedLocal\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract PlasmaFramework\",\"name\":\"plasmaFramework\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"RemoteCallFailed\",\"type\":\"event\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/attackers/FailFastReentrancyGuardAttacker.sol\":\"FailFastReentrancyGuardAttacker\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/attackers/FailFastReentrancyGuardAttacker.sol\":{\"keccak256\":\"0x5322e97677f258f4be04022037f6e004f819e2ae1d9a96bcc2fa53e38c8084c4\",\"urls\":[\"bzz-raw://c0d87586d6ab6ef703e94f41a50243cbd3bc730a412f19e2949821db952be94b\",\"dweb:/ipfs/QmUdX1rsFfBMDvKbMtXto88MAzkaTN7nBhbZy1g623FwEm\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/BlockController.sol\":{\"keccak256\":\"0xac302eceee96e5a83b7fdfb43d23389f516ff4b7322e5e094d7ad0b3be177c0b\",\"urls\":[\"bzz-raw://cf36aec949574838af497c6448000226d20aea4d0a787c746dd10775166df8a3\",\"dweb:/ipfs/QmQvD1DZfeidC1xiC3fnzTbCcgTTG9MuN6NNwKn965bVvC\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/ExitGameController.sol\":{\"keccak256\":\"0x4afed31e54ae47674ccf2ca4c9a6fe57e3e3f6519bf3b3fc997eed708405c4a0\",\"urls\":[\"bzz-raw://dc82f473933be3817ba0bc07da0dc9fb488dc1f34195d132e6ba274d190bdcee\",\"dweb:/ipfs/QmdADCXHRKRjWqLMcRmtSpyzz9bti9cod7Poa8M7TW6QKJ\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/PlasmaFramework.sol\":{\"keccak256\":\"0x4b017fa7cae50fcf79803255fe0ffe8183e8f3934d9ac46a48235986f4714179\",\"urls\":[\"bzz-raw://30974a631b8c13aedea212390fcc1cf75472dc3f49a9c52eb33fc07c04b545e1\",\"dweb:/ipfs/QmT15Bw5NtE7b1RvVcmRXcGkEAL9BpbbgKwMtJBphXTbLd\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/Protocol.sol\":{\"keccak256\":\"0x81e37c136c340d917e370c58894761aee710bbef727414685490e405bc0f18e8\",\"urls\":[\"bzz-raw://7a54192b587531dd1adc33202479142afdf116385bab22daa153b8d4439d7333\",\"dweb:/ipfs/QmT37F3SCsWLf93okFrx1LUUr6c2zXCj28u2sjXXFBef2X\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/interfaces/IExitProcessor.sol\":{\"keccak256\":\"0x93c31f7c8ff69c80bd30f9296a7b2059affedadefc0c2cfb5c992eb1f1885fa2\",\"urls\":[\"bzz-raw://d56cb65fd67b07cec3bb17f48c064df4ea892780bf21d87d717e6581feb92ffd\",\"dweb:/ipfs/QmZZGPdSSN81c2P1CBnrCQD9mRWntPUPUjm4vCgWsBqS14\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/models/BlockModel.sol\":{\"keccak256\":\"0x7d26be621a43e2b8855f6c71f91c886d3b48ed809f421a1eee9c165c803d0cf7\",\"urls\":[\"bzz-raw://850b2acb61d96e9eb09d8bf24617ecf47aa948d6754b2d09d0e0d2b949193a2d\",\"dweb:/ipfs/QmW8yoi4jZxHAJf4bNjtt3nGckaWUEX92ZbgrKpoRHJGRM\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/registries/ExitGameRegistry.sol\":{\"keccak256\":\"0x4695a609c60b6be59bbc49ed6d3b14725bcc2efcecd083f8cabbcd3ddb399e68\",\"urls\":[\"bzz-raw://d31ca9188c426bbb2e8cf0fca61a9d451497408ddb4708cfc78d543b75fcb274\",\"dweb:/ipfs/QmawYeD9CCd5chGoB62zVKpk5Q9zJxhUUGJu7hUaCF5JXM\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/registries/VaultRegistry.sol\":{\"keccak256\":\"0x7786b4b8b043026655fa872f11ec747ef600100cc73da38369e1e2fd5047c95a\",\"urls\":[\"bzz-raw://b957490e53281e516290455b78722627f5536e0bd6b9bc17777f3f7a93ed9b14\",\"dweb:/ipfs/QmbUEwWfkTCSPPNEjAJUEXwgCCY9cBPgAKJagRbYQ3PSLE\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/ExitPriority.sol\":{\"keccak256\":\"0x18a6c6b1f8c072e693d855bc8991ea4c51951f9058fd116253a1b8ccb6fc1647\",\"urls\":[\"bzz-raw://a22420b5f647d6108be8a3de23b5dd561f65b12dd804ead7edf5384407a506f3\",\"dweb:/ipfs/QmTd986YDqtwQ1eXqUP4esUBKxGthieXJWkQTsMJzewXgA\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/PriorityQueue.sol\":{\"keccak256\":\"0xf46de2038d5fbc06f1aba7f36e7e02ead27485044ccf25afc2b9ad84ea705991\",\"urls\":[\"bzz-raw://a23fd7ad08f351743c7599fa546a0b54586e7e319c00c3e9d41c3aa10546ec5d\",\"dweb:/ipfs/QmWH32SoQmhyy7CE8u8g412e1AosogVE3eEBjrAh9MABvb\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/Quarantine.sol\":{\"keccak256\":\"0x1b685ea3de626e3d8961d0e384a67c3e87752874784cc2e59777857d130f2390\",\"urls\":[\"bzz-raw://28c30354aa580476f230c4d8e151d34337b923caabc6bccfe560d75ef37d446e\",\"dweb:/ipfs/Qmf9nCYFBhHDyMgHmxX5pSkqLpqb2W3XffPopdkJTHmnAA\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/FailFastReentrancyGuard.sol\":{\"keccak256\":\"0xcbd6934ca4d8f5af83795e6475568d7cd12e822e4ae2c5724da352e245531de9\",\"urls\":[\"bzz-raw://0db25d5aa03db681f2f18ef9be8f858c451684ac0866ebe618ff4700aed54135\",\"dweb:/ipfs/QmXCgKMGq8qxVCUDAiVQeEXvM7AYbwYie8ce1kYCWpbVZg\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/OnlyFromAddress.sol\":{\"keccak256\":\"0x54d4cb74bf5c448bb383ff4ffce898473739a5ba015e439dae1c092c70df943f\",\"urls\":[\"bzz-raw://5c9efbe363534d6746573b9b0dda687d257272c3ce0123b6a45bc7eef55a40b4\",\"dweb:/ipfs/QmZPLF1bKdU6DAZZcxWfMudUwzeubLxsSk14x8hvUMj15X\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/PosLib.sol\":{\"keccak256\":\"0xd47b38ef93cf913b6b7a3bf608dec2c084108d090cc02b222da3d8eb39819d5f\",\"urls\":[\"bzz-raw://c42d551c21adfa400d08108673b29e4bd1eec70aaa469287571071df3f8f0bc1\",\"dweb:/ipfs/Qmepq632azqUDHt5ypVwmkTfeQG8uP1HYw8x1H3Hdg9K6R\"]},\"openzeppelin-solidity/contracts/math/SafeMath.sol\":{\"keccak256\":\"0x4ccf2d7b51873db1ccfd54ca2adae5eac3b184f9699911ed4490438419f1c690\",\"urls\":[\"bzz-raw://d62d769b2219d5de39013093412623e624fa887f871826ea3bae6052ee893610\",\"dweb:/ipfs/QmV3yVktya1s617QmuzQR2CfuJgUi3dR2xEZY9ecmqZ2G1\"]},\"openzeppelin-solidity/contracts/utils/Address.sol\":{\"keccak256\":\"0xf3358e5819ca73357abd6c90bdfffd0474af54364897f6b3e3234c4b71fbe9a1\",\"urls\":[\"bzz-raw://75ae8d04454d1511a2ed986cc8585736f05c5c25280683b3d24712a9f414a4bf\",\"dweb:/ipfs/Qmb3kNCoBUZdah1AgBBD4zMk898j5Qw8ahT1w5cCMYp5Y3\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506040516103e63803806103e683398101604081905261002f91610065565b600080546001600160a01b0319166001600160a01b03929092169190911790556100c4565b805161005f816100ad565b92915050565b60006020828403121561007757600080fd5b60006100838484610054565b949350505050565b600061005f826100a1565b600061005f8261008b565b6001600160a01b031690565b6100b681610096565b81146100c157600080fd5b50565b610313806100d36000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c806324c91ff51461003b578063c4b4152e14610045575b600080fd5b61004361004d565b005b6100436101b2565b6000805460408051600162d84e7760e01b0319815290516001600160a01b0390921692839263ff27b18992600480820193929182900301818387803b15801561009557600080fd5b505af11580156100a9573d6000803e3d6000fd5b505060408051600481526024810182526020810180516001600160e01b03166324c91ff560e01b1790529051600093503092506100e69190610284565b6000604051808303816000865af19150503d8060008114610123576040519150601f19603f3d011682016040523d82523d6000602084013e610128565b606091505b505090508061015b576040517fef716e9372205203fc19568c8ea52ab567d8176cf652631acccb75e55ae37a8190600090a15b50806001600160a01b0316634e0f74366040518163ffffffff1660e01b8152600401600060405180830381600087803b15801561019757600080fd5b505af11580156101ab573d6000803e3d6000fd5b5050505050565b6000805460408051600162d84e7760e01b0319815290516001600160a01b0390921692839263ff27b18992600480820193929182900301818387803b1580156101fa57600080fd5b505af115801561020e573d6000803e3d6000fd5b5050505061021a6101b2565b806001600160a01b0316634e0f74366040518163ffffffff1660e01b8152600401600060405180830381600087803b15801561019757600080fd5b600061026082610297565b61026a818561029b565b935061027a8185602086016102a0565b9290920192915050565b60006102908284610255565b9392505050565b5190565b919050565b60005b838110156102bb5781810151838201526020016102a3565b838111156102ca576000848401525b5050505056fea365627a7a7231582076b51146c022fd13096c848b02fd635909068e1da2552101228594a3d1026b3c6c6578706572696d656e74616cf564736f6c634300050b0040",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100365760003560e01c806324c91ff51461003b578063c4b4152e14610045575b600080fd5b61004361004d565b005b6100436101b2565b6000805460408051600162d84e7760e01b0319815290516001600160a01b0390921692839263ff27b18992600480820193929182900301818387803b15801561009557600080fd5b505af11580156100a9573d6000803e3d6000fd5b505060408051600481526024810182526020810180516001600160e01b03166324c91ff560e01b1790529051600093503092506100e69190610284565b6000604051808303816000865af19150503d8060008114610123576040519150601f19603f3d011682016040523d82523d6000602084013e610128565b606091505b505090508061015b576040517fef716e9372205203fc19568c8ea52ab567d8176cf652631acccb75e55ae37a8190600090a15b50806001600160a01b0316634e0f74366040518163ffffffff1660e01b8152600401600060405180830381600087803b15801561019757600080fd5b505af11580156101ab573d6000803e3d6000fd5b5050505050565b6000805460408051600162d84e7760e01b0319815290516001600160a01b0390921692839263ff27b18992600480820193929182900301818387803b1580156101fa57600080fd5b505af115801561020e573d6000803e3d6000fd5b5050505061021a6101b2565b806001600160a01b0316634e0f74366040518163ffffffff1660e01b8152600401600060405180830381600087803b15801561019757600080fd5b600061026082610297565b61026a818561029b565b935061027a8185602086016102a0565b9290920192915050565b60006102908284610255565b9392505050565b5190565b919050565b60005b838110156102bb5781810151838201526020016102a3565b838111156102ca576000848401525b5050505056fea365627a7a7231582076b51146c022fd13096c848b02fd635909068e1da2552101228594a3d1026b3c6c6578706572696d656e74616cf564736f6c634300050b0040",
+  "sourceMap": "164:627:2:-;;;309:96;8:9:-1;5:2;;;30:1;27;20:12;5:2;309:96:2;;;;;;;;;;;;;;;;;;;;;371:9;:27;;-1:-1:-1;;;;;;371:27:2;-1:-1:-1;;;;;371:27:2;;;;;;;;;;164:627;;5:184:-1;108:13;;126:58;108:13;126:58;;;93:96;;;;;196:313;;336:2;324:9;315:7;311:23;307:32;304:2;;;352:1;349;342:12;304:2;387:1;404:89;485:7;465:9;404:89;;;394:99;298:211;-1:-1;;;;298:211;516:91;;578:24;596:5;578:24;;614:116;;701:24;719:5;701:24;;737:121;-1:-1;;;;;799:54;;782:76;865:167;959:49;1002:5;959:49;;;952:5;949:60;939:2;;1023:1;1020;1013:12;939:2;933:99;;;164:627:2;;;;;;",
+  "deployedSourceMap": "164:627:2:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;164:627:2;;;;;;;;;;;;;;;;;;;;;;;;503:286;;;:::i;:::-;;411:86;;;:::i;503:286::-;550:9;;;462:41:89;;;-1:-1:-1;;;;;;462:41:89;;;;-1:-1:-1;;;;;550:9:2;;;;;;462:39:89;;:41;;;;;550:9:2;462:41:89;;;;;;550:9:2;;462:41:89;;;5:2:-1;;;;30:1;27;20:12;5:2;462:41:89;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;-1:-1;;668:42:2;;;22:32:-1;6:49;;668:42:2;;;;;49:4:-1;25:18;;61:17;;-1:-1;;;;;182:15;-1:-1;;;179:29;160:49;;649:62:2;;631:12;;-1:-1:-1;657:4:2;;-1:-1:-1;649:62:2;;668:42;649:62;;;;;;;;;;;;;;;;;;14:1:-1;21;16:31;;;;75:4;69:11;64:16;;144:4;140:9;133:4;115:16;111:27;107:43;104:1;100:51;94:4;87:65;169:16;166:1;159:27;225:16;222:1;215:4;212:1;208:12;193:49;7:242;;16:31;36:4;31:9;;7:242;;630:81:2;;;726:7;721:62;;754:18;;;;;;;721:62;513:1:89;524:18;-1:-1:-1;;;;;524:41:89;;:43;;;;;;;;;;;;;;;;;;;;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;524:43:89;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;524:43:89;;;;503:286:2;:::o;411:86::-;455:9;;;462:41:89;;;-1:-1:-1;;;;;;462:41:89;;;;-1:-1:-1;;;;;455:9:2;;;;;;462:39:89;;:41;;;;;455:9:2;462:41:89;;;;;;455:9:2;;462:41:89;;;5:2:-1;;;;30:1;27;20:12;5:2;462:41:89;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;462:41:89;;;;476:14:2;:12;:14::i;:::-;524:18:89;-1:-1:-1;;;;;524:41:89;;:43;;;;;;;;;;;;;;;;;;;;;;;8:9:-1;5:2;;;30:1;27;20:12;5:356;;133:38;165:5;133:38;;;183:88;264:6;259:3;183:88;;;176:95;;276:52;321:6;316:3;309:4;302:5;298:16;276:52;;;340:16;;;;;113:248;-1:-1;;113:248;368:262;;512:93;601:3;592:6;512:93;;;505:100;493:137;-1:-1;;;493:137;637:121;724:12;;695:63;766:144;901:3;879:31;-1:-1;879:31;919:268;984:1;991:101;1005:6;1002:1;999:13;991:101;;;1072:11;;;1066:18;1053:11;;;1046:39;1027:2;1020:10;991:101;;;1107:6;1104:1;1101:13;1098:2;;;1172:1;1163:6;1158:3;1154:16;1147:27;1098:2;968:219;;;;",
+  "source": "pragma solidity 0.5.11;\npragma experimental ABIEncoderV2;\n\nimport \"../../src/utils/FailFastReentrancyGuard.sol\";\nimport \"../../src/framework/PlasmaFramework.sol\";\n\ncontract FailFastReentrancyGuardAttacker is FailFastReentrancyGuard {\n    PlasmaFramework private framework;\n\n    event RemoteCallFailed();\n\n    constructor(PlasmaFramework plasmaFramework) public {\n        framework = plasmaFramework;\n    }\n\n    function guardedLocal() public nonReentrant(framework) {\n        guardedLocal();\n    }\n\n    function guardedRemote() external nonReentrant(framework) {\n        // solhint-disable-next-line avoid-low-level-calls\n        (bool success, ) = address(this).call(abi.encodeWithSignature(\"guardedRemote()\"));\n        if (!success) {\n            emit RemoteCallFailed();\n        }\n    }\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/attackers/FailFastReentrancyGuardAttacker.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/attackers/FailFastReentrancyGuardAttacker.sol",
+    "exportedSymbols": {
+      "FailFastReentrancyGuardAttacker": [
+        118
+      ]
+    },
+    "id": 119,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 62,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:2"
+      },
+      {
+        "id": 63,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "24:33:2"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/FailFastReentrancyGuard.sol",
+        "file": "../../src/utils/FailFastReentrancyGuard.sol",
+        "id": 64,
+        "nodeType": "ImportDirective",
+        "scope": 119,
+        "sourceUnit": 14295,
+        "src": "59:53:2",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/PlasmaFramework.sol",
+        "file": "../../src/framework/PlasmaFramework.sol",
+        "id": 65,
+        "nodeType": "ImportDirective",
+        "scope": 119,
+        "sourceUnit": 12299,
+        "src": "113:49:2",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 66,
+              "name": "FailFastReentrancyGuard",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 14294,
+              "src": "208:23:2",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_FailFastReentrancyGuard_$14294",
+                "typeString": "contract FailFastReentrancyGuard"
+              }
+            },
+            "id": 67,
+            "nodeType": "InheritanceSpecifier",
+            "src": "208:23:2"
+          }
+        ],
+        "contractDependencies": [
+          14294
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 118,
+        "linearizedBaseContracts": [
+          118,
+          14294
+        ],
+        "name": "FailFastReentrancyGuardAttacker",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 69,
+            "name": "framework",
+            "nodeType": "VariableDeclaration",
+            "scope": 118,
+            "src": "238:33:2",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+              "typeString": "contract PlasmaFramework"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 68,
+              "name": "PlasmaFramework",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 12298,
+              "src": "238:15:2",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                "typeString": "contract PlasmaFramework"
+              }
+            },
+            "value": null,
+            "visibility": "private"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 71,
+            "name": "RemoteCallFailed",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 70,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "300:2:2"
+            },
+            "src": "278:25:2"
+          },
+          {
+            "body": {
+              "id": 80,
+              "nodeType": "Block",
+              "src": "361:44:2",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 78,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 76,
+                      "name": "framework",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 69,
+                      "src": "371:9:2",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                        "typeString": "contract PlasmaFramework"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 77,
+                      "name": "plasmaFramework",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 73,
+                      "src": "383:15:2",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                        "typeString": "contract PlasmaFramework"
+                      }
+                    },
+                    "src": "371:27:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                      "typeString": "contract PlasmaFramework"
+                    }
+                  },
+                  "id": 79,
+                  "nodeType": "ExpressionStatement",
+                  "src": "371:27:2"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 81,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 74,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 73,
+                  "name": "plasmaFramework",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 81,
+                  "src": "321:31:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                    "typeString": "contract PlasmaFramework"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 72,
+                    "name": "PlasmaFramework",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 12298,
+                    "src": "321:15:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                      "typeString": "contract PlasmaFramework"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "320:33:2"
+            },
+            "returnParameters": {
+              "id": 75,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "361:0:2"
+            },
+            "scope": 118,
+            "src": "309:96:2",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 90,
+              "nodeType": "Block",
+              "src": "466:31:2",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "id": 87,
+                      "name": "guardedLocal",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 91,
+                      "src": "476:12:2",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_nonpayable$__$returns$__$",
+                        "typeString": "function ()"
+                      }
+                    },
+                    "id": 88,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "476:14:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 89,
+                  "nodeType": "ExpressionStatement",
+                  "src": "476:14:2"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 91,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "arguments": [
+                  {
+                    "argumentTypes": null,
+                    "id": 84,
+                    "name": "framework",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 69,
+                    "src": "455:9:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                      "typeString": "contract PlasmaFramework"
+                    }
+                  }
+                ],
+                "id": 85,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 83,
+                  "name": "nonReentrant",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 14293,
+                  "src": "442:12:2",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_modifier$_t_contract$_ExitGameController_$12211_$",
+                    "typeString": "modifier (contract ExitGameController)"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "442:23:2"
+              }
+            ],
+            "name": "guardedLocal",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 82,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "432:2:2"
+            },
+            "returnParameters": {
+              "id": 86,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "466:0:2"
+            },
+            "scope": 118,
+            "src": "411:86:2",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 116,
+              "nodeType": "Block",
+              "src": "561:228:2",
+              "statements": [
+                {
+                  "assignments": [
+                    98,
+                    null
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 98,
+                      "name": "success",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 116,
+                      "src": "631:12:2",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      },
+                      "typeName": {
+                        "id": 97,
+                        "name": "bool",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "631:4:2",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    null
+                  ],
+                  "id": 108,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "arguments": [
+                          {
+                            "argumentTypes": null,
+                            "hexValue": "6775617264656452656d6f74652829",
+                            "id": 105,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "string",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "692:17:2",
+                            "subdenomination": null,
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_stringliteral_24c91ff503c5b9fec0dca489cdd0c204398e685f67950e99a9d58eb7e42ba727",
+                              "typeString": "literal_string \"guardedRemote()\""
+                            },
+                            "value": "guardedRemote()"
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_stringliteral_24c91ff503c5b9fec0dca489cdd0c204398e685f67950e99a9d58eb7e42ba727",
+                              "typeString": "literal_string \"guardedRemote()\""
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": null,
+                            "id": 103,
+                            "name": "abi",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 17436,
+                            "src": "668:3:2",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_magic_abi",
+                              "typeString": "abi"
+                            }
+                          },
+                          "id": 104,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "memberName": "encodeWithSignature",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": null,
+                          "src": "668:23:2",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_abiencodewithsignature_pure$_t_string_memory_ptr_$returns$_t_bytes_memory_ptr_$",
+                            "typeString": "function (string memory) pure returns (bytes memory)"
+                          }
+                        },
+                        "id": 106,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "functionCall",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "668:42:2",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "arguments": [
+                          {
+                            "argumentTypes": null,
+                            "id": 100,
+                            "name": "this",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 17509,
+                            "src": "657:4:2",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_contract$_FailFastReentrancyGuardAttacker_$118",
+                              "typeString": "contract FailFastReentrancyGuardAttacker"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_contract$_FailFastReentrancyGuardAttacker_$118",
+                              "typeString": "contract FailFastReentrancyGuardAttacker"
+                            }
+                          ],
+                          "id": 99,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "ElementaryTypeNameExpression",
+                          "src": "649:7:2",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_address_$",
+                            "typeString": "type(address)"
+                          },
+                          "typeName": "address"
+                        },
+                        "id": 101,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "typeConversion",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "649:13:2",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      "id": 102,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "call",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": null,
+                      "src": "649:18:2",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_barecall_payable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$",
+                        "typeString": "function (bytes memory) payable returns (bool,bytes memory)"
+                      }
+                    },
+                    "id": 107,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "649:62:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_bool_$_t_bytes_memory_ptr_$",
+                      "typeString": "tuple(bool,bytes memory)"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "630:81:2"
+                },
+                {
+                  "condition": {
+                    "argumentTypes": null,
+                    "id": 110,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "UnaryOperation",
+                    "operator": "!",
+                    "prefix": true,
+                    "src": "725:8:2",
+                    "subExpression": {
+                      "argumentTypes": null,
+                      "id": 109,
+                      "name": "success",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 98,
+                      "src": "726:7:2",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "falseBody": null,
+                  "id": 115,
+                  "nodeType": "IfStatement",
+                  "src": "721:62:2",
+                  "trueBody": {
+                    "id": 114,
+                    "nodeType": "Block",
+                    "src": "735:48:2",
+                    "statements": [
+                      {
+                        "eventCall": {
+                          "argumentTypes": null,
+                          "arguments": [],
+                          "expression": {
+                            "argumentTypes": [],
+                            "id": 111,
+                            "name": "RemoteCallFailed",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 71,
+                            "src": "754:16:2",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_event_nonpayable$__$returns$__$",
+                              "typeString": "function ()"
+                            }
+                          },
+                          "id": 112,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "754:18:2",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 113,
+                        "nodeType": "EmitStatement",
+                        "src": "749:23:2"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 117,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "arguments": [
+                  {
+                    "argumentTypes": null,
+                    "id": 94,
+                    "name": "framework",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 69,
+                    "src": "550:9:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                      "typeString": "contract PlasmaFramework"
+                    }
+                  }
+                ],
+                "id": 95,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 93,
+                  "name": "nonReentrant",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 14293,
+                  "src": "537:12:2",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_modifier$_t_contract$_ExitGameController_$12211_$",
+                    "typeString": "modifier (contract ExitGameController)"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "537:23:2"
+              }
+            ],
+            "name": "guardedRemote",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 92,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "525:2:2"
+            },
+            "returnParameters": {
+              "id": 96,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "561:0:2"
+            },
+            "scope": 118,
+            "src": "503:286:2",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 119,
+        "src": "164:627:2"
+      }
+    ],
+    "src": "0:792:2"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/attackers/FailFastReentrancyGuardAttacker.sol",
+    "exportedSymbols": {
+      "FailFastReentrancyGuardAttacker": [
+        118
+      ]
+    },
+    "id": 119,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 62,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:2"
+      },
+      {
+        "id": 63,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "24:33:2"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/FailFastReentrancyGuard.sol",
+        "file": "../../src/utils/FailFastReentrancyGuard.sol",
+        "id": 64,
+        "nodeType": "ImportDirective",
+        "scope": 119,
+        "sourceUnit": 14295,
+        "src": "59:53:2",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/PlasmaFramework.sol",
+        "file": "../../src/framework/PlasmaFramework.sol",
+        "id": 65,
+        "nodeType": "ImportDirective",
+        "scope": 119,
+        "sourceUnit": 12299,
+        "src": "113:49:2",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 66,
+              "name": "FailFastReentrancyGuard",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 14294,
+              "src": "208:23:2",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_FailFastReentrancyGuard_$14294",
+                "typeString": "contract FailFastReentrancyGuard"
+              }
+            },
+            "id": 67,
+            "nodeType": "InheritanceSpecifier",
+            "src": "208:23:2"
+          }
+        ],
+        "contractDependencies": [
+          14294
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 118,
+        "linearizedBaseContracts": [
+          118,
+          14294
+        ],
+        "name": "FailFastReentrancyGuardAttacker",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 69,
+            "name": "framework",
+            "nodeType": "VariableDeclaration",
+            "scope": 118,
+            "src": "238:33:2",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+              "typeString": "contract PlasmaFramework"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 68,
+              "name": "PlasmaFramework",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 12298,
+              "src": "238:15:2",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                "typeString": "contract PlasmaFramework"
+              }
+            },
+            "value": null,
+            "visibility": "private"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 71,
+            "name": "RemoteCallFailed",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 70,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "300:2:2"
+            },
+            "src": "278:25:2"
+          },
+          {
+            "body": {
+              "id": 80,
+              "nodeType": "Block",
+              "src": "361:44:2",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 78,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 76,
+                      "name": "framework",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 69,
+                      "src": "371:9:2",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                        "typeString": "contract PlasmaFramework"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 77,
+                      "name": "plasmaFramework",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 73,
+                      "src": "383:15:2",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                        "typeString": "contract PlasmaFramework"
+                      }
+                    },
+                    "src": "371:27:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                      "typeString": "contract PlasmaFramework"
+                    }
+                  },
+                  "id": 79,
+                  "nodeType": "ExpressionStatement",
+                  "src": "371:27:2"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 81,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 74,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 73,
+                  "name": "plasmaFramework",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 81,
+                  "src": "321:31:2",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                    "typeString": "contract PlasmaFramework"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 72,
+                    "name": "PlasmaFramework",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 12298,
+                    "src": "321:15:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                      "typeString": "contract PlasmaFramework"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "320:33:2"
+            },
+            "returnParameters": {
+              "id": 75,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "361:0:2"
+            },
+            "scope": 118,
+            "src": "309:96:2",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 90,
+              "nodeType": "Block",
+              "src": "466:31:2",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "id": 87,
+                      "name": "guardedLocal",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 91,
+                      "src": "476:12:2",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_nonpayable$__$returns$__$",
+                        "typeString": "function ()"
+                      }
+                    },
+                    "id": 88,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "476:14:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 89,
+                  "nodeType": "ExpressionStatement",
+                  "src": "476:14:2"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 91,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "arguments": [
+                  {
+                    "argumentTypes": null,
+                    "id": 84,
+                    "name": "framework",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 69,
+                    "src": "455:9:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                      "typeString": "contract PlasmaFramework"
+                    }
+                  }
+                ],
+                "id": 85,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 83,
+                  "name": "nonReentrant",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 14293,
+                  "src": "442:12:2",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_modifier$_t_contract$_ExitGameController_$12211_$",
+                    "typeString": "modifier (contract ExitGameController)"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "442:23:2"
+              }
+            ],
+            "name": "guardedLocal",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 82,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "432:2:2"
+            },
+            "returnParameters": {
+              "id": 86,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "466:0:2"
+            },
+            "scope": 118,
+            "src": "411:86:2",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 116,
+              "nodeType": "Block",
+              "src": "561:228:2",
+              "statements": [
+                {
+                  "assignments": [
+                    98,
+                    null
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 98,
+                      "name": "success",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 116,
+                      "src": "631:12:2",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      },
+                      "typeName": {
+                        "id": 97,
+                        "name": "bool",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "631:4:2",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    null
+                  ],
+                  "id": 108,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "arguments": [
+                          {
+                            "argumentTypes": null,
+                            "hexValue": "6775617264656452656d6f74652829",
+                            "id": 105,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "string",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "692:17:2",
+                            "subdenomination": null,
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_stringliteral_24c91ff503c5b9fec0dca489cdd0c204398e685f67950e99a9d58eb7e42ba727",
+                              "typeString": "literal_string \"guardedRemote()\""
+                            },
+                            "value": "guardedRemote()"
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_stringliteral_24c91ff503c5b9fec0dca489cdd0c204398e685f67950e99a9d58eb7e42ba727",
+                              "typeString": "literal_string \"guardedRemote()\""
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": null,
+                            "id": 103,
+                            "name": "abi",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 17436,
+                            "src": "668:3:2",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_magic_abi",
+                              "typeString": "abi"
+                            }
+                          },
+                          "id": 104,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "memberName": "encodeWithSignature",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": null,
+                          "src": "668:23:2",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_abiencodewithsignature_pure$_t_string_memory_ptr_$returns$_t_bytes_memory_ptr_$",
+                            "typeString": "function (string memory) pure returns (bytes memory)"
+                          }
+                        },
+                        "id": 106,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "functionCall",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "668:42:2",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bytes_memory_ptr",
+                          "typeString": "bytes memory"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "arguments": [
+                          {
+                            "argumentTypes": null,
+                            "id": 100,
+                            "name": "this",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 17509,
+                            "src": "657:4:2",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_contract$_FailFastReentrancyGuardAttacker_$118",
+                              "typeString": "contract FailFastReentrancyGuardAttacker"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_contract$_FailFastReentrancyGuardAttacker_$118",
+                              "typeString": "contract FailFastReentrancyGuardAttacker"
+                            }
+                          ],
+                          "id": 99,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "ElementaryTypeNameExpression",
+                          "src": "649:7:2",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_address_$",
+                            "typeString": "type(address)"
+                          },
+                          "typeName": "address"
+                        },
+                        "id": 101,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "typeConversion",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "649:13:2",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      "id": 102,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "call",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": null,
+                      "src": "649:18:2",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_barecall_payable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$",
+                        "typeString": "function (bytes memory) payable returns (bool,bytes memory)"
+                      }
+                    },
+                    "id": 107,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "649:62:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_bool_$_t_bytes_memory_ptr_$",
+                      "typeString": "tuple(bool,bytes memory)"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "630:81:2"
+                },
+                {
+                  "condition": {
+                    "argumentTypes": null,
+                    "id": 110,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "UnaryOperation",
+                    "operator": "!",
+                    "prefix": true,
+                    "src": "725:8:2",
+                    "subExpression": {
+                      "argumentTypes": null,
+                      "id": 109,
+                      "name": "success",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 98,
+                      "src": "726:7:2",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "falseBody": null,
+                  "id": 115,
+                  "nodeType": "IfStatement",
+                  "src": "721:62:2",
+                  "trueBody": {
+                    "id": 114,
+                    "nodeType": "Block",
+                    "src": "735:48:2",
+                    "statements": [
+                      {
+                        "eventCall": {
+                          "argumentTypes": null,
+                          "arguments": [],
+                          "expression": {
+                            "argumentTypes": [],
+                            "id": 111,
+                            "name": "RemoteCallFailed",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 71,
+                            "src": "754:16:2",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_event_nonpayable$__$returns$__$",
+                              "typeString": "function ()"
+                            }
+                          },
+                          "id": 112,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "754:18:2",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 113,
+                        "nodeType": "EmitStatement",
+                        "src": "749:23:2"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 117,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "arguments": [
+                  {
+                    "argumentTypes": null,
+                    "id": 94,
+                    "name": "framework",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 69,
+                    "src": "550:9:2",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                      "typeString": "contract PlasmaFramework"
+                    }
+                  }
+                ],
+                "id": 95,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 93,
+                  "name": "nonReentrant",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 14293,
+                  "src": "537:12:2",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_modifier$_t_contract$_ExitGameController_$12211_$",
+                    "typeString": "modifier (contract ExitGameController)"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "537:23:2"
+              }
+            ],
+            "name": "guardedRemote",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 92,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "525:2:2"
+            },
+            "returnParameters": {
+              "id": 96,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "561:0:2"
+            },
+            "scope": 118,
+            "src": "503:286:2",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 119,
+        "src": "164:627:2"
+      }
+    ],
+    "src": "0:792:2"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.418Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

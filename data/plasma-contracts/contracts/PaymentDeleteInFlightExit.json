@@ -1,0 +1,3708 @@
+{
+  "contractName": "PaymentDeleteInFlightExit",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint160",
+          "name": "exitId",
+          "type": "uint160"
+        }
+      ],
+      "name": "InFlightExitDeleted",
+      "type": "event"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint160\",\"name\":\"exitId\",\"type\":\"uint160\"}],\"name\":\"InFlightExitDeleted\",\"type\":\"event\"}],\"devdoc\":{\"methods\":{\"run(PaymentDeleteInFlightExit.Controller,PaymentExitDataModel.InFlightExitMap storage,uint160)\":{\"params\":{\"exitId\":\"The exitId of the standard exit\"}}}},\"userdoc\":{\"methods\":{\"run(PaymentDeleteInFlightExit.Controller,PaymentExitDataModel.InFlightExitMap storage,uint160)\":{\"notice\":\"Main logic function to delete the non piggybacked in-flight exit\"}}}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/controllers/PaymentDeleteInFlightExit.sol\":\"PaymentDeleteInFlightExit\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/PaymentExitDataModel.sol\":{\"keccak256\":\"0xd4269d4c4a2cee7e70affd8aac5d413ef7e3171baad504c9f9554c5f87b9ce3b\",\"urls\":[\"bzz-raw://c4ef525a4c6be0eb34c86ba87aff011461cf5552d981a93207122850532641fb\",\"dweb:/ipfs/QmYcxEMctRHeu1e94m6yF1RFbm3faTjFWKtJgb1xpeVh3V\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/PaymentInFlightExitModelUtils.sol\":{\"keccak256\":\"0x125db4317e14f203a9519d76c7190c773df8d87c305fba75cb7ce7b168a453f2\",\"urls\":[\"bzz-raw://32c6f2bf83ff3355a4b3cd34f8339abcc1f6b8a4f8ecc565c8eed3e87e2603ce\",\"dweb:/ipfs/QmS8LN4kfiepg1UgoxuTgiuvgMky6Rp1MBESFdKNbq18cD\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/controllers/PaymentDeleteInFlightExit.sol\":{\"keccak256\":\"0xf81268bc7d11715baf0ea94d9bb4d18f1228d142fa717079e75f343b36344d90\",\"urls\":[\"bzz-raw://916abd6edc260f70db4374e60e4ef37d5bf7cb5ce5837a843d64f9a795df39ea\",\"dweb:/ipfs/QmR8zE5bVTUMD1EUWRuL8ctk87Ya2uZdf6cki7stbqBvRc\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/transactions/FungibleTokenOutputModel.sol\":{\"keccak256\":\"0xc3ba28ef422e5e69bf45fd19696f15154bc425a8ce203381634e53c7225cfb7a\",\"urls\":[\"bzz-raw://a8abad3a40e7324cac88861fa42eded4a4eb8ba63cebb78e2c515fb1fe522156\",\"dweb:/ipfs/QmeNackaS2epdnrZ9Y3KJgZFUT6QWd4fi7kDcmaEhQKmrd\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/transactions/GenericTransaction.sol\":{\"keccak256\":\"0xde90e8614329838d210c19607920c7332be57982790763884a7ff62511771871\",\"urls\":[\"bzz-raw://85887bc1789f94197c0476e9b3580aab2330f6988623883eaa857e1f5b82f0e5\",\"dweb:/ipfs/QmcNTkDNpibtRGmxWCpNj6n3HLpsAgmiKKQvDZSNJGT4Bg\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/transactions/PaymentTransactionModel.sol\":{\"keccak256\":\"0x24d5374cc8d463974a2dbebaa348f8f762c870e1bf9159920f78dbd3f9c5ab2c\",\"urls\":[\"bzz-raw://8d75bd75739f4df38e95bcc80a87a5f92dc3e66bcd31edbd1683fd528df67d03\",\"dweb:/ipfs/QmYFoc5hmFwPnU9Kdu4ZdEo9Qcvu565o1UoCMcbnbuHcJy\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/Bits.sol\":{\"keccak256\":\"0x8634dbdd911b93b96ffc247db5063fade8f74f519130021b7e71e505135148d8\",\"urls\":[\"bzz-raw://f0dd95b5277522e5604bbf24a6a6955f2e628ca41e137cb8a8a08e6c7312deb8\",\"dweb:/ipfs/QmfW1kxWqjvz57RNGcv9NsY33aWxyVPKQtd3cV4FbiW3sS\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/RLPReader.sol\":{\"keccak256\":\"0x83a578c149e11e4c03d222bc2ae7226f8b448c308b6bf8167b6c53719b68f722\",\"urls\":[\"bzz-raw://792d3afbbc68be381e4981d2f62a5720033967544b5cb750052dc62d273f3587\",\"dweb:/ipfs/QmUemf7AhGu3SWu86NQ6YW2HcNAzQSoT5BpwGqqasFyzH5\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/SafeEthTransfer.sol\":{\"keccak256\":\"0xe707370228eea8c9c613472dd4d44df94ba631892bc74077cf5af24097944aad\",\"urls\":[\"bzz-raw://803b2c876f40f8d8dbcbca8b6cde233d73a98c4d2384c90e259da1c169225de9\",\"dweb:/ipfs/QmZkb1kHBmFb4jGgZepfAJsiZM6beQJiS9x319QZxExiB4\"]}},\"version\":1}",
+  "bytecode": "0x610a34610026600b82828239805160001a60731461001957fe5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600436106100355760003560e01c8063b1cf0fed1461003a575b600080fd5b81801561004657600080fd5b5061005a61005536600461074e565b61005c565b005b610064610579565b6001600160a01b038216600090815260208481526040808320815161012081018352815460ff811615158252610100900467ffffffffffffffff169381019390935260018101548383015260028101546060840152815160808082019093529293909291840191906003840190600490835b8282101561013d576040805160a081018252600584028601805482526001808201546001600160a01b0390811660208086019190915260028401549091169484019490945260038201546060840152600490910154608083015290835290920191016100d6565b5050509082525060408051608081019091526020909101906017830160046000835b828210156101c6576040805160a081018252600584028601805482526001808201546001600160a01b03908116602080860191909152600284015490911694840194909452600382015460608401526004909101546080830152908352909201910161015f565b50505090825250602b8201546001600160a01b0316602080830191909152602c8301546040830152602d9092015460609091015281015190915067ffffffffffffffff1661022f5760405162461bcd60e51b815260040161022690610932565b60405180910390fd5b835161024290829063ffffffff61034d16565b1561025f5760405162461bcd60e51b815260040161022690610962565b6102688161037d565b156102855760405162461bcd60e51b815260040161022690610982565b6001600160a01b0382166000908152602084905260408120805468ffffffffffffffffff191681556001810182905560028101829055906102c960038301826105e6565b6102d76017830160006105e6565b50602b810180546001600160a01b03191690556000602c8201819055602d9091015560c081015160e0820151602086015161031392919061040a565b6040516001600160a01b038316907f1991c4c350498b0cc937c6a08bc5bdecf2e4fdd9d918052a880f102e43dbe45c90600090a250505050565b600080600283049050600181856020015167ffffffffffffffff1642038161037157fe5b04109150505b92915050565b6000805b61038961043c565b60ff168161ffff1610156103be576103a7838263ffffffff61044116565b156103b6576001915050610405565b600101610381565b5060005b6103ca61043c565b60ff168161ffff1610156103ff576103e8838263ffffffff61048c16565b156103f7576001915050610405565b6001016103c2565b50600090505b919050565b60006104178484846104eb565b9050806104365760405162461bcd60e51b815260040161022690610952565b50505050565b600490565b600061044b61043c565b60ff168261ffff16106104705760405162461bcd60e51b815260040161022690610972565b6040830151610485908363ffffffff61055516565b9392505050565b600061049661043c565b60ff168261ffff16106104bb5760405162461bcd60e51b815260040161022690610942565b60006104c561043c565b60ff16830190506104e381856040015161055590919063ffffffff16565b949350505050565b600080846001600160a01b0316838560405161050690610927565b600060405180830381858888f193505050503d8060008114610544576040519150601f19603f3d011682016040523d82523d6000602084013e610549565b606091505b50909695505050505050565b6000610561838361056f565b60ff16600114905092915050565b60ff161c60011690565b604051806101200160405280600015158152602001600067ffffffffffffffff16815260200160008152602001600081526020016105b5610696565b81526020016105c2610696565b815260200160006001600160a01b0316815260200160008152602001600081525090565b5060008082556001820180546001600160a01b03199081169091556002830180548216905560038301829055600483018290556005830182905560068301805482169055600783018054821690556008830182905560098301829055600a8301829055600b8301805482169055600c8301805482169055600d8301829055600e8301829055600f830182905560108301805482169055601183018054909116905560128201819055601390910155565b60405180608001604052806004905b6106ad6106c3565b8152602001906001900390816106a55790505090565b6040805160a08101825260008082526020820181905291810182905260608101829052608081019190915290565b60006040828403121561070357600080fd5b61070d6040610992565b9050600061071b8484610738565b825250602061072c84848301610738565b60208301525092915050565b8035610377816109d1565b8035610377816109e8565b60008060006080848603121561076357600080fd5b600061076f86866106f1565b935050604061078086828701610738565b925050606061079186828701610743565b9150509250925092565b60006107a8601d836109b9565b7f496e2d666c69676874206578697420646f6573206e6f74206578697374000000815260200192915050565b60006107e16014836109b9565b73092dcecc2d8d2c840deeae8e0eae840d2dcc8caf60631b815260200192915050565b60006108116027836109b9565b7f536166654574685472616e736665723a206661696c656420746f207472616e738152660cccae4408aa8960cb1b602082015260400192915050565b600061085a6031836109b9565b7f43616e6e6f742064656c65746520696e2d666c696768742065786974207374698152706c6c20696e20666972737420706861736560781b602082015260400192915050565b60006108ad6013836109b9565b72092dcecc2d8d2c840d2dce0eae840d2dcc8caf606b1b815260200192915050565b60006108dc6029836109b9565b7f54686520696e2d666c69676874206578697420697320616c726561647920706981526819d9de589858dad95960ba1b602082015260400192915050565b6000610377600083610405565b60006103778261091a565b602080825281016103778161079b565b60208082528101610377816107d4565b6020808252810161037781610804565b602080825281016103778161084d565b60208082528101610377816108a0565b60208082528101610377816108cf565b60405181810167ffffffffffffffff811182821017156109b157600080fd5b604052919050565b90815260200190565b90565b6001600160a01b031690565b6109da816109c2565b81146109e557600080fd5b50565b6109da816109c556fea365627a7a72315820dd837d3614e48ccc306883a154cb85ce242aa8adf208b28c257d5cad0676a51b6c6578706572696d656e74616cf564736f6c634300050b0040",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600436106100355760003560e01c8063b1cf0fed1461003a575b600080fd5b81801561004657600080fd5b5061005a61005536600461074e565b61005c565b005b610064610579565b6001600160a01b038216600090815260208481526040808320815161012081018352815460ff811615158252610100900467ffffffffffffffff169381019390935260018101548383015260028101546060840152815160808082019093529293909291840191906003840190600490835b8282101561013d576040805160a081018252600584028601805482526001808201546001600160a01b0390811660208086019190915260028401549091169484019490945260038201546060840152600490910154608083015290835290920191016100d6565b5050509082525060408051608081019091526020909101906017830160046000835b828210156101c6576040805160a081018252600584028601805482526001808201546001600160a01b03908116602080860191909152600284015490911694840194909452600382015460608401526004909101546080830152908352909201910161015f565b50505090825250602b8201546001600160a01b0316602080830191909152602c8301546040830152602d9092015460609091015281015190915067ffffffffffffffff1661022f5760405162461bcd60e51b815260040161022690610932565b60405180910390fd5b835161024290829063ffffffff61034d16565b1561025f5760405162461bcd60e51b815260040161022690610962565b6102688161037d565b156102855760405162461bcd60e51b815260040161022690610982565b6001600160a01b0382166000908152602084905260408120805468ffffffffffffffffff191681556001810182905560028101829055906102c960038301826105e6565b6102d76017830160006105e6565b50602b810180546001600160a01b03191690556000602c8201819055602d9091015560c081015160e0820151602086015161031392919061040a565b6040516001600160a01b038316907f1991c4c350498b0cc937c6a08bc5bdecf2e4fdd9d918052a880f102e43dbe45c90600090a250505050565b600080600283049050600181856020015167ffffffffffffffff1642038161037157fe5b04109150505b92915050565b6000805b61038961043c565b60ff168161ffff1610156103be576103a7838263ffffffff61044116565b156103b6576001915050610405565b600101610381565b5060005b6103ca61043c565b60ff168161ffff1610156103ff576103e8838263ffffffff61048c16565b156103f7576001915050610405565b6001016103c2565b50600090505b919050565b60006104178484846104eb565b9050806104365760405162461bcd60e51b815260040161022690610952565b50505050565b600490565b600061044b61043c565b60ff168261ffff16106104705760405162461bcd60e51b815260040161022690610972565b6040830151610485908363ffffffff61055516565b9392505050565b600061049661043c565b60ff168261ffff16106104bb5760405162461bcd60e51b815260040161022690610942565b60006104c561043c565b60ff16830190506104e381856040015161055590919063ffffffff16565b949350505050565b600080846001600160a01b0316838560405161050690610927565b600060405180830381858888f193505050503d8060008114610544576040519150601f19603f3d011682016040523d82523d6000602084013e610549565b606091505b50909695505050505050565b6000610561838361056f565b60ff16600114905092915050565b60ff161c60011690565b604051806101200160405280600015158152602001600067ffffffffffffffff16815260200160008152602001600081526020016105b5610696565b81526020016105c2610696565b815260200160006001600160a01b0316815260200160008152602001600081525090565b5060008082556001820180546001600160a01b03199081169091556002830180548216905560038301829055600483018290556005830182905560068301805482169055600783018054821690556008830182905560098301829055600a8301829055600b8301805482169055600c8301805482169055600d8301829055600e8301829055600f830182905560108301805482169055601183018054909116905560128201819055601390910155565b60405180608001604052806004905b6106ad6106c3565b8152602001906001900390816106a55790505090565b6040805160a08101825260008082526020820181905291810182905260608101829052608081019190915290565b60006040828403121561070357600080fd5b61070d6040610992565b9050600061071b8484610738565b825250602061072c84848301610738565b60208301525092915050565b8035610377816109d1565b8035610377816109e8565b60008060006080848603121561076357600080fd5b600061076f86866106f1565b935050604061078086828701610738565b925050606061079186828701610743565b9150509250925092565b60006107a8601d836109b9565b7f496e2d666c69676874206578697420646f6573206e6f74206578697374000000815260200192915050565b60006107e16014836109b9565b73092dcecc2d8d2c840deeae8e0eae840d2dcc8caf60631b815260200192915050565b60006108116027836109b9565b7f536166654574685472616e736665723a206661696c656420746f207472616e738152660cccae4408aa8960cb1b602082015260400192915050565b600061085a6031836109b9565b7f43616e6e6f742064656c65746520696e2d666c696768742065786974207374698152706c6c20696e20666972737420706861736560781b602082015260400192915050565b60006108ad6013836109b9565b72092dcecc2d8d2c840d2dce0eae840d2dcc8caf606b1b815260200192915050565b60006108dc6029836109b9565b7f54686520696e2d666c69676874206578697420697320616c726561647920706981526819d9de589858dad95960ba1b602082015260400192915050565b6000610377600083610405565b60006103778261091a565b602080825281016103778161079b565b60208082528101610377816107d4565b6020808252810161037781610804565b602080825281016103778161084d565b60208082528101610377816108a0565b60208082528101610377816108cf565b60405181810167ffffffffffffffff811182821017156109b157600080fd5b604052919050565b90815260200190565b90565b6001600160a01b031690565b6109da816109c2565b81146109e557600080fd5b50565b6109da816109c556fea365627a7a72315820dd837d3614e48ccc306883a154cb85ce242aa8adf208b28c257d5cad0676a51b6c6578706572696d656e74616cf564736f6c634300050b0040",
+  "sourceMap": "250:1634:56:-;;132:2:-1;166:7;155:9;146:7;137:37;255:7;249:14;246:1;241:23;235:4;232:33;222:2;;269:9;222:2;293:9;290:1;283:20;323:4;314:7;306:22;347:7;338;331:24",
+  "deployedSourceMap": "250:1634:56:-;;;;;;;;;;;;;;;;;;;;;;;;683:692;;8:9:-1;5:2;;;30:1;27;20:12;5:2;-1:-1;683:692:56;;;;;;;;:::i;:::-;;;849:44;;:::i;:::-;-1:-1:-1;;;;;896:21:56;;:13;:21;;;;;;;;;;;849:68;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;896:21;;849:68;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;849:68:56;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;849:68:56;;;-1:-1:-1;849:68:56;;;;;;;;;;;;;;;;;;-1:-1:-1;849:68:56;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;849:68:56;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;849:68:56;;;-1:-1:-1;849:68:56;;;;-1:-1:-1;;;;;849:68:56;;;;;;;;;;;;;;;;;;;;;;;;;;;935:22;;;849:68;;-1:-1:-1;935:27:56;;927:69;;;;-1:-1:-1;;;927:69:56;;;;;;;;;;;;;;;;;1034:18;;1015:38;;:3;;:38;:18;:38;:::i;:::-;1014:39;1006:101;;;;-1:-1:-1;;;1006:101:56;;;;;;;;;1126:18;1140:3;1126:13;:18::i;:::-;1125:19;1117:73;;;;-1:-1:-1;;;1117:73:56;;;;;;;;;-1:-1:-1;;;;;1208:21:56;;:13;:21;;;;;;;;;;1201:28;;-1:-1:-1;;1201:28:56;;;;;;;;;;;;;;;1208:21;1201:28;;;;1208:13;1201:28;:::i;:::-;;;;;;;:::i;:::-;-1:-1:-1;1201:28:56;;;;;-1:-1:-1;;;;;;1201:28:56;;;;;;;;;;;;;;;1277:13;;;;1292:12;;;;1306:19;;;;1239:87;;1277:13;1292:12;1239:37;:87::i;:::-;1341:27;;-1:-1:-1;;;;;1341:27:56;;;;;;;;683:692;;;;:::o;2761:272:50:-;2890:4;;2947:1;2931:13;:17;2910:38;;3025:1;3011:10;2985:3;:22;;;2967:40;;:15;:40;2966:55;;;;;;2965:61;2958:68;;;2761:272;;;;;:::o;1381:501:56:-;1485:4;;1505:168;1528:39;:37;:39::i;:::-;1524:43;;:1;:43;;;1505:168;;;1592:25;:3;1615:1;1592:25;:22;:25;:::i;:::-;1588:75;;;1644:4;1637:11;;;;;1588:75;1569:3;;1505:168;;;-1:-1:-1;1688:8:56;1683:170;1706:40;:38;:40::i;:::-;1702:44;;:1;:44;;;1683:170;;;1771:26;:3;1795:1;1771:26;:23;:26;:::i;:::-;1767:76;;;1824:4;1817:11;;;;;1767:76;1748:3;;1683:170;;;;1870:5;1863:12;;1381:501;;;;:::o;824:265:95:-;948:12;963:50;984:8;994:6;1002:10;963:20;:50::i;:::-;948:65;;1031:7;1023:59;;;;-1:-1:-1;;;1023:59:95;;;;;;;;;824:265;;;;:::o;526:93:86:-;369:1;526:93;:::o;875:279:50:-;999:4;1035:39;:37;:39::i;:::-;1027:47;;:5;:47;;;1019:79;;;;-1:-1:-1;;;1019:79:50;;;;;;;;;1115:11;;;;:32;;1140:5;1115:32;:18;:32;:::i;:::-;1108:39;875:279;-1:-1:-1;;;875:279:50:o;1160:371::-;1285:4;1321:40;:38;:40::i;:::-;1313:48;;:5;:48;;;1305:81;;;;-1:-1:-1;;;1305:81:50;;;;;;;;;1396:20;1433:39;:37;:39::i;:::-;1425:47;;:5;:47;1396:77;;1490:34;1509:14;1490:3;:11;;;:18;;:34;;;;:::i;:::-;1483:41;1160:371;-1:-1:-1;;;;1160:371:50:o;1610:243:95:-;1736:4;1757:12;1775:8;-1:-1:-1;;;;;1775:13:95;1793:10;1811:6;1775:47;;;;;;;;;;;;;;;;;;;;;;;;14:1:-1;21;16:31;;;;75:4;69:11;64:16;;144:4;140:9;133:4;115:16;111:27;107:43;104:1;100:51;94:4;87:65;169:16;166:1;159:27;225:16;222:1;215:4;212:1;208:12;193:49;7:242;;16:31;36:4;31:9;;7:242;-1:-1;1756:66:95;;1610:243;-1:-1:-1;;;;;;1610:243:95:o;1514:149:88:-;1603:4;1630:21;1637:5;1644:6;1630;:21::i;:::-;:26;;1655:1;1630:26;1623:33;;1514:149;;;;:::o;1134:150::-;1257:15;;;1275:1;1257:19;;1134:150::o;250:1634:56:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;:::i;:::-;;;;;;-1:-1:-1;;;;;250:1634:56;;;;;;;;;;;;;;;:::o;:::-;-1:-1:-1;250:1634:56;;;;;;;;;-1:-1:-1;;;;;;250:1634:56;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;;-1:-1:-1;250:1634:56;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;55:488:-1:-;;172:4;160:9;155:3;151:19;147:30;144:2;;;190:1;187;180:12;144:2;208:20;223:4;208:20;;;199:29;-1:-1;287:1;318:49;363:3;343:9;318:49;;;294:74;;-1:-1;439:2;472:49;517:3;493:22;;;472:49;;;465:4;458:5;454:16;447:75;389:144;138:405;;;;;550:198;651:20;;676:67;651:20;676:67;;755:130;822:20;;847:33;822:20;847:33;;1029:616;;;;1229:3;1217:9;1208:7;1204:23;1200:33;1197:2;;;1246:1;1243;1236:12;1197:2;1281:1;1298:81;1371:7;1351:9;1298:81;;;1288:91;;1260:125;1416:2;1434:87;1513:7;1504:6;1493:9;1489:22;1434:87;;;1424:97;;1395:132;1558:2;1576:53;1621:7;1612:6;1601:9;1597:22;1576:53;;;1566:63;;1537:98;1191:454;;;;;;1653:364;;1813:67;1877:2;1872:3;1813:67;;;1913:66;1893:87;;2008:2;1999:12;;1799:218;-1:-1;;1799:218;2026:364;;2186:67;2250:2;2245:3;2186:67;;;-1:-1;;;2266:87;;2381:2;2372:12;;2172:218;-1:-1;;2172:218;2399:465;;2559:67;2623:2;2618:3;2559:67;;;2659:66;2639:87;;-1:-1;;;2755:2;2746:12;;2739:88;2855:2;2846:12;;2545:319;-1:-1;;2545:319;2873:465;;3033:67;3097:2;3092:3;3033:67;;;3133:66;3113:87;;-1:-1;;;3229:2;3220:12;;3213:88;3329:2;3320:12;;3019:319;-1:-1;;3019:319;3347:364;;3507:67;3571:2;3566:3;3507:67;;;-1:-1;;;3587:87;;3702:2;3693:12;;3493:218;-1:-1;;3493:218;3720:465;;3880:67;3944:2;3939:3;3880:67;;;3980:66;3960:87;;-1:-1;;;4076:2;4067:12;;4060:88;4176:2;4167:12;;3866:319;-1:-1;;3866:319;4194:296;;4371:83;4452:1;4447:3;4371:83;;4498:370;;4696:147;4839:3;4696:147;;4875:407;5066:2;5080:47;;;5051:18;;5141:131;5051:18;5141:131;;5289:407;5480:2;5494:47;;;5465:18;;5555:131;5465:18;5555:131;;5703:407;5894:2;5908:47;;;5879:18;;5969:131;5879:18;5969:131;;6117:407;6308:2;6322:47;;;6293:18;;6383:131;6293:18;6383:131;;6531:407;6722:2;6736:47;;;6707:18;;6797:131;6707:18;6797:131;;6945:407;7136:2;7150:47;;;7121:18;;7211:131;7121:18;7211:131;;7359:256;7421:2;7415:9;7447:17;;;7522:18;7507:34;;7543:22;;;7504:62;7501:2;;;7579:1;7576;7569:12;7501:2;7595;7588:22;7399:216;;-1:-1;7399:216;7776:163;7879:19;;;7928:4;7919:14;;7872:67;7947:106;8043:5;8026:27;8060:121;-1:-1;;;;;8122:54;;8105:76;8267:185;8370:58;8422:5;8370:58;;;8363:5;8360:69;8350:2;;8443:1;8440;8433:12;8350:2;8344:108;;8459:117;8528:24;8546:5;8528:24;",
+  "source": "pragma solidity 0.5.11;\npragma experimental ABIEncoderV2;\n\nimport \"../PaymentExitDataModel.sol\";\nimport \"../PaymentInFlightExitModelUtils.sol\";\nimport \"../../../utils/SafeEthTransfer.sol\";\nimport \"../../../transactions/PaymentTransactionModel.sol\";\n\nlibrary PaymentDeleteInFlightExit {\n    using PaymentInFlightExitModelUtils for PaymentExitDataModel.InFlightExit;\n\n    struct Controller {\n        uint256 minExitPeriod;\n        uint256 safeGasStipend;\n    }\n\n    event InFlightExitDeleted(\n        uint160 indexed exitId\n    );\n\n    /**\n     * @notice Main logic function to delete the non piggybacked in-flight exit\n     * @param exitId The exitId of the standard exit\n     */\n    function run(\n        Controller memory self,\n        PaymentExitDataModel.InFlightExitMap storage exitMap,\n        uint160 exitId\n    )\n        public\n    {\n        PaymentExitDataModel.InFlightExit memory ife = exitMap.exits[exitId];\n        require(ife.exitStartTimestamp != 0, \"In-flight exit does not exist\");\n        require(!ife.isInFirstPhase(self.minExitPeriod), \"Cannot delete in-flight exit still in first phase\");\n        require(!isPiggybacked(ife), \"The in-flight exit is already piggybacked\");\n\n        delete exitMap.exits[exitId];\n        SafeEthTransfer.transferRevertOnError(ife.bondOwner, ife.bondSize, self.safeGasStipend);\n        emit InFlightExitDeleted(exitId);\n    }\n\n    function isPiggybacked(ExitModel.InFlightExit memory ife)\n        private\n        pure\n        returns (bool)\n    {\n        for (uint16 i = 0; i < PaymentTransactionModel.MAX_INPUT_NUM(); i++) {\n            if (ife.isInputPiggybacked(i)) {\n                return true;\n            }\n        }\n\n        for (uint16 i = 0; i < PaymentTransactionModel.MAX_OUTPUT_NUM(); i++) {\n            if (ife.isOutputPiggybacked(i)) {\n                return true;\n            }\n        }\n\n        return false;\n    }\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/controllers/PaymentDeleteInFlightExit.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/controllers/PaymentDeleteInFlightExit.sol",
+    "exportedSymbols": {
+      "PaymentDeleteInFlightExit": [
+        6381
+      ]
+    },
+    "id": 6382,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 6243,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:56"
+      },
+      {
+        "id": 6244,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "24:33:56"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/PaymentExitDataModel.sol",
+        "file": "../PaymentExitDataModel.sol",
+        "id": 6245,
+        "nodeType": "ImportDirective",
+        "scope": 6382,
+        "sourceUnit": 3864,
+        "src": "59:37:56",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/PaymentInFlightExitModelUtils.sol",
+        "file": "../PaymentInFlightExitModelUtils.sol",
+        "id": 6246,
+        "nodeType": "ImportDirective",
+        "scope": 6382,
+        "sourceUnit": 4337,
+        "src": "97:46:56",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/SafeEthTransfer.sol",
+        "file": "../../../utils/SafeEthTransfer.sol",
+        "id": 6247,
+        "nodeType": "ImportDirective",
+        "scope": 6382,
+        "sourceUnit": 15278,
+        "src": "144:44:56",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/transactions/PaymentTransactionModel.sol",
+        "file": "../../../transactions/PaymentTransactionModel.sol",
+        "id": 6248,
+        "nodeType": "ImportDirective",
+        "scope": 6382,
+        "sourceUnit": 13872,
+        "src": "189:59:56",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 6381,
+        "linearizedBaseContracts": [
+          6381
+        ],
+        "name": "PaymentDeleteInFlightExit",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "id": 6251,
+            "libraryName": {
+              "contractScope": null,
+              "id": 6249,
+              "name": "PaymentInFlightExitModelUtils",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 4336,
+              "src": "296:29:56",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_PaymentInFlightExitModelUtils_$4336",
+                "typeString": "library PaymentInFlightExitModelUtils"
+              }
+            },
+            "nodeType": "UsingForDirective",
+            "src": "290:74:56",
+            "typeName": {
+              "contractScope": null,
+              "id": 6250,
+              "name": "PaymentExitDataModel.InFlightExit",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 3857,
+              "src": "330:33:56",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_InFlightExit_$3857_storage_ptr",
+                "typeString": "struct PaymentExitDataModel.InFlightExit"
+              }
+            }
+          },
+          {
+            "canonicalName": "PaymentDeleteInFlightExit.Controller",
+            "id": 6256,
+            "members": [
+              {
+                "constant": false,
+                "id": 6253,
+                "name": "minExitPeriod",
+                "nodeType": "VariableDeclaration",
+                "scope": 6256,
+                "src": "398:21:56",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 6252,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "398:7:56",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 6255,
+                "name": "safeGasStipend",
+                "nodeType": "VariableDeclaration",
+                "scope": 6256,
+                "src": "429:22:56",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 6254,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "429:7:56",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "Controller",
+            "nodeType": "StructDefinition",
+            "scope": 6381,
+            "src": "370:88:56",
+            "visibility": "public"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 6260,
+            "name": "InFlightExitDeleted",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 6259,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6258,
+                  "indexed": true,
+                  "name": "exitId",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6260,
+                  "src": "499:22:56",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint160",
+                    "typeString": "uint160"
+                  },
+                  "typeName": {
+                    "id": 6257,
+                    "name": "uint160",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "499:7:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint160",
+                      "typeString": "uint160"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "489:38:56"
+            },
+            "src": "464:64:56"
+          },
+          {
+            "body": {
+              "id": 6325,
+              "nodeType": "Block",
+              "src": "839:536:56",
+              "statements": [
+                {
+                  "assignments": [
+                    6272
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 6272,
+                      "name": "ife",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 6325,
+                      "src": "849:44:56",
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                        "typeString": "struct PaymentExitDataModel.InFlightExit"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 6271,
+                        "name": "PaymentExitDataModel.InFlightExit",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 3857,
+                        "src": "849:33:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_InFlightExit_$3857_storage_ptr",
+                          "typeString": "struct PaymentExitDataModel.InFlightExit"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 6277,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "baseExpression": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 6273,
+                        "name": "exitMap",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 6264,
+                        "src": "896:7:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_InFlightExitMap_$3862_storage_ptr",
+                          "typeString": "struct PaymentExitDataModel.InFlightExitMap storage pointer"
+                        }
+                      },
+                      "id": 6274,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "exits",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 3861,
+                      "src": "896:13:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_mapping$_t_uint160_$_t_struct$_InFlightExit_$3857_storage_$",
+                        "typeString": "mapping(uint160 => struct PaymentExitDataModel.InFlightExit storage ref)"
+                      }
+                    },
+                    "id": 6276,
+                    "indexExpression": {
+                      "argumentTypes": null,
+                      "id": 6275,
+                      "name": "exitId",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 6266,
+                      "src": "910:6:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint160",
+                        "typeString": "uint160"
+                      }
+                    },
+                    "isConstant": false,
+                    "isLValue": true,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "IndexAccess",
+                    "src": "896:21:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_InFlightExit_$3857_storage",
+                      "typeString": "struct PaymentExitDataModel.InFlightExit storage ref"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "849:68:56"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_uint64",
+                          "typeString": "uint64"
+                        },
+                        "id": 6282,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "expression": {
+                            "argumentTypes": null,
+                            "id": 6279,
+                            "name": "ife",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 6272,
+                            "src": "935:3:56",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                              "typeString": "struct PaymentExitDataModel.InFlightExit memory"
+                            }
+                          },
+                          "id": 6280,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "exitStartTimestamp",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 3838,
+                          "src": "935:22:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint64",
+                            "typeString": "uint64"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "!=",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "hexValue": "30",
+                          "id": 6281,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "number",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "961:1:56",
+                          "subdenomination": null,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_rational_0_by_1",
+                            "typeString": "int_const 0"
+                          },
+                          "value": "0"
+                        },
+                        "src": "935:27:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "496e2d666c69676874206578697420646f6573206e6f74206578697374",
+                        "id": 6283,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "964:31:56",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_430035b7744880bb9acf8f17f92f04efa5ef3f93565db88aed361948ed7815d8",
+                          "typeString": "literal_string \"In-flight exit does not exist\""
+                        },
+                        "value": "In-flight exit does not exist"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_430035b7744880bb9acf8f17f92f04efa5ef3f93565db88aed361948ed7815d8",
+                          "typeString": "literal_string \"In-flight exit does not exist\""
+                        }
+                      ],
+                      "id": 6278,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "927:7:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 6284,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "927:69:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 6285,
+                  "nodeType": "ExpressionStatement",
+                  "src": "927:69:56"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 6292,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "nodeType": "UnaryOperation",
+                        "operator": "!",
+                        "prefix": true,
+                        "src": "1014:39:56",
+                        "subExpression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "expression": {
+                                "argumentTypes": null,
+                                "id": 6289,
+                                "name": "self",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 6262,
+                                "src": "1034:4:56",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_struct$_Controller_$6256_memory_ptr",
+                                  "typeString": "struct PaymentDeleteInFlightExit.Controller memory"
+                                }
+                              },
+                              "id": 6290,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberName": "minExitPeriod",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 6253,
+                              "src": "1034:18:56",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            ],
+                            "expression": {
+                              "argumentTypes": null,
+                              "id": 6287,
+                              "name": "ife",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 6272,
+                              "src": "1015:3:56",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                                "typeString": "struct PaymentExitDataModel.InFlightExit memory"
+                              }
+                            },
+                            "id": 6288,
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "isInFirstPhase",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 4296,
+                            "src": "1015:18:56",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_view$_t_struct$_InFlightExit_$3857_memory_ptr_$_t_uint256_$returns$_t_bool_$bound_to$_t_struct$_InFlightExit_$3857_memory_ptr_$",
+                              "typeString": "function (struct PaymentExitDataModel.InFlightExit memory,uint256) view returns (bool)"
+                            }
+                          },
+                          "id": 6291,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1015:38:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "43616e6e6f742064656c65746520696e2d666c696768742065786974207374696c6c20696e206669727374207068617365",
+                        "id": 6293,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1055:51:56",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_8a2620721c7accab8c85f77fe416dcbff75156774604f53ee1d56d7d2461c72a",
+                          "typeString": "literal_string \"Cannot delete in-flight exit still in first phase\""
+                        },
+                        "value": "Cannot delete in-flight exit still in first phase"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_8a2620721c7accab8c85f77fe416dcbff75156774604f53ee1d56d7d2461c72a",
+                          "typeString": "literal_string \"Cannot delete in-flight exit still in first phase\""
+                        }
+                      ],
+                      "id": 6286,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "1006:7:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 6294,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1006:101:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 6295,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1006:101:56"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 6300,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "nodeType": "UnaryOperation",
+                        "operator": "!",
+                        "prefix": true,
+                        "src": "1125:19:56",
+                        "subExpression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "id": 6298,
+                              "name": "ife",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 6272,
+                              "src": "1140:3:56",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                                "typeString": "struct PaymentExitDataModel.InFlightExit memory"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                                "typeString": "struct PaymentExitDataModel.InFlightExit memory"
+                              }
+                            ],
+                            "id": 6297,
+                            "name": "isPiggybacked",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 6380,
+                            "src": "1126:13:56",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_pure$_t_struct$_InFlightExit_$3857_memory_ptr_$returns$_t_bool_$",
+                              "typeString": "function (struct PaymentExitDataModel.InFlightExit memory) pure returns (bool)"
+                            }
+                          },
+                          "id": 6299,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1126:18:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "54686520696e2d666c69676874206578697420697320616c72656164792070696767796261636b6564",
+                        "id": 6301,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1146:43:56",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_a79cbbfd6ecbb6f03847b01755de556b3c7de1ef7160c1795e1c9664872c04b6",
+                          "typeString": "literal_string \"The in-flight exit is already piggybacked\""
+                        },
+                        "value": "The in-flight exit is already piggybacked"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_a79cbbfd6ecbb6f03847b01755de556b3c7de1ef7160c1795e1c9664872c04b6",
+                          "typeString": "literal_string \"The in-flight exit is already piggybacked\""
+                        }
+                      ],
+                      "id": 6296,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "1117:7:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 6302,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1117:73:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 6303,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1117:73:56"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 6308,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "UnaryOperation",
+                    "operator": "delete",
+                    "prefix": true,
+                    "src": "1201:28:56",
+                    "subExpression": {
+                      "argumentTypes": null,
+                      "baseExpression": {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 6304,
+                          "name": "exitMap",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 6264,
+                          "src": "1208:7:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_InFlightExitMap_$3862_storage_ptr",
+                            "typeString": "struct PaymentExitDataModel.InFlightExitMap storage pointer"
+                          }
+                        },
+                        "id": 6305,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "exits",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 3861,
+                        "src": "1208:13:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_mapping$_t_uint160_$_t_struct$_InFlightExit_$3857_storage_$",
+                          "typeString": "mapping(uint160 => struct PaymentExitDataModel.InFlightExit storage ref)"
+                        }
+                      },
+                      "id": 6307,
+                      "indexExpression": {
+                        "argumentTypes": null,
+                        "id": 6306,
+                        "name": "exitId",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 6266,
+                        "src": "1222:6:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint160",
+                          "typeString": "uint160"
+                        }
+                      },
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "nodeType": "IndexAccess",
+                      "src": "1208:21:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_InFlightExit_$3857_storage",
+                        "typeString": "struct PaymentExitDataModel.InFlightExit storage ref"
+                      }
+                    },
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 6309,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1201:28:56"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 6313,
+                          "name": "ife",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 6272,
+                          "src": "1277:3:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                            "typeString": "struct PaymentExitDataModel.InFlightExit memory"
+                          }
+                        },
+                        "id": 6314,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "bondOwner",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 3852,
+                        "src": "1277:13:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 6315,
+                          "name": "ife",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 6272,
+                          "src": "1292:3:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                            "typeString": "struct PaymentExitDataModel.InFlightExit memory"
+                          }
+                        },
+                        "id": 6316,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "bondSize",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 3854,
+                        "src": "1292:12:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 6317,
+                          "name": "self",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 6262,
+                          "src": "1306:4:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Controller_$6256_memory_ptr",
+                            "typeString": "struct PaymentDeleteInFlightExit.Controller memory"
+                          }
+                        },
+                        "id": 6318,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "safeGasStipend",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 6255,
+                        "src": "1306:19:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 6310,
+                        "name": "SafeEthTransfer",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 15277,
+                        "src": "1239:15:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_SafeEthTransfer_$15277_$",
+                          "typeString": "type(library SafeEthTransfer)"
+                        }
+                      },
+                      "id": 6312,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "transferRevertOnError",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 15249,
+                      "src": "1239:37:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_nonpayable$_t_address_payable_$_t_uint256_$_t_uint256_$returns$__$",
+                        "typeString": "function (address payable,uint256,uint256)"
+                      }
+                    },
+                    "id": 6319,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1239:87:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 6320,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1239:87:56"
+                },
+                {
+                  "eventCall": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 6322,
+                        "name": "exitId",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 6266,
+                        "src": "1361:6:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint160",
+                          "typeString": "uint160"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint160",
+                          "typeString": "uint160"
+                        }
+                      ],
+                      "id": 6321,
+                      "name": "InFlightExitDeleted",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 6260,
+                      "src": "1341:19:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_event_nonpayable$_t_uint160_$returns$__$",
+                        "typeString": "function (uint160)"
+                      }
+                    },
+                    "id": 6323,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1341:27:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 6324,
+                  "nodeType": "EmitStatement",
+                  "src": "1336:32:56"
+                }
+              ]
+            },
+            "documentation": "@notice Main logic function to delete the non piggybacked in-flight exit\n@param exitId The exitId of the standard exit",
+            "id": 6326,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "run",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 6267,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6262,
+                  "name": "self",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6326,
+                  "src": "705:22:56",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Controller_$6256_memory_ptr",
+                    "typeString": "struct PaymentDeleteInFlightExit.Controller"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 6261,
+                    "name": "Controller",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 6256,
+                    "src": "705:10:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Controller_$6256_storage_ptr",
+                      "typeString": "struct PaymentDeleteInFlightExit.Controller"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 6264,
+                  "name": "exitMap",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6326,
+                  "src": "737:52:56",
+                  "stateVariable": false,
+                  "storageLocation": "storage",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_InFlightExitMap_$3862_storage_ptr",
+                    "typeString": "struct PaymentExitDataModel.InFlightExitMap"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 6263,
+                    "name": "PaymentExitDataModel.InFlightExitMap",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 3862,
+                    "src": "737:36:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_InFlightExitMap_$3862_storage_ptr",
+                      "typeString": "struct PaymentExitDataModel.InFlightExitMap"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 6266,
+                  "name": "exitId",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6326,
+                  "src": "799:14:56",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint160",
+                    "typeString": "uint160"
+                  },
+                  "typeName": {
+                    "id": 6265,
+                    "name": "uint160",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "799:7:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint160",
+                      "typeString": "uint160"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "695:124:56"
+            },
+            "returnParameters": {
+              "id": 6268,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "839:0:56"
+            },
+            "scope": 6381,
+            "src": "683:692:56",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 6379,
+              "nodeType": "Block",
+              "src": "1495:387:56",
+              "statements": [
+                {
+                  "body": {
+                    "id": 6353,
+                    "nodeType": "Block",
+                    "src": "1574:99:56",
+                    "statements": [
+                      {
+                        "condition": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "id": 6347,
+                              "name": "i",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 6334,
+                              "src": "1615:1:56",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint16",
+                                "typeString": "uint16"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_uint16",
+                                "typeString": "uint16"
+                              }
+                            ],
+                            "expression": {
+                              "argumentTypes": null,
+                              "id": 6345,
+                              "name": "ife",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 6328,
+                              "src": "1592:3:56",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                                "typeString": "struct PaymentExitDataModel.InFlightExit memory"
+                              }
+                            },
+                            "id": 6346,
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "isInputPiggybacked",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 4101,
+                            "src": "1592:22:56",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_pure$_t_struct$_InFlightExit_$3857_memory_ptr_$_t_uint16_$returns$_t_bool_$bound_to$_t_struct$_InFlightExit_$3857_memory_ptr_$",
+                              "typeString": "function (struct PaymentExitDataModel.InFlightExit memory,uint16) pure returns (bool)"
+                            }
+                          },
+                          "id": 6348,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1592:25:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "falseBody": null,
+                        "id": 6352,
+                        "nodeType": "IfStatement",
+                        "src": "1588:75:56",
+                        "trueBody": {
+                          "id": 6351,
+                          "nodeType": "Block",
+                          "src": "1619:44:56",
+                          "statements": [
+                            {
+                              "expression": {
+                                "argumentTypes": null,
+                                "hexValue": "74727565",
+                                "id": 6349,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": true,
+                                "kind": "bool",
+                                "lValueRequested": false,
+                                "nodeType": "Literal",
+                                "src": "1644:4:56",
+                                "subdenomination": null,
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bool",
+                                  "typeString": "bool"
+                                },
+                                "value": "true"
+                              },
+                              "functionReturnParameters": 6332,
+                              "id": 6350,
+                              "nodeType": "Return",
+                              "src": "1637:11:56"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "condition": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_uint16",
+                      "typeString": "uint16"
+                    },
+                    "id": 6341,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "id": 6337,
+                      "name": "i",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 6334,
+                      "src": "1524:1:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint16",
+                        "typeString": "uint16"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "<",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "arguments": [],
+                      "expression": {
+                        "argumentTypes": [],
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 6338,
+                          "name": "PaymentTransactionModel",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 13871,
+                          "src": "1528:23:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_contract$_PaymentTransactionModel_$13871_$",
+                            "typeString": "type(library PaymentTransactionModel)"
+                          }
+                        },
+                        "id": 6339,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "MAX_INPUT_NUM",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 13651,
+                        "src": "1528:37:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_internal_pure$__$returns$_t_uint8_$",
+                          "typeString": "function () pure returns (uint8)"
+                        }
+                      },
+                      "id": 6340,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "1528:39:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint8",
+                        "typeString": "uint8"
+                      }
+                    },
+                    "src": "1524:43:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 6354,
+                  "initializationExpression": {
+                    "assignments": [
+                      6334
+                    ],
+                    "declarations": [
+                      {
+                        "constant": false,
+                        "id": 6334,
+                        "name": "i",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 6354,
+                        "src": "1510:8:56",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint16",
+                          "typeString": "uint16"
+                        },
+                        "typeName": {
+                          "id": 6333,
+                          "name": "uint16",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1510:6:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint16",
+                            "typeString": "uint16"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "id": 6336,
+                    "initialValue": {
+                      "argumentTypes": null,
+                      "hexValue": "30",
+                      "id": 6335,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1521:1:56",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_0_by_1",
+                        "typeString": "int_const 0"
+                      },
+                      "value": "0"
+                    },
+                    "nodeType": "VariableDeclarationStatement",
+                    "src": "1510:12:56"
+                  },
+                  "loopExpression": {
+                    "expression": {
+                      "argumentTypes": null,
+                      "id": 6343,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "nodeType": "UnaryOperation",
+                      "operator": "++",
+                      "prefix": false,
+                      "src": "1569:3:56",
+                      "subExpression": {
+                        "argumentTypes": null,
+                        "id": 6342,
+                        "name": "i",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 6334,
+                        "src": "1569:1:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint16",
+                          "typeString": "uint16"
+                        }
+                      },
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint16",
+                        "typeString": "uint16"
+                      }
+                    },
+                    "id": 6344,
+                    "nodeType": "ExpressionStatement",
+                    "src": "1569:3:56"
+                  },
+                  "nodeType": "ForStatement",
+                  "src": "1505:168:56"
+                },
+                {
+                  "body": {
+                    "id": 6375,
+                    "nodeType": "Block",
+                    "src": "1753:100:56",
+                    "statements": [
+                      {
+                        "condition": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "id": 6369,
+                              "name": "i",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 6356,
+                              "src": "1795:1:56",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint16",
+                                "typeString": "uint16"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_uint16",
+                                "typeString": "uint16"
+                              }
+                            ],
+                            "expression": {
+                              "argumentTypes": null,
+                              "id": 6367,
+                              "name": "ife",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 6328,
+                              "src": "1771:3:56",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                                "typeString": "struct PaymentExitDataModel.InFlightExit memory"
+                              }
+                            },
+                            "id": 6368,
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "isOutputPiggybacked",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 4136,
+                            "src": "1771:23:56",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_pure$_t_struct$_InFlightExit_$3857_memory_ptr_$_t_uint16_$returns$_t_bool_$bound_to$_t_struct$_InFlightExit_$3857_memory_ptr_$",
+                              "typeString": "function (struct PaymentExitDataModel.InFlightExit memory,uint16) pure returns (bool)"
+                            }
+                          },
+                          "id": 6370,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1771:26:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "falseBody": null,
+                        "id": 6374,
+                        "nodeType": "IfStatement",
+                        "src": "1767:76:56",
+                        "trueBody": {
+                          "id": 6373,
+                          "nodeType": "Block",
+                          "src": "1799:44:56",
+                          "statements": [
+                            {
+                              "expression": {
+                                "argumentTypes": null,
+                                "hexValue": "74727565",
+                                "id": 6371,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": true,
+                                "kind": "bool",
+                                "lValueRequested": false,
+                                "nodeType": "Literal",
+                                "src": "1824:4:56",
+                                "subdenomination": null,
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bool",
+                                  "typeString": "bool"
+                                },
+                                "value": "true"
+                              },
+                              "functionReturnParameters": 6332,
+                              "id": 6372,
+                              "nodeType": "Return",
+                              "src": "1817:11:56"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "condition": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_uint16",
+                      "typeString": "uint16"
+                    },
+                    "id": 6363,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "id": 6359,
+                      "name": "i",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 6356,
+                      "src": "1702:1:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint16",
+                        "typeString": "uint16"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "<",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "arguments": [],
+                      "expression": {
+                        "argumentTypes": [],
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 6360,
+                          "name": "PaymentTransactionModel",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 13871,
+                          "src": "1706:23:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_contract$_PaymentTransactionModel_$13871_$",
+                            "typeString": "type(library PaymentTransactionModel)"
+                          }
+                        },
+                        "id": 6361,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "MAX_OUTPUT_NUM",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 13659,
+                        "src": "1706:38:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_internal_pure$__$returns$_t_uint8_$",
+                          "typeString": "function () pure returns (uint8)"
+                        }
+                      },
+                      "id": 6362,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "1706:40:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint8",
+                        "typeString": "uint8"
+                      }
+                    },
+                    "src": "1702:44:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 6376,
+                  "initializationExpression": {
+                    "assignments": [
+                      6356
+                    ],
+                    "declarations": [
+                      {
+                        "constant": false,
+                        "id": 6356,
+                        "name": "i",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 6376,
+                        "src": "1688:8:56",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint16",
+                          "typeString": "uint16"
+                        },
+                        "typeName": {
+                          "id": 6355,
+                          "name": "uint16",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1688:6:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint16",
+                            "typeString": "uint16"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "id": 6358,
+                    "initialValue": {
+                      "argumentTypes": null,
+                      "hexValue": "30",
+                      "id": 6357,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1699:1:56",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_0_by_1",
+                        "typeString": "int_const 0"
+                      },
+                      "value": "0"
+                    },
+                    "nodeType": "VariableDeclarationStatement",
+                    "src": "1688:12:56"
+                  },
+                  "loopExpression": {
+                    "expression": {
+                      "argumentTypes": null,
+                      "id": 6365,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "nodeType": "UnaryOperation",
+                      "operator": "++",
+                      "prefix": false,
+                      "src": "1748:3:56",
+                      "subExpression": {
+                        "argumentTypes": null,
+                        "id": 6364,
+                        "name": "i",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 6356,
+                        "src": "1748:1:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint16",
+                          "typeString": "uint16"
+                        }
+                      },
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint16",
+                        "typeString": "uint16"
+                      }
+                    },
+                    "id": 6366,
+                    "nodeType": "ExpressionStatement",
+                    "src": "1748:3:56"
+                  },
+                  "nodeType": "ForStatement",
+                  "src": "1683:170:56"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "hexValue": "66616c7365",
+                    "id": 6377,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "bool",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "1870:5:56",
+                    "subdenomination": null,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    },
+                    "value": "false"
+                  },
+                  "functionReturnParameters": 6332,
+                  "id": 6378,
+                  "nodeType": "Return",
+                  "src": "1863:12:56"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 6380,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isPiggybacked",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 6329,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6328,
+                  "name": "ife",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6380,
+                  "src": "1404:33:56",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                    "typeString": "struct PaymentExitDataModel.InFlightExit"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 6327,
+                    "name": "ExitModel.InFlightExit",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 3857,
+                    "src": "1404:22:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_InFlightExit_$3857_storage_ptr",
+                      "typeString": "struct PaymentExitDataModel.InFlightExit"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1403:35:56"
+            },
+            "returnParameters": {
+              "id": 6332,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6331,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6380,
+                  "src": "1485:4:56",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 6330,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1485:4:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1484:6:56"
+            },
+            "scope": 6381,
+            "src": "1381:501:56",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "private"
+          }
+        ],
+        "scope": 6382,
+        "src": "250:1634:56"
+      }
+    ],
+    "src": "0:1885:56"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/controllers/PaymentDeleteInFlightExit.sol",
+    "exportedSymbols": {
+      "PaymentDeleteInFlightExit": [
+        6381
+      ]
+    },
+    "id": 6382,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 6243,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:56"
+      },
+      {
+        "id": 6244,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "24:33:56"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/PaymentExitDataModel.sol",
+        "file": "../PaymentExitDataModel.sol",
+        "id": 6245,
+        "nodeType": "ImportDirective",
+        "scope": 6382,
+        "sourceUnit": 3864,
+        "src": "59:37:56",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/PaymentInFlightExitModelUtils.sol",
+        "file": "../PaymentInFlightExitModelUtils.sol",
+        "id": 6246,
+        "nodeType": "ImportDirective",
+        "scope": 6382,
+        "sourceUnit": 4337,
+        "src": "97:46:56",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/SafeEthTransfer.sol",
+        "file": "../../../utils/SafeEthTransfer.sol",
+        "id": 6247,
+        "nodeType": "ImportDirective",
+        "scope": 6382,
+        "sourceUnit": 15278,
+        "src": "144:44:56",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/transactions/PaymentTransactionModel.sol",
+        "file": "../../../transactions/PaymentTransactionModel.sol",
+        "id": 6248,
+        "nodeType": "ImportDirective",
+        "scope": 6382,
+        "sourceUnit": 13872,
+        "src": "189:59:56",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 6381,
+        "linearizedBaseContracts": [
+          6381
+        ],
+        "name": "PaymentDeleteInFlightExit",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "id": 6251,
+            "libraryName": {
+              "contractScope": null,
+              "id": 6249,
+              "name": "PaymentInFlightExitModelUtils",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 4336,
+              "src": "296:29:56",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_PaymentInFlightExitModelUtils_$4336",
+                "typeString": "library PaymentInFlightExitModelUtils"
+              }
+            },
+            "nodeType": "UsingForDirective",
+            "src": "290:74:56",
+            "typeName": {
+              "contractScope": null,
+              "id": 6250,
+              "name": "PaymentExitDataModel.InFlightExit",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 3857,
+              "src": "330:33:56",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_InFlightExit_$3857_storage_ptr",
+                "typeString": "struct PaymentExitDataModel.InFlightExit"
+              }
+            }
+          },
+          {
+            "canonicalName": "PaymentDeleteInFlightExit.Controller",
+            "id": 6256,
+            "members": [
+              {
+                "constant": false,
+                "id": 6253,
+                "name": "minExitPeriod",
+                "nodeType": "VariableDeclaration",
+                "scope": 6256,
+                "src": "398:21:56",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 6252,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "398:7:56",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 6255,
+                "name": "safeGasStipend",
+                "nodeType": "VariableDeclaration",
+                "scope": 6256,
+                "src": "429:22:56",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 6254,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "429:7:56",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "Controller",
+            "nodeType": "StructDefinition",
+            "scope": 6381,
+            "src": "370:88:56",
+            "visibility": "public"
+          },
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 6260,
+            "name": "InFlightExitDeleted",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 6259,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6258,
+                  "indexed": true,
+                  "name": "exitId",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6260,
+                  "src": "499:22:56",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint160",
+                    "typeString": "uint160"
+                  },
+                  "typeName": {
+                    "id": 6257,
+                    "name": "uint160",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "499:7:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint160",
+                      "typeString": "uint160"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "489:38:56"
+            },
+            "src": "464:64:56"
+          },
+          {
+            "body": {
+              "id": 6325,
+              "nodeType": "Block",
+              "src": "839:536:56",
+              "statements": [
+                {
+                  "assignments": [
+                    6272
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 6272,
+                      "name": "ife",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 6325,
+                      "src": "849:44:56",
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                        "typeString": "struct PaymentExitDataModel.InFlightExit"
+                      },
+                      "typeName": {
+                        "contractScope": null,
+                        "id": 6271,
+                        "name": "PaymentExitDataModel.InFlightExit",
+                        "nodeType": "UserDefinedTypeName",
+                        "referencedDeclaration": 3857,
+                        "src": "849:33:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_InFlightExit_$3857_storage_ptr",
+                          "typeString": "struct PaymentExitDataModel.InFlightExit"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 6277,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "baseExpression": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 6273,
+                        "name": "exitMap",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 6264,
+                        "src": "896:7:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_InFlightExitMap_$3862_storage_ptr",
+                          "typeString": "struct PaymentExitDataModel.InFlightExitMap storage pointer"
+                        }
+                      },
+                      "id": 6274,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "exits",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 3861,
+                      "src": "896:13:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_mapping$_t_uint160_$_t_struct$_InFlightExit_$3857_storage_$",
+                        "typeString": "mapping(uint160 => struct PaymentExitDataModel.InFlightExit storage ref)"
+                      }
+                    },
+                    "id": 6276,
+                    "indexExpression": {
+                      "argumentTypes": null,
+                      "id": 6275,
+                      "name": "exitId",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 6266,
+                      "src": "910:6:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint160",
+                        "typeString": "uint160"
+                      }
+                    },
+                    "isConstant": false,
+                    "isLValue": true,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "IndexAccess",
+                    "src": "896:21:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_InFlightExit_$3857_storage",
+                      "typeString": "struct PaymentExitDataModel.InFlightExit storage ref"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "849:68:56"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_uint64",
+                          "typeString": "uint64"
+                        },
+                        "id": 6282,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "expression": {
+                            "argumentTypes": null,
+                            "id": 6279,
+                            "name": "ife",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 6272,
+                            "src": "935:3:56",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                              "typeString": "struct PaymentExitDataModel.InFlightExit memory"
+                            }
+                          },
+                          "id": 6280,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "exitStartTimestamp",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 3838,
+                          "src": "935:22:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint64",
+                            "typeString": "uint64"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "!=",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "hexValue": "30",
+                          "id": 6281,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "number",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "961:1:56",
+                          "subdenomination": null,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_rational_0_by_1",
+                            "typeString": "int_const 0"
+                          },
+                          "value": "0"
+                        },
+                        "src": "935:27:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "496e2d666c69676874206578697420646f6573206e6f74206578697374",
+                        "id": 6283,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "964:31:56",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_430035b7744880bb9acf8f17f92f04efa5ef3f93565db88aed361948ed7815d8",
+                          "typeString": "literal_string \"In-flight exit does not exist\""
+                        },
+                        "value": "In-flight exit does not exist"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_430035b7744880bb9acf8f17f92f04efa5ef3f93565db88aed361948ed7815d8",
+                          "typeString": "literal_string \"In-flight exit does not exist\""
+                        }
+                      ],
+                      "id": 6278,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "927:7:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 6284,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "927:69:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 6285,
+                  "nodeType": "ExpressionStatement",
+                  "src": "927:69:56"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 6292,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "nodeType": "UnaryOperation",
+                        "operator": "!",
+                        "prefix": true,
+                        "src": "1014:39:56",
+                        "subExpression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "expression": {
+                                "argumentTypes": null,
+                                "id": 6289,
+                                "name": "self",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 6262,
+                                "src": "1034:4:56",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_struct$_Controller_$6256_memory_ptr",
+                                  "typeString": "struct PaymentDeleteInFlightExit.Controller memory"
+                                }
+                              },
+                              "id": 6290,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberName": "minExitPeriod",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 6253,
+                              "src": "1034:18:56",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            ],
+                            "expression": {
+                              "argumentTypes": null,
+                              "id": 6287,
+                              "name": "ife",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 6272,
+                              "src": "1015:3:56",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                                "typeString": "struct PaymentExitDataModel.InFlightExit memory"
+                              }
+                            },
+                            "id": 6288,
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "isInFirstPhase",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 4296,
+                            "src": "1015:18:56",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_view$_t_struct$_InFlightExit_$3857_memory_ptr_$_t_uint256_$returns$_t_bool_$bound_to$_t_struct$_InFlightExit_$3857_memory_ptr_$",
+                              "typeString": "function (struct PaymentExitDataModel.InFlightExit memory,uint256) view returns (bool)"
+                            }
+                          },
+                          "id": 6291,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1015:38:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "43616e6e6f742064656c65746520696e2d666c696768742065786974207374696c6c20696e206669727374207068617365",
+                        "id": 6293,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1055:51:56",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_8a2620721c7accab8c85f77fe416dcbff75156774604f53ee1d56d7d2461c72a",
+                          "typeString": "literal_string \"Cannot delete in-flight exit still in first phase\""
+                        },
+                        "value": "Cannot delete in-flight exit still in first phase"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_8a2620721c7accab8c85f77fe416dcbff75156774604f53ee1d56d7d2461c72a",
+                          "typeString": "literal_string \"Cannot delete in-flight exit still in first phase\""
+                        }
+                      ],
+                      "id": 6286,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "1006:7:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 6294,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1006:101:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 6295,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1006:101:56"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 6300,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "nodeType": "UnaryOperation",
+                        "operator": "!",
+                        "prefix": true,
+                        "src": "1125:19:56",
+                        "subExpression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "id": 6298,
+                              "name": "ife",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 6272,
+                              "src": "1140:3:56",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                                "typeString": "struct PaymentExitDataModel.InFlightExit memory"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                                "typeString": "struct PaymentExitDataModel.InFlightExit memory"
+                              }
+                            ],
+                            "id": 6297,
+                            "name": "isPiggybacked",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 6380,
+                            "src": "1126:13:56",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_pure$_t_struct$_InFlightExit_$3857_memory_ptr_$returns$_t_bool_$",
+                              "typeString": "function (struct PaymentExitDataModel.InFlightExit memory) pure returns (bool)"
+                            }
+                          },
+                          "id": 6299,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1126:18:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "54686520696e2d666c69676874206578697420697320616c72656164792070696767796261636b6564",
+                        "id": 6301,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1146:43:56",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_a79cbbfd6ecbb6f03847b01755de556b3c7de1ef7160c1795e1c9664872c04b6",
+                          "typeString": "literal_string \"The in-flight exit is already piggybacked\""
+                        },
+                        "value": "The in-flight exit is already piggybacked"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_a79cbbfd6ecbb6f03847b01755de556b3c7de1ef7160c1795e1c9664872c04b6",
+                          "typeString": "literal_string \"The in-flight exit is already piggybacked\""
+                        }
+                      ],
+                      "id": 6296,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "1117:7:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 6302,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1117:73:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 6303,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1117:73:56"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 6308,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "UnaryOperation",
+                    "operator": "delete",
+                    "prefix": true,
+                    "src": "1201:28:56",
+                    "subExpression": {
+                      "argumentTypes": null,
+                      "baseExpression": {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 6304,
+                          "name": "exitMap",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 6264,
+                          "src": "1208:7:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_InFlightExitMap_$3862_storage_ptr",
+                            "typeString": "struct PaymentExitDataModel.InFlightExitMap storage pointer"
+                          }
+                        },
+                        "id": 6305,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "exits",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 3861,
+                        "src": "1208:13:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_mapping$_t_uint160_$_t_struct$_InFlightExit_$3857_storage_$",
+                          "typeString": "mapping(uint160 => struct PaymentExitDataModel.InFlightExit storage ref)"
+                        }
+                      },
+                      "id": 6307,
+                      "indexExpression": {
+                        "argumentTypes": null,
+                        "id": 6306,
+                        "name": "exitId",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 6266,
+                        "src": "1222:6:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint160",
+                          "typeString": "uint160"
+                        }
+                      },
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": true,
+                      "nodeType": "IndexAccess",
+                      "src": "1208:21:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_InFlightExit_$3857_storage",
+                        "typeString": "struct PaymentExitDataModel.InFlightExit storage ref"
+                      }
+                    },
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 6309,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1201:28:56"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 6313,
+                          "name": "ife",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 6272,
+                          "src": "1277:3:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                            "typeString": "struct PaymentExitDataModel.InFlightExit memory"
+                          }
+                        },
+                        "id": 6314,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "bondOwner",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 3852,
+                        "src": "1277:13:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 6315,
+                          "name": "ife",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 6272,
+                          "src": "1292:3:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                            "typeString": "struct PaymentExitDataModel.InFlightExit memory"
+                          }
+                        },
+                        "id": 6316,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "bondSize",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 3854,
+                        "src": "1292:12:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 6317,
+                          "name": "self",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 6262,
+                          "src": "1306:4:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Controller_$6256_memory_ptr",
+                            "typeString": "struct PaymentDeleteInFlightExit.Controller memory"
+                          }
+                        },
+                        "id": 6318,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "safeGasStipend",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 6255,
+                        "src": "1306:19:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 6310,
+                        "name": "SafeEthTransfer",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 15277,
+                        "src": "1239:15:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_SafeEthTransfer_$15277_$",
+                          "typeString": "type(library SafeEthTransfer)"
+                        }
+                      },
+                      "id": 6312,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "transferRevertOnError",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 15249,
+                      "src": "1239:37:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_nonpayable$_t_address_payable_$_t_uint256_$_t_uint256_$returns$__$",
+                        "typeString": "function (address payable,uint256,uint256)"
+                      }
+                    },
+                    "id": 6319,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1239:87:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 6320,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1239:87:56"
+                },
+                {
+                  "eventCall": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 6322,
+                        "name": "exitId",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 6266,
+                        "src": "1361:6:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint160",
+                          "typeString": "uint160"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint160",
+                          "typeString": "uint160"
+                        }
+                      ],
+                      "id": 6321,
+                      "name": "InFlightExitDeleted",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 6260,
+                      "src": "1341:19:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_event_nonpayable$_t_uint160_$returns$__$",
+                        "typeString": "function (uint160)"
+                      }
+                    },
+                    "id": 6323,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1341:27:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 6324,
+                  "nodeType": "EmitStatement",
+                  "src": "1336:32:56"
+                }
+              ]
+            },
+            "documentation": "@notice Main logic function to delete the non piggybacked in-flight exit\n@param exitId The exitId of the standard exit",
+            "id": 6326,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "run",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 6267,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6262,
+                  "name": "self",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6326,
+                  "src": "705:22:56",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Controller_$6256_memory_ptr",
+                    "typeString": "struct PaymentDeleteInFlightExit.Controller"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 6261,
+                    "name": "Controller",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 6256,
+                    "src": "705:10:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Controller_$6256_storage_ptr",
+                      "typeString": "struct PaymentDeleteInFlightExit.Controller"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 6264,
+                  "name": "exitMap",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6326,
+                  "src": "737:52:56",
+                  "stateVariable": false,
+                  "storageLocation": "storage",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_InFlightExitMap_$3862_storage_ptr",
+                    "typeString": "struct PaymentExitDataModel.InFlightExitMap"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 6263,
+                    "name": "PaymentExitDataModel.InFlightExitMap",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 3862,
+                    "src": "737:36:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_InFlightExitMap_$3862_storage_ptr",
+                      "typeString": "struct PaymentExitDataModel.InFlightExitMap"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 6266,
+                  "name": "exitId",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6326,
+                  "src": "799:14:56",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint160",
+                    "typeString": "uint160"
+                  },
+                  "typeName": {
+                    "id": 6265,
+                    "name": "uint160",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "799:7:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint160",
+                      "typeString": "uint160"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "695:124:56"
+            },
+            "returnParameters": {
+              "id": 6268,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "839:0:56"
+            },
+            "scope": 6381,
+            "src": "683:692:56",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 6379,
+              "nodeType": "Block",
+              "src": "1495:387:56",
+              "statements": [
+                {
+                  "body": {
+                    "id": 6353,
+                    "nodeType": "Block",
+                    "src": "1574:99:56",
+                    "statements": [
+                      {
+                        "condition": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "id": 6347,
+                              "name": "i",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 6334,
+                              "src": "1615:1:56",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint16",
+                                "typeString": "uint16"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_uint16",
+                                "typeString": "uint16"
+                              }
+                            ],
+                            "expression": {
+                              "argumentTypes": null,
+                              "id": 6345,
+                              "name": "ife",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 6328,
+                              "src": "1592:3:56",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                                "typeString": "struct PaymentExitDataModel.InFlightExit memory"
+                              }
+                            },
+                            "id": 6346,
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "isInputPiggybacked",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 4101,
+                            "src": "1592:22:56",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_pure$_t_struct$_InFlightExit_$3857_memory_ptr_$_t_uint16_$returns$_t_bool_$bound_to$_t_struct$_InFlightExit_$3857_memory_ptr_$",
+                              "typeString": "function (struct PaymentExitDataModel.InFlightExit memory,uint16) pure returns (bool)"
+                            }
+                          },
+                          "id": 6348,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1592:25:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "falseBody": null,
+                        "id": 6352,
+                        "nodeType": "IfStatement",
+                        "src": "1588:75:56",
+                        "trueBody": {
+                          "id": 6351,
+                          "nodeType": "Block",
+                          "src": "1619:44:56",
+                          "statements": [
+                            {
+                              "expression": {
+                                "argumentTypes": null,
+                                "hexValue": "74727565",
+                                "id": 6349,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": true,
+                                "kind": "bool",
+                                "lValueRequested": false,
+                                "nodeType": "Literal",
+                                "src": "1644:4:56",
+                                "subdenomination": null,
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bool",
+                                  "typeString": "bool"
+                                },
+                                "value": "true"
+                              },
+                              "functionReturnParameters": 6332,
+                              "id": 6350,
+                              "nodeType": "Return",
+                              "src": "1637:11:56"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "condition": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_uint16",
+                      "typeString": "uint16"
+                    },
+                    "id": 6341,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "id": 6337,
+                      "name": "i",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 6334,
+                      "src": "1524:1:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint16",
+                        "typeString": "uint16"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "<",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "arguments": [],
+                      "expression": {
+                        "argumentTypes": [],
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 6338,
+                          "name": "PaymentTransactionModel",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 13871,
+                          "src": "1528:23:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_contract$_PaymentTransactionModel_$13871_$",
+                            "typeString": "type(library PaymentTransactionModel)"
+                          }
+                        },
+                        "id": 6339,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "MAX_INPUT_NUM",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 13651,
+                        "src": "1528:37:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_internal_pure$__$returns$_t_uint8_$",
+                          "typeString": "function () pure returns (uint8)"
+                        }
+                      },
+                      "id": 6340,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "1528:39:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint8",
+                        "typeString": "uint8"
+                      }
+                    },
+                    "src": "1524:43:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 6354,
+                  "initializationExpression": {
+                    "assignments": [
+                      6334
+                    ],
+                    "declarations": [
+                      {
+                        "constant": false,
+                        "id": 6334,
+                        "name": "i",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 6354,
+                        "src": "1510:8:56",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint16",
+                          "typeString": "uint16"
+                        },
+                        "typeName": {
+                          "id": 6333,
+                          "name": "uint16",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1510:6:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint16",
+                            "typeString": "uint16"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "id": 6336,
+                    "initialValue": {
+                      "argumentTypes": null,
+                      "hexValue": "30",
+                      "id": 6335,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1521:1:56",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_0_by_1",
+                        "typeString": "int_const 0"
+                      },
+                      "value": "0"
+                    },
+                    "nodeType": "VariableDeclarationStatement",
+                    "src": "1510:12:56"
+                  },
+                  "loopExpression": {
+                    "expression": {
+                      "argumentTypes": null,
+                      "id": 6343,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "nodeType": "UnaryOperation",
+                      "operator": "++",
+                      "prefix": false,
+                      "src": "1569:3:56",
+                      "subExpression": {
+                        "argumentTypes": null,
+                        "id": 6342,
+                        "name": "i",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 6334,
+                        "src": "1569:1:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint16",
+                          "typeString": "uint16"
+                        }
+                      },
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint16",
+                        "typeString": "uint16"
+                      }
+                    },
+                    "id": 6344,
+                    "nodeType": "ExpressionStatement",
+                    "src": "1569:3:56"
+                  },
+                  "nodeType": "ForStatement",
+                  "src": "1505:168:56"
+                },
+                {
+                  "body": {
+                    "id": 6375,
+                    "nodeType": "Block",
+                    "src": "1753:100:56",
+                    "statements": [
+                      {
+                        "condition": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "id": 6369,
+                              "name": "i",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 6356,
+                              "src": "1795:1:56",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint16",
+                                "typeString": "uint16"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_uint16",
+                                "typeString": "uint16"
+                              }
+                            ],
+                            "expression": {
+                              "argumentTypes": null,
+                              "id": 6367,
+                              "name": "ife",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 6328,
+                              "src": "1771:3:56",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                                "typeString": "struct PaymentExitDataModel.InFlightExit memory"
+                              }
+                            },
+                            "id": 6368,
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "isOutputPiggybacked",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 4136,
+                            "src": "1771:23:56",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_internal_pure$_t_struct$_InFlightExit_$3857_memory_ptr_$_t_uint16_$returns$_t_bool_$bound_to$_t_struct$_InFlightExit_$3857_memory_ptr_$",
+                              "typeString": "function (struct PaymentExitDataModel.InFlightExit memory,uint16) pure returns (bool)"
+                            }
+                          },
+                          "id": 6370,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1771:26:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_bool",
+                            "typeString": "bool"
+                          }
+                        },
+                        "falseBody": null,
+                        "id": 6374,
+                        "nodeType": "IfStatement",
+                        "src": "1767:76:56",
+                        "trueBody": {
+                          "id": 6373,
+                          "nodeType": "Block",
+                          "src": "1799:44:56",
+                          "statements": [
+                            {
+                              "expression": {
+                                "argumentTypes": null,
+                                "hexValue": "74727565",
+                                "id": 6371,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": true,
+                                "kind": "bool",
+                                "lValueRequested": false,
+                                "nodeType": "Literal",
+                                "src": "1824:4:56",
+                                "subdenomination": null,
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bool",
+                                  "typeString": "bool"
+                                },
+                                "value": "true"
+                              },
+                              "functionReturnParameters": 6332,
+                              "id": 6372,
+                              "nodeType": "Return",
+                              "src": "1817:11:56"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "condition": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_uint16",
+                      "typeString": "uint16"
+                    },
+                    "id": 6363,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "id": 6359,
+                      "name": "i",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 6356,
+                      "src": "1702:1:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint16",
+                        "typeString": "uint16"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "<",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "arguments": [],
+                      "expression": {
+                        "argumentTypes": [],
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 6360,
+                          "name": "PaymentTransactionModel",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 13871,
+                          "src": "1706:23:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_contract$_PaymentTransactionModel_$13871_$",
+                            "typeString": "type(library PaymentTransactionModel)"
+                          }
+                        },
+                        "id": 6361,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "MAX_OUTPUT_NUM",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 13659,
+                        "src": "1706:38:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_internal_pure$__$returns$_t_uint8_$",
+                          "typeString": "function () pure returns (uint8)"
+                        }
+                      },
+                      "id": 6362,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "1706:40:56",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint8",
+                        "typeString": "uint8"
+                      }
+                    },
+                    "src": "1702:44:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 6376,
+                  "initializationExpression": {
+                    "assignments": [
+                      6356
+                    ],
+                    "declarations": [
+                      {
+                        "constant": false,
+                        "id": 6356,
+                        "name": "i",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 6376,
+                        "src": "1688:8:56",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint16",
+                          "typeString": "uint16"
+                        },
+                        "typeName": {
+                          "id": 6355,
+                          "name": "uint16",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "1688:6:56",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint16",
+                            "typeString": "uint16"
+                          }
+                        },
+                        "value": null,
+                        "visibility": "internal"
+                      }
+                    ],
+                    "id": 6358,
+                    "initialValue": {
+                      "argumentTypes": null,
+                      "hexValue": "30",
+                      "id": 6357,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1699:1:56",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_0_by_1",
+                        "typeString": "int_const 0"
+                      },
+                      "value": "0"
+                    },
+                    "nodeType": "VariableDeclarationStatement",
+                    "src": "1688:12:56"
+                  },
+                  "loopExpression": {
+                    "expression": {
+                      "argumentTypes": null,
+                      "id": 6365,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "nodeType": "UnaryOperation",
+                      "operator": "++",
+                      "prefix": false,
+                      "src": "1748:3:56",
+                      "subExpression": {
+                        "argumentTypes": null,
+                        "id": 6364,
+                        "name": "i",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 6356,
+                        "src": "1748:1:56",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint16",
+                          "typeString": "uint16"
+                        }
+                      },
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint16",
+                        "typeString": "uint16"
+                      }
+                    },
+                    "id": 6366,
+                    "nodeType": "ExpressionStatement",
+                    "src": "1748:3:56"
+                  },
+                  "nodeType": "ForStatement",
+                  "src": "1683:170:56"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "hexValue": "66616c7365",
+                    "id": 6377,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "bool",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "1870:5:56",
+                    "subdenomination": null,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    },
+                    "value": "false"
+                  },
+                  "functionReturnParameters": 6332,
+                  "id": 6378,
+                  "nodeType": "Return",
+                  "src": "1863:12:56"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 6380,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isPiggybacked",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 6329,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6328,
+                  "name": "ife",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6380,
+                  "src": "1404:33:56",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_InFlightExit_$3857_memory_ptr",
+                    "typeString": "struct PaymentExitDataModel.InFlightExit"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 6327,
+                    "name": "ExitModel.InFlightExit",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 3857,
+                    "src": "1404:22:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_InFlightExit_$3857_storage_ptr",
+                      "typeString": "struct PaymentExitDataModel.InFlightExit"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1403:35:56"
+            },
+            "returnParameters": {
+              "id": 6332,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6331,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6380,
+                  "src": "1485:4:56",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 6330,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1485:4:56",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1484:6:56"
+            },
+            "scope": 6381,
+            "src": "1381:501:56",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "private"
+          }
+        ],
+        "scope": 6382,
+        "src": "250:1634:56"
+      }
+    ],
+    "src": "0:1885:56"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {
+    "1337": {
+      "events": {
+        "0x1991c4c350498b0cc937c6a08bc5bdecf2e4fdd9d918052a880f102e43dbe45c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint160",
+              "name": "exitId",
+              "type": "uint160"
+            }
+          ],
+          "name": "InFlightExitDeleted",
+          "type": "event",
+          "signature": "0x1991c4c350498b0cc937c6a08bc5bdecf2e4fdd9d918052a880f102e43dbe45c"
+        }
+      },
+      "links": {},
+      "address": "0x210E316C70cB364B3A75C3A264cf01e99bf4455B",
+      "transactionHash": "0x66f5d880af3b5923034a28f7e3e1f554a231d0b8c94b0dac9f3b3aa38f67ff99"
+    }
+  },
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:09:22.606Z",
+  "devdoc": {
+    "methods": {
+      "run(PaymentDeleteInFlightExit.Controller,PaymentExitDataModel.InFlightExitMap storage,uint160)": {
+        "params": {
+          "exitId": "The exitId of the standard exit"
+        }
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {
+      "run(PaymentDeleteInFlightExit.Controller,PaymentExitDataModel.InFlightExitMap storage,uint160)": {
+        "notice": "Main logic function to delete the non piggybacked in-flight exit"
+      }
+    }
+  }
+}

@@ -41,6 +41,8 @@ defmodule Engine.MixProject do
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
       # {:sibling_app_in_umbrella, in_umbrella: true}
+      {:ex_abi, "~> 0.2.1"},
+      {:ethereumex, "~> 0.6.0"},
       {:ecto_sql, "~> 3.1"},
       {:ex_plasma, git: "https://github.com/omisego/ex_plasma.git"},
       {:postgrex, "~> 0.14"},

@@ -77,7 +77,21 @@ defmodule Engine.Ethereum.RootChain.Abi do
 
   defp decode_function_call_result(function_spec, values) do
     function_spec.input_names
-    |> Enum.zip(values)
+    |> Enum.zip(Enum.map(values, &to_hex/1))
     |> Enum.into(%{})
+  end
+
+  defp to_hex(value) when is_binary(value) do
+    case String.valid?(value) do
+      false ->
+        Encoding.to_hex(value)
+
+      true ->
+        value
+    end
+  end
+
+  defp to_hex(value) do
+    value
   end
 end

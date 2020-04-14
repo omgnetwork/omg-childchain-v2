@@ -1,0 +1,354 @@
+{
+  "contractName": "IExitProcessor",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "uint160",
+          "name": "exitId",
+          "type": "uint160"
+        },
+        {
+          "internalType": "uint256",
+          "name": "vaultId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "processExit",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[{\"internalType\":\"uint160\",\"name\":\"exitId\",\"type\":\"uint160\"},{\"internalType\":\"uint256\",\"name\":\"vaultId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"name\":\"processExit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"An interface that allows custom logic to process exits for different requirements.     This interface is used to dispatch to each custom processor when 'processExits' is called on PlasmaFramework.\",\"methods\":{\"processExit(uint160,uint256,address)\":{\"details\":\"Function interface for processing exits.\",\"params\":{\"exitId\":\"Unique ID for exit per tx type\",\"token\":\"Address of the token contract\",\"vaultId\":\"ID of the vault that funds the exit\"}}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/interfaces/IExitProcessor.sol\":\"IExitProcessor\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/interfaces/IExitProcessor.sol\":{\"keccak256\":\"0x93c31f7c8ff69c80bd30f9296a7b2059affedadefc0c2cfb5c992eb1f1885fa2\",\"urls\":[\"bzz-raw://d56cb65fd67b07cec3bb17f48c064df4ea892780bf21d87d717e6581feb92ffd\",\"dweb:/ipfs/QmZZGPdSSN81c2P1CBnrCQD9mRWntPUPUjm4vCgWsBqS14\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity 0.5.11;\n\n/**\n * @dev An interface that allows custom logic to process exits for different requirements.\n *      This interface is used to dispatch to each custom processor when 'processExits' is called on PlasmaFramework.\n */\ninterface IExitProcessor {\n    /**\n     * @dev Function interface for processing exits.\n     * @param exitId Unique ID for exit per tx type\n     * @param vaultId ID of the vault that funds the exit\n     * @param token Address of the token contract\n     */\n    function processExit(uint160 exitId, uint256 vaultId, address token) external;\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/interfaces/IExitProcessor.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/interfaces/IExitProcessor.sol",
+    "exportedSymbols": {
+      "IExitProcessor": [
+        12351
+      ]
+    },
+    "id": 12352,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 12341,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:77"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": "@dev An interface that allows custom logic to process exits for different requirements.\n     This interface is used to dispatch to each custom processor when 'processExits' is called on PlasmaFramework.",
+        "fullyImplemented": false,
+        "id": 12351,
+        "linearizedBaseContracts": [
+          12351
+        ],
+        "name": "IExitProcessor",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": "@dev Function interface for processing exits.\n@param exitId Unique ID for exit per tx type\n@param vaultId ID of the vault that funds the exit\n@param token Address of the token contract",
+            "id": 12350,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "processExit",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 12348,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 12343,
+                  "name": "exitId",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12350,
+                  "src": "523:14:77",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint160",
+                    "typeString": "uint160"
+                  },
+                  "typeName": {
+                    "id": 12342,
+                    "name": "uint160",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "523:7:77",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint160",
+                      "typeString": "uint160"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 12345,
+                  "name": "vaultId",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12350,
+                  "src": "539:15:77",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 12344,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "539:7:77",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 12347,
+                  "name": "token",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12350,
+                  "src": "556:13:77",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 12346,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "556:7:77",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "522:48:77"
+            },
+            "returnParameters": {
+              "id": 12349,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "579:0:77"
+            },
+            "scope": 12351,
+            "src": "502:78:77",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 12352,
+        "src": "242:340:77"
+      }
+    ],
+    "src": "0:583:77"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/interfaces/IExitProcessor.sol",
+    "exportedSymbols": {
+      "IExitProcessor": [
+        12351
+      ]
+    },
+    "id": 12352,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 12341,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:77"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": "@dev An interface that allows custom logic to process exits for different requirements.\n     This interface is used to dispatch to each custom processor when 'processExits' is called on PlasmaFramework.",
+        "fullyImplemented": false,
+        "id": 12351,
+        "linearizedBaseContracts": [
+          12351
+        ],
+        "name": "IExitProcessor",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": "@dev Function interface for processing exits.\n@param exitId Unique ID for exit per tx type\n@param vaultId ID of the vault that funds the exit\n@param token Address of the token contract",
+            "id": 12350,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "processExit",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 12348,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 12343,
+                  "name": "exitId",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12350,
+                  "src": "523:14:77",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint160",
+                    "typeString": "uint160"
+                  },
+                  "typeName": {
+                    "id": 12342,
+                    "name": "uint160",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "523:7:77",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint160",
+                      "typeString": "uint160"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 12345,
+                  "name": "vaultId",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12350,
+                  "src": "539:15:77",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 12344,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "539:7:77",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 12347,
+                  "name": "token",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12350,
+                  "src": "556:13:77",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 12346,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "556:7:77",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "522:48:77"
+            },
+            "returnParameters": {
+              "id": 12349,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "579:0:77"
+            },
+            "scope": 12351,
+            "src": "502:78:77",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 12352,
+        "src": "242:340:77"
+      }
+    ],
+    "src": "0:583:77"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.795Z",
+  "devdoc": {
+    "details": "An interface that allows custom logic to process exits for different requirements.     This interface is used to dispatch to each custom processor when 'processExits' is called on PlasmaFramework.",
+    "methods": {
+      "processExit(uint160,uint256,address)": {
+        "details": "Function interface for processing exits.",
+        "params": {
+          "exitId": "Unique ID for exit per tx type",
+          "token": "Address of the token contract",
+          "vaultId": "ID of the vault that funds the exit"
+        }
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

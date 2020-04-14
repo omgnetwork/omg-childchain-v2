@@ -1,0 +1,1242 @@
+{
+  "contractName": "VaultRegistryMock",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_vaultId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_vaultAddress",
+          "type": "address"
+        }
+      ],
+      "name": "registerVault",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_vaultId",
+          "type": "uint256"
+        }
+      ],
+      "name": "vaults",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_vaultAddress",
+          "type": "address"
+        }
+      ],
+      "name": "vaultToId",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_minExitPeriod",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_initialImmuneVaults",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "vaultId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "vaultAddress",
+          "type": "address"
+        }
+      ],
+      "name": "VaultRegistered",
+      "type": "event"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getMaintainer",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "maintainerToSet",
+          "type": "address"
+        }
+      ],
+      "name": "setMaintainer",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "checkOnlyFromNonQuarantinedVault",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[],\"name\":\"checkOnlyFromNonQuarantinedVault\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"maintainerToSet\",\"type\":\"address\"}],\"name\":\"setMaintainer\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"getMaintainer\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_vaultId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_vaultAddress\",\"type\":\"address\"}],\"name\":\"registerVault\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_vaultId\",\"type\":\"uint256\"}],\"name\":\"vaults\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_vaultAddress\",\"type\":\"address\"}],\"name\":\"vaultToId\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_minExitPeriod\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_initialImmuneVaults\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"vaultId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"vaultAddress\",\"type\":\"address\"}],\"name\":\"VaultRegistered\",\"type\":\"event\"}],\"devdoc\":{\"methods\":{\"registerVault(uint256,address)\":{\"details\":\"emits VaultRegistered event to notify clients\",\"params\":{\"_vaultAddress\":\"Address of the vault contract\",\"_vaultId\":\"The ID for the vault contract to register\"}}}},\"userdoc\":{\"methods\":{\"getMaintainer()\":{\"notice\":\"override to make it non-abstract contract \"},\"registerVault(uint256,address)\":{\"notice\":\"Register a vault within the PlasmaFramework. Only a maintainer can make the call.\"},\"setMaintainer(address)\":{\"notice\":\"test helper function \"},\"vaultToId(address)\":{\"notice\":\"Public getter for retrieving vault ID with vault address\"},\"vaults(uint256)\":{\"notice\":\"Public getter for retrieving vault address with vault ID\"}}}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/framework/registries/VaultRegistryMock.sol\":\"VaultRegistryMock\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/framework/registries/VaultRegistryMock.sol\":{\"keccak256\":\"0x9238507e42c43cb5f9907d7a736ed2fee39957db056fde84515b48c2aa7e1a36\",\"urls\":[\"bzz-raw://92d86d6d32f77b23d84eb6abe264cbd8c0a4ca6a1329cdc86d41033b9c50697b\",\"dweb:/ipfs/QmeFKegptPNjbLcCwHCrsYanahqN39LaA9sC3VwSS8CJr3\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/registries/VaultRegistry.sol\":{\"keccak256\":\"0x7786b4b8b043026655fa872f11ec747ef600100cc73da38369e1e2fd5047c95a\",\"urls\":[\"bzz-raw://b957490e53281e516290455b78722627f5536e0bd6b9bc17777f3f7a93ed9b14\",\"dweb:/ipfs/QmbUEwWfkTCSPPNEjAJUEXwgCCY9cBPgAKJagRbYQ3PSLE\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/Quarantine.sol\":{\"keccak256\":\"0x1b685ea3de626e3d8961d0e384a67c3e87752874784cc2e59777857d130f2390\",\"urls\":[\"bzz-raw://28c30354aa580476f230c4d8e151d34337b923caabc6bccfe560d75ef37d446e\",\"dweb:/ipfs/Qmf9nCYFBhHDyMgHmxX5pSkqLpqb2W3XffPopdkJTHmnAA\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/OnlyFromAddress.sol\":{\"keccak256\":\"0x54d4cb74bf5c448bb383ff4ffce898473739a5ba015e439dae1c092c70df943f\",\"urls\":[\"bzz-raw://5c9efbe363534d6746573b9b0dda687d257272c3ce0123b6a45bc7eef55a40b4\",\"dweb:/ipfs/QmZPLF1bKdU6DAZZcxWfMudUwzeubLxsSk14x8hvUMj15X\"]},\"openzeppelin-solidity/contracts/utils/Address.sol\":{\"keccak256\":\"0xf3358e5819ca73357abd6c90bdfffd0474af54364897f6b3e3234c4b71fbe9a1\",\"urls\":[\"bzz-raw://75ae8d04454d1511a2ed986cc8585736f05c5c25280683b3d24712a9f414a4bf\",\"dweb:/ipfs/Qmb3kNCoBUZdah1AgBBD4zMk898j5Qw8ahT1w5cCMYp5Y3\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506040516107113803806107118339818101604052604081101561003357600080fd5b50805160209091015160029091026003556004556106bb806100566000396000f3fe608060405234801561001057600080fd5b50600436106100625760003560e01c80630971f0e01461006757806313ea5d29146100835780634b0a72bc146100ab5780636a51fd63146100cf5780638c64ea4a146100fb578063dfb494f014610118575b600080fd5b61006f610150565b604080519115158252519081900360200190f35b6100a96004803603602081101561009957600080fd5b50356001600160a01b03166101fb565b005b6100b361021d565b604080516001600160a01b039092168252519081900360200190f35b6100a9600480360360408110156100e557600080fd5b50803590602001356001600160a01b031661022c565b6100b36004803603602081101561011157600080fd5b5035610444565b61013e6004803603602081101561012e57600080fd5b50356001600160a01b031661045f565b60408051918252519081900360200190f35b3360009081526001602052604081205461019b5760405162461bcd60e51b81526004018080602001828103825260278152602001806105e76027913960400191505060405180910390fd5b6101ac60023363ffffffff61047a16565b156101f5576040805162461bcd60e51b815260206004820152601460248201527315985d5b1d081a5cc81c5d585c985b9d1a5b995960621b604482015290519081900360640190fd5b50600190565b600580546001600160a01b0319166001600160a01b0392909216919091179055565b6005546001600160a01b031690565b61023461021d565b336001600160a01b03821614610291576040805162461bcd60e51b815260206004820152601e60248201527f43616c6c6572206164647265737320697320756e617574686f72697a65640000604482015290519081900360640190fd5b826102cd5760405162461bcd60e51b815260040180806020018281038252602381526020018061059e6023913960400191505060405180910390fd5b6102d682610498565b6103115760405162461bcd60e51b815260040180806020018281038252602f81526020018061060e602f913960400191505060405180910390fd5b6000838152602081905260409020546001600160a01b0316156103655760405162461bcd60e51b81526004018080602001828103825260228152602001806106656022913960400191505060405180910390fd5b6001600160a01b038216600090815260016020526040902054156103ba5760405162461bcd60e51b815260040180806020018281038252602881526020018061063d6028913960400191505060405180910390fd5b60008381526020818152604080832080546001600160a01b0319166001600160a01b0387169081179091558352600190915290208390556103fc60028361049e565b604080518481526001600160a01b038416602082015281517f7051aac27f9b76ec8f37bd5796f2dcf402bd840a1c45c952a6eeb0e11bde0996929181900390910190a1505050565b6000908152602081905260409020546001600160a01b031690565b6001600160a01b031660009081526001602052604090205490565b6001600160a01b031660009081526020919091526040902054421090565b3b151590565b6001600160a01b0381166104e35760405162461bcd60e51b81526004018080602001828103825260268152602001806105c16026913960400191505060405180910390fd5b6001600160a01b038116600090815260208390526040902054156105385760405162461bcd60e51b815260040180806020018281038252602381526020018061057b6023913960400191505060405180910390fd5b60028201546105695760018201546001600160a01b0382166000908152602084905260409020429091019055610576565b6002820180546000190190555b505056fe54686520636f6e747261637420697320616c72656164792071756172616e74696e656453686f756c64206e6f742072656769737465722077697468207661756c742049442030416e20656d70747920616464726573732063616e6e6f742062652071756172616e74696e65645468652063616c6c206973206e6f742066726f6d20612072656769737465726564207661756c7453686f756c64206e6f7420726567697374657220776974682061206e6f6e2d636f6e74726163742061646472657373546865207661756c7420636f6e747261637420697320616c72656164792072656769737465726564546865207661756c7420494420697320616c72656164792072656769737465726564a265627a7a723158200eb444c1ccb17d694437146eecc57c0a52ab7944357cb11502ea2a3c6e55116164736f6c634300050b0032",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100625760003560e01c80630971f0e01461006757806313ea5d29146100835780634b0a72bc146100ab5780636a51fd63146100cf5780638c64ea4a146100fb578063dfb494f014610118575b600080fd5b61006f610150565b604080519115158252519081900360200190f35b6100a96004803603602081101561009957600080fd5b50356001600160a01b03166101fb565b005b6100b361021d565b604080516001600160a01b039092168252519081900360200190f35b6100a9600480360360408110156100e557600080fd5b50803590602001356001600160a01b031661022c565b6100b36004803603602081101561011157600080fd5b5035610444565b61013e6004803603602081101561012e57600080fd5b50356001600160a01b031661045f565b60408051918252519081900360200190f35b3360009081526001602052604081205461019b5760405162461bcd60e51b81526004018080602001828103825260278152602001806105e76027913960400191505060405180910390fd5b6101ac60023363ffffffff61047a16565b156101f5576040805162461bcd60e51b815260206004820152601460248201527315985d5b1d081a5cc81c5d585c985b9d1a5b995960621b604482015290519081900360640190fd5b50600190565b600580546001600160a01b0319166001600160a01b0392909216919091179055565b6005546001600160a01b031690565b61023461021d565b336001600160a01b03821614610291576040805162461bcd60e51b815260206004820152601e60248201527f43616c6c6572206164647265737320697320756e617574686f72697a65640000604482015290519081900360640190fd5b826102cd5760405162461bcd60e51b815260040180806020018281038252602381526020018061059e6023913960400191505060405180910390fd5b6102d682610498565b6103115760405162461bcd60e51b815260040180806020018281038252602f81526020018061060e602f913960400191505060405180910390fd5b6000838152602081905260409020546001600160a01b0316156103655760405162461bcd60e51b81526004018080602001828103825260228152602001806106656022913960400191505060405180910390fd5b6001600160a01b038216600090815260016020526040902054156103ba5760405162461bcd60e51b815260040180806020018281038252602881526020018061063d6028913960400191505060405180910390fd5b60008381526020818152604080832080546001600160a01b0319166001600160a01b0387169081179091558352600190915290208390556103fc60028361049e565b604080518481526001600160a01b038416602082015281517f7051aac27f9b76ec8f37bd5796f2dcf402bd840a1c45c952a6eeb0e11bde0996929181900390910190a1505050565b6000908152602081905260409020546001600160a01b031690565b6001600160a01b031660009081526001602052604090205490565b6001600160a01b031660009081526020919091526040902054421090565b3b151590565b6001600160a01b0381166104e35760405162461bcd60e51b81526004018080602001828103825260268152602001806105c16026913960400191505060405180910390fd5b6001600160a01b038116600090815260208390526040902054156105385760405162461bcd60e51b815260040180806020018281038252602381526020018061057b6023913960400191505060405180910390fd5b60028201546105695760018201546001600160a01b0382166000908152602084905260409020429091019055610576565b6002820180546000190190555b505056fe54686520636f6e747261637420697320616c72656164792071756172616e74696e656453686f756c64206e6f742072656769737465722077697468207661756c742049442030416e20656d70747920616464726573732063616e6e6f742062652071756172616e74696e65645468652063616c6c206973206e6f742066726f6d20612072656769737465726564207661756c7453686f756c64206e6f7420726567697374657220776974682061206e6f6e2d636f6e74726163742061646472657373546865207661756c7420636f6e747261637420697320616c72656164792072656769737465726564546865207661756c7420494420697320616c72656164792072656769737465726564a265627a7a723158200eb444c1ccb17d694437146eecc57c0a52ab7944357cb11502ea2a3c6e55116164736f6c634300050b0032",
+  "sourceMap": "88:657:24:-;;;171:153;8:9:-1;5:2;;;30:1;27;20:12;5:2;171:153:24;;;;;;;;;;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;171:153:24;;;;;;;1101:1:80;:18;;;1065:33;:54;1129:36;:59;88:657:24;;;;;;",
+  "deployedSourceMap": "88:657:24:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;88:657:24;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;616:127;;;:::i;:::-;;;;;;;;;;;;;;;;;;510:100;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;510:100:24;-1:-1:-1;;;;;510:100:24;;:::i;:::-;;383:89;;;:::i;:::-;;;;-1:-1:-1;;;;;383:89:24;;;;;;;;;;;;;;2018:657:80;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;2018:657:80;;;;;;-1:-1:-1;;;;;2018:657:80;;:::i;2769:105::-;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;2769:105:80;;:::i;2968:121::-;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;2968:121:80;-1:-1:-1;;;;;2968:121:80;;:::i;:::-;;;;;;;;;;;;;;;;616:127:24;1555:10:80;709:4:24;1544:22:80;;;:10;:22;;;;;;1536:78;;;;-1:-1:-1;;;1536:78:80;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1633:42;:16;1664:10;1633:42;:30;:42;:::i;:::-;1632:43;1624:76;;;;;-1:-1:-1;;;1624:76:80;;;;;;;;;;;;-1:-1:-1;;;1624:76:80;;;;;;;;;;;;;;;-1:-1:-1;732:4:24;616:127;:::o;510:100::-;575:10;:28;;-1:-1:-1;;;;;;575:28:24;-1:-1:-1;;;;;575:28:24;;;;;;;;;;510:100::o;383:89::-;455:10;;-1:-1:-1;;;;;455:10:24;383:89;:::o;2018:657:80:-;2098:15;:13;:15::i;:::-;109:10:91;-1:-1:-1;;;;;109:20:91;;;101:63;;;;;-1:-1:-1;;;101:63:91;;;;;;;;;;;;;;;;;;;;;;;;;;;;2133:13:80;2125:61;;;;-1:-1:-1;;;2125:61:80;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2204:33;2223:13;2204:18;:33::i;:::-;2196:93;;;;-1:-1:-1;;;2196:93:80;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2336:1;2307:17;;;;;;;;;;;-1:-1:-1;;;;;2307:17:80;:31;2299:78;;;;-1:-1:-1;;;2299:78:80;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;2395:25:80;;;;;;:10;:25;;;;;;:30;2387:83;;;;-1:-1:-1;;;2387:83:80;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2481:7;:17;;;;;;;;;;;:33;;-1:-1:-1;;;;;;2481:33:80;-1:-1:-1;;;;;2481:33:80;;;;;;;;2524:25;;-1:-1:-1;2524:25:80;;;;;:36;;;2570:42;:16;2481:33;2570:27;:42::i;:::-;2628:40;;;;;;-1:-1:-1;;;;;2628:40:80;;;;;;;;;;;;;;;;;;;2018:657;;;:::o;2769:105::-;2824:7;2850:17;;;;;;;;;;;-1:-1:-1;;;;;2850:17:80;;2769:105::o;2968:121::-;-1:-1:-1;;;;;3057:25:80;3031:7;3057:25;;;:10;:25;;;;;;;2968:121::o;496:169:83:-;-1:-1:-1;;;;;629:29:83;588:4;629:29;;;;;;;;;;;;611:15;:47;;496:169::o;542:413:113:-;902:20;940:8;;;542:413::o;795:466:83:-;-1:-1:-1;;;;;888:30:83;;880:81;;;;-1:-1:-1;;;880:81:83;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;979:29:83;;:11;:29;;;;;;;;;;;:34;971:82;;;;-1:-1:-1;;;971:82:83;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1068:25;;;;1064:191;;1164:22;;;;-1:-1:-1;;;;;1114:29:83;;:11;:29;;;;;;;;;;1146:15;:40;;;1114:72;;1064:191;;;1217:25;;;:27;;-1:-1:-1;;1217:27:83;;;1064:191;795:466;;:::o",
+  "source": "pragma solidity 0.5.11;\n\nimport \"../../../src/framework/registries/VaultRegistry.sol\";\n\ncontract VaultRegistryMock is VaultRegistry {\n    address private maintainer;\n\n    constructor (uint256 _minExitPeriod, uint256 _initialImmuneVaults)\n        public\n        VaultRegistry(_minExitPeriod, _initialImmuneVaults)\n    {\n    }\n\n    /** override to make it non-abstract contract */\n    function getMaintainer() public view returns (address) {\n        return maintainer;\n    }\n\n    /** test helper function */\n    function setMaintainer(address maintainerToSet) public {\n        maintainer = maintainerToSet;\n    }\n\n    function checkOnlyFromNonQuarantinedVault() public onlyFromNonQuarantinedVault view returns (bool) {\n        return true;\n    }\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/framework/registries/VaultRegistryMock.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/framework/registries/VaultRegistryMock.sol",
+    "exportedSymbols": {
+      "VaultRegistryMock": [
+        2196
+      ]
+    },
+    "id": 2197,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2150,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:24"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/registries/VaultRegistry.sol",
+        "file": "../../../src/framework/registries/VaultRegistry.sol",
+        "id": 2151,
+        "nodeType": "ImportDirective",
+        "scope": 2197,
+        "sourceUnit": 12760,
+        "src": "25:61:24",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 2152,
+              "name": "VaultRegistry",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 12759,
+              "src": "118:13:24",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_VaultRegistry_$12759",
+                "typeString": "contract VaultRegistry"
+              }
+            },
+            "id": 2153,
+            "nodeType": "InheritanceSpecifier",
+            "src": "118:13:24"
+          }
+        ],
+        "contractDependencies": [
+          12759,
+          14437
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 2196,
+        "linearizedBaseContracts": [
+          2196,
+          12759,
+          14437
+        ],
+        "name": "VaultRegistryMock",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 2155,
+            "name": "maintainer",
+            "nodeType": "VariableDeclaration",
+            "scope": 2196,
+            "src": "138:26:24",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_address",
+              "typeString": "address"
+            },
+            "typeName": {
+              "id": 2154,
+              "name": "address",
+              "nodeType": "ElementaryTypeName",
+              "src": "138:7:24",
+              "stateMutability": "nonpayable",
+              "typeDescriptions": {
+                "typeIdentifier": "t_address",
+                "typeString": "address"
+              }
+            },
+            "value": null,
+            "visibility": "private"
+          },
+          {
+            "body": {
+              "id": 2166,
+              "nodeType": "Block",
+              "src": "317:7:24",
+              "statements": []
+            },
+            "documentation": null,
+            "id": 2167,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [
+              {
+                "arguments": [
+                  {
+                    "argumentTypes": null,
+                    "id": 2162,
+                    "name": "_minExitPeriod",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 2157,
+                    "src": "275:14:24",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  {
+                    "argumentTypes": null,
+                    "id": 2163,
+                    "name": "_initialImmuneVaults",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 2159,
+                    "src": "291:20:24",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  }
+                ],
+                "id": 2164,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 2161,
+                  "name": "VaultRegistry",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 12759,
+                  "src": "261:13:24",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_type$_t_contract$_VaultRegistry_$12759_$",
+                    "typeString": "type(contract VaultRegistry)"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "261:51:24"
+              }
+            ],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2160,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2157,
+                  "name": "_minExitPeriod",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2167,
+                  "src": "184:22:24",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 2156,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "184:7:24",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 2159,
+                  "name": "_initialImmuneVaults",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2167,
+                  "src": "208:28:24",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 2158,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "208:7:24",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "183:54:24"
+            },
+            "returnParameters": {
+              "id": 2165,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "317:0:24"
+            },
+            "scope": 2196,
+            "src": "171:153:24",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2174,
+              "nodeType": "Block",
+              "src": "438:34:24",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 2172,
+                    "name": "maintainer",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 2155,
+                    "src": "455:10:24",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "functionReturnParameters": 2171,
+                  "id": 2173,
+                  "nodeType": "Return",
+                  "src": "448:17:24"
+                }
+              ]
+            },
+            "documentation": "override to make it non-abstract contract ",
+            "id": 2175,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getMaintainer",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2168,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "405:2:24"
+            },
+            "returnParameters": {
+              "id": 2171,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2170,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2175,
+                  "src": "429:7:24",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 2169,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "429:7:24",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "428:9:24"
+            },
+            "scope": 2196,
+            "src": "383:89:24",
+            "stateMutability": "view",
+            "superFunction": 12640,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2184,
+              "nodeType": "Block",
+              "src": "565:45:24",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 2182,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 2180,
+                      "name": "maintainer",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 2155,
+                      "src": "575:10:24",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 2181,
+                      "name": "maintainerToSet",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 2177,
+                      "src": "588:15:24",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "src": "575:28:24",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "id": 2183,
+                  "nodeType": "ExpressionStatement",
+                  "src": "575:28:24"
+                }
+              ]
+            },
+            "documentation": "test helper function ",
+            "id": 2185,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setMaintainer",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2178,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2177,
+                  "name": "maintainerToSet",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2185,
+                  "src": "533:23:24",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 2176,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "533:7:24",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "532:25:24"
+            },
+            "returnParameters": {
+              "id": 2179,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "565:0:24"
+            },
+            "scope": 2196,
+            "src": "510:100:24",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2194,
+              "nodeType": "Block",
+              "src": "715:28:24",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "hexValue": "74727565",
+                    "id": 2192,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "bool",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "732:4:24",
+                    "subdenomination": null,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    },
+                    "value": "true"
+                  },
+                  "functionReturnParameters": 2191,
+                  "id": 2193,
+                  "nodeType": "Return",
+                  "src": "725:11:24"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2195,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "arguments": null,
+                "id": 2188,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 2187,
+                  "name": "onlyFromNonQuarantinedVault",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 12664,
+                  "src": "667:27:24",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_modifier$__$",
+                    "typeString": "modifier ()"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "667:27:24"
+              }
+            ],
+            "name": "checkOnlyFromNonQuarantinedVault",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2186,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "657:2:24"
+            },
+            "returnParameters": {
+              "id": 2191,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2190,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2195,
+                  "src": "709:4:24",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 2189,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "709:4:24",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "708:6:24"
+            },
+            "scope": 2196,
+            "src": "616:127:24",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 2197,
+        "src": "88:657:24"
+      }
+    ],
+    "src": "0:746:24"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/framework/registries/VaultRegistryMock.sol",
+    "exportedSymbols": {
+      "VaultRegistryMock": [
+        2196
+      ]
+    },
+    "id": 2197,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2150,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:24"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/registries/VaultRegistry.sol",
+        "file": "../../../src/framework/registries/VaultRegistry.sol",
+        "id": 2151,
+        "nodeType": "ImportDirective",
+        "scope": 2197,
+        "sourceUnit": 12760,
+        "src": "25:61:24",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 2152,
+              "name": "VaultRegistry",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 12759,
+              "src": "118:13:24",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_VaultRegistry_$12759",
+                "typeString": "contract VaultRegistry"
+              }
+            },
+            "id": 2153,
+            "nodeType": "InheritanceSpecifier",
+            "src": "118:13:24"
+          }
+        ],
+        "contractDependencies": [
+          12759,
+          14437
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 2196,
+        "linearizedBaseContracts": [
+          2196,
+          12759,
+          14437
+        ],
+        "name": "VaultRegistryMock",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 2155,
+            "name": "maintainer",
+            "nodeType": "VariableDeclaration",
+            "scope": 2196,
+            "src": "138:26:24",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_address",
+              "typeString": "address"
+            },
+            "typeName": {
+              "id": 2154,
+              "name": "address",
+              "nodeType": "ElementaryTypeName",
+              "src": "138:7:24",
+              "stateMutability": "nonpayable",
+              "typeDescriptions": {
+                "typeIdentifier": "t_address",
+                "typeString": "address"
+              }
+            },
+            "value": null,
+            "visibility": "private"
+          },
+          {
+            "body": {
+              "id": 2166,
+              "nodeType": "Block",
+              "src": "317:7:24",
+              "statements": []
+            },
+            "documentation": null,
+            "id": 2167,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [
+              {
+                "arguments": [
+                  {
+                    "argumentTypes": null,
+                    "id": 2162,
+                    "name": "_minExitPeriod",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 2157,
+                    "src": "275:14:24",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  {
+                    "argumentTypes": null,
+                    "id": 2163,
+                    "name": "_initialImmuneVaults",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 2159,
+                    "src": "291:20:24",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  }
+                ],
+                "id": 2164,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 2161,
+                  "name": "VaultRegistry",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 12759,
+                  "src": "261:13:24",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_type$_t_contract$_VaultRegistry_$12759_$",
+                    "typeString": "type(contract VaultRegistry)"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "261:51:24"
+              }
+            ],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2160,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2157,
+                  "name": "_minExitPeriod",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2167,
+                  "src": "184:22:24",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 2156,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "184:7:24",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 2159,
+                  "name": "_initialImmuneVaults",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2167,
+                  "src": "208:28:24",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 2158,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "208:7:24",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "183:54:24"
+            },
+            "returnParameters": {
+              "id": 2165,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "317:0:24"
+            },
+            "scope": 2196,
+            "src": "171:153:24",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2174,
+              "nodeType": "Block",
+              "src": "438:34:24",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 2172,
+                    "name": "maintainer",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 2155,
+                    "src": "455:10:24",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "functionReturnParameters": 2171,
+                  "id": 2173,
+                  "nodeType": "Return",
+                  "src": "448:17:24"
+                }
+              ]
+            },
+            "documentation": "override to make it non-abstract contract ",
+            "id": 2175,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getMaintainer",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2168,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "405:2:24"
+            },
+            "returnParameters": {
+              "id": 2171,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2170,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2175,
+                  "src": "429:7:24",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 2169,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "429:7:24",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "428:9:24"
+            },
+            "scope": 2196,
+            "src": "383:89:24",
+            "stateMutability": "view",
+            "superFunction": 12640,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2184,
+              "nodeType": "Block",
+              "src": "565:45:24",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 2182,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 2180,
+                      "name": "maintainer",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 2155,
+                      "src": "575:10:24",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 2181,
+                      "name": "maintainerToSet",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 2177,
+                      "src": "588:15:24",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "src": "575:28:24",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "id": 2183,
+                  "nodeType": "ExpressionStatement",
+                  "src": "575:28:24"
+                }
+              ]
+            },
+            "documentation": "test helper function ",
+            "id": 2185,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setMaintainer",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2178,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2177,
+                  "name": "maintainerToSet",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2185,
+                  "src": "533:23:24",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 2176,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "533:7:24",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "532:25:24"
+            },
+            "returnParameters": {
+              "id": 2179,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "565:0:24"
+            },
+            "scope": 2196,
+            "src": "510:100:24",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2194,
+              "nodeType": "Block",
+              "src": "715:28:24",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "hexValue": "74727565",
+                    "id": 2192,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "bool",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "732:4:24",
+                    "subdenomination": null,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    },
+                    "value": "true"
+                  },
+                  "functionReturnParameters": 2191,
+                  "id": 2193,
+                  "nodeType": "Return",
+                  "src": "725:11:24"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2195,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "arguments": null,
+                "id": 2188,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 2187,
+                  "name": "onlyFromNonQuarantinedVault",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 12664,
+                  "src": "667:27:24",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_modifier$__$",
+                    "typeString": "modifier ()"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "667:27:24"
+              }
+            ],
+            "name": "checkOnlyFromNonQuarantinedVault",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2186,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "657:2:24"
+            },
+            "returnParameters": {
+              "id": 2191,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2190,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2195,
+                  "src": "709:4:24",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 2189,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "709:4:24",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "708:6:24"
+            },
+            "scope": 2196,
+            "src": "616:127:24",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 2197,
+        "src": "88:657:24"
+      }
+    ],
+    "src": "0:746:24"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.561Z",
+  "devdoc": {
+    "methods": {
+      "registerVault(uint256,address)": {
+        "details": "emits VaultRegistered event to notify clients",
+        "params": {
+          "_vaultAddress": "Address of the vault contract",
+          "_vaultId": "The ID for the vault contract to register"
+        }
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {
+      "getMaintainer()": {
+        "notice": "override to make it non-abstract contract "
+      },
+      "registerVault(uint256,address)": {
+        "notice": "Register a vault within the PlasmaFramework. Only a maintainer can make the call."
+      },
+      "setMaintainer(address)": {
+        "notice": "test helper function "
+      },
+      "vaultToId(address)": {
+        "notice": "Public getter for retrieving vault ID with vault address"
+      },
+      "vaults(uint256)": {
+        "notice": "Public getter for retrieving vault address with vault ID"
+      }
+    }
+  }
+}

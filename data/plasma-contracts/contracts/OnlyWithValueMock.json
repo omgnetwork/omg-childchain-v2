@@ -1,0 +1,478 @@
+{
+  "contractName": "OnlyWithValueMock",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "OnlyWithValuePassed",
+      "type": "event"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "checkOnlyWithValue",
+      "outputs": [],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"checkOnlyWithValue\",\"outputs\":[],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"OnlyWithValuePassed\",\"type\":\"event\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/OnlyWithValueMock.sol\":\"OnlyWithValueMock\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/OnlyWithValueMock.sol\":{\"keccak256\":\"0x4fefe88e24b298de3c2b30073a64897830a65638a8892449857ef67d8d37ef71\",\"urls\":[\"bzz-raw://c7405f67fc32d4c505f9e3aae7c9b1b5ee3fcde74600a591f025e36e7918921d\",\"dweb:/ipfs/QmZFtrL9Jp5iJCi3Zbe8bhJfhAvj8454niiSnguzJZFKBJ\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/OnlyWithValue.sol\":{\"keccak256\":\"0x8861c80b27979fd6a3a6fe3d08b8706fd3c556d1c88376a7018b3fb3dea88478\",\"urls\":[\"bzz-raw://d12b78f0ff6494bf93f6e1700ed7f5b1b27a1c963c49b9fed5efab7f6c2224a7\",\"dweb:/ipfs/QmfBNE8v1FpqhQqtWtg8zLP5pbrk1f8TizE3EgEyhbgpot\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5060f38061001f6000396000f3fe608060405260043610601c5760003560e01c80630f1d6323146021575b600080fd5b603b60048036036020811015603557600080fd5b5035603d565b005b808034146091576040805162461bcd60e51b815260206004820181905260248201527f496e7075742076616c7565206d757374206d61746368206d73672e76616c7565604482015290519081900360640190fd5b6040517f39b3dd8f9a5c4bf0f448d73043a8b2ea6c46eb0d5aa5b2f38e50b351bf00220f90600090a1505056fea265627a7a7231582082db7b7363382b6faf837f7a00f8bfd728accbb0475a5d5a00bba69d1d93735e64736f6c634300050b0032",
+  "deployedBytecode": "0x608060405260043610601c5760003560e01c80630f1d6323146021575b600080fd5b603b60048036036020811015603557600080fd5b5035603d565b005b808034146091576040805162461bcd60e51b815260206004820181905260248201527f496e7075742076616c7565206d757374206d61746368206d73672e76616c7565604482015290519081900360640190fd5b6040517f39b3dd8f9a5c4bf0f448d73043a8b2ea6c46eb0d5aa5b2f38e50b351bf00220f90600090a1505056fea265627a7a7231582082db7b7363382b6faf837f7a00f8bfd728accbb0475a5d5a00bba69d1d93735e64736f6c634300050b0032",
+  "sourceMap": "70:210:36:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;70:210:36;;;;;;;",
+  "deployedSourceMap": "70:210:36:-;;;;;;;;;;;;;;;;;;;;;154:124;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;154:124:36;;:::i;:::-;;;227:6;124::92;111:9;:19;103:64;;;;;-1:-1:-1;;;103:64:92;;;;;;;;;;;;;;;;;;;;;;;;;;;;;250:21:36;;;;;;;154:124;;:::o",
+  "source": "pragma solidity 0.5.11;\n\nimport \"../../src/utils/OnlyWithValue.sol\";\n\ncontract OnlyWithValueMock is OnlyWithValue {\n    event OnlyWithValuePassed();\n\n    function checkOnlyWithValue(uint256 _value) public payable onlyWithValue(_value) {\n        emit OnlyWithValuePassed();\n    }\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/OnlyWithValueMock.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/OnlyWithValueMock.sol",
+    "exportedSymbols": {
+      "OnlyWithValueMock": [
+        2829
+      ]
+    },
+    "id": 2830,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2811,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:36"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/OnlyWithValue.sol",
+        "file": "../../src/utils/OnlyWithValue.sol",
+        "id": 2812,
+        "nodeType": "ImportDirective",
+        "scope": 2830,
+        "sourceUnit": 14455,
+        "src": "25:43:36",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 2813,
+              "name": "OnlyWithValue",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 14454,
+              "src": "100:13:36",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_OnlyWithValue_$14454",
+                "typeString": "contract OnlyWithValue"
+              }
+            },
+            "id": 2814,
+            "nodeType": "InheritanceSpecifier",
+            "src": "100:13:36"
+          }
+        ],
+        "contractDependencies": [
+          14454
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 2829,
+        "linearizedBaseContracts": [
+          2829,
+          14454
+        ],
+        "name": "OnlyWithValueMock",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 2816,
+            "name": "OnlyWithValuePassed",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 2815,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "145:2:36"
+            },
+            "src": "120:28:36"
+          },
+          {
+            "body": {
+              "id": 2827,
+              "nodeType": "Block",
+              "src": "235:43:36",
+              "statements": [
+                {
+                  "eventCall": {
+                    "argumentTypes": null,
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "id": 2824,
+                      "name": "OnlyWithValuePassed",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 2816,
+                      "src": "250:19:36",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_event_nonpayable$__$returns$__$",
+                        "typeString": "function ()"
+                      }
+                    },
+                    "id": 2825,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "250:21:36",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 2826,
+                  "nodeType": "EmitStatement",
+                  "src": "245:26:36"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2828,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "arguments": [
+                  {
+                    "argumentTypes": null,
+                    "id": 2821,
+                    "name": "_value",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 2818,
+                    "src": "227:6:36",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  }
+                ],
+                "id": 2822,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 2820,
+                  "name": "onlyWithValue",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 14453,
+                  "src": "213:13:36",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_modifier$_t_uint256_$",
+                    "typeString": "modifier (uint256)"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "213:21:36"
+              }
+            ],
+            "name": "checkOnlyWithValue",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2819,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2818,
+                  "name": "_value",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2828,
+                  "src": "182:14:36",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 2817,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "182:7:36",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "181:16:36"
+            },
+            "returnParameters": {
+              "id": 2823,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "235:0:36"
+            },
+            "scope": 2829,
+            "src": "154:124:36",
+            "stateMutability": "payable",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 2830,
+        "src": "70:210:36"
+      }
+    ],
+    "src": "0:281:36"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/OnlyWithValueMock.sol",
+    "exportedSymbols": {
+      "OnlyWithValueMock": [
+        2829
+      ]
+    },
+    "id": 2830,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2811,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:36"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/OnlyWithValue.sol",
+        "file": "../../src/utils/OnlyWithValue.sol",
+        "id": 2812,
+        "nodeType": "ImportDirective",
+        "scope": 2830,
+        "sourceUnit": 14455,
+        "src": "25:43:36",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 2813,
+              "name": "OnlyWithValue",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 14454,
+              "src": "100:13:36",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_OnlyWithValue_$14454",
+                "typeString": "contract OnlyWithValue"
+              }
+            },
+            "id": 2814,
+            "nodeType": "InheritanceSpecifier",
+            "src": "100:13:36"
+          }
+        ],
+        "contractDependencies": [
+          14454
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 2829,
+        "linearizedBaseContracts": [
+          2829,
+          14454
+        ],
+        "name": "OnlyWithValueMock",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "anonymous": false,
+            "documentation": null,
+            "id": 2816,
+            "name": "OnlyWithValuePassed",
+            "nodeType": "EventDefinition",
+            "parameters": {
+              "id": 2815,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "145:2:36"
+            },
+            "src": "120:28:36"
+          },
+          {
+            "body": {
+              "id": 2827,
+              "nodeType": "Block",
+              "src": "235:43:36",
+              "statements": [
+                {
+                  "eventCall": {
+                    "argumentTypes": null,
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "id": 2824,
+                      "name": "OnlyWithValuePassed",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 2816,
+                      "src": "250:19:36",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_event_nonpayable$__$returns$__$",
+                        "typeString": "function ()"
+                      }
+                    },
+                    "id": 2825,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "250:21:36",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 2826,
+                  "nodeType": "EmitStatement",
+                  "src": "245:26:36"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2828,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "arguments": [
+                  {
+                    "argumentTypes": null,
+                    "id": 2821,
+                    "name": "_value",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 2818,
+                    "src": "227:6:36",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  }
+                ],
+                "id": 2822,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 2820,
+                  "name": "onlyWithValue",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 14453,
+                  "src": "213:13:36",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_modifier$_t_uint256_$",
+                    "typeString": "modifier (uint256)"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "213:21:36"
+              }
+            ],
+            "name": "checkOnlyWithValue",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2819,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2818,
+                  "name": "_value",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2828,
+                  "src": "182:14:36",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 2817,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "182:7:36",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "181:16:36"
+            },
+            "returnParameters": {
+              "id": 2823,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "235:0:36"
+            },
+            "scope": 2829,
+            "src": "154:124:36",
+            "stateMutability": "payable",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 2830,
+        "src": "70:210:36"
+      }
+    ],
+    "src": "0:281:36"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.617Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

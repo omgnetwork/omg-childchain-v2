@@ -1,0 +1,997 @@
+{
+  "contractName": "Protocol",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{},\"notice\":\"Protocols for the PlasmaFramework\"}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/Protocol.sol\":\"Protocol\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/Protocol.sol\":{\"keccak256\":\"0x81e37c136c340d917e370c58894761aee710bbef727414685490e405bc0f18e8\",\"urls\":[\"bzz-raw://7a54192b587531dd1adc33202479142afdf116385bab22daa153b8d4439d7333\",\"dweb:/ipfs/QmT37F3SCsWLf93okFrx1LUUr6c2zXCj28u2sjXXFBef2X\"]}},\"version\":1}",
+  "bytecode": "0x60556023600b82828239805160001a607314601657fe5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a723158204266d07c9994801678c2ef27dc94e36b4686470a158c8e6a46552d4ef2c15aa164736f6c634300050b0032",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a723158204266d07c9994801678c2ef27dc94e36b4686470a158c8e6a46552d4ef2c15aa164736f6c634300050b0032",
+  "sourceMap": "78:542:76:-;;132:2:-1;166:7;155:9;146:7;137:37;255:7;249:14;246:1;241:23;235:4;232:33;222:2;;269:9;222:2;293:9;290:1;283:20;323:4;314:7;306:22;347:7;338;331:24",
+  "deployedSourceMap": "78:542:76:-;;;;;;;;",
+  "source": "pragma solidity 0.5.11;\n\n/**\n * @notice Protocols for the PlasmaFramework\n */\nlibrary Protocol {\n    uint8 constant internal MVP_VALUE = 1;\n    uint8 constant internal MORE_VP_VALUE = 2;\n\n    // solhint-disable-next-line func-name-mixedcase\n    function MVP() internal pure returns (uint8) {\n        return MVP_VALUE;\n    }\n\n    // solhint-disable-next-line func-name-mixedcase\n    function MORE_VP() internal pure returns (uint8) {\n        return MORE_VP_VALUE;\n    }\n\n    function isValidProtocol(uint8 protocol) internal pure returns (bool) {\n        return protocol == MVP_VALUE || protocol == MORE_VP_VALUE;\n    }\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/Protocol.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/Protocol.sol",
+    "exportedSymbols": {
+      "Protocol": [
+        12339
+      ]
+    },
+    "id": 12340,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 12300,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:76"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": "@notice Protocols for the PlasmaFramework",
+        "fullyImplemented": true,
+        "id": 12339,
+        "linearizedBaseContracts": [
+          12339
+        ],
+        "name": "Protocol",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": true,
+            "id": 12303,
+            "name": "MVP_VALUE",
+            "nodeType": "VariableDeclaration",
+            "scope": 12339,
+            "src": "101:37:76",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint8",
+              "typeString": "uint8"
+            },
+            "typeName": {
+              "id": 12301,
+              "name": "uint8",
+              "nodeType": "ElementaryTypeName",
+              "src": "101:5:76",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint8",
+                "typeString": "uint8"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "31",
+              "id": 12302,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "137:1:76",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_1_by_1",
+                "typeString": "int_const 1"
+              },
+              "value": "1"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 12306,
+            "name": "MORE_VP_VALUE",
+            "nodeType": "VariableDeclaration",
+            "scope": 12339,
+            "src": "144:41:76",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint8",
+              "typeString": "uint8"
+            },
+            "typeName": {
+              "id": 12304,
+              "name": "uint8",
+              "nodeType": "ElementaryTypeName",
+              "src": "144:5:76",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint8",
+                "typeString": "uint8"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "32",
+              "id": 12305,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "184:1:76",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_2_by_1",
+                "typeString": "int_const 2"
+              },
+              "value": "2"
+            },
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 12313,
+              "nodeType": "Block",
+              "src": "290:33:76",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 12311,
+                    "name": "MVP_VALUE",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 12303,
+                    "src": "307:9:76",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "functionReturnParameters": 12310,
+                  "id": 12312,
+                  "nodeType": "Return",
+                  "src": "300:16:76"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 12314,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "MVP",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 12307,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "257:2:76"
+            },
+            "returnParameters": {
+              "id": 12310,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 12309,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12314,
+                  "src": "283:5:76",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 12308,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "283:5:76",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "282:7:76"
+            },
+            "scope": 12339,
+            "src": "245:78:76",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 12321,
+              "nodeType": "Block",
+              "src": "431:37:76",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 12319,
+                    "name": "MORE_VP_VALUE",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 12306,
+                    "src": "448:13:76",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "functionReturnParameters": 12318,
+                  "id": 12320,
+                  "nodeType": "Return",
+                  "src": "441:20:76"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 12322,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "MORE_VP",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 12315,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "398:2:76"
+            },
+            "returnParameters": {
+              "id": 12318,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 12317,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12322,
+                  "src": "424:5:76",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 12316,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "424:5:76",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "423:7:76"
+            },
+            "scope": 12339,
+            "src": "382:86:76",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 12337,
+              "nodeType": "Block",
+              "src": "544:74:76",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    },
+                    "id": 12335,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "commonType": {
+                        "typeIdentifier": "t_uint8",
+                        "typeString": "uint8"
+                      },
+                      "id": 12331,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "leftExpression": {
+                        "argumentTypes": null,
+                        "id": 12329,
+                        "name": "protocol",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 12324,
+                        "src": "561:8:76",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint8",
+                          "typeString": "uint8"
+                        }
+                      },
+                      "nodeType": "BinaryOperation",
+                      "operator": "==",
+                      "rightExpression": {
+                        "argumentTypes": null,
+                        "id": 12330,
+                        "name": "MVP_VALUE",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 12303,
+                        "src": "573:9:76",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint8",
+                          "typeString": "uint8"
+                        }
+                      },
+                      "src": "561:21:76",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "||",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "commonType": {
+                        "typeIdentifier": "t_uint8",
+                        "typeString": "uint8"
+                      },
+                      "id": 12334,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "leftExpression": {
+                        "argumentTypes": null,
+                        "id": 12332,
+                        "name": "protocol",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 12324,
+                        "src": "586:8:76",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint8",
+                          "typeString": "uint8"
+                        }
+                      },
+                      "nodeType": "BinaryOperation",
+                      "operator": "==",
+                      "rightExpression": {
+                        "argumentTypes": null,
+                        "id": 12333,
+                        "name": "MORE_VP_VALUE",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 12306,
+                        "src": "598:13:76",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint8",
+                          "typeString": "uint8"
+                        }
+                      },
+                      "src": "586:25:76",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "src": "561:50:76",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "functionReturnParameters": 12328,
+                  "id": 12336,
+                  "nodeType": "Return",
+                  "src": "554:57:76"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 12338,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isValidProtocol",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 12325,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 12324,
+                  "name": "protocol",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12338,
+                  "src": "499:14:76",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 12323,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "499:5:76",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "498:16:76"
+            },
+            "returnParameters": {
+              "id": 12328,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 12327,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12338,
+                  "src": "538:4:76",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 12326,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "538:4:76",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "537:6:76"
+            },
+            "scope": 12339,
+            "src": "474:144:76",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 12340,
+        "src": "78:542:76"
+      }
+    ],
+    "src": "0:621:76"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/Protocol.sol",
+    "exportedSymbols": {
+      "Protocol": [
+        12339
+      ]
+    },
+    "id": 12340,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 12300,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:76"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": "@notice Protocols for the PlasmaFramework",
+        "fullyImplemented": true,
+        "id": 12339,
+        "linearizedBaseContracts": [
+          12339
+        ],
+        "name": "Protocol",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": true,
+            "id": 12303,
+            "name": "MVP_VALUE",
+            "nodeType": "VariableDeclaration",
+            "scope": 12339,
+            "src": "101:37:76",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint8",
+              "typeString": "uint8"
+            },
+            "typeName": {
+              "id": 12301,
+              "name": "uint8",
+              "nodeType": "ElementaryTypeName",
+              "src": "101:5:76",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint8",
+                "typeString": "uint8"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "31",
+              "id": 12302,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "137:1:76",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_1_by_1",
+                "typeString": "int_const 1"
+              },
+              "value": "1"
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 12306,
+            "name": "MORE_VP_VALUE",
+            "nodeType": "VariableDeclaration",
+            "scope": 12339,
+            "src": "144:41:76",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint8",
+              "typeString": "uint8"
+            },
+            "typeName": {
+              "id": 12304,
+              "name": "uint8",
+              "nodeType": "ElementaryTypeName",
+              "src": "144:5:76",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint8",
+                "typeString": "uint8"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "32",
+              "id": 12305,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "number",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "184:1:76",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_rational_2_by_1",
+                "typeString": "int_const 2"
+              },
+              "value": "2"
+            },
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 12313,
+              "nodeType": "Block",
+              "src": "290:33:76",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 12311,
+                    "name": "MVP_VALUE",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 12303,
+                    "src": "307:9:76",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "functionReturnParameters": 12310,
+                  "id": 12312,
+                  "nodeType": "Return",
+                  "src": "300:16:76"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 12314,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "MVP",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 12307,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "257:2:76"
+            },
+            "returnParameters": {
+              "id": 12310,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 12309,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12314,
+                  "src": "283:5:76",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 12308,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "283:5:76",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "282:7:76"
+            },
+            "scope": 12339,
+            "src": "245:78:76",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 12321,
+              "nodeType": "Block",
+              "src": "431:37:76",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 12319,
+                    "name": "MORE_VP_VALUE",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 12306,
+                    "src": "448:13:76",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "functionReturnParameters": 12318,
+                  "id": 12320,
+                  "nodeType": "Return",
+                  "src": "441:20:76"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 12322,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "MORE_VP",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 12315,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "398:2:76"
+            },
+            "returnParameters": {
+              "id": 12318,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 12317,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12322,
+                  "src": "424:5:76",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 12316,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "424:5:76",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "423:7:76"
+            },
+            "scope": 12339,
+            "src": "382:86:76",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 12337,
+              "nodeType": "Block",
+              "src": "544:74:76",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    },
+                    "id": 12335,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "commonType": {
+                        "typeIdentifier": "t_uint8",
+                        "typeString": "uint8"
+                      },
+                      "id": 12331,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "leftExpression": {
+                        "argumentTypes": null,
+                        "id": 12329,
+                        "name": "protocol",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 12324,
+                        "src": "561:8:76",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint8",
+                          "typeString": "uint8"
+                        }
+                      },
+                      "nodeType": "BinaryOperation",
+                      "operator": "==",
+                      "rightExpression": {
+                        "argumentTypes": null,
+                        "id": 12330,
+                        "name": "MVP_VALUE",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 12303,
+                        "src": "573:9:76",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint8",
+                          "typeString": "uint8"
+                        }
+                      },
+                      "src": "561:21:76",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "||",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "commonType": {
+                        "typeIdentifier": "t_uint8",
+                        "typeString": "uint8"
+                      },
+                      "id": 12334,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "leftExpression": {
+                        "argumentTypes": null,
+                        "id": 12332,
+                        "name": "protocol",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 12324,
+                        "src": "586:8:76",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint8",
+                          "typeString": "uint8"
+                        }
+                      },
+                      "nodeType": "BinaryOperation",
+                      "operator": "==",
+                      "rightExpression": {
+                        "argumentTypes": null,
+                        "id": 12333,
+                        "name": "MORE_VP_VALUE",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 12306,
+                        "src": "598:13:76",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint8",
+                          "typeString": "uint8"
+                        }
+                      },
+                      "src": "586:25:76",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "src": "561:50:76",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "functionReturnParameters": 12328,
+                  "id": 12336,
+                  "nodeType": "Return",
+                  "src": "554:57:76"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 12338,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isValidProtocol",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 12325,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 12324,
+                  "name": "protocol",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12338,
+                  "src": "499:14:76",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 12323,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "499:5:76",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "498:16:76"
+            },
+            "returnParameters": {
+              "id": 12328,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 12327,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 12338,
+                  "src": "538:4:76",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 12326,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "538:4:76",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "537:6:76"
+            },
+            "scope": 12339,
+            "src": "474:144:76",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 12340,
+        "src": "78:542:76"
+      }
+    ],
+    "src": "0:621:76"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.795Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {},
+    "notice": "Protocols for the PlasmaFramework"
+  }
+}

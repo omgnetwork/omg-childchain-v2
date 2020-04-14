@@ -1,0 +1,1377 @@
+{
+  "contractName": "DummyVault",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_contract",
+          "type": "address"
+        }
+      ],
+      "name": "setVaultRegistry",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "checkOnlyFromNonQuarantinedVault",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_contract",
+          "type": "address"
+        }
+      ],
+      "name": "setBlockController",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_blockRoot",
+          "type": "bytes32"
+        }
+      ],
+      "name": "submitDepositBlock",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[],\"name\":\"checkOnlyFromNonQuarantinedVault\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_contract\",\"type\":\"address\"}],\"name\":\"setBlockController\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_blockRoot\",\"type\":\"bytes32\"}],\"name\":\"submitDepositBlock\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_contract\",\"type\":\"address\"}],\"name\":\"setVaultRegistry\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/framework/DummyVault.sol\":\"DummyVault\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/framework/DummyVault.sol\":{\"keccak256\":\"0xf1cec175d3d789cc273d6b3f15a730ea558411e38d8aa86c993a115a0b90318c\",\"urls\":[\"bzz-raw://f4f47767e532ca314a36d527457ec170eee0b98640add49698aebaa81f15d800\",\"dweb:/ipfs/QmQrJ8TiZnLWsfBuW5VhCTZLi8vZYQ6EuKamQurMREbzxU\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/framework/registries/VaultRegistryMock.sol\":{\"keccak256\":\"0x9238507e42c43cb5f9907d7a736ed2fee39957db056fde84515b48c2aa7e1a36\",\"urls\":[\"bzz-raw://92d86d6d32f77b23d84eb6abe264cbd8c0a4ca6a1329cdc86d41033b9c50697b\",\"dweb:/ipfs/QmeFKegptPNjbLcCwHCrsYanahqN39LaA9sC3VwSS8CJr3\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/BlockController.sol\":{\"keccak256\":\"0xac302eceee96e5a83b7fdfb43d23389f516ff4b7322e5e094d7ad0b3be177c0b\",\"urls\":[\"bzz-raw://cf36aec949574838af497c6448000226d20aea4d0a787c746dd10775166df8a3\",\"dweb:/ipfs/QmQvD1DZfeidC1xiC3fnzTbCcgTTG9MuN6NNwKn965bVvC\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/models/BlockModel.sol\":{\"keccak256\":\"0x7d26be621a43e2b8855f6c71f91c886d3b48ed809f421a1eee9c165c803d0cf7\",\"urls\":[\"bzz-raw://850b2acb61d96e9eb09d8bf24617ecf47aa948d6754b2d09d0e0d2b949193a2d\",\"dweb:/ipfs/QmW8yoi4jZxHAJf4bNjtt3nGckaWUEX92ZbgrKpoRHJGRM\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/registries/VaultRegistry.sol\":{\"keccak256\":\"0x7786b4b8b043026655fa872f11ec747ef600100cc73da38369e1e2fd5047c95a\",\"urls\":[\"bzz-raw://b957490e53281e516290455b78722627f5536e0bd6b9bc17777f3f7a93ed9b14\",\"dweb:/ipfs/QmbUEwWfkTCSPPNEjAJUEXwgCCY9cBPgAKJagRbYQ3PSLE\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/Quarantine.sol\":{\"keccak256\":\"0x1b685ea3de626e3d8961d0e384a67c3e87752874784cc2e59777857d130f2390\",\"urls\":[\"bzz-raw://28c30354aa580476f230c4d8e151d34337b923caabc6bccfe560d75ef37d446e\",\"dweb:/ipfs/Qmf9nCYFBhHDyMgHmxX5pSkqLpqb2W3XffPopdkJTHmnAA\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/OnlyFromAddress.sol\":{\"keccak256\":\"0x54d4cb74bf5c448bb383ff4ffce898473739a5ba015e439dae1c092c70df943f\",\"urls\":[\"bzz-raw://5c9efbe363534d6746573b9b0dda687d257272c3ce0123b6a45bc7eef55a40b4\",\"dweb:/ipfs/QmZPLF1bKdU6DAZZcxWfMudUwzeubLxsSk14x8hvUMj15X\"]},\"openzeppelin-solidity/contracts/utils/Address.sol\":{\"keccak256\":\"0xf3358e5819ca73357abd6c90bdfffd0474af54364897f6b3e3234c4b71fbe9a1\",\"urls\":[\"bzz-raw://75ae8d04454d1511a2ed986cc8585736f05c5c25280683b3d24712a9f414a4bf\",\"dweb:/ipfs/Qmb3kNCoBUZdah1AgBBD4zMk898j5Qw8ahT1w5cCMYp5Y3\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5061024e806100206000396000f3fe608060405234801561001057600080fd5b506004361061004c5760003560e01c80630971f0e0146100515780638b7c7ebe1461006d578063be5ac69814610095578063cb91dd7b146100b2575b600080fd5b6100596100d8565b604080519115158252519081900360200190f35b6100936004803603602081101561008357600080fd5b50356001600160a01b0316610158565b005b610093600480360360208110156100ab57600080fd5b503561017a565b610093600480360360208110156100c857600080fd5b50356001600160a01b03166101f7565b60008060009054906101000a90046001600160a01b03166001600160a01b0316630971f0e06040518163ffffffff1660e01b815260040160206040518083038186803b15801561012757600080fd5b505afa15801561013b573d6000803e3d6000fd5b505050506040513d602081101561015157600080fd5b5051905090565b600180546001600160a01b0319166001600160a01b0392909216919091179055565b600154604080516317cb58d360e31b81526004810184905290516001600160a01b039092169163be5ac698916024808201926020929091908290030181600087803b1580156101c857600080fd5b505af11580156101dc573d6000803e3d6000fd5b505050506040513d60208110156101f257600080fd5b505050565b600080546001600160a01b0319166001600160a01b039290921691909117905556fea265627a7a7231582049b61fe0099563340a6cfef88cc2869e37bb0acc01e54ac71d800c0530db617764736f6c634300050b0032",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061004c5760003560e01c80630971f0e0146100515780638b7c7ebe1461006d578063be5ac69814610095578063cb91dd7b146100b2575b600080fd5b6100596100d8565b604080519115158252519081900360200190f35b6100936004803603602081101561008357600080fd5b50356001600160a01b0316610158565b005b610093600480360360208110156100ab57600080fd5b503561017a565b610093600480360360208110156100c857600080fd5b50356001600160a01b03166101f7565b60008060009054906101000a90046001600160a01b03166001600160a01b0316630971f0e06040518163ffffffff1660e01b815260040160206040518083038186803b15801561012757600080fd5b505afa15801561013b573d6000803e3d6000fd5b505050506040513d602081101561015157600080fd5b5051905090565b600180546001600160a01b0319166001600160a01b0392909216919091179055565b600154604080516317cb58d360e31b81526004810184905290516001600160a01b039092169163be5ac698916024808201926020929091908290030181600087803b1580156101c857600080fd5b505af11580156101dc573d6000803e3d6000fd5b505050506040513d60208110156101f257600080fd5b505050565b600080546001600160a01b0319166001600160a01b039290921691909117905556fea265627a7a7231582049b61fe0099563340a6cfef88cc2869e37bb0acc01e54ac71d800c0530db617764736f6c634300050b0032",
+  "sourceMap": "121:756:19:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;121:756:19;;;;;;;",
+  "deployedSourceMap": "121:756:19:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;121:756:19;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;423:143;;;:::i;:::-;;;;;;;;;;;;;;;;;;636:115;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;636:115:19;-1:-1:-1;;;;;636:115:19;;:::i;:::-;;757:118;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;757:118:19;;:::i;304:113::-;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;304:113:19;-1:-1:-1;;;;;304:113:19;;:::i;423:143::-;488:4;511:13;;;;;;;;;-1:-1:-1;;;;;511:13:19;-1:-1:-1;;;;;511:46:19;;:48;;;;;;;;;;;;;;;;;;;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;511:48:19;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;511:48:19;;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;511:48:19;;-1:-1:-1;423:143:19;:::o;636:115::-;700:15;:44;;-1:-1:-1;;;;;;700:44:19;-1:-1:-1;;;;;700:44:19;;;;;;;;;;636:115::o;757:118::-;822:15;;:46;;;-1:-1:-1;;;822:46:19;;;;;;;;;;-1:-1:-1;;;;;822:15:19;;;;:34;;:46;;;;;;;;;;;;;;;:15;;:46;;;5:2:-1;;;;30:1;27;20:12;5:2;822:46:19;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;822:46:19;;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;;;757:118:19:o;304:113::-;366:13;:44;;-1:-1:-1;;;;;;366:44:19;-1:-1:-1;;;;;366:44:19;;;;;;;;;;304:113::o",
+  "source": "pragma solidity 0.5.11;\n\nimport \"./registries/VaultRegistryMock.sol\";\nimport \"../../src/framework/BlockController.sol\";\n\ncontract DummyVault {\n    VaultRegistryMock internal vaultRegistry;\n    BlockController internal blockController;\n\n    // setter function only for test, not a real Vault function\n    function setVaultRegistry(address _contract) public {\n        vaultRegistry = VaultRegistryMock(_contract);\n    }\n\n    function checkOnlyFromNonQuarantinedVault() public view returns (bool) {\n        return vaultRegistry.checkOnlyFromNonQuarantinedVault();\n    }\n\n    // setter function only for test, not a real Vault function\n    function setBlockController(address _contract) public {\n        blockController = BlockController(_contract);\n    }\n\n    function submitDepositBlock(bytes32 _blockRoot) public {\n        blockController.submitDepositBlock(_blockRoot);\n    }\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/framework/DummyVault.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/framework/DummyVault.sol",
+    "exportedSymbols": {
+      "DummyVault": [
+        1936
+      ]
+    },
+    "id": 1937,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1883,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:19"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/framework/registries/VaultRegistryMock.sol",
+        "file": "./registries/VaultRegistryMock.sol",
+        "id": 1884,
+        "nodeType": "ImportDirective",
+        "scope": 1937,
+        "sourceUnit": 2197,
+        "src": "25:44:19",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/BlockController.sol",
+        "file": "../../src/framework/BlockController.sol",
+        "id": 1885,
+        "nodeType": "ImportDirective",
+        "scope": 1937,
+        "sourceUnit": 11566,
+        "src": "70:49:19",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 1936,
+        "linearizedBaseContracts": [
+          1936
+        ],
+        "name": "DummyVault",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 1887,
+            "name": "vaultRegistry",
+            "nodeType": "VariableDeclaration",
+            "scope": 1936,
+            "src": "147:40:19",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_VaultRegistryMock_$2196",
+              "typeString": "contract VaultRegistryMock"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 1886,
+              "name": "VaultRegistryMock",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 2196,
+              "src": "147:17:19",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_VaultRegistryMock_$2196",
+                "typeString": "contract VaultRegistryMock"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 1889,
+            "name": "blockController",
+            "nodeType": "VariableDeclaration",
+            "scope": 1936,
+            "src": "193:40:19",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_BlockController_$11565",
+              "typeString": "contract BlockController"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 1888,
+              "name": "BlockController",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 11565,
+              "src": "193:15:19",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_BlockController_$11565",
+                "typeString": "contract BlockController"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 1900,
+              "nodeType": "Block",
+              "src": "356:61:19",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 1898,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 1894,
+                      "name": "vaultRegistry",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 1887,
+                      "src": "366:13:19",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_VaultRegistryMock_$2196",
+                        "typeString": "contract VaultRegistryMock"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "arguments": [
+                        {
+                          "argumentTypes": null,
+                          "id": 1896,
+                          "name": "_contract",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 1891,
+                          "src": "400:9:19",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        ],
+                        "id": 1895,
+                        "name": "VaultRegistryMock",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2196,
+                        "src": "382:17:19",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_VaultRegistryMock_$2196_$",
+                          "typeString": "type(contract VaultRegistryMock)"
+                        }
+                      },
+                      "id": 1897,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "typeConversion",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "382:28:19",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_VaultRegistryMock_$2196",
+                        "typeString": "contract VaultRegistryMock"
+                      }
+                    },
+                    "src": "366:44:19",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_VaultRegistryMock_$2196",
+                      "typeString": "contract VaultRegistryMock"
+                    }
+                  },
+                  "id": 1899,
+                  "nodeType": "ExpressionStatement",
+                  "src": "366:44:19"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 1901,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setVaultRegistry",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1892,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1891,
+                  "name": "_contract",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1901,
+                  "src": "330:17:19",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1890,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "330:7:19",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "329:19:19"
+            },
+            "returnParameters": {
+              "id": 1893,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "356:0:19"
+            },
+            "scope": 1936,
+            "src": "304:113:19",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1910,
+              "nodeType": "Block",
+              "src": "494:72:19",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 1906,
+                        "name": "vaultRegistry",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1887,
+                        "src": "511:13:19",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_VaultRegistryMock_$2196",
+                          "typeString": "contract VaultRegistryMock"
+                        }
+                      },
+                      "id": 1907,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "checkOnlyFromNonQuarantinedVault",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 2195,
+                      "src": "511:46:19",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_view$__$returns$_t_bool_$",
+                        "typeString": "function () view external returns (bool)"
+                      }
+                    },
+                    "id": 1908,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "511:48:19",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "functionReturnParameters": 1905,
+                  "id": 1909,
+                  "nodeType": "Return",
+                  "src": "504:55:19"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 1911,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "checkOnlyFromNonQuarantinedVault",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1902,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "464:2:19"
+            },
+            "returnParameters": {
+              "id": 1905,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1904,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1911,
+                  "src": "488:4:19",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 1903,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "488:4:19",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "487:6:19"
+            },
+            "scope": 1936,
+            "src": "423:143:19",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1922,
+              "nodeType": "Block",
+              "src": "690:61:19",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 1920,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 1916,
+                      "name": "blockController",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 1889,
+                      "src": "700:15:19",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_BlockController_$11565",
+                        "typeString": "contract BlockController"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "arguments": [
+                        {
+                          "argumentTypes": null,
+                          "id": 1918,
+                          "name": "_contract",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 1913,
+                          "src": "734:9:19",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        ],
+                        "id": 1917,
+                        "name": "BlockController",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11565,
+                        "src": "718:15:19",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_BlockController_$11565_$",
+                          "typeString": "type(contract BlockController)"
+                        }
+                      },
+                      "id": 1919,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "typeConversion",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "718:26:19",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_BlockController_$11565",
+                        "typeString": "contract BlockController"
+                      }
+                    },
+                    "src": "700:44:19",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_BlockController_$11565",
+                      "typeString": "contract BlockController"
+                    }
+                  },
+                  "id": 1921,
+                  "nodeType": "ExpressionStatement",
+                  "src": "700:44:19"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 1923,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setBlockController",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1914,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1913,
+                  "name": "_contract",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1923,
+                  "src": "664:17:19",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1912,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "664:7:19",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "663:19:19"
+            },
+            "returnParameters": {
+              "id": 1915,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "690:0:19"
+            },
+            "scope": 1936,
+            "src": "636:115:19",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1934,
+              "nodeType": "Block",
+              "src": "812:63:19",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 1931,
+                        "name": "_blockRoot",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1925,
+                        "src": "857:10:19",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 1928,
+                        "name": "blockController",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1889,
+                        "src": "822:15:19",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_BlockController_$11565",
+                          "typeString": "contract BlockController"
+                        }
+                      },
+                      "id": 1930,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "submitDepositBlock",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 11528,
+                      "src": "822:34:19",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$returns$_t_uint256_$",
+                        "typeString": "function (bytes32) external returns (uint256)"
+                      }
+                    },
+                    "id": 1932,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "822:46:19",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 1933,
+                  "nodeType": "ExpressionStatement",
+                  "src": "822:46:19"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 1935,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "submitDepositBlock",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1926,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1925,
+                  "name": "_blockRoot",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1935,
+                  "src": "785:18:19",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 1924,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "785:7:19",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "784:20:19"
+            },
+            "returnParameters": {
+              "id": 1927,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "812:0:19"
+            },
+            "scope": 1936,
+            "src": "757:118:19",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 1937,
+        "src": "121:756:19"
+      }
+    ],
+    "src": "0:878:19"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/framework/DummyVault.sol",
+    "exportedSymbols": {
+      "DummyVault": [
+        1936
+      ]
+    },
+    "id": 1937,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1883,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:19"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/framework/registries/VaultRegistryMock.sol",
+        "file": "./registries/VaultRegistryMock.sol",
+        "id": 1884,
+        "nodeType": "ImportDirective",
+        "scope": 1937,
+        "sourceUnit": 2197,
+        "src": "25:44:19",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/BlockController.sol",
+        "file": "../../src/framework/BlockController.sol",
+        "id": 1885,
+        "nodeType": "ImportDirective",
+        "scope": 1937,
+        "sourceUnit": 11566,
+        "src": "70:49:19",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 1936,
+        "linearizedBaseContracts": [
+          1936
+        ],
+        "name": "DummyVault",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 1887,
+            "name": "vaultRegistry",
+            "nodeType": "VariableDeclaration",
+            "scope": 1936,
+            "src": "147:40:19",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_VaultRegistryMock_$2196",
+              "typeString": "contract VaultRegistryMock"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 1886,
+              "name": "VaultRegistryMock",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 2196,
+              "src": "147:17:19",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_VaultRegistryMock_$2196",
+                "typeString": "contract VaultRegistryMock"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 1889,
+            "name": "blockController",
+            "nodeType": "VariableDeclaration",
+            "scope": 1936,
+            "src": "193:40:19",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_BlockController_$11565",
+              "typeString": "contract BlockController"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 1888,
+              "name": "BlockController",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 11565,
+              "src": "193:15:19",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_BlockController_$11565",
+                "typeString": "contract BlockController"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 1900,
+              "nodeType": "Block",
+              "src": "356:61:19",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 1898,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 1894,
+                      "name": "vaultRegistry",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 1887,
+                      "src": "366:13:19",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_VaultRegistryMock_$2196",
+                        "typeString": "contract VaultRegistryMock"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "arguments": [
+                        {
+                          "argumentTypes": null,
+                          "id": 1896,
+                          "name": "_contract",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 1891,
+                          "src": "400:9:19",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        ],
+                        "id": 1895,
+                        "name": "VaultRegistryMock",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2196,
+                        "src": "382:17:19",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_VaultRegistryMock_$2196_$",
+                          "typeString": "type(contract VaultRegistryMock)"
+                        }
+                      },
+                      "id": 1897,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "typeConversion",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "382:28:19",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_VaultRegistryMock_$2196",
+                        "typeString": "contract VaultRegistryMock"
+                      }
+                    },
+                    "src": "366:44:19",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_VaultRegistryMock_$2196",
+                      "typeString": "contract VaultRegistryMock"
+                    }
+                  },
+                  "id": 1899,
+                  "nodeType": "ExpressionStatement",
+                  "src": "366:44:19"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 1901,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setVaultRegistry",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1892,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1891,
+                  "name": "_contract",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1901,
+                  "src": "330:17:19",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1890,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "330:7:19",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "329:19:19"
+            },
+            "returnParameters": {
+              "id": 1893,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "356:0:19"
+            },
+            "scope": 1936,
+            "src": "304:113:19",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1910,
+              "nodeType": "Block",
+              "src": "494:72:19",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 1906,
+                        "name": "vaultRegistry",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1887,
+                        "src": "511:13:19",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_VaultRegistryMock_$2196",
+                          "typeString": "contract VaultRegistryMock"
+                        }
+                      },
+                      "id": 1907,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "checkOnlyFromNonQuarantinedVault",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 2195,
+                      "src": "511:46:19",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_view$__$returns$_t_bool_$",
+                        "typeString": "function () view external returns (bool)"
+                      }
+                    },
+                    "id": 1908,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "511:48:19",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "functionReturnParameters": 1905,
+                  "id": 1909,
+                  "nodeType": "Return",
+                  "src": "504:55:19"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 1911,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "checkOnlyFromNonQuarantinedVault",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1902,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "464:2:19"
+            },
+            "returnParameters": {
+              "id": 1905,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1904,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1911,
+                  "src": "488:4:19",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 1903,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "488:4:19",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "487:6:19"
+            },
+            "scope": 1936,
+            "src": "423:143:19",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1922,
+              "nodeType": "Block",
+              "src": "690:61:19",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 1920,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 1916,
+                      "name": "blockController",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 1889,
+                      "src": "700:15:19",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_BlockController_$11565",
+                        "typeString": "contract BlockController"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "arguments": [
+                        {
+                          "argumentTypes": null,
+                          "id": 1918,
+                          "name": "_contract",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 1913,
+                          "src": "734:9:19",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        ],
+                        "id": 1917,
+                        "name": "BlockController",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 11565,
+                        "src": "718:15:19",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_BlockController_$11565_$",
+                          "typeString": "type(contract BlockController)"
+                        }
+                      },
+                      "id": 1919,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "typeConversion",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "718:26:19",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_BlockController_$11565",
+                        "typeString": "contract BlockController"
+                      }
+                    },
+                    "src": "700:44:19",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_BlockController_$11565",
+                      "typeString": "contract BlockController"
+                    }
+                  },
+                  "id": 1921,
+                  "nodeType": "ExpressionStatement",
+                  "src": "700:44:19"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 1923,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setBlockController",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1914,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1913,
+                  "name": "_contract",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1923,
+                  "src": "664:17:19",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1912,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "664:7:19",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "663:19:19"
+            },
+            "returnParameters": {
+              "id": 1915,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "690:0:19"
+            },
+            "scope": 1936,
+            "src": "636:115:19",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 1934,
+              "nodeType": "Block",
+              "src": "812:63:19",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 1931,
+                        "name": "_blockRoot",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1925,
+                        "src": "857:10:19",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 1928,
+                        "name": "blockController",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 1889,
+                        "src": "822:15:19",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_BlockController_$11565",
+                          "typeString": "contract BlockController"
+                        }
+                      },
+                      "id": 1930,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "submitDepositBlock",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 11528,
+                      "src": "822:34:19",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_nonpayable$_t_bytes32_$returns$_t_uint256_$",
+                        "typeString": "function (bytes32) external returns (uint256)"
+                      }
+                    },
+                    "id": 1932,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "822:46:19",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 1933,
+                  "nodeType": "ExpressionStatement",
+                  "src": "822:46:19"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 1935,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "submitDepositBlock",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 1926,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1925,
+                  "name": "_blockRoot",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 1935,
+                  "src": "785:18:19",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 1924,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "785:7:19",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "784:20:19"
+            },
+            "returnParameters": {
+              "id": 1927,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "812:0:19"
+            },
+            "scope": 1936,
+            "src": "757:118:19",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 1937,
+        "src": "121:756:19"
+      }
+    ],
+    "src": "0:878:19"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.536Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}
