@@ -4,7 +4,7 @@ SNAPSHOT ?= SNAPSHOT_MIX_EXIT_PERIOD_SECONDS_20
 BAREBUILD_ENV ?= dev
 ENV_TEST ?= env MIX_ENV=test
 CHILDCHAIN_IMAGE_NAME  ?= "omisego/childchain:latest"
-IMAGE_BUILDER   ?= "omisegoimages/childchain-builder:dev-90c05cb"
+IMAGE_BUILDER   ?= "omisego/childchain-builder:stable-20200414"
 IMAGE_BUILD_DIR ?= $(PWD)
 ENV_DEV         ?= env MIX_ENV=dev
 ENV_TEST        ?= env MIX_ENV=test

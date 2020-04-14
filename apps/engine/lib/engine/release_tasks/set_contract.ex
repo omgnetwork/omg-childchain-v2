@@ -17,8 +17,8 @@ defmodule Engine.ReleaseTasks.SetContract do
 
   def load(config, args) do
     _ = on_load(args)
-    plasma_framework = get_env("PLASMA_FRAMEWORK")
-    tx_hash = get_env("TX_HASH")
+    plasma_framework = get_env("CONTRACT_ADDRESS_PLASMA_FRAMEWORK")
+    tx_hash = get_env("TXHASH_CONTRACT")
 
     [
       payment_exit_game,

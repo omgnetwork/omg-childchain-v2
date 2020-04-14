@@ -27,3 +27,6 @@ erl_crash.dump
 
 # The directory Mix downloads your dependencies sources to when in docker.
 /deps_docker/
+
+# geth storage
+data/
