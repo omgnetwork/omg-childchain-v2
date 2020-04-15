@@ -58,7 +58,13 @@ defmodule Engine.Repo.MonitorTest do
         health_check_after_crash: health_check_after_crash
       )
 
+    {:links, children} = Process.info(temp_monitor_pid, :links)
+    repo_child = hd(children -- [self()])
+    Process.monitor(temp_monitor_pid)
+    Process.monitor(repo_child)
     :ok = GenServer.stop(temp_monitor_pid)
+    assert_receive {:DOWN, _ref, :process, ^repo_child, :normal}
+    assert_receive {:DOWN, _ref, :process, ^temp_monitor_pid, :normal}
 
     {:ok, monitor_pid} =
       Monitor.start_link(

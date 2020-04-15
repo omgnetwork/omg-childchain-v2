@@ -28,7 +28,7 @@ deps-childchain:
 .PHONY: test
 
 test:
-	$(ENV_TEST) mix test --exclude integration
+	$(ENV_TEST) mix test
 
 credo:
 	mix credo --strict
