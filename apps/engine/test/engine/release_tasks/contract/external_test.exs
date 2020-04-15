@@ -1,7 +1,8 @@
 defmodule Engine.ReleaseTasks.Contract.ExternalTest do
   use ExUnit.Case, async: true
-  alias Engine.ReleaseTasks.Contract.External
+
   alias DBConnection.Backoff
+  alias Engine.ReleaseTasks.Contract.External
 
   describe "min_exit_period/1" do
     test "that the returned data is a number", %{test: test_name} do

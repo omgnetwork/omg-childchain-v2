@@ -1,8 +1,8 @@
 defmodule Engine.ReleaseTasks.ContractTest do
   use ExUnit.Case, async: true
 
-  alias __MODULE__.SystemMock
   alias __MODULE__.RpcApiMock
+  alias __MODULE__.SystemMock
 
   describe "on_load/2" do
     test "plasma_framework, tx_hash and authority_address can be set" do
