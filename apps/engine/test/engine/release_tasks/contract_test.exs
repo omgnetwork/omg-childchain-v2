@@ -2,17 +2,15 @@ defmodule Engine.ReleaseTasks.ContractTest do
   use ExUnit.Case, async: true
 
   alias __MODULE__.EthereumClient
-
   alias Engine.ReleaseTasks.Contract
 
-  setup %{test: test_name} do
-    _ = Kernel.spawn_link(EthereumClient, :start, [10_000, test_name])
-    :ok
-  end
-
   describe "on_load/2" do
-    test "plasma_framework, tx_hash and authority_address can be set", %{test: test_name} do
-      defmodule test_name do
+    test "plasma_framework, tx_hash and authority_address can be set" do
+      port = :crypto.rand_uniform(9500, 10_000)
+      Agent.start_link(fn -> port end, name: :system_mock)
+      pid = Kernel.spawn(EthereumClient, :start, [port, test_name])
+
+      defmodule :system_mock do
         def get_env("CONTRACT_ADDRESS_PLASMA_FRAMEWORK") do
           "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f"
         end
@@ -26,7 +24,8 @@ defmodule Engine.ReleaseTasks.ContractTest do
         end
 
         def get_env("ETHEREUM_RPC_URL") do
-          "http://127.0.0.1:10000/"
+          port = Agent.get(__MODULE__, fn state -> state end)
+          "http://localhost:#{port}/"
         end
       end
 
@@ -85,7 +84,8 @@ defmodule Engine.ReleaseTasks.ContractTest do
       ]
 
       Agent.start_link(fn -> execution end, name: test_name)
-      assert Contract.load([], system_adapter: test_name) == engine_setup
+      assert Contract.load([], system_adapter: :system_mock) == engine_setup
+      Kernel.send(pid, :stop)
     end
   end
 
@@ -94,6 +94,11 @@ defmodule Engine.ReleaseTasks.ContractTest do
     def start(port, test_name) do
       {:ok, sock} = :gen_tcp.listen(port, [:binary, {:active, false}])
       spawn(fn -> loop(sock, test_name) end)
+
+      receive do
+        :stop ->
+          :gen_tcp.close(sock)
+      end
     end
 
     defp loop(sock, test_name) do

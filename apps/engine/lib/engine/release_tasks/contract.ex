@@ -56,10 +56,10 @@ defmodule Engine.ReleaseTasks.Contract do
   end
 
   defp external_data(plasma_framework, tx_hash, rpc_url) do
-    min_exit_period_seconds = External.min_exit_period(plasma_framework, url: rpc_url)
     payment_exit_game = External.exit_game_contract_address(plasma_framework, ExPlasma.payment_v1(), url: rpc_url)
     eth_vault = External.vault(plasma_framework, @ether_vault_id, url: rpc_url)
     erc20_vault = External.vault(plasma_framework, @erc20_vault_id, url: rpc_url)
+    min_exit_period_seconds = External.min_exit_period(plasma_framework, url: rpc_url)
     contract_semver = External.contract_semver(plasma_framework, url: rpc_url)
     child_block_interval = External.child_block_interval(plasma_framework, url: rpc_url)
     root_deployment_height = External.root_deployment_height(plasma_framework, tx_hash, url: rpc_url)

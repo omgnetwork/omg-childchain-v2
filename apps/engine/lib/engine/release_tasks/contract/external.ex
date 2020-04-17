@@ -12,15 +12,6 @@ defmodule Engine.ReleaseTasks.Contract.External do
 
   @type option :: {:url, String.t()}
 
-  @spec min_exit_period(String.t(), [option]) :: pos_integer()
-  def min_exit_period(plasma_framework, opts) do
-    signature = "minExitPeriod()"
-    {:ok, data} = call(plasma_framework, signature, [], opts)
-    %{"min_exit_period" => min_exit_period} = Abi.decode_function(data, signature)
-    _ = Logger.info("Retrieved min exit period #{min_exit_period}.")
-    min_exit_period
-  end
-
   def exit_game_contract_address(plasma_framework, tx_type, opts) do
     signature = "exitGames(uint256)"
     {:ok, data} = call(plasma_framework, signature, [tx_type], opts)
@@ -35,6 +26,15 @@ defmodule Engine.ReleaseTasks.Contract.External do
     %{"vault_address" => vault_address} = Abi.decode_function(data, signature)
     _ = Logger.info("Retrieved vault address for #{id} #{vault_address}.")
     vault_address
+  end
+
+  @spec min_exit_period(String.t(), keyword()) :: any()
+  def min_exit_period(plasma_framework, opts) do
+    signature = "minExitPeriod()"
+    {:ok, data} = call(plasma_framework, signature, [], opts)
+    %{"min_exit_period" => min_exit_period} = Abi.decode_function(data, signature)
+    _ = Logger.info("Retrieved min exit period #{min_exit_period}.")
+    min_exit_period
   end
 
   def contract_semver(plasma_framework, opts) do
