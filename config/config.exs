@@ -45,7 +45,6 @@ config :engine, Engine.Repo,
 config :engine, ecto_repos: [Engine.Repo]
 
 config :ethereumex,
-  url: "http://localhost:8545",
   http_options: [recv_timeout: 20_000]
 
 import_config "#{Mix.env()}.exs"

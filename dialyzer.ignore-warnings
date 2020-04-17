@@ -1,4 +1,4 @@
 #broken ethereumex
-lib/engine/release_tasks/contract.ex:23: Function load/2 has no local return
-lib/engine/release_tasks/contract.ex:58: Function external_data/3 has no local return
-lib/engine/release_tasks/contract.ex:59: The call 'Elixir.Engine.ReleaseTasks.Contract.External':exit_game_contract_address(_plasma_framework@1::binary(),<<_:8>>,[{'url',binary()},...]) will never return since it differs in the 3rd argument from the success typing arguments: (binary(),any(),[])
+lib/engine/release_tasks/contract.ex:23
+lib/engine/release_tasks/contract.ex:58
+lib/engine/release_tasks/contract.ex:59
