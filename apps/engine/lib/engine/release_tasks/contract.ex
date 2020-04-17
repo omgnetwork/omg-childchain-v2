@@ -86,6 +86,7 @@ defmodule Engine.ReleaseTasks.Contract do
     {:ok, _} = Application.ensure_all_started(:telemetry)
   end
 
+  @spec get_env(String.t()) :: String.t()
   defp get_env(key) do
     system_adapter().get_env(key)
   end

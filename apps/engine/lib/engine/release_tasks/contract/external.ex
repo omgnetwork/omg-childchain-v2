@@ -12,7 +12,7 @@ defmodule Engine.ReleaseTasks.Contract.External do
 
   @type option :: {:url, String.t()}
 
-  def exit_game_contract_address(plasma_framework, tx_type, opts) do
+  def exit_game_contract_address(plasma_framework, tx_type, opts \\ []) do
     signature = "exitGames(uint256)"
     {:ok, data} = call(plasma_framework, signature, [tx_type], opts)
     %{"exit_game_address" => exit_game_address} = Abi.decode_function(data, signature)

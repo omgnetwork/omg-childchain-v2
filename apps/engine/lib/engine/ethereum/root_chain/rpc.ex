@@ -32,8 +32,7 @@ defmodule Engine.Ethereum.RootChain.Rpc do
     Ethereumex.HttpClient.eth_get_transaction_receipt(txhash, opts)
   end
 
-  # Rpc.call_contract(plasma_framework, signature, args, opts)
-  # @spec call_contract(String.t(), String.t(), any(), keyword()) :: {:ok | :error, any()}
+  @spec call_contract(String.t(), String.t(), any(), keyword()) :: {:ok | :error, any()}
   def call_contract(contract, signature, args, opts) do
     data = signature |> ABI.encode(args) |> Encoding.to_hex()
     Ethereumex.HttpClient.eth_call(%{to: contract, data: data}, "latest", opts)
