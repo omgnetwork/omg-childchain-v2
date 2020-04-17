@@ -24,6 +24,7 @@ jobs:
           paths:
             - "deps"
             - "_build"
+            - "dialyzer.ignore-warnings"
 
   test:
     working_directory: ~/childchain
@@ -69,7 +70,7 @@ jobs:
       - restore_cache:
           key: v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - restore_cache:
-          key: v2-dialyzer-plts-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v1-dialyzer-plts-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run:
           name: Unpack PLT cache
           command: |
@@ -85,7 +86,7 @@ jobs:
             cp _build/dev/dialyxir*.plt plts/
             cp ~/.mix/dialyxir*.plt plts/
       - save_cache:
-          key: v2-dialyzer-plts-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v1-dialyzer-plts-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
           paths:
             - "plts"
 
