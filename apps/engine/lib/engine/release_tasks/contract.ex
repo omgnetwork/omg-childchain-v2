@@ -28,6 +28,7 @@ defmodule Engine.ReleaseTasks.Contract do
 
     authority_address = "AUTHORITY_ADDRESS" |> get_env() |> Validators.address!("AUTHORITY_ADDRESS")
     tx_hash = "TXHASH_CONTRACT" |> get_env() |> Validators.tx_hash!("TXHASH_CONTRACT")
+    rpc_url = get_env("ETHEREUM_RPC_URL")
 
     [
       payment_exit_game,
@@ -37,7 +38,7 @@ defmodule Engine.ReleaseTasks.Contract do
       contract_semver,
       child_block_interval,
       root_deployment_height
-    ] = external_data(plasma_framework, tx_hash)
+    ] = external_data(plasma_framework, tx_hash, rpc_url)
 
     Config.Reader.merge(config,
       engine: [
@@ -54,14 +55,14 @@ defmodule Engine.ReleaseTasks.Contract do
     )
   end
 
-  defp external_data(plasma_framework, tx_hash) do
-    min_exit_period_seconds = External.min_exit_period(plasma_framework)
-    payment_exit_game = External.exit_game_contract_address(plasma_framework, ExPlasma.payment_v1())
-    eth_vault = External.vault(plasma_framework, @ether_vault_id)
-    erc20_vault = External.vault(plasma_framework, @erc20_vault_id)
-    contract_semver = External.contract_semver(plasma_framework)
-    child_block_interval = External.child_block_interval(plasma_framework)
-    root_deployment_height = External.root_deployment_height(plasma_framework, tx_hash)
+  defp external_data(plasma_framework, tx_hash, rpc_url) do
+    min_exit_period_seconds = External.min_exit_period(plasma_framework, url: rpc_url)
+    payment_exit_game = External.exit_game_contract_address(plasma_framework, ExPlasma.payment_v1(), url: rpc_url)
+    eth_vault = External.vault(plasma_framework, @ether_vault_id, url: rpc_url)
+    erc20_vault = External.vault(plasma_framework, @erc20_vault_id, url: rpc_url)
+    contract_semver = External.contract_semver(plasma_framework, url: rpc_url)
+    child_block_interval = External.child_block_interval(plasma_framework, url: rpc_url)
+    root_deployment_height = External.root_deployment_height(plasma_framework, tx_hash, url: rpc_url)
 
     [
       payment_exit_game,
@@ -80,16 +81,6 @@ defmodule Engine.ReleaseTasks.Contract do
     backoff_state = Backoff.new(backoff)
     nil = Process.put(:system_adapter, adapter)
     nil = Process.put(:backoff, backoff_state)
-    rpc_url = get_env("ETHEREUM_RPC_URL")
-
-    case rpc_url do
-      nil ->
-        :ok
-
-      _ ->
-        :ok = Application.put_env(:ethereumex, :url, rpc_url, persistent: true)
-    end
-
     {:ok, _} = Application.ensure_all_started(:logger)
     {:ok, _} = Application.ensure_all_started(:ethereumex)
     {:ok, _} = Application.ensure_all_started(:telemetry)

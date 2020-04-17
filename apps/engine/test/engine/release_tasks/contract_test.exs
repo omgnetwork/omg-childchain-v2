@@ -1,64 +1,120 @@
 defmodule Engine.ReleaseTasks.ContractTest do
   use ExUnit.Case, async: true
 
-  alias __MODULE__.RpcApiMock
-  alias __MODULE__.SystemMock
+  alias __MODULE__.EthereumClient
+
+  alias Engine.ReleaseTasks.Contract
+
+  setup %{test: test_name} do
+    _ = Kernel.spawn_link(EthereumClient, :start, [10_000, test_name])
+    :ok
+  end
 
   describe "on_load/2" do
-    test "plasma_framework, tx_hash and authority_address can be set" do
-      Process.put(:rpc_api, RpcApiMock)
+    test "plasma_framework, tx_hash and authority_address can be set", %{test: test_name} do
+      defmodule test_name do
+        def get_env("CONTRACT_ADDRESS_PLASMA_FRAMEWORK") do
+          "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f"
+        end
+
+        def get_env("AUTHORITY_ADDRESS") do
+          "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f"
+        end
+
+        def get_env("TXHASH_CONTRACT") do
+          "0xb836b6c4eb016e430b8e7495db92357896c1da263c6a3de73320b669eb5912d3"
+        end
+
+        def get_env("ETHEREUM_RPC_URL") do
+          "http://127.0.0.1:10000/"
+        end
+      end
+
+      execution = fn method, params, conn ->
+        response =
+          case method do
+            "eth_call" ->
+              data = params |> hd() |> Map.get("data")
+              <<function::binary-size(10), _::binary>> = data
+
+              case function do
+                "0x0d8e6e2c" ->
+                  # getVersion()
+                  "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000d312e302e342b6136396337363300000000000000000000000000000000000000"
+
+                "0x8c64ea4a" ->
+                  # vaults
+                  "0x0000000000000000000000004e3aeff70f022a6d4cc5947423887e7152826cf7"
+
+                "0xaf079764" ->
+                  # payment exit game
+                  "0x0000000000000000000000004e3aeff70f022a6d4cc5947423887e7152826cf7"
+
+                _ ->
+                  # min exit period seconds and child bloc interval
+                  "0x0000000000000000000000000000000000000000000000000000000000000014"
+              end
+
+            "eth_getTransactionReceipt" ->
+              %{"contractAddress" => "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f", "blockNumber" => "0x1"}
+          end
+
+        body = %{
+          "id" => 1,
+          "jsonrpc" => "2.0",
+          "result" => response
+        }
+
+        body = Jason.encode!(body)
+        :ok = :gen_tcp.send(conn, ["HTTP/1.0 ", Integer.to_charlist(200), "\r\n", [], "\r\n", body])
+        :gen_tcp.close(conn)
+      end
 
       engine_setup = [
         engine: [
           authority_address: "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f",
           plasma_framework: "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f",
-          eth_vault: "0x00000000000000000000000000000000000003e8",
-          erc20_vault: "0x00000000000000000000000000000000000003e8",
-          payment_exit_game: "0x00000000000000000000000000000000000003e8",
-          min_exit_period_seconds: 1000,
+          eth_vault: "0x4e3aeff70f022a6d4cc5947423887e7152826cf7",
+          erc20_vault: "0x4e3aeff70f022a6d4cc5947423887e7152826cf7",
+          payment_exit_game: "0x4e3aeff70f022a6d4cc5947423887e7152826cf7",
+          min_exit_period_seconds: 20,
           contract_semver: "1.0.4+a69c763",
-          child_block_interval: 1000,
+          child_block_interval: 20,
           root_deployment_height: 1
         ]
       ]
 
-      assert Engine.ReleaseTasks.Contract.load([], system_adapter: SystemMock) == engine_setup
+      Agent.start_link(fn -> execution end, name: test_name)
+      assert Contract.load([], system_adapter: test_name) == engine_setup
     end
   end
 
-  defmodule SystemMock do
-    def get_env("CONTRACT_ADDRESS_PLASMA_FRAMEWORK") do
-      "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f"
+  defmodule EthereumClient do
+    # a very simple http client implementation that we can twist into responses that we need
+    def start(port, test_name) do
+      {:ok, sock} = :gen_tcp.listen(port, [:binary, {:active, false}])
+      spawn(fn -> loop(sock, test_name) end)
     end
 
-    def get_env("AUTHORITY_ADDRESS") do
-      "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f"
+    defp loop(sock, test_name) do
+      case :gen_tcp.accept(sock) do
+        {:ok, conn} ->
+          handler = spawn(fn -> handle(conn, test_name) end)
+          :gen_tcp.controlling_process(conn, handler)
+          loop(sock, test_name)
+
+        _ ->
+          :ok
+      end
     end
 
-    def get_env("TXHASH_CONTRACT") do
-      "0xb836b6c4eb016e430b8e7495db92357896c1da263c6a3de73320b669eb5912d3"
-    end
-
-    def get_env("ETHEREUM_RPC_URL") do
-      "localhost"
-    end
-  end
-
-  defmodule RpcApiMock do
-    def call_contract(_, "getVersion()", _) do
-      data =
-        "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000d312e302e342b6136396337363300000000000000000000000000000000000000"
-
-      {:ok, data}
-    end
-
-    def call_contract(_, _, _) do
-      data = "0x00000000000000000000000000000000000000000000000000000000000003e8"
-      {:ok, data}
-    end
-
-    def transaction_receipt(_) do
-      {:ok, %{"contractAddress" => "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f", "blockNumber" => "0x1"}}
+    defp handle(conn, test_name) do
+      {:ok, body} = :gen_tcp.recv(conn, 0)
+      [_, request] = String.split(body, "\r\n\r\n")
+      method = request |> Jason.decode!() |> Map.get("method")
+      params = request |> Jason.decode!() |> Map.get("params")
+      execution = Agent.get(test_name, fn state -> state end)
+      execution.(method, params, conn)
     end
   end
 end

@@ -14,86 +14,101 @@
 defmodule Engine.Ethereum.RootChain.Rpc do
   @moduledoc """
    Does RPC calls for enriching event functions or bare events polling to plasma contracts.
+
+    The reason why these public functions allow opts is that if we 
+    let [url: "asdf"] through to Ethereumex, the request will be sent to that URL.
+
+    This will allow us to run integration tests concurrently!
   """
   alias Engine.Encoding
   require Logger
+  @type option :: {:url, String.t()}
+  @type block :: non_neg_integer()
+  @type signatures :: list(String.t()) | String.t()
+  @type contracts :: list(String.t()) | String.t()
 
-  def transaction_receipt(client \\ Ethereumex.HttpClient, txhash) do
-    client.eth_get_transaction_receipt(txhash)
+  #@spec transaction_receipt(String.t(), [] | [option]) :: {:ok | :error, any()}
+  def transaction_receipt(txhash, opts) do
+    Ethereumex.HttpClient.eth_get_transaction_receipt(txhash, opts)
   end
 
-  def call_contract(client \\ Ethereumex.HttpClient, contract, signature, args) do
+  #@spec call_contract(String.t(), String.t(), any(), [] | [option]) :: {:ok | :error, any()}
+  def call_contract(contract, signature, args, opts) do
     data = signature |> ABI.encode(args) |> Encoding.to_hex()
-    client.eth_call(%{to: contract, data: data})
+    Ethereumex.HttpClient.eth_call(%{to: contract, data: data}, "latest", opts)
   end
 
-  def get_ethereum_events(block_from, block_to, [_ | _] = signatures, [_ | _] = contracts) do
-    topics = Enum.map(signatures, fn signature -> event_topic_for_signature(signature) end)
+  # @spec get_call_data(String.t(), [] | [option]) :: {:ok, map()}
+  # def get_call_data(root_chain_txhash, opts \\ []) do
+  #   {:ok, %{"input" => input}} =
+  #     root_chain_txhash
+  #     |> Encoding.to_hex()
+  #     |> Ethereumex.HttpClient.eth_get_transaction_by_hash(opts)
 
-    topics_and_signatures =
-      topics
-      |> Enum.zip(signatures)
-      |> Enum.reduce(%{}, fn {topic, signature}, acc -> Map.put(acc, topic, signature) end)
+  #   {:ok, input}
+  # end
 
-    contracts = Enum.map(contracts, &Encoding.to_hex(&1))
-    block_from = Encoding.to_hex(block_from)
-    block_to = Encoding.to_hex(block_to)
+  # @spec get_ethereum_events(block(), block(), signatures(), contracts(), [] | [option]) :: {:ok | :error, any()}
+  # def get_ethereum_events(block_from, block_to, signatures, contract, opts \\ [])
 
-    params = %{
-      fromBlock: block_from,
-      toBlock: block_to,
-      address: contracts,
-      topics: [topics]
-    }
+  # def get_ethereum_events(block_from, block_to, [_ | _] = signatures, [_ | _] = contracts, opts) do
+  #   topics = Enum.map(signatures, fn signature -> event_topic_for_signature(signature) end)
 
-    {:ok, logs} = Ethereumex.HttpClient.eth_get_logs(params)
-    filtered_and_enriched_logs = handle_result(logs, topics, topics_and_signatures)
-    {:ok, filtered_and_enriched_logs}
-  end
+  #   topics_and_signatures =
+  #     topics
+  #     |> Enum.zip(signatures)
+  #     |> Enum.reduce(%{}, fn {topic, signature}, acc -> Map.put(acc, topic, signature) end)
 
-  def get_ethereum_events(block_from, block_to, [_ | _] = signatures, contract) do
-    get_ethereum_events(block_from, block_to, signatures, [contract])
-  end
+  #   contracts = Enum.map(contracts, &Encoding.to_hex(&1))
+  #   block_from = Encoding.to_hex(block_from)
+  #   block_to = Encoding.to_hex(block_to)
 
-  def get_ethereum_events(block_from, block_to, signature, [_ | _] = contracts) do
-    get_ethereum_events(block_from, block_to, [signature], contracts)
-  end
+  #   params = %{
+  #     fromBlock: block_from,
+  #     toBlock: block_to,
+  #     address: contracts,
+  #     topics: [topics]
+  #   }
 
-  def get_ethereum_events(block_from, block_to, signature, contract) do
-    get_ethereum_events(block_from, block_to, [signature], [contract])
-  end
+  #   {:ok, logs} = Ethereumex.HttpClient.eth_get_logs(params, opts)
+  #   filtered_and_enriched_logs = handle_result(logs, topics, topics_and_signatures)
+  #   {:ok, filtered_and_enriched_logs}
+  # end
 
-  def get_call_data(root_chain_txhash) do
-    {:ok, %{"input" => input}} =
-      root_chain_txhash
-      |> Encoding.to_hex()
-      |> Ethereumex.HttpClient.eth_get_transaction_by_hash()
+  # def get_ethereum_events(block_from, block_to, [_ | _] = signatures, contract, opts) do
+  #   get_ethereum_events(block_from, block_to, signatures, [contract], opts)
+  # end
 
-    {:ok, input}
-  end
+  # def get_ethereum_events(block_from, block_to, signature, [_ | _] = contracts, opts) do
+  #   get_ethereum_events(block_from, block_to, [signature], contracts, opts)
+  # end
 
-  defp event_topic_for_signature(signature) do
-    signature
-    |> ExthCrypto.Hash.hash(ExthCrypto.Hash.kec())
-    |> Encoding.to_hex()
-  end
+  # def get_ethereum_events(block_from, block_to, signature, contract, opts) do
+  #   get_ethereum_events(block_from, block_to, [signature], [contract], opts)
+  # end
 
-  defp handle_result(logs, topics, topics_and_signatures) do
-    acc = []
-    handle_result(logs, topics, topics_and_signatures, acc)
-  end
+  # defp event_topic_for_signature(signature) do
+  #   signature
+  #   |> ExthCrypto.Hash.hash(ExthCrypto.Hash.kec())
+  #   |> Encoding.to_hex()
+  # end
 
-  defp handle_result([], _topics, _topics_and_signatures, acc), do: acc
+  # defp handle_result(logs, topics, topics_and_signatures) do
+  #   acc = []
+  #   handle_result(logs, topics, topics_and_signatures, acc)
+  # end
 
-  defp handle_result([%{"removed" => true} | _logs], _topics, _topics_and_signatures, acc) do
-    acc
-  end
+  # defp handle_result([], _topics, _topics_and_signatures, acc), do: acc
 
-  defp handle_result([log | logs], topics, topics_and_signatures, acc) do
-    topic = Enum.find(topics, fn topic -> Enum.at(log["topics"], 0) == topic end)
-    enriched_log = put_signature(log, Map.get(topics_and_signatures, topic))
-    handle_result(logs, topics, topics_and_signatures, [enriched_log | acc])
-  end
+  # defp handle_result([%{"removed" => true} | _logs], _topics, _topics_and_signatures, acc) do
+  #   acc
+  # end
 
-  defp put_signature(log, signature), do: Map.put(log, :event_signature, signature)
+  # defp handle_result([log | logs], topics, topics_and_signatures, acc) do
+  #   topic = Enum.find(topics, fn topic -> Enum.at(log["topics"], 0) == topic end)
+  #   enriched_log = put_signature(log, Map.get(topics_and_signatures, topic))
+  #   handle_result(logs, topics, topics_and_signatures, [enriched_log | acc])
+  # end
+
+  # defp put_signature(log, signature), do: Map.put(log, :event_signature, signature)
 end
