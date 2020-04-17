@@ -27,14 +27,14 @@ defmodule Engine.Ethereum.RootChain.Rpc do
   @type signatures :: list(String.t()) | String.t()
   @type contracts :: list(String.t()) | String.t()
 
-  @spec transaction_receipt(String.t(), keyword()) :: {:ok | :error, any()}
+  @spec transaction_receipt(String.t(), keyword()) :: {:ok, map()} | {:error, map() | binary() | atom()}
   def transaction_receipt(txhash, opts) do
     Ethereumex.HttpClient.eth_get_transaction_receipt(txhash, opts)
   end
 
-  @spec call_contract(String.t(), String.t(), any(), keyword()) :: {:ok | :error, any()}
+  @spec call_contract(String.t(), String.t(), any(), keyword()) :: {:ok, binary()} | {:error, map() | binary() | atom()}
   def call_contract(contract, signature, args, opts) do
     data = signature |> ABI.encode(args) |> Encoding.to_hex()
-    Ethereumex.HttpClient.eth_call(%{to: contract, data: data}, "latest", opts)
+    Ethereumex.HttpClient.eth_call(%{to: contract, data: data}, opts)
   end
 end

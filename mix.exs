@@ -24,7 +24,7 @@ defmodule Childchain.MixProject do
   defp deps do
     [
       {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
-      {:dialyxir, "1.0.0-rc.7", only: [:dev], runtime: false}
+      {:dialyxir, "1.0.0", only: [:dev], runtime: false}
     ]
   end
 
@@ -60,7 +60,7 @@ defmodule Childchain.MixProject do
       ],
       ignore_warnings: "dialyzer.ignore-warnings",
       list_unused_filters: true,
-      plt_add_apps: [:keccakf1600, :ex_abi, :ethereumex],
+      plt_add_apps: [:keccakf1600, :ex_abi],
       paths: paths
     ]
   end

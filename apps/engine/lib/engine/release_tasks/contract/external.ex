@@ -28,7 +28,6 @@ defmodule Engine.ReleaseTasks.Contract.External do
     vault_address
   end
 
-  @spec min_exit_period(String.t(), keyword()) :: any()
   def min_exit_period(plasma_framework, opts) do
     signature = "minExitPeriod()"
     {:ok, data} = call(plasma_framework, signature, [], opts)
