@@ -29,45 +29,7 @@ defmodule Engine.ReleaseTasks.ContractTest do
         end
       end
 
-      execution = fn method, params, conn ->
-        response =
-          case method do
-            "eth_call" ->
-              data = params |> hd() |> Map.get("data")
-              <<function::binary-size(10), _::binary>> = data
-
-              case function do
-                "0x0d8e6e2c" ->
-                  # getVersion()
-                  "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000d312e302e342b6136396337363300000000000000000000000000000000000000"
-
-                "0x8c64ea4a" ->
-                  # vaults
-                  "0x0000000000000000000000004e3aeff70f022a6d4cc5947423887e7152826cf7"
-
-                "0xaf079764" ->
-                  # payment exit game
-                  "0x0000000000000000000000004e3aeff70f022a6d4cc5947423887e7152826cf7"
-
-                _ ->
-                  # min exit period seconds and child bloc interval
-                  "0x0000000000000000000000000000000000000000000000000000000000000014"
-              end
-
-            "eth_getTransactionReceipt" ->
-              %{"contractAddress" => "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f", "blockNumber" => "0x1"}
-          end
-
-        body = %{
-          "id" => 1,
-          "jsonrpc" => "2.0",
-          "result" => response
-        }
-
-        body = Jason.encode!(body)
-        :ok = :gen_tcp.send(conn, ["HTTP/1.0 ", Integer.to_charlist(200), "\r\n", [], "\r\n", body])
-        :gen_tcp.close(conn)
-      end
+      execution = response_handler_function()
 
       engine_setup = [
         engine: [
@@ -86,6 +48,51 @@ defmodule Engine.ReleaseTasks.ContractTest do
       Agent.start_link(fn -> execution end, name: test_name)
       assert Contract.load([], system_adapter: :system_mock) == engine_setup
       Kernel.send(pid, :stop)
+    end
+  end
+
+  # this anonymous function will
+  # get invoked for every request 
+  # on a specific server startup
+  defp response_handler_function() do
+    fn method, params, conn ->
+      response =
+        case method do
+          "eth_call" ->
+            data = params |> hd() |> Map.get("data")
+            <<function::binary-size(10), _::binary>> = data
+
+            case function do
+              "0x0d8e6e2c" ->
+                # getVersion()
+                "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000d312e302e342b6136396337363300000000000000000000000000000000000000"
+
+              "0x8c64ea4a" ->
+                # vaults
+                "0x0000000000000000000000004e3aeff70f022a6d4cc5947423887e7152826cf7"
+
+              "0xaf079764" ->
+                # payment exit game
+                "0x0000000000000000000000004e3aeff70f022a6d4cc5947423887e7152826cf7"
+
+              _ ->
+                # min exit period seconds and child bloc interval
+                "0x0000000000000000000000000000000000000000000000000000000000000014"
+            end
+
+          "eth_getTransactionReceipt" ->
+            %{"contractAddress" => "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f", "blockNumber" => "0x1"}
+        end
+
+      body = %{
+        "id" => 1,
+        "jsonrpc" => "2.0",
+        "result" => response
+      }
+
+      body = Jason.encode!(body)
+      :ok = :gen_tcp.send(conn, ["HTTP/1.0 ", Integer.to_charlist(200), "\r\n", [], "\r\n", body])
+      :gen_tcp.close(conn)
     end
   end
 
