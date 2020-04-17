@@ -5,7 +5,7 @@ defmodule Engine.ReleaseTasks.ContractTest do
   alias Engine.ReleaseTasks.Contract
 
   describe "on_load/2" do
-    test "plasma_framework, tx_hash and authority_address can be set" do
+    test "plasma_framework, tx_hash and authority_address can be set", %{test: test_name} do
       port = :crypto.rand_uniform(9500, 10_000)
       Agent.start_link(fn -> port end, name: :system_mock)
       pid = Kernel.spawn(EthereumClient, :start, [port, test_name])

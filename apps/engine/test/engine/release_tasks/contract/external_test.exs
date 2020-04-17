@@ -14,7 +14,8 @@ defmodule Engine.ReleaseTasks.Contract.ExternalTest do
   setup context do
     %{test: test_name} = context
     port = Agent.get_and_update(__MODULE__, fn state -> {state, state + 1} end)
-    _ = Kernel.spawn_link(EthereumClient, :start, [port, test_name])
+    pid = Kernel.spawn(EthereumClient, :start, [port, test_name])
+    on_exit(fn -> Kernel.send(pid, :stop) end)
     %{port: port}
   end
 
