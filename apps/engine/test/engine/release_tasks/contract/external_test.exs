@@ -31,10 +31,7 @@ defmodule Engine.ReleaseTasks.Contract.ExternalTest do
         }
 
         body = Jason.encode!(body)
-
-        :ok = :gen_tcp.send(conn, ["HTTP/1.0 ", Integer.to_charlist(200), "\r\n", [], "\r\n", body])
-
-        :gen_tcp.close(conn)
+        :ok = send_and_close(conn, body)
       end
 
       Agent.start_link(fn -> {0, execution} end, name: test_name)
@@ -55,10 +52,7 @@ defmodule Engine.ReleaseTasks.Contract.ExternalTest do
         }
 
         body = Jason.encode!(body)
-
-        :ok = :gen_tcp.send(conn, ["HTTP/1.0 ", Integer.to_charlist(200), "\r\n", [], "\r\n", body])
-
-        :gen_tcp.close(conn)
+        :ok = send_and_close(conn, body)
       end
 
       Agent.start_link(fn -> {0, execution} end, name: test_name)
@@ -82,10 +76,7 @@ defmodule Engine.ReleaseTasks.Contract.ExternalTest do
         }
 
         body = Jason.encode!(body)
-
-        :ok = :gen_tcp.send(conn, ["HTTP/1.0 ", Integer.to_charlist(200), "\r\n", [], "\r\n", body])
-
-        :gen_tcp.close(conn)
+        :ok = send_and_close(conn, body)
       end
 
       Agent.start_link(fn -> {0, execution} end, name: test_name)
@@ -107,10 +98,7 @@ defmodule Engine.ReleaseTasks.Contract.ExternalTest do
         }
 
         body = Jason.encode!(body)
-
-        :ok = :gen_tcp.send(conn, ["HTTP/1.0 ", Integer.to_charlist(200), "\r\n", [], "\r\n", body])
-
-        :gen_tcp.close(conn)
+        :ok = send_and_close(conn, body)
       end
 
       Agent.start_link(fn -> {0, execution} end, name: test_name)
@@ -135,10 +123,7 @@ defmodule Engine.ReleaseTasks.Contract.ExternalTest do
         }
 
         body = Jason.encode!(body)
-
-        :ok = :gen_tcp.send(conn, ["HTTP/1.0 ", Integer.to_charlist(200), "\r\n", [], "\r\n", body])
-
-        :gen_tcp.close(conn)
+        :ok = send_and_close(conn, body)
       end
 
       Agent.start_link(fn -> {0, execution} end, name: test_name)
@@ -163,10 +148,7 @@ defmodule Engine.ReleaseTasks.Contract.ExternalTest do
             }
 
             body = Jason.encode!(body)
-
-            :ok = :gen_tcp.send(conn, ["HTTP/1.0 ", Integer.to_charlist(200), "\r\n", [], "\r\n", body])
-
-            :gen_tcp.close(conn)
+            :ok = send_and_close(conn, body)
         end
       end
 
@@ -207,5 +189,10 @@ defmodule Engine.ReleaseTasks.Contract.ExternalTest do
       Agent.update(agent_name, fn {index, execution} -> {index + 1, execution} end)
       execution.(index, conn)
     end
+  end
+
+  defp send_and_close(conn, body) do
+    :gen_tcp.send(conn, ["HTTP/1.0 ", Integer.to_charlist(200), "\r\n", [], "\r\n", body])
+    :gen_tcp.close(conn)
   end
 end

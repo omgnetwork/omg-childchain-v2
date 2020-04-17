@@ -35,6 +35,6 @@ defmodule Engine.Ethereum.RootChain.Rpc do
   @spec call_contract(String.t(), String.t(), any(), keyword()) :: {:ok, binary()} | {:error, map() | binary() | atom()}
   def call_contract(contract, signature, args, opts) do
     data = signature |> ABI.encode(args) |> Encoding.to_hex()
-    Ethereumex.HttpClient.eth_call(%{to: contract, data: data}, opts)
+    Ethereumex.HttpClient.eth_call(%{to: contract, data: data}, "latest", opts)
   end
 end
