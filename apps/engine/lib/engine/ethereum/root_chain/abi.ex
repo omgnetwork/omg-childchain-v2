@@ -2,10 +2,10 @@ defmodule Engine.Ethereum.RootChain.Abi do
   @moduledoc """
   Functions that provide ethereum log decoding 
   """
-  alias ExPlasma.Encoding
   alias Engine.Ethereum.RootChain.AbiEventSelector
   alias Engine.Ethereum.RootChain.AbiFunctionSelector
   alias Engine.Ethereum.RootChain.Fields
+  alias ExPlasma.Encoding
 
   def decode_function(enriched_data, signature) do
     "0x" <> data = enriched_data

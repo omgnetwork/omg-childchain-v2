@@ -2,9 +2,9 @@ defmodule Engine.ReleaseTasks.Contract.External do
   @moduledoc false
 
   alias DBConnection.Backoff
-  alias ExPlasma.Encoding
   alias Engine.Ethereum.RootChain.Abi
   alias Engine.Ethereum.RootChain.Rpc
+  alias ExPlasma.Encoding
 
   require Logger
 
