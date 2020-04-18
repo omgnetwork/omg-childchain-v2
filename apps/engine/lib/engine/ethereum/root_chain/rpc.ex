@@ -20,7 +20,7 @@ defmodule Engine.Ethereum.RootChain.Rpc do
 
     This will allow us to run integration tests concurrently!
   """
-  alias Engine.Encoding
+  alias ExPlasma.Encoding
   require Logger
   @type option :: {:url, String.t()}
   @type block :: non_neg_integer()

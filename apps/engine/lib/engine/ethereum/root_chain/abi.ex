@@ -2,7 +2,7 @@ defmodule Engine.Ethereum.RootChain.Abi do
   @moduledoc """
   Functions that provide ethereum log decoding 
   """
-  alias Engine.Encoding
+  alias ExPlasma.Encoding
   alias Engine.Ethereum.RootChain.AbiEventSelector
   alias Engine.Ethereum.RootChain.AbiFunctionSelector
   alias Engine.Ethereum.RootChain.Fields
@@ -10,7 +10,7 @@ defmodule Engine.Ethereum.RootChain.Abi do
   def decode_function(enriched_data, signature) do
     "0x" <> data = enriched_data
     <<method_id::binary-size(4), _::binary>> = :keccakf1600.hash(:sha3_256, signature)
-    method_id |> Encoding.to_hex() |> Kernel.<>(data) |> Encoding.from_hex() |> decode_function()
+    method_id |> Encoding.to_hex() |> Kernel.<>(data) |> Encoding.to_binary() |> decode_function()
   end
 
   def decode_function(enriched_data) do
@@ -36,7 +36,7 @@ defmodule Engine.Ethereum.RootChain.Abi do
     topics =
       Enum.map(log["topics"], fn
         nil -> nil
-        topic -> Encoding.from_hex(topic)
+        topic -> Encoding.to_binary(topic)
       end)
 
     {event_spec, data} =
@@ -46,7 +46,7 @@ defmodule Engine.Ethereum.RootChain.Abi do
         Enum.at(topics, 1),
         Enum.at(topics, 2),
         Enum.at(topics, 3),
-        Encoding.from_hex(log["data"])
+        Encoding.to_binary(log["data"])
       )
 
     data
@@ -61,9 +61,9 @@ defmodule Engine.Ethereum.RootChain.Abi do
       ) do
     # NOTE: we're using `put_new` here, because `merge` would allow us to overwrite data fields in case of conflict
     result
-    |> Map.put_new(:eth_height, Encoding.int_from_hex(eth_height))
-    |> Map.put_new(:root_chain_txhash, Encoding.from_hex(root_chain_txhash))
-    |> Map.put_new(:log_index, Encoding.int_from_hex(log_index))
+    |> Map.put_new(:eth_height, Encoding.to_int(eth_height))
+    |> Map.put_new(:root_chain_txhash, Encoding.to_binary(root_chain_txhash))
+    |> Map.put_new(:log_index, Encoding.to_int(log_index))
     # just copy `event_signature` over, if it's present (could use tidying up)
     |> Map.put_new(:event_signature, event[:event_signature])
   end

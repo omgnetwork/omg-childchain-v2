@@ -2,7 +2,7 @@ defmodule Engine.ReleaseTasks.Contract.External do
   @moduledoc false
 
   alias DBConnection.Backoff
-  alias Engine.Encoding
+  alias ExPlasma.Encoding
   alias Engine.Ethereum.RootChain.Abi
   alias Engine.Ethereum.RootChain.Rpc
 
@@ -52,7 +52,7 @@ defmodule Engine.ReleaseTasks.Contract.External do
 
   def root_deployment_height(plasma_framework, tx_hash, opts) do
     {:ok, %{"contractAddress" => ^plasma_framework, "blockNumber" => height}} = Rpc.transaction_receipt(tx_hash, opts)
-    Encoding.int_from_hex(height)
+    Encoding.to_int(height)
   end
 
   defp call(plasma_framework, signature, args, opts) do
