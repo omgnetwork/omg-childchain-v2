@@ -1,0 +1,568 @@
+{
+  "contractName": "PaymentExitGameArgs",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/PaymentExitGameArgs.sol\":\"PaymentExitGameArgs\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/interfaces/ISpendingCondition.sol\":{\"keccak256\":\"0xb8b546d44dc9fd210e4f3b2d5adbad81a2c0f1d39ac6646ecb1d90a3f8204473\",\"urls\":[\"bzz-raw://a6f5211cd589f7d9d70ad0f6e2ccd62bf2dcfe6883b91318b2169be107047ae1\",\"dweb:/ipfs/QmdGFznAejCmEdELxR3Rb66vLuzo7NjZs7jcwFfu2CKu2V\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/interfaces/IStateTransitionVerifier.sol\":{\"keccak256\":\"0xf38736d4921d3b8a29c5e95438ba4b70125ef61733820af30d2c27c5198bdbb4\",\"urls\":[\"bzz-raw://4d55cff362b0df5bd11685359061b3a28b915d3f0e0e36eb20d7a32adb8afe67\",\"dweb:/ipfs/QmP4Y51MzAeZT3dymbKrqZDJisdEaCK75ghLxS9MfVbJX8\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/PaymentExitGameArgs.sol\":{\"keccak256\":\"0x41ba4f61cb6f94f17b4dc23141e84509b77828321fb649155b4a6d59086b6cfc\",\"urls\":[\"bzz-raw://31ac6461e133455974644253db2da44079f925186f6279e179334fb74f0898e7\",\"dweb:/ipfs/QmaUamkHyFG34MEqiDBZWrgVQkW2c1T6DCSerWWDJ76c8q\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/registries/SpendingConditionRegistry.sol\":{\"keccak256\":\"0x402d0e1850ccc0f8ef1d9645057346900a7e196e2546f5e6ba063a2afd324783\",\"urls\":[\"bzz-raw://32bfdfb3d47431c7c6d5b1726aa3c19adb3d668d28befcff8595768da387a739\",\"dweb:/ipfs/QmSaK99mby3HvMjcHWxtFcVUVU3RV6zGWLq5q4LwQwjvF1\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/BlockController.sol\":{\"keccak256\":\"0xac302eceee96e5a83b7fdfb43d23389f516ff4b7322e5e094d7ad0b3be177c0b\",\"urls\":[\"bzz-raw://cf36aec949574838af497c6448000226d20aea4d0a787c746dd10775166df8a3\",\"dweb:/ipfs/QmQvD1DZfeidC1xiC3fnzTbCcgTTG9MuN6NNwKn965bVvC\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/ExitGameController.sol\":{\"keccak256\":\"0x4afed31e54ae47674ccf2ca4c9a6fe57e3e3f6519bf3b3fc997eed708405c4a0\",\"urls\":[\"bzz-raw://dc82f473933be3817ba0bc07da0dc9fb488dc1f34195d132e6ba274d190bdcee\",\"dweb:/ipfs/QmdADCXHRKRjWqLMcRmtSpyzz9bti9cod7Poa8M7TW6QKJ\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/PlasmaFramework.sol\":{\"keccak256\":\"0x4b017fa7cae50fcf79803255fe0ffe8183e8f3934d9ac46a48235986f4714179\",\"urls\":[\"bzz-raw://30974a631b8c13aedea212390fcc1cf75472dc3f49a9c52eb33fc07c04b545e1\",\"dweb:/ipfs/QmT15Bw5NtE7b1RvVcmRXcGkEAL9BpbbgKwMtJBphXTbLd\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/Protocol.sol\":{\"keccak256\":\"0x81e37c136c340d917e370c58894761aee710bbef727414685490e405bc0f18e8\",\"urls\":[\"bzz-raw://7a54192b587531dd1adc33202479142afdf116385bab22daa153b8d4439d7333\",\"dweb:/ipfs/QmT37F3SCsWLf93okFrx1LUUr6c2zXCj28u2sjXXFBef2X\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/interfaces/IExitProcessor.sol\":{\"keccak256\":\"0x93c31f7c8ff69c80bd30f9296a7b2059affedadefc0c2cfb5c992eb1f1885fa2\",\"urls\":[\"bzz-raw://d56cb65fd67b07cec3bb17f48c064df4ea892780bf21d87d717e6581feb92ffd\",\"dweb:/ipfs/QmZZGPdSSN81c2P1CBnrCQD9mRWntPUPUjm4vCgWsBqS14\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/models/BlockModel.sol\":{\"keccak256\":\"0x7d26be621a43e2b8855f6c71f91c886d3b48ed809f421a1eee9c165c803d0cf7\",\"urls\":[\"bzz-raw://850b2acb61d96e9eb09d8bf24617ecf47aa948d6754b2d09d0e0d2b949193a2d\",\"dweb:/ipfs/QmW8yoi4jZxHAJf4bNjtt3nGckaWUEX92ZbgrKpoRHJGRM\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/registries/ExitGameRegistry.sol\":{\"keccak256\":\"0x4695a609c60b6be59bbc49ed6d3b14725bcc2efcecd083f8cabbcd3ddb399e68\",\"urls\":[\"bzz-raw://d31ca9188c426bbb2e8cf0fca61a9d451497408ddb4708cfc78d543b75fcb274\",\"dweb:/ipfs/QmawYeD9CCd5chGoB62zVKpk5Q9zJxhUUGJu7hUaCF5JXM\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/registries/VaultRegistry.sol\":{\"keccak256\":\"0x7786b4b8b043026655fa872f11ec747ef600100cc73da38369e1e2fd5047c95a\",\"urls\":[\"bzz-raw://b957490e53281e516290455b78722627f5536e0bd6b9bc17777f3f7a93ed9b14\",\"dweb:/ipfs/QmbUEwWfkTCSPPNEjAJUEXwgCCY9cBPgAKJagRbYQ3PSLE\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/ExitPriority.sol\":{\"keccak256\":\"0x18a6c6b1f8c072e693d855bc8991ea4c51951f9058fd116253a1b8ccb6fc1647\",\"urls\":[\"bzz-raw://a22420b5f647d6108be8a3de23b5dd561f65b12dd804ead7edf5384407a506f3\",\"dweb:/ipfs/QmTd986YDqtwQ1eXqUP4esUBKxGthieXJWkQTsMJzewXgA\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/PriorityQueue.sol\":{\"keccak256\":\"0xf46de2038d5fbc06f1aba7f36e7e02ead27485044ccf25afc2b9ad84ea705991\",\"urls\":[\"bzz-raw://a23fd7ad08f351743c7599fa546a0b54586e7e319c00c3e9d41c3aa10546ec5d\",\"dweb:/ipfs/QmWH32SoQmhyy7CE8u8g412e1AosogVE3eEBjrAh9MABvb\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/Quarantine.sol\":{\"keccak256\":\"0x1b685ea3de626e3d8961d0e384a67c3e87752874784cc2e59777857d130f2390\",\"urls\":[\"bzz-raw://28c30354aa580476f230c4d8e151d34337b923caabc6bccfe560d75ef37d446e\",\"dweb:/ipfs/Qmf9nCYFBhHDyMgHmxX5pSkqLpqb2W3XffPopdkJTHmnAA\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/OnlyFromAddress.sol\":{\"keccak256\":\"0x54d4cb74bf5c448bb383ff4ffce898473739a5ba015e439dae1c092c70df943f\",\"urls\":[\"bzz-raw://5c9efbe363534d6746573b9b0dda687d257272c3ce0123b6a45bc7eef55a40b4\",\"dweb:/ipfs/QmZPLF1bKdU6DAZZcxWfMudUwzeubLxsSk14x8hvUMj15X\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/PosLib.sol\":{\"keccak256\":\"0xd47b38ef93cf913b6b7a3bf608dec2c084108d090cc02b222da3d8eb39819d5f\",\"urls\":[\"bzz-raw://c42d551c21adfa400d08108673b29e4bd1eec70aaa469287571071df3f8f0bc1\",\"dweb:/ipfs/Qmepq632azqUDHt5ypVwmkTfeQG8uP1HYw8x1H3Hdg9K6R\"]},\"openzeppelin-solidity/contracts/math/SafeMath.sol\":{\"keccak256\":\"0x4ccf2d7b51873db1ccfd54ca2adae5eac3b184f9699911ed4490438419f1c690\",\"urls\":[\"bzz-raw://d62d769b2219d5de39013093412623e624fa887f871826ea3bae6052ee893610\",\"dweb:/ipfs/QmV3yVktya1s617QmuzQR2CfuJgUi3dR2xEZY9ecmqZ2G1\"]},\"openzeppelin-solidity/contracts/ownership/Ownable.sol\":{\"keccak256\":\"0xf79fb10e8235770eb4aea7249034076a3cc9f9119ad944fc48705bae9c9d20dc\",\"urls\":[\"bzz-raw://cd3429aa9a4878dcf6c73faa32c3722f4013d4be012ece543b246faa6b50f55c\",\"dweb:/ipfs/QmS55hgTvNEAKinus19m65CB4wcymN8EiUPFpRx5tYJ1i2\"]},\"openzeppelin-solidity/contracts/utils/Address.sol\":{\"keccak256\":\"0xf3358e5819ca73357abd6c90bdfffd0474af54364897f6b3e3234c4b71fbe9a1\",\"urls\":[\"bzz-raw://75ae8d04454d1511a2ed986cc8585736f05c5c25280683b3d24712a9f414a4bf\",\"dweb:/ipfs/Qmb3kNCoBUZdah1AgBBD4zMk898j5Qw8ahT1w5cCMYp5Y3\"]}},\"version\":1}",
+  "bytecode": "0x60556023600b82828239805160001a607314601657fe5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a72315820ea38880a2d7a94987ba90ab20339830b68397008ebfb5a684590b8581ae6e66164736f6c634300050b0032",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a72315820ea38880a2d7a94987ba90ab20339830b68397008ebfb5a684590b8581ae6e66164736f6c634300050b0032",
+  "sourceMap": "179:924:49:-;;132:2:-1;166:7;155:9;146:7;137:37;255:7;249:14;246:1;241:23;235:4;232:33;222:2;;269:9;222:2;293:9;290:1;283:20;323:4;314:7;306:22;347:7;338;331:24",
+  "deployedSourceMap": "179:924:49:-;;;;;;;;",
+  "source": "pragma solidity 0.5.11;\n\nimport \"../registries/SpendingConditionRegistry.sol\";\nimport \"../interfaces/IStateTransitionVerifier.sol\";\nimport \"../../framework/PlasmaFramework.sol\";\n\nlibrary PaymentExitGameArgs {\n    /**\n     * @param framework The Plasma framework\n     * @param ethVaultId Vault id for EthVault\n     * @param erc20VaultId Vault id for the Erc20Vault\n     * @param spendingConditionRegistry the spendingConditionRegistry that can provide spending condition implementation by types\n     * @param stateTransitionVerifier state transition verifier predicate contract that checks the transaction correctness\n     * @param supportTxType the tx type of this exit game is using\n     * @param safeGasStipend a gas amount limit when transferring Eth to protect from attack with draining gas\n     */\n    struct Args {\n        PlasmaFramework framework;\n        uint256 ethVaultId;\n        uint256 erc20VaultId;\n        SpendingConditionRegistry spendingConditionRegistry;\n        IStateTransitionVerifier stateTransitionVerifier;\n        uint256 supportTxType;\n        uint256 safeGasStipend;\n    }\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/PaymentExitGameArgs.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/PaymentExitGameArgs.sol",
+    "exportedSymbols": {
+      "PaymentExitGameArgs": [
+        4012
+      ]
+    },
+    "id": 4013,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3993,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:49"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/registries/SpendingConditionRegistry.sol",
+        "file": "../registries/SpendingConditionRegistry.sol",
+        "id": 3994,
+        "nodeType": "ImportDirective",
+        "scope": 4013,
+        "sourceUnit": 10834,
+        "src": "25:53:49",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/interfaces/IStateTransitionVerifier.sol",
+        "file": "../interfaces/IStateTransitionVerifier.sol",
+        "id": 3995,
+        "nodeType": "ImportDirective",
+        "scope": 4013,
+        "sourceUnit": 3798,
+        "src": "79:52:49",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/PlasmaFramework.sol",
+        "file": "../../framework/PlasmaFramework.sol",
+        "id": 3996,
+        "nodeType": "ImportDirective",
+        "scope": 4013,
+        "sourceUnit": 12299,
+        "src": "132:45:49",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 4012,
+        "linearizedBaseContracts": [
+          4012
+        ],
+        "name": "PaymentExitGameArgs",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "PaymentExitGameArgs.Args",
+            "id": 4011,
+            "members": [
+              {
+                "constant": false,
+                "id": 3998,
+                "name": "framework",
+                "nodeType": "VariableDeclaration",
+                "scope": 4011,
+                "src": "829:25:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                  "typeString": "contract PlasmaFramework"
+                },
+                "typeName": {
+                  "contractScope": null,
+                  "id": 3997,
+                  "name": "PlasmaFramework",
+                  "nodeType": "UserDefinedTypeName",
+                  "referencedDeclaration": 12298,
+                  "src": "829:15:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                    "typeString": "contract PlasmaFramework"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 4000,
+                "name": "ethVaultId",
+                "nodeType": "VariableDeclaration",
+                "scope": 4011,
+                "src": "864:18:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 3999,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "864:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 4002,
+                "name": "erc20VaultId",
+                "nodeType": "VariableDeclaration",
+                "scope": 4011,
+                "src": "892:20:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 4001,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "892:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 4004,
+                "name": "spendingConditionRegistry",
+                "nodeType": "VariableDeclaration",
+                "scope": 4011,
+                "src": "922:51:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_contract$_SpendingConditionRegistry_$10833",
+                  "typeString": "contract SpendingConditionRegistry"
+                },
+                "typeName": {
+                  "contractScope": null,
+                  "id": 4003,
+                  "name": "SpendingConditionRegistry",
+                  "nodeType": "UserDefinedTypeName",
+                  "referencedDeclaration": 10833,
+                  "src": "922:25:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_SpendingConditionRegistry_$10833",
+                    "typeString": "contract SpendingConditionRegistry"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 4006,
+                "name": "stateTransitionVerifier",
+                "nodeType": "VariableDeclaration",
+                "scope": 4011,
+                "src": "983:48:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_contract$_IStateTransitionVerifier_$3797",
+                  "typeString": "contract IStateTransitionVerifier"
+                },
+                "typeName": {
+                  "contractScope": null,
+                  "id": 4005,
+                  "name": "IStateTransitionVerifier",
+                  "nodeType": "UserDefinedTypeName",
+                  "referencedDeclaration": 3797,
+                  "src": "983:24:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IStateTransitionVerifier_$3797",
+                    "typeString": "contract IStateTransitionVerifier"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 4008,
+                "name": "supportTxType",
+                "nodeType": "VariableDeclaration",
+                "scope": 4011,
+                "src": "1041:21:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 4007,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1041:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 4010,
+                "name": "safeGasStipend",
+                "nodeType": "VariableDeclaration",
+                "scope": 4011,
+                "src": "1072:22:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 4009,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1072:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "Args",
+            "nodeType": "StructDefinition",
+            "scope": 4012,
+            "src": "807:294:49",
+            "visibility": "public"
+          }
+        ],
+        "scope": 4013,
+        "src": "179:924:49"
+      }
+    ],
+    "src": "0:1104:49"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/PaymentExitGameArgs.sol",
+    "exportedSymbols": {
+      "PaymentExitGameArgs": [
+        4012
+      ]
+    },
+    "id": 4013,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3993,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:49"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/registries/SpendingConditionRegistry.sol",
+        "file": "../registries/SpendingConditionRegistry.sol",
+        "id": 3994,
+        "nodeType": "ImportDirective",
+        "scope": 4013,
+        "sourceUnit": 10834,
+        "src": "25:53:49",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/interfaces/IStateTransitionVerifier.sol",
+        "file": "../interfaces/IStateTransitionVerifier.sol",
+        "id": 3995,
+        "nodeType": "ImportDirective",
+        "scope": 4013,
+        "sourceUnit": 3798,
+        "src": "79:52:49",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/PlasmaFramework.sol",
+        "file": "../../framework/PlasmaFramework.sol",
+        "id": 3996,
+        "nodeType": "ImportDirective",
+        "scope": 4013,
+        "sourceUnit": 12299,
+        "src": "132:45:49",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 4012,
+        "linearizedBaseContracts": [
+          4012
+        ],
+        "name": "PaymentExitGameArgs",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "PaymentExitGameArgs.Args",
+            "id": 4011,
+            "members": [
+              {
+                "constant": false,
+                "id": 3998,
+                "name": "framework",
+                "nodeType": "VariableDeclaration",
+                "scope": 4011,
+                "src": "829:25:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                  "typeString": "contract PlasmaFramework"
+                },
+                "typeName": {
+                  "contractScope": null,
+                  "id": 3997,
+                  "name": "PlasmaFramework",
+                  "nodeType": "UserDefinedTypeName",
+                  "referencedDeclaration": 12298,
+                  "src": "829:15:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_PlasmaFramework_$12298",
+                    "typeString": "contract PlasmaFramework"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 4000,
+                "name": "ethVaultId",
+                "nodeType": "VariableDeclaration",
+                "scope": 4011,
+                "src": "864:18:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 3999,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "864:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 4002,
+                "name": "erc20VaultId",
+                "nodeType": "VariableDeclaration",
+                "scope": 4011,
+                "src": "892:20:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 4001,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "892:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 4004,
+                "name": "spendingConditionRegistry",
+                "nodeType": "VariableDeclaration",
+                "scope": 4011,
+                "src": "922:51:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_contract$_SpendingConditionRegistry_$10833",
+                  "typeString": "contract SpendingConditionRegistry"
+                },
+                "typeName": {
+                  "contractScope": null,
+                  "id": 4003,
+                  "name": "SpendingConditionRegistry",
+                  "nodeType": "UserDefinedTypeName",
+                  "referencedDeclaration": 10833,
+                  "src": "922:25:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_SpendingConditionRegistry_$10833",
+                    "typeString": "contract SpendingConditionRegistry"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 4006,
+                "name": "stateTransitionVerifier",
+                "nodeType": "VariableDeclaration",
+                "scope": 4011,
+                "src": "983:48:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_contract$_IStateTransitionVerifier_$3797",
+                  "typeString": "contract IStateTransitionVerifier"
+                },
+                "typeName": {
+                  "contractScope": null,
+                  "id": 4005,
+                  "name": "IStateTransitionVerifier",
+                  "nodeType": "UserDefinedTypeName",
+                  "referencedDeclaration": 3797,
+                  "src": "983:24:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IStateTransitionVerifier_$3797",
+                    "typeString": "contract IStateTransitionVerifier"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 4008,
+                "name": "supportTxType",
+                "nodeType": "VariableDeclaration",
+                "scope": 4011,
+                "src": "1041:21:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 4007,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1041:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 4010,
+                "name": "safeGasStipend",
+                "nodeType": "VariableDeclaration",
+                "scope": 4011,
+                "src": "1072:22:49",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 4009,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1072:7:49",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "Args",
+            "nodeType": "StructDefinition",
+            "scope": 4012,
+            "src": "807:294:49",
+            "visibility": "public"
+          }
+        ],
+        "scope": 4013,
+        "src": "179:924:49"
+      }
+    ],
+    "src": "0:1104:49"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.649Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

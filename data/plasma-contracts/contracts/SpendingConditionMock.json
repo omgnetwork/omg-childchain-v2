@@ -1,0 +1,3911 @@
+{
+  "contractName": "SpendingConditionMock",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "bool",
+          "name": "result",
+          "type": "bool"
+        }
+      ],
+      "name": "mockResult",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "mockRevert",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes",
+              "name": "inputTx",
+              "type": "bytes"
+            },
+            {
+              "internalType": "uint256",
+              "name": "utxoPos",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "spendingTx",
+              "type": "bytes"
+            },
+            {
+              "internalType": "uint16",
+              "name": "inputIndex",
+              "type": "uint16"
+            },
+            {
+              "internalType": "bytes",
+              "name": "witness",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct SpendingConditionMock.Args",
+          "name": "args",
+          "type": "tuple"
+        }
+      ],
+      "name": "shouldVerifyArgumentEquals",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "inputTx",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint256",
+          "name": "utxoPos",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "spendingTx",
+          "type": "bytes"
+        },
+        {
+          "internalType": "uint16",
+          "name": "inputIndex",
+          "type": "uint16"
+        },
+        {
+          "internalType": "bytes",
+          "name": "witness",
+          "type": "bytes"
+        }
+      ],
+      "name": "verify",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[{\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"name\":\"mockResult\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"components\":[{\"internalType\":\"bytes\",\"name\":\"inputTx\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"utxoPos\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"spendingTx\",\"type\":\"bytes\"},{\"internalType\":\"uint16\",\"name\":\"inputIndex\",\"type\":\"uint16\"},{\"internalType\":\"bytes\",\"name\":\"witness\",\"type\":\"bytes\"}],\"internalType\":\"struct SpendingConditionMock.Args\",\"name\":\"args\",\"type\":\"tuple\"}],\"name\":\"shouldVerifyArgumentEquals\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"mockRevert\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"inputTx\",\"type\":\"bytes\"},{\"internalType\":\"uint256\",\"name\":\"utxoPos\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"spendingTx\",\"type\":\"bytes\"},{\"internalType\":\"uint16\",\"name\":\"inputIndex\",\"type\":\"uint16\"},{\"internalType\":\"bytes\",\"name\":\"witness\",\"type\":\"bytes\"}],\"name\":\"verify\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{\"mockResult(bool)\":{\"notice\":\"mock what would \\\"verify()\\\" returns \"},\"mockRevert()\":{\"notice\":\"when called, the spending condition would always revert on purpose \"},\"shouldVerifyArgumentEquals((bytes,uint256,bytes,uint16,bytes))\":{\"notice\":\"provide the expected args, it would check with the value called for \\\"verify()\\\" \"},\"verify(bytes,uint256,bytes,uint16,bytes)\":{\"notice\":\"override \"}}}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/exits/SpendingConditionMock.sol\":\"SpendingConditionMock\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/exits/SpendingConditionMock.sol\":{\"keccak256\":\"0x98be9e08e4425c1f212ac0b1849a0ee7ecf80143e46a036f3ab65a9c923a68ad\",\"urls\":[\"bzz-raw://dc5adb7e5b43acd19c5d69d9c0b8cdf6e2d65b1ae496b46e8c218586902d0862\",\"dweb:/ipfs/Qmc4YpJRmrBy6HcAyeqa2VXSXKFkKPqMAfmuPnytAwLboN\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/interfaces/ISpendingCondition.sol\":{\"keccak256\":\"0xb8b546d44dc9fd210e4f3b2d5adbad81a2c0f1d39ac6646ecb1d90a3f8204473\",\"urls\":[\"bzz-raw://a6f5211cd589f7d9d70ad0f6e2ccd62bf2dcfe6883b91318b2169be107047ae1\",\"dweb:/ipfs/QmdGFznAejCmEdELxR3Rb66vLuzo7NjZs7jcwFfu2CKu2V\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50610a11806100206000396000f3fe608060405234801561001057600080fd5b506004361061004c5760003560e01c80630e902e44146100515780637597d2261461006657806392f915c914610079578063e618a6f514610081575b600080fd5b61006461005f36600461052d565b6100aa565b005b61006461007436600461061c565b6100bd565b610064610138565b61009461008f366004610553565b610149565b6040516100a1919061087b565b60405180910390f35b6000805460ff1916911515919091179055565b8051805182916001916100d7918391602090910190610304565b506020828101516001830155604083015180516100fa9260028501920190610304565b50606082015160038201805461ffff191661ffff90921691909117905560808201518051610132916004840191602090910190610304565b50505050565b6000805461ff001916610100179055565b60008054610100900460ff16156101ae57604080518082018252601f81527f54657374207370656e64696e6720636f6e646974696f6e2072657665727473006020820152905162461bcd60e51b81526101a59190600401610889565b60405180910390fd5b6001805460029181161561010002600019011604156102f15788886040516101d792919061085b565b604051908190038120906101ed90600190610868565b6040518091039020146102125760405162461bcd60e51b81526004016101a5906108ca565b60025487146102335760405162461bcd60e51b81526004016101a5906108aa565b858560405161024392919061085b565b6040519081900381209061025990600390610868565b60405180910390201461027e5760405162461bcd60e51b81526004016101a5906108ba565b60045461ffff8581169116146102a65760405162461bcd60e51b81526004016101a59061089a565b82826040516102b692919061085b565b604051908190038120906102cc90600590610868565b6040518091039020146102f15760405162461bcd60e51b81526004016101a5906108da565b5060005460ff1698975050505050505050565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f1061034557805160ff1916838001178555610372565b82800160010185558215610372579182015b82811115610372578251825591602001919060010190610357565b5061037e929150610382565b5090565b61039c91905b8082111561037e5760008155600101610388565b90565b80356103aa816109a5565b92915050565b60008083601f8401126103c257600080fd5b50813567ffffffffffffffff8111156103da57600080fd5b6020830191508360018202830111156103f257600080fd5b9250929050565b600082601f83011261040a57600080fd5b813561041d61041882610911565b6108ea565b9150808252602083016020830185838301111561043957600080fd5b610444838284610963565b50505092915050565b600060a0828403121561045f57600080fd5b61046960a06108ea565b9050813567ffffffffffffffff81111561048257600080fd5b61048e848285016103f9565b825250602061049f84848301610522565b602083015250604082013567ffffffffffffffff8111156104bf57600080fd5b6104cb848285016103f9565b60408301525060606104df84828501610517565b606083015250608082013567ffffffffffffffff8111156104ff57600080fd5b61050b848285016103f9565b60808301525092915050565b80356103aa816109bc565b80356103aa816109c5565b60006020828403121561053f57600080fd5b600061054b848461039f565b949350505050565b60008060008060008060008060a0898b03121561056f57600080fd5b883567ffffffffffffffff81111561058657600080fd5b6105928b828c016103b0565b985098505060206105a58b828c01610522565b965050604089013567ffffffffffffffff8111156105c257600080fd5b6105ce8b828c016103b0565b955095505060606105e18b828c01610517565b935050608089013567ffffffffffffffff8111156105fe57600080fd5b61060a8b828c016103b0565b92509250509295985092959890939650565b60006020828403121561062e57600080fd5b813567ffffffffffffffff81111561064557600080fd5b61054b8482850161044d565b61065a81610957565b82525050565b600061066c8385610949565b9350610679838584610963565b50500190565b60008154600181166000811461069c57600181146106bf576106fe565b607f60028304166106ad8187610949565b60ff19841681529550850192506106fe565b600282046106cd8187610949565b95506106d885610939565b60005b828110156106f7578154888201526001909101906020016106db565b5050850192505b505092915050565b600061071182610945565b61071b818561094e565b935061072b81856020860161096f565b6107348161099b565b9093019392505050565b600061074b601b8361094e565b7f696e70757420696e646578206e6f742061732065787065637465640000000000815260200192915050565b600061078460178361094e565b7f7574786f506f73206e6f74206173206578706563746564000000000000000000815260200192915050565b60006107bd601b8361094e565b7f7370656e64696e67207478206e6f742061732065787065637465640000000000815260200192915050565b60006107f660188361094e565b7f696e707574207478206e6f742061732065787065637465640000000000000000815260200192915050565b600061082f60178361094e565b7f7769746e657373206e6f74206173206578706563746564000000000000000000815260200192915050565b600061054b828486610660565b6000610874828461067f565b9392505050565b602081016103aa8284610651565b602080825281016108748184610706565b602080825281016103aa8161073e565b602080825281016103aa81610777565b602080825281016103aa816107b0565b602080825281016103aa816107e9565b602080825281016103aa81610822565b60405181810167ffffffffffffffff8111828210171561090957600080fd5b604052919050565b600067ffffffffffffffff82111561092857600080fd5b506020601f91909101601f19160190565b60009081526020902090565b5190565b919050565b90815260200190565b151590565b61ffff1690565b82818337506000910152565b60005b8381101561098a578181015183820152602001610972565b838111156101325750506000910152565b601f01601f191690565b6109ae81610957565b81146109b957600080fd5b50565b6109ae8161095c565b6109ae8161039c56fea365627a7a72315820bcabbdf2fa71bdf359417a0d3a2f5d38150a84c8c2ee90be9a56700d544b30336c6578706572696d656e74616cf564736f6c634300050b0040",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061004c5760003560e01c80630e902e44146100515780637597d2261461006657806392f915c914610079578063e618a6f514610081575b600080fd5b61006461005f36600461052d565b6100aa565b005b61006461007436600461061c565b6100bd565b610064610138565b61009461008f366004610553565b610149565b6040516100a1919061087b565b60405180910390f35b6000805460ff1916911515919091179055565b8051805182916001916100d7918391602090910190610304565b506020828101516001830155604083015180516100fa9260028501920190610304565b50606082015160038201805461ffff191661ffff90921691909117905560808201518051610132916004840191602090910190610304565b50505050565b6000805461ff001916610100179055565b60008054610100900460ff16156101ae57604080518082018252601f81527f54657374207370656e64696e6720636f6e646974696f6e2072657665727473006020820152905162461bcd60e51b81526101a59190600401610889565b60405180910390fd5b6001805460029181161561010002600019011604156102f15788886040516101d792919061085b565b604051908190038120906101ed90600190610868565b6040518091039020146102125760405162461bcd60e51b81526004016101a5906108ca565b60025487146102335760405162461bcd60e51b81526004016101a5906108aa565b858560405161024392919061085b565b6040519081900381209061025990600390610868565b60405180910390201461027e5760405162461bcd60e51b81526004016101a5906108ba565b60045461ffff8581169116146102a65760405162461bcd60e51b81526004016101a59061089a565b82826040516102b692919061085b565b604051908190038120906102cc90600590610868565b6040518091039020146102f15760405162461bcd60e51b81526004016101a5906108da565b5060005460ff1698975050505050505050565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f1061034557805160ff1916838001178555610372565b82800160010185558215610372579182015b82811115610372578251825591602001919060010190610357565b5061037e929150610382565b5090565b61039c91905b8082111561037e5760008155600101610388565b90565b80356103aa816109a5565b92915050565b60008083601f8401126103c257600080fd5b50813567ffffffffffffffff8111156103da57600080fd5b6020830191508360018202830111156103f257600080fd5b9250929050565b600082601f83011261040a57600080fd5b813561041d61041882610911565b6108ea565b9150808252602083016020830185838301111561043957600080fd5b610444838284610963565b50505092915050565b600060a0828403121561045f57600080fd5b61046960a06108ea565b9050813567ffffffffffffffff81111561048257600080fd5b61048e848285016103f9565b825250602061049f84848301610522565b602083015250604082013567ffffffffffffffff8111156104bf57600080fd5b6104cb848285016103f9565b60408301525060606104df84828501610517565b606083015250608082013567ffffffffffffffff8111156104ff57600080fd5b61050b848285016103f9565b60808301525092915050565b80356103aa816109bc565b80356103aa816109c5565b60006020828403121561053f57600080fd5b600061054b848461039f565b949350505050565b60008060008060008060008060a0898b03121561056f57600080fd5b883567ffffffffffffffff81111561058657600080fd5b6105928b828c016103b0565b985098505060206105a58b828c01610522565b965050604089013567ffffffffffffffff8111156105c257600080fd5b6105ce8b828c016103b0565b955095505060606105e18b828c01610517565b935050608089013567ffffffffffffffff8111156105fe57600080fd5b61060a8b828c016103b0565b92509250509295985092959890939650565b60006020828403121561062e57600080fd5b813567ffffffffffffffff81111561064557600080fd5b61054b8482850161044d565b61065a81610957565b82525050565b600061066c8385610949565b9350610679838584610963565b50500190565b60008154600181166000811461069c57600181146106bf576106fe565b607f60028304166106ad8187610949565b60ff19841681529550850192506106fe565b600282046106cd8187610949565b95506106d885610939565b60005b828110156106f7578154888201526001909101906020016106db565b5050850192505b505092915050565b600061071182610945565b61071b818561094e565b935061072b81856020860161096f565b6107348161099b565b9093019392505050565b600061074b601b8361094e565b7f696e70757420696e646578206e6f742061732065787065637465640000000000815260200192915050565b600061078460178361094e565b7f7574786f506f73206e6f74206173206578706563746564000000000000000000815260200192915050565b60006107bd601b8361094e565b7f7370656e64696e67207478206e6f742061732065787065637465640000000000815260200192915050565b60006107f660188361094e565b7f696e707574207478206e6f742061732065787065637465640000000000000000815260200192915050565b600061082f60178361094e565b7f7769746e657373206e6f74206173206578706563746564000000000000000000815260200192915050565b600061054b828486610660565b6000610874828461067f565b9392505050565b602081016103aa8284610651565b602080825281016108748184610706565b602080825281016103aa8161073e565b602080825281016103aa81610777565b602080825281016103aa816107b0565b602080825281016103aa816107e9565b602080825281016103aa81610822565b60405181810167ffffffffffffffff8111828210171561090957600080fd5b604052919050565b600067ffffffffffffffff82111561092857600080fd5b506020601f91909101601f19160190565b60009081526020902090565b5190565b919050565b90815260200190565b151590565b61ffff1690565b82818337506000910152565b60005b8381101561098a578181015183820152602001610972565b838111156101325750506000910152565b601f01601f191690565b6109ae81610957565b81146109b957600080fd5b50565b6109ae8161095c565b6109ae8161039c56fea365627a7a72315820bcabbdf2fa71bdf359417a0d3a2f5d38150a84c8c2ee90be9a56700d544b30336c6578706572696d656e74616cf564736f6c634300050b0040",
+  "sourceMap": "120:1852:5:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;120:1852:5;;;;;;;",
+  "deployedSourceMap": "120:1852:5:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;120:1852:5;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;555:80;;;;;;;;;:::i;:::-;;880:97;;;;;;;;;:::i;719:65::-;;;:::i;1003:967::-;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;555:80;605:14;:23;;-1:-1:-1;;605:23:5;;;;;;;;;;555:80::o;880:97::-;951:19;;;;966:4;;951:12;;:19;;:12;;:19;;;;;;:::i;:::-;-1:-1:-1;951:19:5;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;-1:-1:-1;951:19:5;;;;;;;;;-1:-1:-1;;951:19:5;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;-1:-1:-1;;;;880:97:5:o;719:65::-;758:12;:19;;-1:-1:-1;;758:19:5;;;;;719:65::o;1003:967::-;1223:4;1247:12;;;;;;;1243:65;;;1282:14;;;;;;;;;;;;;;;;1275:22;;-1:-1:-1;;;1275:22:5;;;;1282:14;1275:22;;;;;;;;;;;;1243:65;1397:12;:27;;;;;;;;;-1:-1:-1;;1397:27:5;;;:31;1393:540;;1497:7;;1487:18;;;;;;;;;;;;;;;;;;1452:31;;1462:12;;1452:31;;;;;;;;;;:53;1444:90;;;;-1:-1:-1;;;1444:90:5;;;;;;;;;1556:20;;:31;;1548:67;;;;-1:-1:-1;;;1548:67:5;;;;;;;;;1685:10;;1675:21;;;;;;;;;;;;;;;;;;1637:34;;1647:23;;1637:34;;;;;;;;;;:59;1629:99;;;;-1:-1:-1;;;1629:99:5;;;;;;;;;1750:23;;:37;;;;:23;;:37;1742:77;;;;-1:-1:-1;;;1742:77:5;;;;;;;;;1886:7;;1876:18;;;;;;;;;;;;;;;;;;1841:31;;1851:20;;1841:31;;;;;;;;;;:53;1833:89;;;;-1:-1:-1;;;1833:89:5;;;;;;;;;-1:-1:-1;1949:14:5;;;;1003:967;;;;;;;;;;:::o;120:1852::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;120:1852:5;;;-1:-1:-1;120:1852:5;:::i;:::-;;;:::o;:::-;;;;;;;;;;;;;;;;;;;;:::o;5:124:-1:-;69:20;;94:30;69:20;94:30;;;54:75;;;;;150:335;;;264:3;257:4;249:6;245:17;241:27;231:2;;282:1;279;272:12;231:2;-1:-1;302:20;;342:18;331:30;;328:2;;;374:1;371;364:12;328:2;408:4;400:6;396:17;384:29;;458:3;451;443:6;439:16;429:8;425:31;422:40;419:2;;;475:1;472;465:12;419:2;224:261;;;;;;494:432;;591:3;584:4;576:6;572:17;568:27;558:2;;609:1;606;599:12;558:2;646:6;633:20;668:60;683:44;720:6;683:44;;;668:60;;;659:69;;748:6;741:5;734:21;784:4;776:6;772:17;817:4;810:5;806:16;852:3;843:6;838:3;834:16;831:25;828:2;;;869:1;866;859:12;828:2;879:41;913:6;908:3;903;879:41;;;551:375;;;;;;;;974:1188;;1084:4;1072:9;1067:3;1063:19;1059:30;1056:2;;;1102:1;1099;1092:12;1056:2;1120:20;1135:4;1120:20;;;1111:29;-1:-1;1193:31;;1244:18;1233:30;;1230:2;;;1276:1;1273;1266:12;1230:2;1310:54;1360:3;1351:6;1340:9;1336:22;1310:54;;;1286:79;;-1:-1;1429:2;1462:49;1507:3;1483:22;;;1462:49;;;1455:4;1448:5;1444:16;1437:75;1386:137;1607:2;1596:9;1592:18;1579:32;1631:18;1623:6;1620:30;1617:2;;;1663:1;1660;1653:12;1617:2;1698:54;1748:3;1739:6;1728:9;1724:22;1698:54;;;1691:4;1684:5;1680:16;1673:80;1533:231;1820:2;1853:48;1897:3;1888:6;1877:9;1873:22;1853:48;;;1846:4;1839:5;1835:16;1828:74;1774:139;1994:3;1983:9;1979:19;1966:33;2019:18;2011:6;2008:30;2005:2;;;2051:1;2048;2041:12;2005:2;2086:54;2136:3;2127:6;2116:9;2112:22;2086:54;;;2079:4;2072:5;2068:16;2061:80;1923:229;1050:1112;;;;;2169:128;2235:20;;2260:32;2235:20;2260:32;;2304:130;2371:20;;2396:33;2371:20;2396:33;;2441:235;;2542:2;2530:9;2521:7;2517:23;2513:32;2510:2;;;2558:1;2555;2548:12;2510:2;2593:1;2610:50;2652:7;2632:9;2610:50;;;2600:60;2504:172;-1:-1;;;;2504:172;2683:1113;;;;;;;;;2911:3;2899:9;2890:7;2886:23;2882:33;2879:2;;;2928:1;2925;2918:12;2879:2;2963:31;;3014:18;3003:30;;3000:2;;;3046:1;3043;3036:12;3000:2;3074:64;3130:7;3121:6;3110:9;3106:22;3074:64;;;3064:74;;;;2942:202;3175:2;3193:53;3238:7;3229:6;3218:9;3214:22;3193:53;;;3183:63;;3154:98;3311:2;3300:9;3296:18;3283:32;3335:18;3327:6;3324:30;3321:2;;;3367:1;3364;3357:12;3321:2;3395:64;3451:7;3442:6;3431:9;3427:22;3395:64;;;3385:74;;;;3262:203;3496:2;3514:52;3558:7;3549:6;3538:9;3534:22;3514:52;;;3504:62;;3475:97;3631:3;3620:9;3616:19;3603:33;3656:18;3648:6;3645:30;3642:2;;;3688:1;3685;3678:12;3642:2;3716:64;3772:7;3763:6;3752:9;3748:22;3716:64;;;3706:74;;;;3582:204;2873:923;;;;;;;;;;;;3803:369;;3928:2;3916:9;3907:7;3903:23;3899:32;3896:2;;;3944:1;3941;3934:12;3896:2;3979:31;;4030:18;4019:30;;4016:2;;;4062:1;4059;4052:12;4016:2;4082:74;4148:7;4139:6;4128:9;4124:22;4082:74;;4179:104;4256:21;4271:5;4256:21;;;4251:3;4244:34;4238:45;;;4313:310;;4445:88;4526:6;4521:3;4445:88;;;4438:95;;4545:43;4581:6;4576:3;4569:5;4545:43;;;-1:-1;;4601:16;;4431:192;4654:879;;4789:5;4783:12;4823:1;4812:9;4808:17;4836:1;4831:267;;;;5109:1;5104:423;;;;4801:726;;4831:267;4909:4;4905:1;4894:9;4890:17;4886:28;4928:88;5009:6;5004:3;4928:88;;;-1:-1;;5035:25;;5023:38;;4921:95;-1:-1;5075:16;;;-1:-1;4831:267;;5104:423;5173:1;5162:9;5158:17;5189:88;5270:6;5265:3;5189:88;;;5182:95;;5299:37;5330:5;5299:37;;;5352:1;5360:130;5374:6;5371:1;5368:13;5360:130;;;5433:14;;5420:11;;;5413:35;5480:1;5467:15;;;;5396:4;5389:12;5360:130;;;-1:-1;;5504:16;;;-1:-1;4801:726;;4759:774;;;;;;5541:339;;5649:35;5678:5;5649:35;;;5696:71;5760:6;5755:3;5696:71;;;5689:78;;5772:52;5817:6;5812:3;5805:4;5798:5;5794:16;5772:52;;;5845:29;5867:6;5845:29;;;5836:39;;;;5629:251;-1:-1;;;5629:251;5888:364;;6048:67;6112:2;6107:3;6048:67;;;6148:66;6128:87;;6243:2;6234:12;;6034:218;-1:-1;;6034:218;6261:364;;6421:67;6485:2;6480:3;6421:67;;;6521:66;6501:87;;6616:2;6607:12;;6407:218;-1:-1;;6407:218;6634:364;;6794:67;6858:2;6853:3;6794:67;;;6894:66;6874:87;;6989:2;6980:12;;6780:218;-1:-1;;6780:218;7007:364;;7167:67;7231:2;7226:3;7167:67;;;7267:66;7247:87;;7362:2;7353:12;;7153:218;-1:-1;;7153:218;7380:364;;7540:67;7604:2;7599:3;7540:67;;;7640:66;7620:87;;7735:2;7726:12;;7526:218;-1:-1;;7526:218;7752:282;;7906:103;8005:3;7996:6;7988;7906:103;;8041:256;;8182:90;8268:3;8259:6;8182:90;;;8175:97;8163:134;-1:-1;;;8163:134;8304:201;8416:2;8401:18;;8430:65;8405:9;8468:6;8430:65;;8512:293;8646:2;8660:47;;;8631:18;;8721:74;8631:18;8781:6;8721:74;;8812:407;9003:2;9017:47;;;8988:18;;9078:131;8988:18;9078:131;;9226:407;9417:2;9431:47;;;9402:18;;9492:131;9402:18;9492:131;;9640:407;9831:2;9845:47;;;9816:18;;9906:131;9816:18;9906:131;;10054:407;10245:2;10259:47;;;10230:18;;10320:131;10230:18;10320:131;;10468:407;10659:2;10673:47;;;10644:18;;10734:131;10644:18;10734:131;;10882:256;10944:2;10938:9;10970:17;;;11045:18;11030:34;;11066:22;;;11027:62;11024:2;;;11102:1;11099;11092:12;11024:2;11118;11111:22;10922:216;;-1:-1;10922:216;11145:317;;11284:18;11276:6;11273:30;11270:2;;;11316:1;11313;11306:12;11270:2;-1:-1;11447:4;11383;11360:17;;;;-1:-1;;11356:33;11437:15;;11207:255;11469:157;;11563:14;;;11605:4;11592:18;;;11522:104;11633:118;11717:12;;11688:63;11759:144;11894:3;11872:31;-1:-1;11872:31;11912:163;12015:19;;;12064:4;12055:14;;12008:67;12083:85;12149:13;12142:21;;12125:43;12175:84;12247:6;12236:18;;12219:40;12346:145;12427:6;12422:3;12417;12404:30;-1:-1;12483:1;12465:16;;12458:27;12397:94;12500:268;12565:1;12572:101;12586:6;12583:1;12580:13;12572:101;;;12653:11;;;12647:18;12634:11;;;12627:39;12608:2;12601:10;12572:101;;;12688:6;12685:1;12682:13;12679:2;;;-1:-1;;12753:1;12735:16;;12728:27;12549:219;12776:97;12864:2;12844:14;-1:-1;;12840:28;;12824:49;12881:111;12947:21;12962:5;12947:21;;;12940:5;12937:32;12927:2;;12983:1;12980;12973:12;12927:2;12921:71;;12999:115;13067:23;13084:5;13067:23;;13121:117;13190:24;13208:5;13190:24;",
+  "source": "pragma solidity 0.5.11;\npragma experimental ABIEncoderV2;\n\nimport \"../../src/exits/interfaces/ISpendingCondition.sol\";\n\ncontract SpendingConditionMock is ISpendingCondition {\n    bool internal expectedResult;\n    bool internal shouldRevert;\n    Args internal expectedArgs;\n\n    string constant internal REVERT_MESSAGE = \"Test spending condition reverts\";\n\n    struct Args {\n        bytes inputTx;\n        uint256 utxoPos;\n        bytes spendingTx;\n        uint16 inputIndex;\n        bytes witness;\n    }\n\n    /** mock what would \"verify()\" returns */\n    function mockResult(bool result) public {\n        expectedResult = result;\n    }\n\n    /** when called, the spending condition would always revert on purpose */\n    function mockRevert() public {\n        shouldRevert = true;\n    }\n\n    /** provide the expected args, it would check with the value called for \"verify()\" */\n    function shouldVerifyArgumentEquals(Args memory args) public {\n        expectedArgs = args;\n    }\n\n    /** override */\n    function verify(\n        bytes calldata inputTx,\n        uint256 utxoPos,\n        bytes calldata spendingTx,\n        uint16 inputIndex,\n        bytes calldata witness\n    )\n        external\n        view\n        returns (bool)\n    {\n        if (shouldRevert) {\n            revert(REVERT_MESSAGE);\n        }\n\n        // only run the check when \"shouldVerifyArgumentEqauals\" is called\n        if (expectedArgs.inputTx.length > 0) {\n            require(keccak256(expectedArgs.inputTx) == keccak256(inputTx), \"input tx not as expected\");\n            require(expectedArgs.utxoPos == utxoPos, \"utxoPos not as expected\");\n            require(keccak256(expectedArgs.spendingTx) == keccak256(spendingTx), \"spending tx not as expected\");\n            require(expectedArgs.inputIndex == inputIndex, \"input index not as expected\");\n            require(keccak256(expectedArgs.witness) == keccak256(witness), \"witness not as expected\");\n        }\n        return expectedResult;\n    }\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/exits/SpendingConditionMock.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/exits/SpendingConditionMock.sol",
+    "exportedSymbols": {
+      "SpendingConditionMock": [
+        279
+      ]
+    },
+    "id": 280,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 142,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:5"
+      },
+      {
+        "id": 143,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "24:33:5"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/interfaces/ISpendingCondition.sol",
+        "file": "../../src/exits/interfaces/ISpendingCondition.sol",
+        "id": 144,
+        "nodeType": "ImportDirective",
+        "scope": 280,
+        "sourceUnit": 3781,
+        "src": "59:59:5",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 145,
+              "name": "ISpendingCondition",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 3780,
+              "src": "154:18:5",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_ISpendingCondition_$3780",
+                "typeString": "contract ISpendingCondition"
+              }
+            },
+            "id": 146,
+            "nodeType": "InheritanceSpecifier",
+            "src": "154:18:5"
+          }
+        ],
+        "contractDependencies": [
+          3780
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 279,
+        "linearizedBaseContracts": [
+          279,
+          3780
+        ],
+        "name": "SpendingConditionMock",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 148,
+            "name": "expectedResult",
+            "nodeType": "VariableDeclaration",
+            "scope": 279,
+            "src": "179:28:5",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bool",
+              "typeString": "bool"
+            },
+            "typeName": {
+              "id": 147,
+              "name": "bool",
+              "nodeType": "ElementaryTypeName",
+              "src": "179:4:5",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 150,
+            "name": "shouldRevert",
+            "nodeType": "VariableDeclaration",
+            "scope": 279,
+            "src": "213:26:5",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bool",
+              "typeString": "bool"
+            },
+            "typeName": {
+              "id": 149,
+              "name": "bool",
+              "nodeType": "ElementaryTypeName",
+              "src": "213:4:5",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 152,
+            "name": "expectedArgs",
+            "nodeType": "VariableDeclaration",
+            "scope": 279,
+            "src": "245:26:5",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_struct$_Args_$166_storage",
+              "typeString": "struct SpendingConditionMock.Args"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 151,
+              "name": "Args",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 166,
+              "src": "245:4:5",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_Args_$166_storage_ptr",
+                "typeString": "struct SpendingConditionMock.Args"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 155,
+            "name": "REVERT_MESSAGE",
+            "nodeType": "VariableDeclaration",
+            "scope": 279,
+            "src": "278:75:5",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_string_memory",
+              "typeString": "string"
+            },
+            "typeName": {
+              "id": 153,
+              "name": "string",
+              "nodeType": "ElementaryTypeName",
+              "src": "278:6:5",
+              "typeDescriptions": {
+                "typeIdentifier": "t_string_storage_ptr",
+                "typeString": "string"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "54657374207370656e64696e6720636f6e646974696f6e2072657665727473",
+              "id": 154,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "string",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "320:33:5",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_stringliteral_ab5b5f7250609c7fbbe032053eeddc673b65809c21b6d6d00dce4a2366d4c6d7",
+                "typeString": "literal_string \"Test spending condition reverts\""
+              },
+              "value": "Test spending condition reverts"
+            },
+            "visibility": "internal"
+          },
+          {
+            "canonicalName": "SpendingConditionMock.Args",
+            "id": 166,
+            "members": [
+              {
+                "constant": false,
+                "id": 157,
+                "name": "inputTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 166,
+                "src": "382:13:5",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 156,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "382:5:5",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 159,
+                "name": "utxoPos",
+                "nodeType": "VariableDeclaration",
+                "scope": 166,
+                "src": "405:15:5",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 158,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "405:7:5",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 161,
+                "name": "spendingTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 166,
+                "src": "430:16:5",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 160,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "430:5:5",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 163,
+                "name": "inputIndex",
+                "nodeType": "VariableDeclaration",
+                "scope": 166,
+                "src": "456:17:5",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint16",
+                  "typeString": "uint16"
+                },
+                "typeName": {
+                  "id": 162,
+                  "name": "uint16",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "456:6:5",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 165,
+                "name": "witness",
+                "nodeType": "VariableDeclaration",
+                "scope": 166,
+                "src": "483:13:5",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 164,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "483:5:5",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "Args",
+            "nodeType": "StructDefinition",
+            "scope": 279,
+            "src": "360:143:5",
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 175,
+              "nodeType": "Block",
+              "src": "595:40:5",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 173,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 171,
+                      "name": "expectedResult",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 148,
+                      "src": "605:14:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 172,
+                      "name": "result",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 168,
+                      "src": "622:6:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "src": "605:23:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 174,
+                  "nodeType": "ExpressionStatement",
+                  "src": "605:23:5"
+                }
+              ]
+            },
+            "documentation": "mock what would \"verify()\" returns ",
+            "id": 176,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "mockResult",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 169,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 168,
+                  "name": "result",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 176,
+                  "src": "575:11:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 167,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "575:4:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "574:13:5"
+            },
+            "returnParameters": {
+              "id": 170,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "595:0:5"
+            },
+            "scope": 279,
+            "src": "555:80:5",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 183,
+              "nodeType": "Block",
+              "src": "748:36:5",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 181,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 179,
+                      "name": "shouldRevert",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 150,
+                      "src": "758:12:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "hexValue": "74727565",
+                      "id": 180,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "bool",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "773:4:5",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      },
+                      "value": "true"
+                    },
+                    "src": "758:19:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 182,
+                  "nodeType": "ExpressionStatement",
+                  "src": "758:19:5"
+                }
+              ]
+            },
+            "documentation": "when called, the spending condition would always revert on purpose ",
+            "id": 184,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "mockRevert",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 177,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "738:2:5"
+            },
+            "returnParameters": {
+              "id": 178,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "748:0:5"
+            },
+            "scope": 279,
+            "src": "719:65:5",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 193,
+              "nodeType": "Block",
+              "src": "941:36:5",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 191,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 189,
+                      "name": "expectedArgs",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 152,
+                      "src": "951:12:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Args_$166_storage",
+                        "typeString": "struct SpendingConditionMock.Args storage ref"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 190,
+                      "name": "args",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 186,
+                      "src": "966:4:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Args_$166_memory_ptr",
+                        "typeString": "struct SpendingConditionMock.Args memory"
+                      }
+                    },
+                    "src": "951:19:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Args_$166_storage",
+                      "typeString": "struct SpendingConditionMock.Args storage ref"
+                    }
+                  },
+                  "id": 192,
+                  "nodeType": "ExpressionStatement",
+                  "src": "951:19:5"
+                }
+              ]
+            },
+            "documentation": "provide the expected args, it would check with the value called for \"verify()\" ",
+            "id": 194,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "shouldVerifyArgumentEquals",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 187,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 186,
+                  "name": "args",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 194,
+                  "src": "916:16:5",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Args_$166_memory_ptr",
+                    "typeString": "struct SpendingConditionMock.Args"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 185,
+                    "name": "Args",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 166,
+                    "src": "916:4:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Args_$166_storage_ptr",
+                      "typeString": "struct SpendingConditionMock.Args"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "915:18:5"
+            },
+            "returnParameters": {
+              "id": 188,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "941:0:5"
+            },
+            "scope": 279,
+            "src": "880:97:5",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 277,
+              "nodeType": "Block",
+              "src": "1233:737:5",
+              "statements": [
+                {
+                  "condition": {
+                    "argumentTypes": null,
+                    "id": 209,
+                    "name": "shouldRevert",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 150,
+                    "src": "1247:12:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "falseBody": null,
+                  "id": 215,
+                  "nodeType": "IfStatement",
+                  "src": "1243:65:5",
+                  "trueBody": {
+                    "id": 214,
+                    "nodeType": "Block",
+                    "src": "1261:47:5",
+                    "statements": [
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "id": 211,
+                              "name": "REVERT_MESSAGE",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 155,
+                              "src": "1282:14:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_string_memory",
+                                "typeString": "string memory"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_string_memory",
+                                "typeString": "string memory"
+                              }
+                            ],
+                            "id": 210,
+                            "name": "revert",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [
+                              17454,
+                              17455
+                            ],
+                            "referencedDeclaration": 17455,
+                            "src": "1275:6:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_revert_pure$_t_string_memory_ptr_$returns$__$",
+                              "typeString": "function (string memory) pure"
+                            }
+                          },
+                          "id": 212,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1275:22:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 213,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1275:22:5"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "condition": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 220,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 216,
+                          "name": "expectedArgs",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 152,
+                          "src": "1397:12:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Args_$166_storage",
+                            "typeString": "struct SpendingConditionMock.Args storage ref"
+                          }
+                        },
+                        "id": 217,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "inputTx",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 157,
+                        "src": "1397:20:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_storage",
+                          "typeString": "bytes storage ref"
+                        }
+                      },
+                      "id": 218,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "length",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": null,
+                      "src": "1397:27:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": ">",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "hexValue": "30",
+                      "id": 219,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1427:1:5",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_0_by_1",
+                        "typeString": "int_const 0"
+                      },
+                      "value": "0"
+                    },
+                    "src": "1397:31:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "falseBody": null,
+                  "id": 274,
+                  "nodeType": "IfStatement",
+                  "src": "1393:540:5",
+                  "trueBody": {
+                    "id": 273,
+                    "nodeType": "Block",
+                    "src": "1430:503:5",
+                    "statements": [
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "commonType": {
+                                "typeIdentifier": "t_bytes32",
+                                "typeString": "bytes32"
+                              },
+                              "id": 229,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "leftExpression": {
+                                "argumentTypes": null,
+                                "arguments": [
+                                  {
+                                    "argumentTypes": null,
+                                    "expression": {
+                                      "argumentTypes": null,
+                                      "id": 223,
+                                      "name": "expectedArgs",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": [],
+                                      "referencedDeclaration": 152,
+                                      "src": "1462:12:5",
+                                      "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_Args_$166_storage",
+                                        "typeString": "struct SpendingConditionMock.Args storage ref"
+                                      }
+                                    },
+                                    "id": 224,
+                                    "isConstant": false,
+                                    "isLValue": true,
+                                    "isPure": false,
+                                    "lValueRequested": false,
+                                    "memberName": "inputTx",
+                                    "nodeType": "MemberAccess",
+                                    "referencedDeclaration": 157,
+                                    "src": "1462:20:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_bytes_storage",
+                                      "typeString": "bytes storage ref"
+                                    }
+                                  }
+                                ],
+                                "expression": {
+                                  "argumentTypes": [
+                                    {
+                                      "typeIdentifier": "t_bytes_storage",
+                                      "typeString": "bytes storage ref"
+                                    }
+                                  ],
+                                  "id": 222,
+                                  "name": "keccak256",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 17443,
+                                  "src": "1452:9:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                                    "typeString": "function (bytes memory) pure returns (bytes32)"
+                                  }
+                                },
+                                "id": 225,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "kind": "functionCall",
+                                "lValueRequested": false,
+                                "names": [],
+                                "nodeType": "FunctionCall",
+                                "src": "1452:31:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes32",
+                                  "typeString": "bytes32"
+                                }
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "==",
+                              "rightExpression": {
+                                "argumentTypes": null,
+                                "arguments": [
+                                  {
+                                    "argumentTypes": null,
+                                    "id": 227,
+                                    "name": "inputTx",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 196,
+                                    "src": "1497:7:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_bytes_calldata_ptr",
+                                      "typeString": "bytes calldata"
+                                    }
+                                  }
+                                ],
+                                "expression": {
+                                  "argumentTypes": [
+                                    {
+                                      "typeIdentifier": "t_bytes_calldata_ptr",
+                                      "typeString": "bytes calldata"
+                                    }
+                                  ],
+                                  "id": 226,
+                                  "name": "keccak256",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 17443,
+                                  "src": "1487:9:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                                    "typeString": "function (bytes memory) pure returns (bytes32)"
+                                  }
+                                },
+                                "id": 228,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "kind": "functionCall",
+                                "lValueRequested": false,
+                                "names": [],
+                                "nodeType": "FunctionCall",
+                                "src": "1487:18:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes32",
+                                  "typeString": "bytes32"
+                                }
+                              },
+                              "src": "1452:53:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              }
+                            },
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "696e707574207478206e6f74206173206578706563746564",
+                              "id": 230,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "string",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1507:26:5",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_c764afe22f01c8b51345f740defd83d434dd0cde382c511d61d4ffc3761c900b",
+                                "typeString": "literal_string \"input tx not as expected\""
+                              },
+                              "value": "input tx not as expected"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              },
+                              {
+                                "typeIdentifier": "t_stringliteral_c764afe22f01c8b51345f740defd83d434dd0cde382c511d61d4ffc3761c900b",
+                                "typeString": "literal_string \"input tx not as expected\""
+                              }
+                            ],
+                            "id": 221,
+                            "name": "require",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [
+                              17452,
+                              17453
+                            ],
+                            "referencedDeclaration": 17453,
+                            "src": "1444:7:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                              "typeString": "function (bool,string memory) pure"
+                            }
+                          },
+                          "id": 231,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1444:90:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 232,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1444:90:5"
+                      },
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "commonType": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              },
+                              "id": 237,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "leftExpression": {
+                                "argumentTypes": null,
+                                "expression": {
+                                  "argumentTypes": null,
+                                  "id": 234,
+                                  "name": "expectedArgs",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 152,
+                                  "src": "1556:12:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_struct$_Args_$166_storage",
+                                    "typeString": "struct SpendingConditionMock.Args storage ref"
+                                  }
+                                },
+                                "id": 235,
+                                "isConstant": false,
+                                "isLValue": true,
+                                "isPure": false,
+                                "lValueRequested": false,
+                                "memberName": "utxoPos",
+                                "nodeType": "MemberAccess",
+                                "referencedDeclaration": 159,
+                                "src": "1556:20:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "==",
+                              "rightExpression": {
+                                "argumentTypes": null,
+                                "id": 236,
+                                "name": "utxoPos",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 198,
+                                "src": "1580:7:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              },
+                              "src": "1556:31:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              }
+                            },
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "7574786f506f73206e6f74206173206578706563746564",
+                              "id": 238,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "string",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1589:25:5",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_2b4040a33c12b6710505c09f42ad56e8aefe3e8620412e90d457c2909fe8a593",
+                                "typeString": "literal_string \"utxoPos not as expected\""
+                              },
+                              "value": "utxoPos not as expected"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              },
+                              {
+                                "typeIdentifier": "t_stringliteral_2b4040a33c12b6710505c09f42ad56e8aefe3e8620412e90d457c2909fe8a593",
+                                "typeString": "literal_string \"utxoPos not as expected\""
+                              }
+                            ],
+                            "id": 233,
+                            "name": "require",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [
+                              17452,
+                              17453
+                            ],
+                            "referencedDeclaration": 17453,
+                            "src": "1548:7:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                              "typeString": "function (bool,string memory) pure"
+                            }
+                          },
+                          "id": 239,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1548:67:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 240,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1548:67:5"
+                      },
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "commonType": {
+                                "typeIdentifier": "t_bytes32",
+                                "typeString": "bytes32"
+                              },
+                              "id": 249,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "leftExpression": {
+                                "argumentTypes": null,
+                                "arguments": [
+                                  {
+                                    "argumentTypes": null,
+                                    "expression": {
+                                      "argumentTypes": null,
+                                      "id": 243,
+                                      "name": "expectedArgs",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": [],
+                                      "referencedDeclaration": 152,
+                                      "src": "1647:12:5",
+                                      "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_Args_$166_storage",
+                                        "typeString": "struct SpendingConditionMock.Args storage ref"
+                                      }
+                                    },
+                                    "id": 244,
+                                    "isConstant": false,
+                                    "isLValue": true,
+                                    "isPure": false,
+                                    "lValueRequested": false,
+                                    "memberName": "spendingTx",
+                                    "nodeType": "MemberAccess",
+                                    "referencedDeclaration": 161,
+                                    "src": "1647:23:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_bytes_storage",
+                                      "typeString": "bytes storage ref"
+                                    }
+                                  }
+                                ],
+                                "expression": {
+                                  "argumentTypes": [
+                                    {
+                                      "typeIdentifier": "t_bytes_storage",
+                                      "typeString": "bytes storage ref"
+                                    }
+                                  ],
+                                  "id": 242,
+                                  "name": "keccak256",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 17443,
+                                  "src": "1637:9:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                                    "typeString": "function (bytes memory) pure returns (bytes32)"
+                                  }
+                                },
+                                "id": 245,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "kind": "functionCall",
+                                "lValueRequested": false,
+                                "names": [],
+                                "nodeType": "FunctionCall",
+                                "src": "1637:34:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes32",
+                                  "typeString": "bytes32"
+                                }
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "==",
+                              "rightExpression": {
+                                "argumentTypes": null,
+                                "arguments": [
+                                  {
+                                    "argumentTypes": null,
+                                    "id": 247,
+                                    "name": "spendingTx",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 200,
+                                    "src": "1685:10:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_bytes_calldata_ptr",
+                                      "typeString": "bytes calldata"
+                                    }
+                                  }
+                                ],
+                                "expression": {
+                                  "argumentTypes": [
+                                    {
+                                      "typeIdentifier": "t_bytes_calldata_ptr",
+                                      "typeString": "bytes calldata"
+                                    }
+                                  ],
+                                  "id": 246,
+                                  "name": "keccak256",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 17443,
+                                  "src": "1675:9:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                                    "typeString": "function (bytes memory) pure returns (bytes32)"
+                                  }
+                                },
+                                "id": 248,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "kind": "functionCall",
+                                "lValueRequested": false,
+                                "names": [],
+                                "nodeType": "FunctionCall",
+                                "src": "1675:21:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes32",
+                                  "typeString": "bytes32"
+                                }
+                              },
+                              "src": "1637:59:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              }
+                            },
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "7370656e64696e67207478206e6f74206173206578706563746564",
+                              "id": 250,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "string",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1698:29:5",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_4411c983170319d0c34756ac7480353134c7f32184e9c0db687180dc01e235ba",
+                                "typeString": "literal_string \"spending tx not as expected\""
+                              },
+                              "value": "spending tx not as expected"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              },
+                              {
+                                "typeIdentifier": "t_stringliteral_4411c983170319d0c34756ac7480353134c7f32184e9c0db687180dc01e235ba",
+                                "typeString": "literal_string \"spending tx not as expected\""
+                              }
+                            ],
+                            "id": 241,
+                            "name": "require",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [
+                              17452,
+                              17453
+                            ],
+                            "referencedDeclaration": 17453,
+                            "src": "1629:7:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                              "typeString": "function (bool,string memory) pure"
+                            }
+                          },
+                          "id": 251,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1629:99:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 252,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1629:99:5"
+                      },
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "commonType": {
+                                "typeIdentifier": "t_uint16",
+                                "typeString": "uint16"
+                              },
+                              "id": 257,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "leftExpression": {
+                                "argumentTypes": null,
+                                "expression": {
+                                  "argumentTypes": null,
+                                  "id": 254,
+                                  "name": "expectedArgs",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 152,
+                                  "src": "1750:12:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_struct$_Args_$166_storage",
+                                    "typeString": "struct SpendingConditionMock.Args storage ref"
+                                  }
+                                },
+                                "id": 255,
+                                "isConstant": false,
+                                "isLValue": true,
+                                "isPure": false,
+                                "lValueRequested": false,
+                                "memberName": "inputIndex",
+                                "nodeType": "MemberAccess",
+                                "referencedDeclaration": 163,
+                                "src": "1750:23:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint16",
+                                  "typeString": "uint16"
+                                }
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "==",
+                              "rightExpression": {
+                                "argumentTypes": null,
+                                "id": 256,
+                                "name": "inputIndex",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 202,
+                                "src": "1777:10:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint16",
+                                  "typeString": "uint16"
+                                }
+                              },
+                              "src": "1750:37:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              }
+                            },
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "696e70757420696e646578206e6f74206173206578706563746564",
+                              "id": 258,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "string",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1789:29:5",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_1655caae0df643c6e90c02fb3698cbcc69f8f2be031bf4bea7c7984f9cbe62eb",
+                                "typeString": "literal_string \"input index not as expected\""
+                              },
+                              "value": "input index not as expected"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              },
+                              {
+                                "typeIdentifier": "t_stringliteral_1655caae0df643c6e90c02fb3698cbcc69f8f2be031bf4bea7c7984f9cbe62eb",
+                                "typeString": "literal_string \"input index not as expected\""
+                              }
+                            ],
+                            "id": 253,
+                            "name": "require",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [
+                              17452,
+                              17453
+                            ],
+                            "referencedDeclaration": 17453,
+                            "src": "1742:7:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                              "typeString": "function (bool,string memory) pure"
+                            }
+                          },
+                          "id": 259,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1742:77:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 260,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1742:77:5"
+                      },
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "commonType": {
+                                "typeIdentifier": "t_bytes32",
+                                "typeString": "bytes32"
+                              },
+                              "id": 269,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "leftExpression": {
+                                "argumentTypes": null,
+                                "arguments": [
+                                  {
+                                    "argumentTypes": null,
+                                    "expression": {
+                                      "argumentTypes": null,
+                                      "id": 263,
+                                      "name": "expectedArgs",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": [],
+                                      "referencedDeclaration": 152,
+                                      "src": "1851:12:5",
+                                      "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_Args_$166_storage",
+                                        "typeString": "struct SpendingConditionMock.Args storage ref"
+                                      }
+                                    },
+                                    "id": 264,
+                                    "isConstant": false,
+                                    "isLValue": true,
+                                    "isPure": false,
+                                    "lValueRequested": false,
+                                    "memberName": "witness",
+                                    "nodeType": "MemberAccess",
+                                    "referencedDeclaration": 165,
+                                    "src": "1851:20:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_bytes_storage",
+                                      "typeString": "bytes storage ref"
+                                    }
+                                  }
+                                ],
+                                "expression": {
+                                  "argumentTypes": [
+                                    {
+                                      "typeIdentifier": "t_bytes_storage",
+                                      "typeString": "bytes storage ref"
+                                    }
+                                  ],
+                                  "id": 262,
+                                  "name": "keccak256",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 17443,
+                                  "src": "1841:9:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                                    "typeString": "function (bytes memory) pure returns (bytes32)"
+                                  }
+                                },
+                                "id": 265,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "kind": "functionCall",
+                                "lValueRequested": false,
+                                "names": [],
+                                "nodeType": "FunctionCall",
+                                "src": "1841:31:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes32",
+                                  "typeString": "bytes32"
+                                }
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "==",
+                              "rightExpression": {
+                                "argumentTypes": null,
+                                "arguments": [
+                                  {
+                                    "argumentTypes": null,
+                                    "id": 267,
+                                    "name": "witness",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 204,
+                                    "src": "1886:7:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_bytes_calldata_ptr",
+                                      "typeString": "bytes calldata"
+                                    }
+                                  }
+                                ],
+                                "expression": {
+                                  "argumentTypes": [
+                                    {
+                                      "typeIdentifier": "t_bytes_calldata_ptr",
+                                      "typeString": "bytes calldata"
+                                    }
+                                  ],
+                                  "id": 266,
+                                  "name": "keccak256",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 17443,
+                                  "src": "1876:9:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                                    "typeString": "function (bytes memory) pure returns (bytes32)"
+                                  }
+                                },
+                                "id": 268,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "kind": "functionCall",
+                                "lValueRequested": false,
+                                "names": [],
+                                "nodeType": "FunctionCall",
+                                "src": "1876:18:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes32",
+                                  "typeString": "bytes32"
+                                }
+                              },
+                              "src": "1841:53:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              }
+                            },
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "7769746e657373206e6f74206173206578706563746564",
+                              "id": 270,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "string",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1896:25:5",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_e00d9b7462320d173e0f390bdb0b2990b90dee3a65dbbcc603a1eefedb70beca",
+                                "typeString": "literal_string \"witness not as expected\""
+                              },
+                              "value": "witness not as expected"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              },
+                              {
+                                "typeIdentifier": "t_stringliteral_e00d9b7462320d173e0f390bdb0b2990b90dee3a65dbbcc603a1eefedb70beca",
+                                "typeString": "literal_string \"witness not as expected\""
+                              }
+                            ],
+                            "id": 261,
+                            "name": "require",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [
+                              17452,
+                              17453
+                            ],
+                            "referencedDeclaration": 17453,
+                            "src": "1833:7:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                              "typeString": "function (bool,string memory) pure"
+                            }
+                          },
+                          "id": 271,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1833:89:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 272,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1833:89:5"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 275,
+                    "name": "expectedResult",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 148,
+                    "src": "1949:14:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "functionReturnParameters": 208,
+                  "id": 276,
+                  "nodeType": "Return",
+                  "src": "1942:21:5"
+                }
+              ]
+            },
+            "documentation": "override ",
+            "id": 278,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "verify",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 205,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 196,
+                  "name": "inputTx",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 278,
+                  "src": "1028:22:5",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 195,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1028:5:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 198,
+                  "name": "utxoPos",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 278,
+                  "src": "1060:15:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 197,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1060:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 200,
+                  "name": "spendingTx",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 278,
+                  "src": "1085:25:5",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 199,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1085:5:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 202,
+                  "name": "inputIndex",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 278,
+                  "src": "1120:17:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  },
+                  "typeName": {
+                    "id": 201,
+                    "name": "uint16",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1120:6:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint16",
+                      "typeString": "uint16"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 204,
+                  "name": "witness",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 278,
+                  "src": "1147:22:5",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 203,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1147:5:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1018:157:5"
+            },
+            "returnParameters": {
+              "id": 208,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 207,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 278,
+                  "src": "1223:4:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 206,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1223:4:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1222:6:5"
+            },
+            "scope": 279,
+            "src": "1003:967:5",
+            "stateMutability": "view",
+            "superFunction": 3779,
+            "visibility": "external"
+          }
+        ],
+        "scope": 280,
+        "src": "120:1852:5"
+      }
+    ],
+    "src": "0:1973:5"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/exits/SpendingConditionMock.sol",
+    "exportedSymbols": {
+      "SpendingConditionMock": [
+        279
+      ]
+    },
+    "id": 280,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 142,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:5"
+      },
+      {
+        "id": 143,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "24:33:5"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/interfaces/ISpendingCondition.sol",
+        "file": "../../src/exits/interfaces/ISpendingCondition.sol",
+        "id": 144,
+        "nodeType": "ImportDirective",
+        "scope": 280,
+        "sourceUnit": 3781,
+        "src": "59:59:5",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 145,
+              "name": "ISpendingCondition",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 3780,
+              "src": "154:18:5",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_ISpendingCondition_$3780",
+                "typeString": "contract ISpendingCondition"
+              }
+            },
+            "id": 146,
+            "nodeType": "InheritanceSpecifier",
+            "src": "154:18:5"
+          }
+        ],
+        "contractDependencies": [
+          3780
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 279,
+        "linearizedBaseContracts": [
+          279,
+          3780
+        ],
+        "name": "SpendingConditionMock",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 148,
+            "name": "expectedResult",
+            "nodeType": "VariableDeclaration",
+            "scope": 279,
+            "src": "179:28:5",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bool",
+              "typeString": "bool"
+            },
+            "typeName": {
+              "id": 147,
+              "name": "bool",
+              "nodeType": "ElementaryTypeName",
+              "src": "179:4:5",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 150,
+            "name": "shouldRevert",
+            "nodeType": "VariableDeclaration",
+            "scope": 279,
+            "src": "213:26:5",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bool",
+              "typeString": "bool"
+            },
+            "typeName": {
+              "id": 149,
+              "name": "bool",
+              "nodeType": "ElementaryTypeName",
+              "src": "213:4:5",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 152,
+            "name": "expectedArgs",
+            "nodeType": "VariableDeclaration",
+            "scope": 279,
+            "src": "245:26:5",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_struct$_Args_$166_storage",
+              "typeString": "struct SpendingConditionMock.Args"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 151,
+              "name": "Args",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 166,
+              "src": "245:4:5",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_Args_$166_storage_ptr",
+                "typeString": "struct SpendingConditionMock.Args"
+              }
+            },
+            "value": null,
+            "visibility": "internal"
+          },
+          {
+            "constant": true,
+            "id": 155,
+            "name": "REVERT_MESSAGE",
+            "nodeType": "VariableDeclaration",
+            "scope": 279,
+            "src": "278:75:5",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_string_memory",
+              "typeString": "string"
+            },
+            "typeName": {
+              "id": 153,
+              "name": "string",
+              "nodeType": "ElementaryTypeName",
+              "src": "278:6:5",
+              "typeDescriptions": {
+                "typeIdentifier": "t_string_storage_ptr",
+                "typeString": "string"
+              }
+            },
+            "value": {
+              "argumentTypes": null,
+              "hexValue": "54657374207370656e64696e6720636f6e646974696f6e2072657665727473",
+              "id": 154,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "string",
+              "lValueRequested": false,
+              "nodeType": "Literal",
+              "src": "320:33:5",
+              "subdenomination": null,
+              "typeDescriptions": {
+                "typeIdentifier": "t_stringliteral_ab5b5f7250609c7fbbe032053eeddc673b65809c21b6d6d00dce4a2366d4c6d7",
+                "typeString": "literal_string \"Test spending condition reverts\""
+              },
+              "value": "Test spending condition reverts"
+            },
+            "visibility": "internal"
+          },
+          {
+            "canonicalName": "SpendingConditionMock.Args",
+            "id": 166,
+            "members": [
+              {
+                "constant": false,
+                "id": 157,
+                "name": "inputTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 166,
+                "src": "382:13:5",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 156,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "382:5:5",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 159,
+                "name": "utxoPos",
+                "nodeType": "VariableDeclaration",
+                "scope": 166,
+                "src": "405:15:5",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 158,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "405:7:5",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 161,
+                "name": "spendingTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 166,
+                "src": "430:16:5",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 160,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "430:5:5",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 163,
+                "name": "inputIndex",
+                "nodeType": "VariableDeclaration",
+                "scope": 166,
+                "src": "456:17:5",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint16",
+                  "typeString": "uint16"
+                },
+                "typeName": {
+                  "id": 162,
+                  "name": "uint16",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "456:6:5",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 165,
+                "name": "witness",
+                "nodeType": "VariableDeclaration",
+                "scope": 166,
+                "src": "483:13:5",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 164,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "483:5:5",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "Args",
+            "nodeType": "StructDefinition",
+            "scope": 279,
+            "src": "360:143:5",
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 175,
+              "nodeType": "Block",
+              "src": "595:40:5",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 173,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 171,
+                      "name": "expectedResult",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 148,
+                      "src": "605:14:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 172,
+                      "name": "result",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 168,
+                      "src": "622:6:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "src": "605:23:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 174,
+                  "nodeType": "ExpressionStatement",
+                  "src": "605:23:5"
+                }
+              ]
+            },
+            "documentation": "mock what would \"verify()\" returns ",
+            "id": 176,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "mockResult",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 169,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 168,
+                  "name": "result",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 176,
+                  "src": "575:11:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 167,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "575:4:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "574:13:5"
+            },
+            "returnParameters": {
+              "id": 170,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "595:0:5"
+            },
+            "scope": 279,
+            "src": "555:80:5",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 183,
+              "nodeType": "Block",
+              "src": "748:36:5",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 181,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 179,
+                      "name": "shouldRevert",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 150,
+                      "src": "758:12:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "hexValue": "74727565",
+                      "id": 180,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "bool",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "773:4:5",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      },
+                      "value": "true"
+                    },
+                    "src": "758:19:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 182,
+                  "nodeType": "ExpressionStatement",
+                  "src": "758:19:5"
+                }
+              ]
+            },
+            "documentation": "when called, the spending condition would always revert on purpose ",
+            "id": 184,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "mockRevert",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 177,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "738:2:5"
+            },
+            "returnParameters": {
+              "id": 178,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "748:0:5"
+            },
+            "scope": 279,
+            "src": "719:65:5",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 193,
+              "nodeType": "Block",
+              "src": "941:36:5",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 191,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 189,
+                      "name": "expectedArgs",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 152,
+                      "src": "951:12:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Args_$166_storage",
+                        "typeString": "struct SpendingConditionMock.Args storage ref"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "id": 190,
+                      "name": "args",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 186,
+                      "src": "966:4:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Args_$166_memory_ptr",
+                        "typeString": "struct SpendingConditionMock.Args memory"
+                      }
+                    },
+                    "src": "951:19:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Args_$166_storage",
+                      "typeString": "struct SpendingConditionMock.Args storage ref"
+                    }
+                  },
+                  "id": 192,
+                  "nodeType": "ExpressionStatement",
+                  "src": "951:19:5"
+                }
+              ]
+            },
+            "documentation": "provide the expected args, it would check with the value called for \"verify()\" ",
+            "id": 194,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "shouldVerifyArgumentEquals",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 187,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 186,
+                  "name": "args",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 194,
+                  "src": "916:16:5",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Args_$166_memory_ptr",
+                    "typeString": "struct SpendingConditionMock.Args"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 185,
+                    "name": "Args",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 166,
+                    "src": "916:4:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Args_$166_storage_ptr",
+                      "typeString": "struct SpendingConditionMock.Args"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "915:18:5"
+            },
+            "returnParameters": {
+              "id": 188,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "941:0:5"
+            },
+            "scope": 279,
+            "src": "880:97:5",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 277,
+              "nodeType": "Block",
+              "src": "1233:737:5",
+              "statements": [
+                {
+                  "condition": {
+                    "argumentTypes": null,
+                    "id": 209,
+                    "name": "shouldRevert",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 150,
+                    "src": "1247:12:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "falseBody": null,
+                  "id": 215,
+                  "nodeType": "IfStatement",
+                  "src": "1243:65:5",
+                  "trueBody": {
+                    "id": 214,
+                    "nodeType": "Block",
+                    "src": "1261:47:5",
+                    "statements": [
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "id": 211,
+                              "name": "REVERT_MESSAGE",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 155,
+                              "src": "1282:14:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_string_memory",
+                                "typeString": "string memory"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_string_memory",
+                                "typeString": "string memory"
+                              }
+                            ],
+                            "id": 210,
+                            "name": "revert",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [
+                              17454,
+                              17455
+                            ],
+                            "referencedDeclaration": 17455,
+                            "src": "1275:6:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_revert_pure$_t_string_memory_ptr_$returns$__$",
+                              "typeString": "function (string memory) pure"
+                            }
+                          },
+                          "id": 212,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1275:22:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 213,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1275:22:5"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "condition": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 220,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 216,
+                          "name": "expectedArgs",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 152,
+                          "src": "1397:12:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Args_$166_storage",
+                            "typeString": "struct SpendingConditionMock.Args storage ref"
+                          }
+                        },
+                        "id": 217,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "inputTx",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 157,
+                        "src": "1397:20:5",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes_storage",
+                          "typeString": "bytes storage ref"
+                        }
+                      },
+                      "id": 218,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "length",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": null,
+                      "src": "1397:27:5",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": ">",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "hexValue": "30",
+                      "id": 219,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1427:1:5",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_0_by_1",
+                        "typeString": "int_const 0"
+                      },
+                      "value": "0"
+                    },
+                    "src": "1397:31:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "falseBody": null,
+                  "id": 274,
+                  "nodeType": "IfStatement",
+                  "src": "1393:540:5",
+                  "trueBody": {
+                    "id": 273,
+                    "nodeType": "Block",
+                    "src": "1430:503:5",
+                    "statements": [
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "commonType": {
+                                "typeIdentifier": "t_bytes32",
+                                "typeString": "bytes32"
+                              },
+                              "id": 229,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "leftExpression": {
+                                "argumentTypes": null,
+                                "arguments": [
+                                  {
+                                    "argumentTypes": null,
+                                    "expression": {
+                                      "argumentTypes": null,
+                                      "id": 223,
+                                      "name": "expectedArgs",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": [],
+                                      "referencedDeclaration": 152,
+                                      "src": "1462:12:5",
+                                      "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_Args_$166_storage",
+                                        "typeString": "struct SpendingConditionMock.Args storage ref"
+                                      }
+                                    },
+                                    "id": 224,
+                                    "isConstant": false,
+                                    "isLValue": true,
+                                    "isPure": false,
+                                    "lValueRequested": false,
+                                    "memberName": "inputTx",
+                                    "nodeType": "MemberAccess",
+                                    "referencedDeclaration": 157,
+                                    "src": "1462:20:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_bytes_storage",
+                                      "typeString": "bytes storage ref"
+                                    }
+                                  }
+                                ],
+                                "expression": {
+                                  "argumentTypes": [
+                                    {
+                                      "typeIdentifier": "t_bytes_storage",
+                                      "typeString": "bytes storage ref"
+                                    }
+                                  ],
+                                  "id": 222,
+                                  "name": "keccak256",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 17443,
+                                  "src": "1452:9:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                                    "typeString": "function (bytes memory) pure returns (bytes32)"
+                                  }
+                                },
+                                "id": 225,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "kind": "functionCall",
+                                "lValueRequested": false,
+                                "names": [],
+                                "nodeType": "FunctionCall",
+                                "src": "1452:31:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes32",
+                                  "typeString": "bytes32"
+                                }
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "==",
+                              "rightExpression": {
+                                "argumentTypes": null,
+                                "arguments": [
+                                  {
+                                    "argumentTypes": null,
+                                    "id": 227,
+                                    "name": "inputTx",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 196,
+                                    "src": "1497:7:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_bytes_calldata_ptr",
+                                      "typeString": "bytes calldata"
+                                    }
+                                  }
+                                ],
+                                "expression": {
+                                  "argumentTypes": [
+                                    {
+                                      "typeIdentifier": "t_bytes_calldata_ptr",
+                                      "typeString": "bytes calldata"
+                                    }
+                                  ],
+                                  "id": 226,
+                                  "name": "keccak256",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 17443,
+                                  "src": "1487:9:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                                    "typeString": "function (bytes memory) pure returns (bytes32)"
+                                  }
+                                },
+                                "id": 228,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "kind": "functionCall",
+                                "lValueRequested": false,
+                                "names": [],
+                                "nodeType": "FunctionCall",
+                                "src": "1487:18:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes32",
+                                  "typeString": "bytes32"
+                                }
+                              },
+                              "src": "1452:53:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              }
+                            },
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "696e707574207478206e6f74206173206578706563746564",
+                              "id": 230,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "string",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1507:26:5",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_c764afe22f01c8b51345f740defd83d434dd0cde382c511d61d4ffc3761c900b",
+                                "typeString": "literal_string \"input tx not as expected\""
+                              },
+                              "value": "input tx not as expected"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              },
+                              {
+                                "typeIdentifier": "t_stringliteral_c764afe22f01c8b51345f740defd83d434dd0cde382c511d61d4ffc3761c900b",
+                                "typeString": "literal_string \"input tx not as expected\""
+                              }
+                            ],
+                            "id": 221,
+                            "name": "require",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [
+                              17452,
+                              17453
+                            ],
+                            "referencedDeclaration": 17453,
+                            "src": "1444:7:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                              "typeString": "function (bool,string memory) pure"
+                            }
+                          },
+                          "id": 231,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1444:90:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 232,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1444:90:5"
+                      },
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "commonType": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              },
+                              "id": 237,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "leftExpression": {
+                                "argumentTypes": null,
+                                "expression": {
+                                  "argumentTypes": null,
+                                  "id": 234,
+                                  "name": "expectedArgs",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 152,
+                                  "src": "1556:12:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_struct$_Args_$166_storage",
+                                    "typeString": "struct SpendingConditionMock.Args storage ref"
+                                  }
+                                },
+                                "id": 235,
+                                "isConstant": false,
+                                "isLValue": true,
+                                "isPure": false,
+                                "lValueRequested": false,
+                                "memberName": "utxoPos",
+                                "nodeType": "MemberAccess",
+                                "referencedDeclaration": 159,
+                                "src": "1556:20:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "==",
+                              "rightExpression": {
+                                "argumentTypes": null,
+                                "id": 236,
+                                "name": "utxoPos",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 198,
+                                "src": "1580:7:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint256",
+                                  "typeString": "uint256"
+                                }
+                              },
+                              "src": "1556:31:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              }
+                            },
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "7574786f506f73206e6f74206173206578706563746564",
+                              "id": 238,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "string",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1589:25:5",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_2b4040a33c12b6710505c09f42ad56e8aefe3e8620412e90d457c2909fe8a593",
+                                "typeString": "literal_string \"utxoPos not as expected\""
+                              },
+                              "value": "utxoPos not as expected"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              },
+                              {
+                                "typeIdentifier": "t_stringliteral_2b4040a33c12b6710505c09f42ad56e8aefe3e8620412e90d457c2909fe8a593",
+                                "typeString": "literal_string \"utxoPos not as expected\""
+                              }
+                            ],
+                            "id": 233,
+                            "name": "require",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [
+                              17452,
+                              17453
+                            ],
+                            "referencedDeclaration": 17453,
+                            "src": "1548:7:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                              "typeString": "function (bool,string memory) pure"
+                            }
+                          },
+                          "id": 239,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1548:67:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 240,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1548:67:5"
+                      },
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "commonType": {
+                                "typeIdentifier": "t_bytes32",
+                                "typeString": "bytes32"
+                              },
+                              "id": 249,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "leftExpression": {
+                                "argumentTypes": null,
+                                "arguments": [
+                                  {
+                                    "argumentTypes": null,
+                                    "expression": {
+                                      "argumentTypes": null,
+                                      "id": 243,
+                                      "name": "expectedArgs",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": [],
+                                      "referencedDeclaration": 152,
+                                      "src": "1647:12:5",
+                                      "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_Args_$166_storage",
+                                        "typeString": "struct SpendingConditionMock.Args storage ref"
+                                      }
+                                    },
+                                    "id": 244,
+                                    "isConstant": false,
+                                    "isLValue": true,
+                                    "isPure": false,
+                                    "lValueRequested": false,
+                                    "memberName": "spendingTx",
+                                    "nodeType": "MemberAccess",
+                                    "referencedDeclaration": 161,
+                                    "src": "1647:23:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_bytes_storage",
+                                      "typeString": "bytes storage ref"
+                                    }
+                                  }
+                                ],
+                                "expression": {
+                                  "argumentTypes": [
+                                    {
+                                      "typeIdentifier": "t_bytes_storage",
+                                      "typeString": "bytes storage ref"
+                                    }
+                                  ],
+                                  "id": 242,
+                                  "name": "keccak256",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 17443,
+                                  "src": "1637:9:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                                    "typeString": "function (bytes memory) pure returns (bytes32)"
+                                  }
+                                },
+                                "id": 245,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "kind": "functionCall",
+                                "lValueRequested": false,
+                                "names": [],
+                                "nodeType": "FunctionCall",
+                                "src": "1637:34:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes32",
+                                  "typeString": "bytes32"
+                                }
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "==",
+                              "rightExpression": {
+                                "argumentTypes": null,
+                                "arguments": [
+                                  {
+                                    "argumentTypes": null,
+                                    "id": 247,
+                                    "name": "spendingTx",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 200,
+                                    "src": "1685:10:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_bytes_calldata_ptr",
+                                      "typeString": "bytes calldata"
+                                    }
+                                  }
+                                ],
+                                "expression": {
+                                  "argumentTypes": [
+                                    {
+                                      "typeIdentifier": "t_bytes_calldata_ptr",
+                                      "typeString": "bytes calldata"
+                                    }
+                                  ],
+                                  "id": 246,
+                                  "name": "keccak256",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 17443,
+                                  "src": "1675:9:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                                    "typeString": "function (bytes memory) pure returns (bytes32)"
+                                  }
+                                },
+                                "id": 248,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "kind": "functionCall",
+                                "lValueRequested": false,
+                                "names": [],
+                                "nodeType": "FunctionCall",
+                                "src": "1675:21:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes32",
+                                  "typeString": "bytes32"
+                                }
+                              },
+                              "src": "1637:59:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              }
+                            },
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "7370656e64696e67207478206e6f74206173206578706563746564",
+                              "id": 250,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "string",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1698:29:5",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_4411c983170319d0c34756ac7480353134c7f32184e9c0db687180dc01e235ba",
+                                "typeString": "literal_string \"spending tx not as expected\""
+                              },
+                              "value": "spending tx not as expected"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              },
+                              {
+                                "typeIdentifier": "t_stringliteral_4411c983170319d0c34756ac7480353134c7f32184e9c0db687180dc01e235ba",
+                                "typeString": "literal_string \"spending tx not as expected\""
+                              }
+                            ],
+                            "id": 241,
+                            "name": "require",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [
+                              17452,
+                              17453
+                            ],
+                            "referencedDeclaration": 17453,
+                            "src": "1629:7:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                              "typeString": "function (bool,string memory) pure"
+                            }
+                          },
+                          "id": 251,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1629:99:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 252,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1629:99:5"
+                      },
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "commonType": {
+                                "typeIdentifier": "t_uint16",
+                                "typeString": "uint16"
+                              },
+                              "id": 257,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "leftExpression": {
+                                "argumentTypes": null,
+                                "expression": {
+                                  "argumentTypes": null,
+                                  "id": 254,
+                                  "name": "expectedArgs",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 152,
+                                  "src": "1750:12:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_struct$_Args_$166_storage",
+                                    "typeString": "struct SpendingConditionMock.Args storage ref"
+                                  }
+                                },
+                                "id": 255,
+                                "isConstant": false,
+                                "isLValue": true,
+                                "isPure": false,
+                                "lValueRequested": false,
+                                "memberName": "inputIndex",
+                                "nodeType": "MemberAccess",
+                                "referencedDeclaration": 163,
+                                "src": "1750:23:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint16",
+                                  "typeString": "uint16"
+                                }
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "==",
+                              "rightExpression": {
+                                "argumentTypes": null,
+                                "id": 256,
+                                "name": "inputIndex",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 202,
+                                "src": "1777:10:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_uint16",
+                                  "typeString": "uint16"
+                                }
+                              },
+                              "src": "1750:37:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              }
+                            },
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "696e70757420696e646578206e6f74206173206578706563746564",
+                              "id": 258,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "string",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1789:29:5",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_1655caae0df643c6e90c02fb3698cbcc69f8f2be031bf4bea7c7984f9cbe62eb",
+                                "typeString": "literal_string \"input index not as expected\""
+                              },
+                              "value": "input index not as expected"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              },
+                              {
+                                "typeIdentifier": "t_stringliteral_1655caae0df643c6e90c02fb3698cbcc69f8f2be031bf4bea7c7984f9cbe62eb",
+                                "typeString": "literal_string \"input index not as expected\""
+                              }
+                            ],
+                            "id": 253,
+                            "name": "require",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [
+                              17452,
+                              17453
+                            ],
+                            "referencedDeclaration": 17453,
+                            "src": "1742:7:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                              "typeString": "function (bool,string memory) pure"
+                            }
+                          },
+                          "id": 259,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1742:77:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 260,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1742:77:5"
+                      },
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "commonType": {
+                                "typeIdentifier": "t_bytes32",
+                                "typeString": "bytes32"
+                              },
+                              "id": 269,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "leftExpression": {
+                                "argumentTypes": null,
+                                "arguments": [
+                                  {
+                                    "argumentTypes": null,
+                                    "expression": {
+                                      "argumentTypes": null,
+                                      "id": 263,
+                                      "name": "expectedArgs",
+                                      "nodeType": "Identifier",
+                                      "overloadedDeclarations": [],
+                                      "referencedDeclaration": 152,
+                                      "src": "1851:12:5",
+                                      "typeDescriptions": {
+                                        "typeIdentifier": "t_struct$_Args_$166_storage",
+                                        "typeString": "struct SpendingConditionMock.Args storage ref"
+                                      }
+                                    },
+                                    "id": 264,
+                                    "isConstant": false,
+                                    "isLValue": true,
+                                    "isPure": false,
+                                    "lValueRequested": false,
+                                    "memberName": "witness",
+                                    "nodeType": "MemberAccess",
+                                    "referencedDeclaration": 165,
+                                    "src": "1851:20:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_bytes_storage",
+                                      "typeString": "bytes storage ref"
+                                    }
+                                  }
+                                ],
+                                "expression": {
+                                  "argumentTypes": [
+                                    {
+                                      "typeIdentifier": "t_bytes_storage",
+                                      "typeString": "bytes storage ref"
+                                    }
+                                  ],
+                                  "id": 262,
+                                  "name": "keccak256",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 17443,
+                                  "src": "1841:9:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                                    "typeString": "function (bytes memory) pure returns (bytes32)"
+                                  }
+                                },
+                                "id": 265,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "kind": "functionCall",
+                                "lValueRequested": false,
+                                "names": [],
+                                "nodeType": "FunctionCall",
+                                "src": "1841:31:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes32",
+                                  "typeString": "bytes32"
+                                }
+                              },
+                              "nodeType": "BinaryOperation",
+                              "operator": "==",
+                              "rightExpression": {
+                                "argumentTypes": null,
+                                "arguments": [
+                                  {
+                                    "argumentTypes": null,
+                                    "id": 267,
+                                    "name": "witness",
+                                    "nodeType": "Identifier",
+                                    "overloadedDeclarations": [],
+                                    "referencedDeclaration": 204,
+                                    "src": "1886:7:5",
+                                    "typeDescriptions": {
+                                      "typeIdentifier": "t_bytes_calldata_ptr",
+                                      "typeString": "bytes calldata"
+                                    }
+                                  }
+                                ],
+                                "expression": {
+                                  "argumentTypes": [
+                                    {
+                                      "typeIdentifier": "t_bytes_calldata_ptr",
+                                      "typeString": "bytes calldata"
+                                    }
+                                  ],
+                                  "id": 266,
+                                  "name": "keccak256",
+                                  "nodeType": "Identifier",
+                                  "overloadedDeclarations": [],
+                                  "referencedDeclaration": 17443,
+                                  "src": "1876:9:5",
+                                  "typeDescriptions": {
+                                    "typeIdentifier": "t_function_keccak256_pure$_t_bytes_memory_ptr_$returns$_t_bytes32_$",
+                                    "typeString": "function (bytes memory) pure returns (bytes32)"
+                                  }
+                                },
+                                "id": 268,
+                                "isConstant": false,
+                                "isLValue": false,
+                                "isPure": false,
+                                "kind": "functionCall",
+                                "lValueRequested": false,
+                                "names": [],
+                                "nodeType": "FunctionCall",
+                                "src": "1876:18:5",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_bytes32",
+                                  "typeString": "bytes32"
+                                }
+                              },
+                              "src": "1841:53:5",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              }
+                            },
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "7769746e657373206e6f74206173206578706563746564",
+                              "id": 270,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "string",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "1896:25:5",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_stringliteral_e00d9b7462320d173e0f390bdb0b2990b90dee3a65dbbcc603a1eefedb70beca",
+                                "typeString": "literal_string \"witness not as expected\""
+                              },
+                              "value": "witness not as expected"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              },
+                              {
+                                "typeIdentifier": "t_stringliteral_e00d9b7462320d173e0f390bdb0b2990b90dee3a65dbbcc603a1eefedb70beca",
+                                "typeString": "literal_string \"witness not as expected\""
+                              }
+                            ],
+                            "id": 261,
+                            "name": "require",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [
+                              17452,
+                              17453
+                            ],
+                            "referencedDeclaration": 17453,
+                            "src": "1833:7:5",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                              "typeString": "function (bool,string memory) pure"
+                            }
+                          },
+                          "id": 271,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1833:89:5",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$__$",
+                            "typeString": "tuple()"
+                          }
+                        },
+                        "id": 272,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1833:89:5"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 275,
+                    "name": "expectedResult",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 148,
+                    "src": "1949:14:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "functionReturnParameters": 208,
+                  "id": 276,
+                  "nodeType": "Return",
+                  "src": "1942:21:5"
+                }
+              ]
+            },
+            "documentation": "override ",
+            "id": 278,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "verify",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 205,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 196,
+                  "name": "inputTx",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 278,
+                  "src": "1028:22:5",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 195,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1028:5:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 198,
+                  "name": "utxoPos",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 278,
+                  "src": "1060:15:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 197,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1060:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 200,
+                  "name": "spendingTx",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 278,
+                  "src": "1085:25:5",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 199,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1085:5:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 202,
+                  "name": "inputIndex",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 278,
+                  "src": "1120:17:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  },
+                  "typeName": {
+                    "id": 201,
+                    "name": "uint16",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1120:6:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint16",
+                      "typeString": "uint16"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 204,
+                  "name": "witness",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 278,
+                  "src": "1147:22:5",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 203,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1147:5:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1018:157:5"
+            },
+            "returnParameters": {
+              "id": 208,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 207,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 278,
+                  "src": "1223:4:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 206,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1223:4:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1222:6:5"
+            },
+            "scope": 279,
+            "src": "1003:967:5",
+            "stateMutability": "view",
+            "superFunction": 3779,
+            "visibility": "external"
+          }
+        ],
+        "scope": 280,
+        "src": "120:1852:5"
+      }
+    ],
+    "src": "0:1973:5"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.444Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {
+      "mockResult(bool)": {
+        "notice": "mock what would \"verify()\" returns "
+      },
+      "mockRevert()": {
+        "notice": "when called, the spending condition would always revert on purpose "
+      },
+      "shouldVerifyArgumentEquals((bytes,uint256,bytes,uint16,bytes))": {
+        "notice": "provide the expected args, it would check with the value called for \"verify()\" "
+      },
+      "verify(bytes,uint256,bytes,uint16,bytes)": {
+        "notice": "override "
+      }
+    }
+  }
+}

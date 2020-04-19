@@ -1,0 +1,1300 @@
+{
+  "contractName": "BondSizeMock",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "bond",
+      "outputs": [
+        {
+          "internalType": "uint128",
+          "name": "previousBondSize",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint128",
+          "name": "updatedBondSize",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint128",
+          "name": "effectiveUpdateTime",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint16",
+          "name": "lowerBoundDivisor",
+          "type": "uint16"
+        },
+        {
+          "internalType": "uint16",
+          "name": "upperBoundMultiplier",
+          "type": "uint16"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint128",
+          "name": "initialBondSize",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint16",
+          "name": "lowerBoundDivisor",
+          "type": "uint16"
+        },
+        {
+          "internalType": "uint16",
+          "name": "upperBoundMultiplier",
+          "type": "uint16"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "bondSize",
+      "outputs": [
+        {
+          "internalType": "uint128",
+          "name": "",
+          "type": "uint128"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "uint128",
+          "name": "newBondSize",
+          "type": "uint128"
+        }
+      ],
+      "name": "updateBondSize",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"newBondSize\",\"type\":\"uint128\"}],\"name\":\"updateBondSize\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"bond\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"previousBondSize\",\"type\":\"uint128\"},{\"internalType\":\"uint128\",\"name\":\"updatedBondSize\",\"type\":\"uint128\"},{\"internalType\":\"uint128\",\"name\":\"effectiveUpdateTime\",\"type\":\"uint128\"},{\"internalType\":\"uint16\",\"name\":\"lowerBoundDivisor\",\"type\":\"uint16\"},{\"internalType\":\"uint16\",\"name\":\"upperBoundMultiplier\",\"type\":\"uint16\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"bondSize\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"\",\"type\":\"uint128\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint128\",\"name\":\"initialBondSize\",\"type\":\"uint128\"},{\"internalType\":\"uint16\",\"name\":\"lowerBoundDivisor\",\"type\":\"uint16\"},{\"internalType\":\"uint16\",\"name\":\"upperBoundMultiplier\",\"type\":\"uint16\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/BondSizeMock.sol\":\"BondSizeMock\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/BondSizeMock.sol\":{\"keccak256\":\"0x47a90df3abe117732b2e3bc9632866bbb6957445bb69c89cc8384a3446194d01\",\"urls\":[\"bzz-raw://d0e2f7c387b63386d08ad35fb012526126c68d8ec758e9cd1f9e11c9721c2a8a\",\"dweb:/ipfs/QmSjmniFM2aFaopYvaVC4ffDAe7Wdjf1Q5f3oPHuYb4S34\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/utils/BondSize.sol\":{\"keccak256\":\"0x01a6c7f4282878431d36015eb45bb297e22272097209adbdb0ca093aa4db165d\",\"urls\":[\"bzz-raw://de55716cbd9621997d4b1a4f617fb3eb9886bea77c584d797c40f8aafa49f2e1\",\"dweb:/ipfs/QmYd8daNQ1S36dUucrbjum1V6ASiJb1fRPVKt6GWxNPe7m\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506040516106263803806106268339818101604052606081101561003357600080fd5b5080516020808301516040909301519192919061005d908490849084906103f4610100821b17901c565b80516000805460208401516001600160801b03199182166001600160801b0394851617841670010000000000000000000000000000000091851682021790925560408401516001805460608701516080909701519316919094161761ffff60801b191661ffff9485169092029190911761ffff60901b19167201000000000000000000000000000000000000939091169290920291909117905550610177915050565b610108610149565b506040805160a0810182526001600160801b03949094168452600060208501526780000000000000009084015261ffff918216606084015216608082015290565b6040805160a08101825260008082526020820181905291810182905260608101829052608081019190915290565b6104a0806101866000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c80635faded721461004657806364c9ec6f1461006e5780637099c581146100b7575b600080fd5b61006c6004803603602081101561005c57600080fd5b50356001600160801b03166100db565b005b6100766100ef565b604080516001600160801b0396871681529486166020860152929094168383015261ffff908116606084015292909216608082015290519081900360a00190f35b6100bf610126565b604080516001600160801b039092168252519081900360200190f35b6100ec60008263ffffffff61018916565b50565b6000546001546001600160801b0380831692600160801b908190048216929182169161ffff918104821691600160901b9091041685565b6040805160a081018252600080546001600160801b038082168452600160801b91829004811660208501526001549081169484019490945261ffff90840481166060840152600160901b909304909216608082015261018490610278565b905090565b6040805160a08101825283546001600160801b038082168352600160801b918290048116602084015260018601549081169383019390935261ffff90830481166060830152600160901b90920490911660808201526101e890826102a3565b8154600160801b90046001600160801b031615801590610215575060018201546001600160801b03164210155b1561023c578154600160801b81046001600160801b03166001600160801b03199091161782555b81546001600160801b03918216600160801b02911617815560010180546001600160801b03191667ffffffffffffffff426202a3000116179055565b600081604001516001600160801b03164210156102975750805161029e565b5060208101515b919050565b60006102ae83610278565b90506000826001600160801b03161161030e576040805162461bcd60e51b815260206004820152601860248201527f426f6e642073697a652063616e6e6f74206265207a65726f0000000000000000604482015290519081900360640190fd5b826060015161ffff16816001600160801b03168161032857fe5b046001600160801b0316826001600160801b03161015610386576040805162461bcd60e51b8152602060048201526014602482015273426f6e642073697a6520697320746f6f206c6f7760601b604482015290519081900360640190fd5b826080015161ffff16816001600160801b031602826001600160801b031611156103ef576040805162461bcd60e51b8152602060048201526015602482015274084dedcc840e6d2f4ca40d2e640e8dede40d0d2ced605b1b604482015290519081900360640190fd5b505050565b6103fc61043d565b506040805160a0810182526001600160801b03949094168452600060208501526780000000000000009084015261ffff918216606084015216608082015290565b6040805160a0810182526000808252602082018190529181018290526060810182905260808101919091529056fea265627a7a72315820af5d0ff2aa44293f45097dd157c45154531bf1cbb8a3a971b3cc431029fc433e64736f6c634300050b0032",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100415760003560e01c80635faded721461004657806364c9ec6f1461006e5780637099c581146100b7575b600080fd5b61006c6004803603602081101561005c57600080fd5b50356001600160801b03166100db565b005b6100766100ef565b604080516001600160801b0396871681529486166020860152929094168383015261ffff908116606084015292909216608082015290519081900360a00190f35b6100bf610126565b604080516001600160801b039092168252519081900360200190f35b6100ec60008263ffffffff61018916565b50565b6000546001546001600160801b0380831692600160801b908190048216929182169161ffff918104821691600160901b9091041685565b6040805160a081018252600080546001600160801b038082168452600160801b91829004811660208501526001549081169484019490945261ffff90840481166060840152600160901b909304909216608082015261018490610278565b905090565b6040805160a08101825283546001600160801b038082168352600160801b918290048116602084015260018601549081169383019390935261ffff90830481166060830152600160901b90920490911660808201526101e890826102a3565b8154600160801b90046001600160801b031615801590610215575060018201546001600160801b03164210155b1561023c578154600160801b81046001600160801b03166001600160801b03199091161782555b81546001600160801b03918216600160801b02911617815560010180546001600160801b03191667ffffffffffffffff426202a3000116179055565b600081604001516001600160801b03164210156102975750805161029e565b5060208101515b919050565b60006102ae83610278565b90506000826001600160801b03161161030e576040805162461bcd60e51b815260206004820152601860248201527f426f6e642073697a652063616e6e6f74206265207a65726f0000000000000000604482015290519081900360640190fd5b826060015161ffff16816001600160801b03168161032857fe5b046001600160801b0316826001600160801b03161015610386576040805162461bcd60e51b8152602060048201526014602482015273426f6e642073697a6520697320746f6f206c6f7760601b604482015290519081900360640190fd5b826080015161ffff16816001600160801b031602826001600160801b031611156103ef576040805162461bcd60e51b8152602060048201526015602482015274084dedcc840e6d2f4ca40d2e640e8dede40d0d2ced605b1b604482015290519081900360640190fd5b505050565b6103fc61043d565b506040805160a0810182526001600160801b03949094168452600060208501526780000000000000009084015261ffff918216606084015216608082015290565b6040805160a0810182526000808252602082018190529181018290526060810182905260808101919091529056fea265627a7a72315820af5d0ff2aa44293f45097dd157c45154531bf1cbb8a3a971b3cc431029fc433e64736f6c634300050b0032",
+  "sourceMap": "71:509:34:-;;;174:202;8:9:-1;5:2;;;30:1;27;20:12;5:2;174:202:34;;;;;;;;;;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;174:202:34;;;;;;;;;;;;;;;;291:78;;174:202;;;;;;291:20;;;;;:78;;:::i;:::-;284:85;;:4;:85;;;;;;-1:-1:-1;;;;;;284:85:34;;;-1:-1:-1;;;;;284:85:34;;;;;;;;;;;;;;;;;;;;-1:-1:-1;284:85:34;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;284:85:34;;;;;;;;;;;;-1:-1:-1;;;;284:85:34;;;;;;;;;;;;;;;;-1:-1:-1;71:509:34;;-1:-1:-1;;71:509:34;1560:562:68;1708:13;;:::i;:::-;-1:-1:-1;1851:264:68;;;;;;;;-1:-1:-1;;;;;1851:264:68;;;;;;-1:-1:-1;1851:264:68;;;;1827:7;1851:264;;;;;;;;;;;;;;;;;;1560:562::o;71:509:34:-;;;;;;;;;-1:-1:-1;71:509:34;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;",
+  "deployedSourceMap": "71:509:34:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;71:509:34;;;;;;;;;;;;;;;;;;;;;;;;;;;;;477:101;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;477:101:34;-1:-1:-1;;;;;477:101:34;;:::i;:::-;;140:27;;;:::i;:::-;;;;-1:-1:-1;;;;;140:27:34;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;382:89;;;:::i;:::-;;;;-1:-1:-1;;;;;382:89:34;;;;;;;;;;;;;;477:101;539:32;:4;559:11;539:32;:19;:32;:::i;:::-;477:101;:::o;140:27::-;;;;;-1:-1:-1;;;;;140:27:34;;;;-1:-1:-1;;;140:27:34;;;;;;;;;;;;;;;;;;-1:-1:-1;;;140:27:34;;;;;:::o;382:89::-;449:13;;;;;;;;423:7;449:13;;-1:-1:-1;;;;;449:13:34;;;;;-1:-1:-1;;;449:13:34;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;449:13:34;;;;;;;;;;:15;;:13;:15::i;:::-;442:22;;382:89;:::o;2307:381:68:-;2392:35;;;;;;;;;;-1:-1:-1;;;;;2392:35:68;;;;;-1:-1:-1;;;2392:35:68;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;2392:35:68;;;;;;;;;;;;2415:11;2392:16;:35::i;:::-;2442:20;;-1:-1:-1;;;2442:20:68;;-1:-1:-1;;;;;2442:20:68;:25;;;;:60;;-1:-1:-1;2478:24:68;;;;-1:-1:-1;;;;;2478:24:68;2471:3;:31;;2442:60;2438:135;;;2542:20;;-1:-1:-1;;;2542:20:68;;-1:-1:-1;;;;;2542:20:68;-1:-1:-1;;;;;;2518:44:68;;;;;;2438:135;2582:34;;-1:-1:-1;;;;;2582:34:68;;;-1:-1:-1;;;2582:34:68;;;;;;-1:-1:-1;2626:24:68;:55;;-1:-1:-1;;;;;;2626:55:68;;2660:3;598:6;2653:28;2626:55;;;;2307:381::o;2753:233::-;2814:7;2843:4;:24;;;-1:-1:-1;;;;;2837:30:68;:3;:30;2833:147;;;-1:-1:-1;2890:21:68;;2883:28;;2833:147;-1:-1:-1;2949:20:68;;;;2833:147;2753:233;;;:::o;2992:417::-;3082:23;3108:14;3117:4;3108:8;:14::i;:::-;3082:40;;3154:1;3140:11;-1:-1:-1;;;;;3140:15:68;;3132:52;;;;;-1:-1:-1;;;3132:52:68;;;;;;;;;;;;;;;;;;;;;;;;;;;;3235:4;:22;;;3217:40;;:15;-1:-1:-1;;;;;3217:40:68;;;;;;;-1:-1:-1;;;;;3202:55:68;:11;-1:-1:-1;;;;;3202:55:68;;;3194:88;;;;;-1:-1:-1;;;3194:88:68;;;;;;;;;;;;-1:-1:-1;;;3194:88:68;;;;;;;;;;;;;;;3351:4;:25;;;3324:52;;3332:15;-1:-1:-1;;;;;3324:24:68;:52;3308:11;-1:-1:-1;;;;;3300:20:68;:76;;3292:110;;;;;-1:-1:-1;;;3292:110:68;;;;;;;;;;;;-1:-1:-1;;;3292:110:68;;;;;;;;;;;;;;;2992:417;;;:::o;1560:562::-;1708:13;;:::i;:::-;-1:-1:-1;1851:264:68;;;;;;;;-1:-1:-1;;;;;1851:264:68;;;;;;-1:-1:-1;1851:264:68;;;;1827:7;1851:264;;;;;;;;;;;;;;;;;;1560:562::o;-1:-1:-1:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o",
+  "source": "pragma solidity 0.5.11;\n\nimport \"../../src/exits/utils/BondSize.sol\";\n\ncontract BondSizeMock {\n    using BondSize for BondSize.Params;\n\n    BondSize.Params public bond;\n\n    constructor (uint128 initialBondSize, uint16 lowerBoundDivisor, uint16 upperBoundMultiplier) public {\n        bond = BondSize.buildParams(initialBondSize, lowerBoundDivisor, upperBoundMultiplier);\n    }\n\n    function bondSize() public view returns (uint128) {\n        return bond.bondSize();\n    }\n\n    function updateBondSize(uint128 newBondSize) public {\n        bond.updateBondSize(newBondSize);\n    }\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/BondSizeMock.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/BondSizeMock.sol",
+    "exportedSymbols": {
+      "BondSizeMock": [
+        2783
+      ]
+    },
+    "id": 2784,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2735,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:34"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/utils/BondSize.sol",
+        "file": "../../src/exits/utils/BondSize.sol",
+        "id": 2736,
+        "nodeType": "ImportDirective",
+        "scope": 2784,
+        "sourceUnit": 10990,
+        "src": "25:44:34",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 2783,
+        "linearizedBaseContracts": [
+          2783
+        ],
+        "name": "BondSizeMock",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "id": 2739,
+            "libraryName": {
+              "contractScope": null,
+              "id": 2737,
+              "name": "BondSize",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 10989,
+              "src": "105:8:34",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_BondSize_$10989",
+                "typeString": "library BondSize"
+              }
+            },
+            "nodeType": "UsingForDirective",
+            "src": "99:35:34",
+            "typeName": {
+              "contractScope": null,
+              "id": 2738,
+              "name": "BondSize.Params",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 10849,
+              "src": "118:15:34",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_Params_$10849_storage_ptr",
+                "typeString": "struct BondSize.Params"
+              }
+            }
+          },
+          {
+            "constant": false,
+            "id": 2741,
+            "name": "bond",
+            "nodeType": "VariableDeclaration",
+            "scope": 2783,
+            "src": "140:27:34",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_struct$_Params_$10849_storage",
+              "typeString": "struct BondSize.Params"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 2740,
+              "name": "BondSize.Params",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 10849,
+              "src": "140:15:34",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_Params_$10849_storage_ptr",
+                "typeString": "struct BondSize.Params"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2759,
+              "nodeType": "Block",
+              "src": "274:102:34",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 2757,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 2750,
+                      "name": "bond",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 2741,
+                      "src": "284:4:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Params_$10849_storage",
+                        "typeString": "struct BondSize.Params storage ref"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "arguments": [
+                        {
+                          "argumentTypes": null,
+                          "id": 2753,
+                          "name": "initialBondSize",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2743,
+                          "src": "312:15:34",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint128",
+                            "typeString": "uint128"
+                          }
+                        },
+                        {
+                          "argumentTypes": null,
+                          "id": 2754,
+                          "name": "lowerBoundDivisor",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2745,
+                          "src": "329:17:34",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint16",
+                            "typeString": "uint16"
+                          }
+                        },
+                        {
+                          "argumentTypes": null,
+                          "id": 2755,
+                          "name": "upperBoundMultiplier",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2747,
+                          "src": "348:20:34",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint16",
+                            "typeString": "uint16"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_uint128",
+                            "typeString": "uint128"
+                          },
+                          {
+                            "typeIdentifier": "t_uint16",
+                            "typeString": "uint16"
+                          },
+                          {
+                            "typeIdentifier": "t_uint16",
+                            "typeString": "uint16"
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 2751,
+                          "name": "BondSize",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 10989,
+                          "src": "291:8:34",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_contract$_BondSize_$10989_$",
+                            "typeString": "type(library BondSize)"
+                          }
+                        },
+                        "id": 2752,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "buildParams",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 10875,
+                        "src": "291:20:34",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_internal_pure$_t_uint128_$_t_uint16_$_t_uint16_$returns$_t_struct$_Params_$10849_memory_ptr_$",
+                          "typeString": "function (uint128,uint16,uint16) pure returns (struct BondSize.Params memory)"
+                        }
+                      },
+                      "id": 2756,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "291:78:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Params_$10849_memory_ptr",
+                        "typeString": "struct BondSize.Params memory"
+                      }
+                    },
+                    "src": "284:85:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Params_$10849_storage",
+                      "typeString": "struct BondSize.Params storage ref"
+                    }
+                  },
+                  "id": 2758,
+                  "nodeType": "ExpressionStatement",
+                  "src": "284:85:34"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2760,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2748,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2743,
+                  "name": "initialBondSize",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2760,
+                  "src": "187:23:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint128",
+                    "typeString": "uint128"
+                  },
+                  "typeName": {
+                    "id": 2742,
+                    "name": "uint128",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "187:7:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint128",
+                      "typeString": "uint128"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 2745,
+                  "name": "lowerBoundDivisor",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2760,
+                  "src": "212:24:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  },
+                  "typeName": {
+                    "id": 2744,
+                    "name": "uint16",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "212:6:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint16",
+                      "typeString": "uint16"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 2747,
+                  "name": "upperBoundMultiplier",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2760,
+                  "src": "238:27:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  },
+                  "typeName": {
+                    "id": 2746,
+                    "name": "uint16",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "238:6:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint16",
+                      "typeString": "uint16"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "186:80:34"
+            },
+            "returnParameters": {
+              "id": 2749,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "274:0:34"
+            },
+            "scope": 2783,
+            "src": "174:202:34",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2769,
+              "nodeType": "Block",
+              "src": "432:39:34",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 2765,
+                        "name": "bond",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2741,
+                        "src": "449:4:34",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Params_$10849_storage",
+                          "typeString": "struct BondSize.Params storage ref"
+                        }
+                      },
+                      "id": 2766,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "bondSize",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 10943,
+                      "src": "449:13:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_view$_t_struct$_Params_$10849_memory_ptr_$returns$_t_uint128_$bound_to$_t_struct$_Params_$10849_memory_ptr_$",
+                        "typeString": "function (struct BondSize.Params memory) view returns (uint128)"
+                      }
+                    },
+                    "id": 2767,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "449:15:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint128",
+                      "typeString": "uint128"
+                    }
+                  },
+                  "functionReturnParameters": 2764,
+                  "id": 2768,
+                  "nodeType": "Return",
+                  "src": "442:22:34"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2770,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "bondSize",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2761,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "399:2:34"
+            },
+            "returnParameters": {
+              "id": 2764,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2763,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2770,
+                  "src": "423:7:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint128",
+                    "typeString": "uint128"
+                  },
+                  "typeName": {
+                    "id": 2762,
+                    "name": "uint128",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "423:7:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint128",
+                      "typeString": "uint128"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "422:9:34"
+            },
+            "scope": 2783,
+            "src": "382:89:34",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2781,
+              "nodeType": "Block",
+              "src": "529:49:34",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 2778,
+                        "name": "newBondSize",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2772,
+                        "src": "559:11:34",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint128",
+                          "typeString": "uint128"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint128",
+                          "typeString": "uint128"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 2775,
+                        "name": "bond",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2741,
+                        "src": "539:4:34",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Params_$10849_storage",
+                          "typeString": "struct BondSize.Params storage ref"
+                        }
+                      },
+                      "id": 2777,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "updateBondSize",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 10922,
+                      "src": "539:19:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_nonpayable$_t_struct$_Params_$10849_storage_ptr_$_t_uint128_$returns$__$bound_to$_t_struct$_Params_$10849_storage_ptr_$",
+                        "typeString": "function (struct BondSize.Params storage pointer,uint128)"
+                      }
+                    },
+                    "id": 2779,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "539:32:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 2780,
+                  "nodeType": "ExpressionStatement",
+                  "src": "539:32:34"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2782,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "updateBondSize",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2773,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2772,
+                  "name": "newBondSize",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2782,
+                  "src": "501:19:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint128",
+                    "typeString": "uint128"
+                  },
+                  "typeName": {
+                    "id": 2771,
+                    "name": "uint128",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "501:7:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint128",
+                      "typeString": "uint128"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "500:21:34"
+            },
+            "returnParameters": {
+              "id": 2774,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "529:0:34"
+            },
+            "scope": 2783,
+            "src": "477:101:34",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 2784,
+        "src": "71:509:34"
+      }
+    ],
+    "src": "0:581:34"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/BondSizeMock.sol",
+    "exportedSymbols": {
+      "BondSizeMock": [
+        2783
+      ]
+    },
+    "id": 2784,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2735,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:34"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/utils/BondSize.sol",
+        "file": "../../src/exits/utils/BondSize.sol",
+        "id": 2736,
+        "nodeType": "ImportDirective",
+        "scope": 2784,
+        "sourceUnit": 10990,
+        "src": "25:44:34",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 2783,
+        "linearizedBaseContracts": [
+          2783
+        ],
+        "name": "BondSizeMock",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "id": 2739,
+            "libraryName": {
+              "contractScope": null,
+              "id": 2737,
+              "name": "BondSize",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 10989,
+              "src": "105:8:34",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_BondSize_$10989",
+                "typeString": "library BondSize"
+              }
+            },
+            "nodeType": "UsingForDirective",
+            "src": "99:35:34",
+            "typeName": {
+              "contractScope": null,
+              "id": 2738,
+              "name": "BondSize.Params",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 10849,
+              "src": "118:15:34",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_Params_$10849_storage_ptr",
+                "typeString": "struct BondSize.Params"
+              }
+            }
+          },
+          {
+            "constant": false,
+            "id": 2741,
+            "name": "bond",
+            "nodeType": "VariableDeclaration",
+            "scope": 2783,
+            "src": "140:27:34",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_struct$_Params_$10849_storage",
+              "typeString": "struct BondSize.Params"
+            },
+            "typeName": {
+              "contractScope": null,
+              "id": 2740,
+              "name": "BondSize.Params",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 10849,
+              "src": "140:15:34",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_Params_$10849_storage_ptr",
+                "typeString": "struct BondSize.Params"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2759,
+              "nodeType": "Block",
+              "src": "274:102:34",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 2757,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 2750,
+                      "name": "bond",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 2741,
+                      "src": "284:4:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Params_$10849_storage",
+                        "typeString": "struct BondSize.Params storage ref"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "arguments": [
+                        {
+                          "argumentTypes": null,
+                          "id": 2753,
+                          "name": "initialBondSize",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2743,
+                          "src": "312:15:34",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint128",
+                            "typeString": "uint128"
+                          }
+                        },
+                        {
+                          "argumentTypes": null,
+                          "id": 2754,
+                          "name": "lowerBoundDivisor",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2745,
+                          "src": "329:17:34",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint16",
+                            "typeString": "uint16"
+                          }
+                        },
+                        {
+                          "argumentTypes": null,
+                          "id": 2755,
+                          "name": "upperBoundMultiplier",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 2747,
+                          "src": "348:20:34",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint16",
+                            "typeString": "uint16"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_uint128",
+                            "typeString": "uint128"
+                          },
+                          {
+                            "typeIdentifier": "t_uint16",
+                            "typeString": "uint16"
+                          },
+                          {
+                            "typeIdentifier": "t_uint16",
+                            "typeString": "uint16"
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 2751,
+                          "name": "BondSize",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 10989,
+                          "src": "291:8:34",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_contract$_BondSize_$10989_$",
+                            "typeString": "type(library BondSize)"
+                          }
+                        },
+                        "id": 2752,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "buildParams",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 10875,
+                        "src": "291:20:34",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_internal_pure$_t_uint128_$_t_uint16_$_t_uint16_$returns$_t_struct$_Params_$10849_memory_ptr_$",
+                          "typeString": "function (uint128,uint16,uint16) pure returns (struct BondSize.Params memory)"
+                        }
+                      },
+                      "id": 2756,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "291:78:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_Params_$10849_memory_ptr",
+                        "typeString": "struct BondSize.Params memory"
+                      }
+                    },
+                    "src": "284:85:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Params_$10849_storage",
+                      "typeString": "struct BondSize.Params storage ref"
+                    }
+                  },
+                  "id": 2758,
+                  "nodeType": "ExpressionStatement",
+                  "src": "284:85:34"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2760,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2748,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2743,
+                  "name": "initialBondSize",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2760,
+                  "src": "187:23:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint128",
+                    "typeString": "uint128"
+                  },
+                  "typeName": {
+                    "id": 2742,
+                    "name": "uint128",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "187:7:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint128",
+                      "typeString": "uint128"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 2745,
+                  "name": "lowerBoundDivisor",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2760,
+                  "src": "212:24:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  },
+                  "typeName": {
+                    "id": 2744,
+                    "name": "uint16",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "212:6:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint16",
+                      "typeString": "uint16"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 2747,
+                  "name": "upperBoundMultiplier",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2760,
+                  "src": "238:27:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  },
+                  "typeName": {
+                    "id": 2746,
+                    "name": "uint16",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "238:6:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint16",
+                      "typeString": "uint16"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "186:80:34"
+            },
+            "returnParameters": {
+              "id": 2749,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "274:0:34"
+            },
+            "scope": 2783,
+            "src": "174:202:34",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2769,
+              "nodeType": "Block",
+              "src": "432:39:34",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 2765,
+                        "name": "bond",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2741,
+                        "src": "449:4:34",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Params_$10849_storage",
+                          "typeString": "struct BondSize.Params storage ref"
+                        }
+                      },
+                      "id": 2766,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "bondSize",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 10943,
+                      "src": "449:13:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_view$_t_struct$_Params_$10849_memory_ptr_$returns$_t_uint128_$bound_to$_t_struct$_Params_$10849_memory_ptr_$",
+                        "typeString": "function (struct BondSize.Params memory) view returns (uint128)"
+                      }
+                    },
+                    "id": 2767,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "449:15:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint128",
+                      "typeString": "uint128"
+                    }
+                  },
+                  "functionReturnParameters": 2764,
+                  "id": 2768,
+                  "nodeType": "Return",
+                  "src": "442:22:34"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2770,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "bondSize",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2761,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "399:2:34"
+            },
+            "returnParameters": {
+              "id": 2764,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2763,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2770,
+                  "src": "423:7:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint128",
+                    "typeString": "uint128"
+                  },
+                  "typeName": {
+                    "id": 2762,
+                    "name": "uint128",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "423:7:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint128",
+                      "typeString": "uint128"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "422:9:34"
+            },
+            "scope": 2783,
+            "src": "382:89:34",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2781,
+              "nodeType": "Block",
+              "src": "529:49:34",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 2778,
+                        "name": "newBondSize",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2772,
+                        "src": "559:11:34",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint128",
+                          "typeString": "uint128"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint128",
+                          "typeString": "uint128"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 2775,
+                        "name": "bond",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2741,
+                        "src": "539:4:34",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Params_$10849_storage",
+                          "typeString": "struct BondSize.Params storage ref"
+                        }
+                      },
+                      "id": 2777,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "updateBondSize",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 10922,
+                      "src": "539:19:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_nonpayable$_t_struct$_Params_$10849_storage_ptr_$_t_uint128_$returns$__$bound_to$_t_struct$_Params_$10849_storage_ptr_$",
+                        "typeString": "function (struct BondSize.Params storage pointer,uint128)"
+                      }
+                    },
+                    "id": 2779,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "539:32:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 2780,
+                  "nodeType": "ExpressionStatement",
+                  "src": "539:32:34"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2782,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "updateBondSize",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2773,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2772,
+                  "name": "newBondSize",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2782,
+                  "src": "501:19:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint128",
+                    "typeString": "uint128"
+                  },
+                  "typeName": {
+                    "id": 2771,
+                    "name": "uint128",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "501:7:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint128",
+                      "typeString": "uint128"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "500:21:34"
+            },
+            "returnParameters": {
+              "id": 2774,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "529:0:34"
+            },
+            "scope": 2783,
+            "src": "477:101:34",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 2784,
+        "src": "71:509:34"
+      }
+    ],
+    "src": "0:581:34"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.606Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

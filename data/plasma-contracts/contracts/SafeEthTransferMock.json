@@ -1,0 +1,1245 @@
+{
+  "contractName": "SafeEthTransferMock",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "transferResult",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address payable",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "gasStipend",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferRevertOnError",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address payable",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "gasStipend",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferReturnResult",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "setupInitialFundToTestTransfer",
+      "outputs": [],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[],\"name\":\"setupInitialFundToTestTransfer\",\"outputs\":[],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"transferResult\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address payable\",\"name\":\"receiver\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"gasStipend\",\"type\":\"uint256\"}],\"name\":\"transferReturnResult\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address payable\",\"name\":\"receiver\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"gasStipend\",\"type\":\"uint256\"}],\"name\":\"transferRevertOnError\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{\"setupInitialFundToTestTransfer()\":{\"notice\":\"helper function to pre-fund the contract to test \"}}}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/SafeEthTransferMock.sol\":\"SafeEthTransferMock\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/SafeEthTransferMock.sol\":{\"keccak256\":\"0x797b491192f7b5ddb6a13724b30a1dfe25f931292a5fbc8fae0c2826f3985fff\",\"urls\":[\"bzz-raw://79db3588de0e320e535697ca6e83d59ba3acb06dc0607a7aace0401091130735\",\"dweb:/ipfs/QmXocj4WehoYjyEc8QhRtrwxeWGgMR6CwxCTknzE4rwNBx\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/SafeEthTransfer.sol\":{\"keccak256\":\"0xe707370228eea8c9c613472dd4d44df94ba631892bc74077cf5af24097944aad\",\"urls\":[\"bzz-raw://803b2c876f40f8d8dbcbca8b6cde233d73a98c4d2384c90e259da1c169225de9\",\"dweb:/ipfs/QmZkb1kHBmFb4jGgZepfAJsiZM6beQJiS9x319QZxExiB4\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5061023f806100206000396000f3fe60806040526004361061003f5760003560e01c806356e7559c14610044578063c94472bc1461004e578063d6ba399614610077578063de45837a146100b6575b600080fd5b61004c6100f5565b005b34801561005a57600080fd5b506100636100f7565b604080519115158252519081900360200190f35b34801561008357600080fd5b5061004c6004803603606081101561009a57600080fd5b506001600160a01b038135169060208101359060400135610100565b3480156100c257600080fd5b5061004c600480360360608110156100d957600080fd5b506001600160a01b038135169060208101359060400135610121565b565b60005460ff1681565b61010b838383610131565b6000805460ff1916911515919091179055505050565b61012c838383610192565b505050565b60405160009081906001600160a01b038616908490869084818181858888f193505050503d8060008114610181576040519150601f19603f3d011682016040523d82523d6000602084013e610186565b606091505b50909695505050505050565b600061019f848484610131565b9050806101dd5760405162461bcd60e51b81526004018080602001828103825260278152602001806101e46027913960400191505060405180910390fd5b5050505056fe536166654574685472616e736665723a206661696c656420746f207472616e7366657220455448a265627a7a72315820c6b79c446af8c3ca4039e41d2e976cd2edcc2c6f5c90ca01687fb23d38d122a264736f6c634300050b0032",
+  "deployedBytecode": "0x60806040526004361061003f5760003560e01c806356e7559c14610044578063c94472bc1461004e578063d6ba399614610077578063de45837a146100b6575b600080fd5b61004c6100f5565b005b34801561005a57600080fd5b506100636100f7565b604080519115158252519081900360200190f35b34801561008357600080fd5b5061004c6004803603606081101561009a57600080fd5b506001600160a01b038135169060208101359060400135610100565b3480156100c257600080fd5b5061004c600480360360608110156100d957600080fd5b506001600160a01b038135169060208101359060400135610121565b565b60005460ff1681565b61010b838383610131565b6000805460ff1916911515919091179055505050565b61012c838383610192565b505050565b60405160009081906001600160a01b038616908490869084818181858888f193505050503d8060008114610181576040519150601f19603f3d011682016040523d82523d6000602084013e610186565b606091505b50909695505050505050565b600061019f848484610131565b9050806101dd5760405162461bcd60e51b81526004018080602001828103825260278152602001806101e46027913960400191505060405180910390fd5b5050505056fe536166654574685472616e736665723a206661696c656420746f207472616e7366657220455448a265627a7a72315820c6b79c446af8c3ca4039e41d2e976cd2edcc2c6f5c90ca01687fb23d38d122a264736f6c634300050b0032",
+  "sourceMap": "72:610:41:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;72:610:41;;;;;;;",
+  "deployedSourceMap": "72:610:41:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;619:61;;;:::i;:::-;;107:26;;8:9:-1;5:2;;;30:1;27;20:12;5:2;107:26:41;;;:::i;:::-;;;;;;;;;;;;;;;;;;342:211;;8:9:-1;5:2;;;30:1;27;20:12;5:2;342:211:41;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;;;;;;342:211:41;;;;;;;;;;;;;:::i;140:196::-;;8:9:-1;5:2;;;30:1;27;20:12;5:2;140:196:41;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;-1:-1;;;;;;140:196:41;;;;;;;;;;;;;:::i;619:61::-;:::o;107:26::-;;;;;;:::o;342:211::-;480:66;517:8;527:6;535:10;480:36;:66::i;:::-;463:14;:83;;-1:-1:-1;;463:83:41;;;;;;;;;;-1:-1:-1;;;342:211:41:o;140:196::-;262:67;300:8;310:6;318:10;262:37;:67::i;:::-;140:196;;;:::o;1610:243:95:-;1775:47;;1736:4;;;;-1:-1:-1;;;;;1775:13:95;;;1793:10;;1811:6;;1736:4;1775:47;1736:4;1775:47;1811:6;1775:13;1793:10;1775:47;;;;;;;14:1:-1;21;16:31;;;;75:4;69:11;64:16;;144:4;140:9;133:4;115:16;111:27;107:43;104:1;100:51;94:4;87:65;169:16;166:1;159:27;225:16;222:1;215:4;212:1;208:12;193:49;7:242;;16:31;36:4;31:9;;7:242;-1:-1;1756:66:95;;1610:243;-1:-1:-1;;;;;;1610:243:95:o;824:265::-;948:12;963:50;984:8;994:6;1002:10;963:20;:50::i;:::-;948:65;;1031:7;1023:59;;;;-1:-1:-1;;;1023:59:95;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;824:265;;;;:::o",
+  "source": "pragma solidity 0.5.11;\n\nimport \"../../src/utils/SafeEthTransfer.sol\";\n\ncontract SafeEthTransferMock {\n    bool public transferResult;\n\n    function transferRevertOnError(address payable receiver, uint256 amount, uint256 gasStipend)\n        public\n    {\n        SafeEthTransfer.transferRevertOnError(receiver, amount, gasStipend);\n    }\n\n    function transferReturnResult(address payable receiver, uint256 amount, uint256 gasStipend)\n        public\n    {\n        transferResult = SafeEthTransfer.transferReturnResult(receiver, amount, gasStipend);\n    }\n\n    /** helper function to pre-fund the contract to test */\n    function setupInitialFundToTestTransfer() external payable {}\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/SafeEthTransferMock.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/SafeEthTransferMock.sol",
+    "exportedSymbols": {
+      "SafeEthTransferMock": [
+        3396
+      ]
+    },
+    "id": 3397,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3351,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:41"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/SafeEthTransfer.sol",
+        "file": "../../src/utils/SafeEthTransfer.sol",
+        "id": 3352,
+        "nodeType": "ImportDirective",
+        "scope": 3397,
+        "sourceUnit": 15278,
+        "src": "25:45:41",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 3396,
+        "linearizedBaseContracts": [
+          3396
+        ],
+        "name": "SafeEthTransferMock",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 3354,
+            "name": "transferResult",
+            "nodeType": "VariableDeclaration",
+            "scope": 3396,
+            "src": "107:26:41",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bool",
+              "typeString": "bool"
+            },
+            "typeName": {
+              "id": 3353,
+              "name": "bool",
+              "nodeType": "ElementaryTypeName",
+              "src": "107:4:41",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 3371,
+              "nodeType": "Block",
+              "src": "252:84:41",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 3366,
+                        "name": "receiver",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 3356,
+                        "src": "300:8:41",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 3367,
+                        "name": "amount",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 3358,
+                        "src": "310:6:41",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 3368,
+                        "name": "gasStipend",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 3360,
+                        "src": "318:10:41",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 3363,
+                        "name": "SafeEthTransfer",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 15277,
+                        "src": "262:15:41",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_SafeEthTransfer_$15277_$",
+                          "typeString": "type(library SafeEthTransfer)"
+                        }
+                      },
+                      "id": 3365,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "transferRevertOnError",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 15249,
+                      "src": "262:37:41",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_nonpayable$_t_address_payable_$_t_uint256_$_t_uint256_$returns$__$",
+                        "typeString": "function (address payable,uint256,uint256)"
+                      }
+                    },
+                    "id": 3369,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "262:67:41",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 3370,
+                  "nodeType": "ExpressionStatement",
+                  "src": "262:67:41"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 3372,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "transferRevertOnError",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3361,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3356,
+                  "name": "receiver",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3372,
+                  "src": "171:24:41",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address_payable",
+                    "typeString": "address payable"
+                  },
+                  "typeName": {
+                    "id": 3355,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "171:15:41",
+                    "stateMutability": "payable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address_payable",
+                      "typeString": "address payable"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3358,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3372,
+                  "src": "197:14:41",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3357,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "197:7:41",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3360,
+                  "name": "gasStipend",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3372,
+                  "src": "213:18:41",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3359,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "213:7:41",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "170:62:41"
+            },
+            "returnParameters": {
+              "id": 3362,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "252:0:41"
+            },
+            "scope": 3396,
+            "src": "140:196:41",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 3390,
+              "nodeType": "Block",
+              "src": "453:100:41",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 3388,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 3381,
+                      "name": "transferResult",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 3354,
+                      "src": "463:14:41",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "arguments": [
+                        {
+                          "argumentTypes": null,
+                          "id": 3384,
+                          "name": "receiver",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 3374,
+                          "src": "517:8:41",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address_payable",
+                            "typeString": "address payable"
+                          }
+                        },
+                        {
+                          "argumentTypes": null,
+                          "id": 3385,
+                          "name": "amount",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 3376,
+                          "src": "527:6:41",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        {
+                          "argumentTypes": null,
+                          "id": 3386,
+                          "name": "gasStipend",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 3378,
+                          "src": "535:10:41",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_address_payable",
+                            "typeString": "address payable"
+                          },
+                          {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          },
+                          {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 3382,
+                          "name": "SafeEthTransfer",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 15277,
+                          "src": "480:15:41",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_contract$_SafeEthTransfer_$15277_$",
+                            "typeString": "type(library SafeEthTransfer)"
+                          }
+                        },
+                        "id": 3383,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "transferReturnResult",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 15276,
+                        "src": "480:36:41",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_internal_nonpayable$_t_address_payable_$_t_uint256_$_t_uint256_$returns$_t_bool_$",
+                          "typeString": "function (address payable,uint256,uint256) returns (bool)"
+                        }
+                      },
+                      "id": 3387,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "480:66:41",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "src": "463:83:41",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 3389,
+                  "nodeType": "ExpressionStatement",
+                  "src": "463:83:41"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 3391,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "transferReturnResult",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3379,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3374,
+                  "name": "receiver",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3391,
+                  "src": "372:24:41",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address_payable",
+                    "typeString": "address payable"
+                  },
+                  "typeName": {
+                    "id": 3373,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "372:15:41",
+                    "stateMutability": "payable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address_payable",
+                      "typeString": "address payable"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3376,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3391,
+                  "src": "398:14:41",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3375,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "398:7:41",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3378,
+                  "name": "gasStipend",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3391,
+                  "src": "414:18:41",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3377,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "414:7:41",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "371:62:41"
+            },
+            "returnParameters": {
+              "id": 3380,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "453:0:41"
+            },
+            "scope": 3396,
+            "src": "342:211:41",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 3394,
+              "nodeType": "Block",
+              "src": "678:2:41",
+              "statements": []
+            },
+            "documentation": "helper function to pre-fund the contract to test ",
+            "id": 3395,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setupInitialFundToTestTransfer",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3392,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "658:2:41"
+            },
+            "returnParameters": {
+              "id": 3393,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "678:0:41"
+            },
+            "scope": 3396,
+            "src": "619:61:41",
+            "stateMutability": "payable",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 3397,
+        "src": "72:610:41"
+      }
+    ],
+    "src": "0:683:41"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/SafeEthTransferMock.sol",
+    "exportedSymbols": {
+      "SafeEthTransferMock": [
+        3396
+      ]
+    },
+    "id": 3397,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3351,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:41"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/SafeEthTransfer.sol",
+        "file": "../../src/utils/SafeEthTransfer.sol",
+        "id": 3352,
+        "nodeType": "ImportDirective",
+        "scope": 3397,
+        "sourceUnit": 15278,
+        "src": "25:45:41",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 3396,
+        "linearizedBaseContracts": [
+          3396
+        ],
+        "name": "SafeEthTransferMock",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 3354,
+            "name": "transferResult",
+            "nodeType": "VariableDeclaration",
+            "scope": 3396,
+            "src": "107:26:41",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bool",
+              "typeString": "bool"
+            },
+            "typeName": {
+              "id": 3353,
+              "name": "bool",
+              "nodeType": "ElementaryTypeName",
+              "src": "107:4:41",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              }
+            },
+            "value": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 3371,
+              "nodeType": "Block",
+              "src": "252:84:41",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 3366,
+                        "name": "receiver",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 3356,
+                        "src": "300:8:41",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 3367,
+                        "name": "amount",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 3358,
+                        "src": "310:6:41",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 3368,
+                        "name": "gasStipend",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 3360,
+                        "src": "318:10:41",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 3363,
+                        "name": "SafeEthTransfer",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 15277,
+                        "src": "262:15:41",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_SafeEthTransfer_$15277_$",
+                          "typeString": "type(library SafeEthTransfer)"
+                        }
+                      },
+                      "id": 3365,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "transferRevertOnError",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 15249,
+                      "src": "262:37:41",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_nonpayable$_t_address_payable_$_t_uint256_$_t_uint256_$returns$__$",
+                        "typeString": "function (address payable,uint256,uint256)"
+                      }
+                    },
+                    "id": 3369,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "262:67:41",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 3370,
+                  "nodeType": "ExpressionStatement",
+                  "src": "262:67:41"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 3372,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "transferRevertOnError",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3361,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3356,
+                  "name": "receiver",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3372,
+                  "src": "171:24:41",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address_payable",
+                    "typeString": "address payable"
+                  },
+                  "typeName": {
+                    "id": 3355,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "171:15:41",
+                    "stateMutability": "payable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address_payable",
+                      "typeString": "address payable"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3358,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3372,
+                  "src": "197:14:41",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3357,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "197:7:41",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3360,
+                  "name": "gasStipend",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3372,
+                  "src": "213:18:41",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3359,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "213:7:41",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "170:62:41"
+            },
+            "returnParameters": {
+              "id": 3362,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "252:0:41"
+            },
+            "scope": 3396,
+            "src": "140:196:41",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 3390,
+              "nodeType": "Block",
+              "src": "453:100:41",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 3388,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "argumentTypes": null,
+                      "id": 3381,
+                      "name": "transferResult",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 3354,
+                      "src": "463:14:41",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "argumentTypes": null,
+                      "arguments": [
+                        {
+                          "argumentTypes": null,
+                          "id": 3384,
+                          "name": "receiver",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 3374,
+                          "src": "517:8:41",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address_payable",
+                            "typeString": "address payable"
+                          }
+                        },
+                        {
+                          "argumentTypes": null,
+                          "id": 3385,
+                          "name": "amount",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 3376,
+                          "src": "527:6:41",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        {
+                          "argumentTypes": null,
+                          "id": 3386,
+                          "name": "gasStipend",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 3378,
+                          "src": "535:10:41",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_address_payable",
+                            "typeString": "address payable"
+                          },
+                          {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          },
+                          {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 3382,
+                          "name": "SafeEthTransfer",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 15277,
+                          "src": "480:15:41",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_contract$_SafeEthTransfer_$15277_$",
+                            "typeString": "type(library SafeEthTransfer)"
+                          }
+                        },
+                        "id": 3383,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "transferReturnResult",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 15276,
+                        "src": "480:36:41",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_internal_nonpayable$_t_address_payable_$_t_uint256_$_t_uint256_$returns$_t_bool_$",
+                          "typeString": "function (address payable,uint256,uint256) returns (bool)"
+                        }
+                      },
+                      "id": 3387,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "480:66:41",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "src": "463:83:41",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 3389,
+                  "nodeType": "ExpressionStatement",
+                  "src": "463:83:41"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 3391,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "transferReturnResult",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3379,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3374,
+                  "name": "receiver",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3391,
+                  "src": "372:24:41",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address_payable",
+                    "typeString": "address payable"
+                  },
+                  "typeName": {
+                    "id": 3373,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "372:15:41",
+                    "stateMutability": "payable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address_payable",
+                      "typeString": "address payable"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3376,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3391,
+                  "src": "398:14:41",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3375,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "398:7:41",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 3378,
+                  "name": "gasStipend",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3391,
+                  "src": "414:18:41",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3377,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "414:7:41",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "371:62:41"
+            },
+            "returnParameters": {
+              "id": 3380,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "453:0:41"
+            },
+            "scope": 3396,
+            "src": "342:211:41",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 3394,
+              "nodeType": "Block",
+              "src": "678:2:41",
+              "statements": []
+            },
+            "documentation": "helper function to pre-fund the contract to test ",
+            "id": 3395,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setupInitialFundToTestTransfer",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3392,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "658:2:41"
+            },
+            "returnParameters": {
+              "id": 3393,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "678:0:41"
+            },
+            "scope": 3396,
+            "src": "619:61:41",
+            "stateMutability": "payable",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 3397,
+        "src": "72:610:41"
+      }
+    ],
+    "src": "0:683:41"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.636Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {
+      "setupInitialFundToTestTransfer()": {
+        "notice": "helper function to pre-fund the contract to test "
+      }
+    }
+  }
+}

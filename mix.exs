@@ -23,8 +23,9 @@ defmodule Childchain.MixProject do
 
   defp deps do
     [
-      {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
-      {:dialyxir, "1.0.0", only: [:dev], runtime: false}
+      {:ex_abi, "~> 0.2.1"},
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
   end
 

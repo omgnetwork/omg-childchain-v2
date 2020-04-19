@@ -1,0 +1,1542 @@
+{
+  "contractName": "PosLibWrapper",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint64",
+              "name": "blockNum",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint16",
+              "name": "txIndex",
+              "type": "uint16"
+            },
+            {
+              "internalType": "uint16",
+              "name": "outputIndex",
+              "type": "uint16"
+            }
+          ],
+          "internalType": "struct PosLib.Position",
+          "name": "pos",
+          "type": "tuple"
+        }
+      ],
+      "name": "toStrictTxPos",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint64",
+              "name": "blockNum",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint16",
+              "name": "txIndex",
+              "type": "uint16"
+            },
+            {
+              "internalType": "uint16",
+              "name": "outputIndex",
+              "type": "uint16"
+            }
+          ],
+          "internalType": "struct PosLib.Position",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint64",
+              "name": "blockNum",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint16",
+              "name": "txIndex",
+              "type": "uint16"
+            },
+            {
+              "internalType": "uint16",
+              "name": "outputIndex",
+              "type": "uint16"
+            }
+          ],
+          "internalType": "struct PosLib.Position",
+          "name": "pos",
+          "type": "tuple"
+        }
+      ],
+      "name": "getTxPositionForExitPriority",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint64",
+              "name": "blockNum",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint16",
+              "name": "txIndex",
+              "type": "uint16"
+            },
+            {
+              "internalType": "uint16",
+              "name": "outputIndex",
+              "type": "uint16"
+            }
+          ],
+          "internalType": "struct PosLib.Position",
+          "name": "pos",
+          "type": "tuple"
+        }
+      ],
+      "name": "encode",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "pos",
+          "type": "uint256"
+        }
+      ],
+      "name": "decode",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint64",
+              "name": "blockNum",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint16",
+              "name": "txIndex",
+              "type": "uint16"
+            },
+            {
+              "internalType": "uint16",
+              "name": "outputIndex",
+              "type": "uint16"
+            }
+          ],
+          "internalType": "struct PosLib.Position",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"blockNum\",\"type\":\"uint64\"},{\"internalType\":\"uint16\",\"name\":\"txIndex\",\"type\":\"uint16\"},{\"internalType\":\"uint16\",\"name\":\"outputIndex\",\"type\":\"uint16\"}],\"internalType\":\"struct PosLib.Position\",\"name\":\"pos\",\"type\":\"tuple\"}],\"name\":\"toStrictTxPos\",\"outputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"blockNum\",\"type\":\"uint64\"},{\"internalType\":\"uint16\",\"name\":\"txIndex\",\"type\":\"uint16\"},{\"internalType\":\"uint16\",\"name\":\"outputIndex\",\"type\":\"uint16\"}],\"internalType\":\"struct PosLib.Position\",\"name\":\"\",\"type\":\"tuple\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"blockNum\",\"type\":\"uint64\"},{\"internalType\":\"uint16\",\"name\":\"txIndex\",\"type\":\"uint16\"},{\"internalType\":\"uint16\",\"name\":\"outputIndex\",\"type\":\"uint16\"}],\"internalType\":\"struct PosLib.Position\",\"name\":\"pos\",\"type\":\"tuple\"}],\"name\":\"getTxPositionForExitPriority\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"pos\",\"type\":\"uint256\"}],\"name\":\"decode\",\"outputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"blockNum\",\"type\":\"uint64\"},{\"internalType\":\"uint16\",\"name\":\"txIndex\",\"type\":\"uint16\"},{\"internalType\":\"uint16\",\"name\":\"outputIndex\",\"type\":\"uint16\"}],\"internalType\":\"struct PosLib.Position\",\"name\":\"\",\"type\":\"tuple\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"components\":[{\"internalType\":\"uint64\",\"name\":\"blockNum\",\"type\":\"uint64\"},{\"internalType\":\"uint16\",\"name\":\"txIndex\",\"type\":\"uint16\"},{\"internalType\":\"uint16\",\"name\":\"outputIndex\",\"type\":\"uint16\"}],\"internalType\":\"struct PosLib.Position\",\"name\":\"pos\",\"type\":\"tuple\"}],\"name\":\"encode\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/PosLibWrapper.sol\":\"PosLibWrapper\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/PosLibWrapper.sol\":{\"keccak256\":\"0x3b8abd989582c01fa7c65ed2872dd4a1973119b78d864884db3b408231771ee8\",\"urls\":[\"bzz-raw://5cad4e9eff8e9cd7a0e17390403a071cb5676335b31a386fedf5edb3f8dcaf7e\",\"dweb:/ipfs/QmNxLaKAh77NRTqhAwb49UuXvjqxLvAFVEC6i8nc77kkpV\"]},\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/PosLib.sol\":{\"keccak256\":\"0xd47b38ef93cf913b6b7a3bf608dec2c084108d090cc02b222da3d8eb39819d5f\",\"urls\":[\"bzz-raw://c42d551c21adfa400d08108673b29e4bd1eec70aaa469287571071df3f8f0bc1\",\"dweb:/ipfs/Qmepq632azqUDHt5ypVwmkTfeQG8uP1HYw8x1H3Hdg9K6R\"]},\"openzeppelin-solidity/contracts/math/SafeMath.sol\":{\"keccak256\":\"0x4ccf2d7b51873db1ccfd54ca2adae5eac3b184f9699911ed4490438419f1c690\",\"urls\":[\"bzz-raw://d62d769b2219d5de39013093412623e624fa887f871826ea3bae6052ee893610\",\"dweb:/ipfs/QmV3yVktya1s617QmuzQR2CfuJgUi3dR2xEZY9ecmqZ2G1\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506105ca806100206000396000f3fe608060405234801561001057600080fd5b506004361061004c5760003560e01c8063246ed3f11461005157806352a5e3c21461007a57806361a769001461009a57806372c57e73146100ad575b600080fd5b61006461005f36600461031f565b6100c0565b60405161007191906104fb565b60405180910390f35b61008d61008836600461031f565b6100d7565b6040516100719190610509565b6100646100a8366004610345565b6100e2565b61008d6100bb36600461031f565b6100f3565b6100c8610283565b6100d1826100fe565b92915050565b60006100d182610139565b6100ea610283565b6100d182610155565b60006100d1826101f2565b610106610283565b5060408051606081018252825167ffffffffffffffff16815260209283015161ffff169281019290925260009082015290565b6000612710610147836101f2565b8161014e57fe5b0492915050565b61015d610283565b633b9aca00808304906127109084068190049084066429f16b11c68311156101a05760405162461bcd60e51b8152600401610197906104bb565b60405180910390fd5b61ffff8211156101c25760405162461bcd60e51b8152600401610197906104cb565b6040805160608101825267ffffffffffffffff909416845261ffff92831660208501529116908201529050919050565b6000600161271003826040015161ffff1611156102215760405162461bcd60e51b8152600401610197906104db565b81516429f16b11c667ffffffffffffffff90911611156102535760405162461bcd60e51b8152600401610197906104eb565b5060408101516020820151825167ffffffffffffffff16633b9aca000261ffff9182166127100201911601919050565b604080516060810182526000808252602082018190529181019190915290565b6000606082840312156102b557600080fd5b6102bf6060610517565b905060006102cd8484610314565b82525060206102de848483016102fe565b60208301525060406102f2848285016102fe565b60408301525092915050565b80356100d18161055e565b80356100d181610575565b80356100d18161057e565b60006060828403121561033157600080fd5b600061033d84846102a3565b949350505050565b60006020828403121561035757600080fd5b600061033d8484610309565b600061037060348361053e565b7f626c6f636b4e756d2065786365656473206d61782073697a6520616c6c6f77658152736420696e20506c61736d614672616d65776f726b60601b602082015260400192915050565b60006103c660228361053e565b7f7478496e6465782065786365656473207468652073697a65206f662075696e74815261189b60f11b602082015260400192915050565b600061040a60148361053e565b73092dcecc2d8d2c840deeae8e0eae840d2dcc8caf60631b815260200192915050565b600061043a60148361053e565b7324b73b30b634b210313637b1b590373ab6b132b960611b815260200192915050565b8051606083019061046e84826104b2565b506020820151610481602085018261049a565b506040820151610494604085018261049a565b50505050565b6104a381610547565b82525050565b6104a38161054e565b6104a381610551565b602080825281016100d181610363565b602080825281016100d1816103b9565b602080825281016100d1816103fd565b602080825281016100d18161042d565b606081016100d1828461045d565b602081016100d182846104a9565b60405181810167ffffffffffffffff8111828210171561053657600080fd5b604052919050565b90815260200190565b61ffff1690565b90565b67ffffffffffffffff1690565b61056781610547565b811461057257600080fd5b50565b6105678161054e565b6105678161055156fea365627a7a72315820c1b997403f1a822e1da173bf735eaf40a0847d40d297f1971f1149948de33ccc6c6578706572696d656e74616cf564736f6c634300050b0040",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061004c5760003560e01c8063246ed3f11461005157806352a5e3c21461007a57806361a769001461009a57806372c57e73146100ad575b600080fd5b61006461005f36600461031f565b6100c0565b60405161007191906104fb565b60405180910390f35b61008d61008836600461031f565b6100d7565b6040516100719190610509565b6100646100a8366004610345565b6100e2565b61008d6100bb36600461031f565b6100f3565b6100c8610283565b6100d1826100fe565b92915050565b60006100d182610139565b6100ea610283565b6100d182610155565b60006100d1826101f2565b610106610283565b5060408051606081018252825167ffffffffffffffff16815260209283015161ffff169281019290925260009082015290565b6000612710610147836101f2565b8161014e57fe5b0492915050565b61015d610283565b633b9aca00808304906127109084068190049084066429f16b11c68311156101a05760405162461bcd60e51b8152600401610197906104bb565b60405180910390fd5b61ffff8211156101c25760405162461bcd60e51b8152600401610197906104cb565b6040805160608101825267ffffffffffffffff909416845261ffff92831660208501529116908201529050919050565b6000600161271003826040015161ffff1611156102215760405162461bcd60e51b8152600401610197906104db565b81516429f16b11c667ffffffffffffffff90911611156102535760405162461bcd60e51b8152600401610197906104eb565b5060408101516020820151825167ffffffffffffffff16633b9aca000261ffff9182166127100201911601919050565b604080516060810182526000808252602082018190529181019190915290565b6000606082840312156102b557600080fd5b6102bf6060610517565b905060006102cd8484610314565b82525060206102de848483016102fe565b60208301525060406102f2848285016102fe565b60408301525092915050565b80356100d18161055e565b80356100d181610575565b80356100d18161057e565b60006060828403121561033157600080fd5b600061033d84846102a3565b949350505050565b60006020828403121561035757600080fd5b600061033d8484610309565b600061037060348361053e565b7f626c6f636b4e756d2065786365656473206d61782073697a6520616c6c6f77658152736420696e20506c61736d614672616d65776f726b60601b602082015260400192915050565b60006103c660228361053e565b7f7478496e6465782065786365656473207468652073697a65206f662075696e74815261189b60f11b602082015260400192915050565b600061040a60148361053e565b73092dcecc2d8d2c840deeae8e0eae840d2dcc8caf60631b815260200192915050565b600061043a60148361053e565b7324b73b30b634b210313637b1b590373ab6b132b960611b815260200192915050565b8051606083019061046e84826104b2565b506020820151610481602085018261049a565b506040820151610494604085018261049a565b50505050565b6104a381610547565b82525050565b6104a38161054e565b6104a381610551565b602080825281016100d181610363565b602080825281016100d1816103b9565b602080825281016100d1816103fd565b602080825281016100d18161042d565b606081016100d1828461045d565b602081016100d182846104a9565b60405181810167ffffffffffffffff8111828210171561053657600080fd5b604052919050565b90815260200190565b61ffff1690565b90565b67ffffffffffffffff1690565b61056781610547565b811461057257600080fd5b50565b6105678161054e565b6105678161055156fea365627a7a72315820c1b997403f1a822e1da173bf735eaf40a0847d40d297f1971f1149948de33ccc6c6578706572696d656e74616cf564736f6c634300050b0040",
+  "sourceMap": "97:663:37:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;97:663:37;;;;;;;",
+  "deployedSourceMap": "97:663:37:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;97:663:37;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;165:167;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;338:182;;;;;;;;;:::i;:::-;;;;;;;;642:116;;;;;;;;;:::i;526:110::-;;;;;;;;;:::i;165:167::-;261:22;;:::i;:::-;306:19;:3;:17;:19::i;:::-;299:26;165:167;-1:-1:-1;;165:167:37:o;338:182::-;449:7;479:34;:3;:32;:34::i;642:116::-;692:22;;:::i;:::-;733:18;747:3;733:13;:18::i;526:110::-;591:7;617:12;:3;:10;:12::i;1065:174:93:-;1156:15;;:::i;:::-;-1:-1:-1;1194:38:93;;;;;;;;1203:12;;1194:38;;;;;1217:11;;;;1194:38;;;;;;;;;-1:-1:-1;1194:38:93;;;;;1065:174::o;1403:166::-;1509:7;464:5;1539:11;1546:3;1539:6;:11::i;:::-;:23;;;;;;;1403:166;-1:-1:-1;;1403:166:93:o;2150:491::-;2202:15;;:::i;:::-;410:10;2248:18;;;;464:5;2295:18;;;2294:32;;;;2364:15;;805:59;2399:25;;;2391:90;;;;-1:-1:-1;;;2391:90:93;;;;;;;;;;;;;;;;;666:11;2499:7;:23;;2491:70;;;;-1:-1:-1;;;2491:70:93;;;;;;;;;2578:56;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;2150:491:93;;;:::o;1698:315::-;1758:7;537:1;464:5;525:13;1785:3;:15;;;:35;;;;1777:68;;;;-1:-1:-1;;;1777:68:93;;;;;;;;;1863:12;;805:59;1863:29;;;;;;1855:62;;;;-1:-1:-1;;;1855:62:93;;;;;;;;;-1:-1:-1;1991:15:93;;;;1965:11;;;;1935:12;;:27;;410:10;1935:27;:71;1965:23;;;464:5;1965:23;1935:53;:71;;;1698:315;;;:::o;97:663:37:-;;;;;;;;;-1:-1:-1;97:663:37;;;;;;;;;;;;;;;;;:::o;34:623:-1:-;;150:4;138:9;133:3;129:19;125:30;122:2;;;168:1;165;158:12;122:2;186:20;201:4;186:20;;;177:29;-1:-1;260:1;291:48;335:3;315:9;291:48;;;267:73;;-1:-1;404:2;437:48;481:3;457:22;;;437:48;;;430:4;423:5;419:16;412:74;361:136;554:2;587:48;631:3;622:6;611:9;607:22;587:48;;;580:4;573:5;569:16;562:74;507:140;116:541;;;;;664:128;730:20;;755:32;730:20;755:32;;799:130;866:20;;891:33;866:20;891:33;;936:128;1002:20;;1027:32;1002:20;1027:32;;1071:295;;1202:2;1190:9;1181:7;1177:23;1173:32;1170:2;;;1218:1;1215;1208:12;1170:2;1253:1;1270:80;1342:7;1322:9;1270:80;;;1260:90;1164:202;-1:-1;;;;1164:202;1373:241;;1477:2;1465:9;1456:7;1452:23;1448:32;1445:2;;;1493:1;1490;1483:12;1445:2;1528:1;1545:53;1590:7;1570:9;1545:53;;1622:465;;1782:67;1846:2;1841:3;1782:67;;;1882:66;1862:87;;-1:-1;;;1978:2;1969:12;;1962:88;2078:2;2069:12;;1768:319;-1:-1;;1768:319;2096:465;;2256:67;2320:2;2315:3;2256:67;;;2356:66;2336:87;;-1:-1;;;2452:2;2443:12;;2436:88;2552:2;2543:12;;2242:319;-1:-1;;2242:319;2570:364;;2730:67;2794:2;2789:3;2730:67;;;-1:-1;;;2810:87;;2925:2;2916:12;;2716:218;-1:-1;;2716:218;2943:364;;3103:67;3167:2;3162:3;3103:67;;;-1:-1;;;3183:87;;3298:2;3289:12;;3089:218;-1:-1;;3089:218;3370:640;3587:22;;3517:4;3508:14;;;3615:60;3512:3;3587:22;3615:60;;;3537:144;3757:4;3750:5;3746:16;3740:23;3769:61;3824:4;3819:3;3815:14;3801:12;3769:61;;;3691:145;3916:4;3909:5;3905:16;3899:23;3928:61;3983:4;3978:3;3974:14;3960:12;3928:61;;;3846:149;3490:520;;;;4017:100;4088:23;4105:5;4088:23;;;4083:3;4076:36;4070:47;;;4124:113;4207:24;4225:5;4207:24;;4244:100;4315:23;4332:5;4315:23;;4351:407;4542:2;4556:47;;;4527:18;;4617:131;4527:18;4617:131;;4765:407;4956:2;4970:47;;;4941:18;;5031:131;4941:18;5031:131;;5179:407;5370:2;5384:47;;;5355:18;;5445:131;5355:18;5445:131;;5593:407;5784:2;5798:47;;;5769:18;;5859:131;5769:18;5859:131;;6007:321;6179:2;6164:18;;6193:125;6168:9;6291:6;6193:125;;6335:213;6453:2;6438:18;;6467:71;6442:9;6511:6;6467:71;;6555:256;6617:2;6611:9;6643:17;;;6718:18;6703:34;;6739:22;;;6700:62;6697:2;;;6775:1;6772;6765:12;6697:2;6791;6784:22;6595:216;;-1:-1;6595:216;6819:163;6922:19;;;6971:4;6962:14;;6915:67;6990:84;7062:6;7051:18;;7034:40;7081:72;7143:5;7126:27;7160:96;7232:18;7221:30;;7204:52;7263:115;7331:23;7348:5;7331:23;;;7324:5;7321:34;7311:2;;7369:1;7366;7359:12;7311:2;7305:73;;7385:117;7454:24;7472:5;7454:24;;7509:115;7577:23;7594:5;7577:23;",
+  "source": "pragma solidity 0.5.11;\npragma experimental ABIEncoderV2;\n\nimport \"../../src/utils/PosLib.sol\";\n\ncontract PosLibWrapper {\n    using PosLib for PosLib.Position;\n\n    function toStrictTxPos(PosLib.Position memory pos)\n        public\n        pure\n        returns (PosLib.Position memory)\n    {\n        return pos.toStrictTxPos();\n    }\n\n    function getTxPositionForExitPriority(PosLib.Position memory pos)\n        public\n        pure\n        returns (uint256)\n    {\n        return pos.getTxPositionForExitPriority();\n    }\n\n    function encode(PosLib.Position memory pos) public pure returns (uint256) {\n        return pos.encode();\n    }\n\n    function decode(uint256 pos) public pure returns (PosLib.Position memory) {\n        return PosLib.decode(pos);\n    }\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/PosLibWrapper.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/PosLibWrapper.sol",
+    "exportedSymbols": {
+      "PosLibWrapper": [
+        2886
+      ]
+    },
+    "id": 2887,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2831,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:37"
+      },
+      {
+        "id": 2832,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "24:33:37"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/PosLib.sol",
+        "file": "../../src/utils/PosLib.sol",
+        "id": 2833,
+        "nodeType": "ImportDirective",
+        "scope": 2887,
+        "sourceUnit": 14622,
+        "src": "59:36:37",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 2886,
+        "linearizedBaseContracts": [
+          2886
+        ],
+        "name": "PosLibWrapper",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "id": 2836,
+            "libraryName": {
+              "contractScope": null,
+              "id": 2834,
+              "name": "PosLib",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 14621,
+              "src": "132:6:37",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_PosLib_$14621",
+                "typeString": "library PosLib"
+              }
+            },
+            "nodeType": "UsingForDirective",
+            "src": "126:33:37",
+            "typeName": {
+              "contractScope": null,
+              "id": 2835,
+              "name": "PosLib.Position",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 14464,
+              "src": "143:15:37",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_Position_$14464_storage_ptr",
+                "typeString": "struct PosLib.Position"
+              }
+            }
+          },
+          {
+            "body": {
+              "id": 2847,
+              "nodeType": "Block",
+              "src": "289:43:37",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 2843,
+                        "name": "pos",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2838,
+                        "src": "306:3:37",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                          "typeString": "struct PosLib.Position memory"
+                        }
+                      },
+                      "id": 2844,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "toStrictTxPos",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 14514,
+                      "src": "306:17:37",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_struct$_Position_$14464_memory_ptr_$returns$_t_struct$_Position_$14464_memory_ptr_$bound_to$_t_struct$_Position_$14464_memory_ptr_$",
+                        "typeString": "function (struct PosLib.Position memory) pure returns (struct PosLib.Position memory)"
+                      }
+                    },
+                    "id": 2845,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "306:19:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                      "typeString": "struct PosLib.Position memory"
+                    }
+                  },
+                  "functionReturnParameters": 2842,
+                  "id": 2846,
+                  "nodeType": "Return",
+                  "src": "299:26:37"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2848,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "toStrictTxPos",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2839,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2838,
+                  "name": "pos",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2848,
+                  "src": "188:26:37",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                    "typeString": "struct PosLib.Position"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 2837,
+                    "name": "PosLib.Position",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 14464,
+                    "src": "188:15:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$14464_storage_ptr",
+                      "typeString": "struct PosLib.Position"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "187:28:37"
+            },
+            "returnParameters": {
+              "id": 2842,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2841,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2848,
+                  "src": "261:22:37",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                    "typeString": "struct PosLib.Position"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 2840,
+                    "name": "PosLib.Position",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 14464,
+                    "src": "261:15:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$14464_storage_ptr",
+                      "typeString": "struct PosLib.Position"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "260:24:37"
+            },
+            "scope": 2886,
+            "src": "165:167:37",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2859,
+              "nodeType": "Block",
+              "src": "462:58:37",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 2855,
+                        "name": "pos",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2850,
+                        "src": "479:3:37",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                          "typeString": "struct PosLib.Position memory"
+                        }
+                      },
+                      "id": 2856,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "getTxPositionForExitPriority",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 14528,
+                      "src": "479:32:37",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_struct$_Position_$14464_memory_ptr_$returns$_t_uint256_$bound_to$_t_struct$_Position_$14464_memory_ptr_$",
+                        "typeString": "function (struct PosLib.Position memory) pure returns (uint256)"
+                      }
+                    },
+                    "id": 2857,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "479:34:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 2854,
+                  "id": 2858,
+                  "nodeType": "Return",
+                  "src": "472:41:37"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2860,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getTxPositionForExitPriority",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2851,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2850,
+                  "name": "pos",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2860,
+                  "src": "376:26:37",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                    "typeString": "struct PosLib.Position"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 2849,
+                    "name": "PosLib.Position",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 14464,
+                    "src": "376:15:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$14464_storage_ptr",
+                      "typeString": "struct PosLib.Position"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "375:28:37"
+            },
+            "returnParameters": {
+              "id": 2854,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2853,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2860,
+                  "src": "449:7:37",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 2852,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "449:7:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "448:9:37"
+            },
+            "scope": 2886,
+            "src": "338:182:37",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2871,
+              "nodeType": "Block",
+              "src": "600:36:37",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 2867,
+                        "name": "pos",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2862,
+                        "src": "617:3:37",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                          "typeString": "struct PosLib.Position memory"
+                        }
+                      },
+                      "id": 2868,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "encode",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 14565,
+                      "src": "617:10:37",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_struct$_Position_$14464_memory_ptr_$returns$_t_uint256_$bound_to$_t_struct$_Position_$14464_memory_ptr_$",
+                        "typeString": "function (struct PosLib.Position memory) pure returns (uint256)"
+                      }
+                    },
+                    "id": 2869,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "617:12:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 2866,
+                  "id": 2870,
+                  "nodeType": "Return",
+                  "src": "610:19:37"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2872,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "encode",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2863,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2862,
+                  "name": "pos",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2872,
+                  "src": "542:26:37",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                    "typeString": "struct PosLib.Position"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 2861,
+                    "name": "PosLib.Position",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 14464,
+                    "src": "542:15:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$14464_storage_ptr",
+                      "typeString": "struct PosLib.Position"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "541:28:37"
+            },
+            "returnParameters": {
+              "id": 2866,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2865,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2872,
+                  "src": "591:7:37",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 2864,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "591:7:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "590:9:37"
+            },
+            "scope": 2886,
+            "src": "526:110:37",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2884,
+              "nodeType": "Block",
+              "src": "716:42:37",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 2881,
+                        "name": "pos",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2874,
+                        "src": "747:3:37",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 2879,
+                        "name": "PosLib",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 14621,
+                        "src": "733:6:37",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_PosLib_$14621_$",
+                          "typeString": "type(library PosLib)"
+                        }
+                      },
+                      "id": 2880,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "decode",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 14620,
+                      "src": "733:13:37",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_uint256_$returns$_t_struct$_Position_$14464_memory_ptr_$",
+                        "typeString": "function (uint256) pure returns (struct PosLib.Position memory)"
+                      }
+                    },
+                    "id": 2882,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "733:18:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                      "typeString": "struct PosLib.Position memory"
+                    }
+                  },
+                  "functionReturnParameters": 2878,
+                  "id": 2883,
+                  "nodeType": "Return",
+                  "src": "726:25:37"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2885,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "decode",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2875,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2874,
+                  "name": "pos",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2885,
+                  "src": "658:11:37",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 2873,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "658:7:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "657:13:37"
+            },
+            "returnParameters": {
+              "id": 2878,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2877,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2885,
+                  "src": "692:22:37",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                    "typeString": "struct PosLib.Position"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 2876,
+                    "name": "PosLib.Position",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 14464,
+                    "src": "692:15:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$14464_storage_ptr",
+                      "typeString": "struct PosLib.Position"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "691:24:37"
+            },
+            "scope": 2886,
+            "src": "642:116:37",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 2887,
+        "src": "97:663:37"
+      }
+    ],
+    "src": "0:761:37"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/mocks/utils/PosLibWrapper.sol",
+    "exportedSymbols": {
+      "PosLibWrapper": [
+        2886
+      ]
+    },
+    "id": 2887,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2831,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:37"
+      },
+      {
+        "id": 2832,
+        "literals": [
+          "experimental",
+          "ABIEncoderV2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "24:33:37"
+      },
+      {
+        "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/PosLib.sol",
+        "file": "../../src/utils/PosLib.sol",
+        "id": 2833,
+        "nodeType": "ImportDirective",
+        "scope": 2887,
+        "sourceUnit": 14622,
+        "src": "59:36:37",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 2886,
+        "linearizedBaseContracts": [
+          2886
+        ],
+        "name": "PosLibWrapper",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "id": 2836,
+            "libraryName": {
+              "contractScope": null,
+              "id": 2834,
+              "name": "PosLib",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 14621,
+              "src": "132:6:37",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_PosLib_$14621",
+                "typeString": "library PosLib"
+              }
+            },
+            "nodeType": "UsingForDirective",
+            "src": "126:33:37",
+            "typeName": {
+              "contractScope": null,
+              "id": 2835,
+              "name": "PosLib.Position",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 14464,
+              "src": "143:15:37",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_Position_$14464_storage_ptr",
+                "typeString": "struct PosLib.Position"
+              }
+            }
+          },
+          {
+            "body": {
+              "id": 2847,
+              "nodeType": "Block",
+              "src": "289:43:37",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 2843,
+                        "name": "pos",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2838,
+                        "src": "306:3:37",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                          "typeString": "struct PosLib.Position memory"
+                        }
+                      },
+                      "id": 2844,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "toStrictTxPos",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 14514,
+                      "src": "306:17:37",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_struct$_Position_$14464_memory_ptr_$returns$_t_struct$_Position_$14464_memory_ptr_$bound_to$_t_struct$_Position_$14464_memory_ptr_$",
+                        "typeString": "function (struct PosLib.Position memory) pure returns (struct PosLib.Position memory)"
+                      }
+                    },
+                    "id": 2845,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "306:19:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                      "typeString": "struct PosLib.Position memory"
+                    }
+                  },
+                  "functionReturnParameters": 2842,
+                  "id": 2846,
+                  "nodeType": "Return",
+                  "src": "299:26:37"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2848,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "toStrictTxPos",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2839,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2838,
+                  "name": "pos",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2848,
+                  "src": "188:26:37",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                    "typeString": "struct PosLib.Position"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 2837,
+                    "name": "PosLib.Position",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 14464,
+                    "src": "188:15:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$14464_storage_ptr",
+                      "typeString": "struct PosLib.Position"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "187:28:37"
+            },
+            "returnParameters": {
+              "id": 2842,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2841,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2848,
+                  "src": "261:22:37",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                    "typeString": "struct PosLib.Position"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 2840,
+                    "name": "PosLib.Position",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 14464,
+                    "src": "261:15:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$14464_storage_ptr",
+                      "typeString": "struct PosLib.Position"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "260:24:37"
+            },
+            "scope": 2886,
+            "src": "165:167:37",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2859,
+              "nodeType": "Block",
+              "src": "462:58:37",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 2855,
+                        "name": "pos",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2850,
+                        "src": "479:3:37",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                          "typeString": "struct PosLib.Position memory"
+                        }
+                      },
+                      "id": 2856,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "getTxPositionForExitPriority",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 14528,
+                      "src": "479:32:37",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_struct$_Position_$14464_memory_ptr_$returns$_t_uint256_$bound_to$_t_struct$_Position_$14464_memory_ptr_$",
+                        "typeString": "function (struct PosLib.Position memory) pure returns (uint256)"
+                      }
+                    },
+                    "id": 2857,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "479:34:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 2854,
+                  "id": 2858,
+                  "nodeType": "Return",
+                  "src": "472:41:37"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2860,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getTxPositionForExitPriority",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2851,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2850,
+                  "name": "pos",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2860,
+                  "src": "376:26:37",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                    "typeString": "struct PosLib.Position"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 2849,
+                    "name": "PosLib.Position",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 14464,
+                    "src": "376:15:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$14464_storage_ptr",
+                      "typeString": "struct PosLib.Position"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "375:28:37"
+            },
+            "returnParameters": {
+              "id": 2854,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2853,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2860,
+                  "src": "449:7:37",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 2852,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "449:7:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "448:9:37"
+            },
+            "scope": 2886,
+            "src": "338:182:37",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2871,
+              "nodeType": "Block",
+              "src": "600:36:37",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 2867,
+                        "name": "pos",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2862,
+                        "src": "617:3:37",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                          "typeString": "struct PosLib.Position memory"
+                        }
+                      },
+                      "id": 2868,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "encode",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 14565,
+                      "src": "617:10:37",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_struct$_Position_$14464_memory_ptr_$returns$_t_uint256_$bound_to$_t_struct$_Position_$14464_memory_ptr_$",
+                        "typeString": "function (struct PosLib.Position memory) pure returns (uint256)"
+                      }
+                    },
+                    "id": 2869,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "617:12:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 2866,
+                  "id": 2870,
+                  "nodeType": "Return",
+                  "src": "610:19:37"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2872,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "encode",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2863,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2862,
+                  "name": "pos",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2872,
+                  "src": "542:26:37",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                    "typeString": "struct PosLib.Position"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 2861,
+                    "name": "PosLib.Position",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 14464,
+                    "src": "542:15:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$14464_storage_ptr",
+                      "typeString": "struct PosLib.Position"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "541:28:37"
+            },
+            "returnParameters": {
+              "id": 2866,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2865,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2872,
+                  "src": "591:7:37",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 2864,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "591:7:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "590:9:37"
+            },
+            "scope": 2886,
+            "src": "526:110:37",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 2884,
+              "nodeType": "Block",
+              "src": "716:42:37",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 2881,
+                        "name": "pos",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 2874,
+                        "src": "747:3:37",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 2879,
+                        "name": "PosLib",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 14621,
+                        "src": "733:6:37",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_PosLib_$14621_$",
+                          "typeString": "type(library PosLib)"
+                        }
+                      },
+                      "id": 2880,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "decode",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 14620,
+                      "src": "733:13:37",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_pure$_t_uint256_$returns$_t_struct$_Position_$14464_memory_ptr_$",
+                        "typeString": "function (uint256) pure returns (struct PosLib.Position memory)"
+                      }
+                    },
+                    "id": 2882,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "733:18:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                      "typeString": "struct PosLib.Position memory"
+                    }
+                  },
+                  "functionReturnParameters": 2878,
+                  "id": 2883,
+                  "nodeType": "Return",
+                  "src": "726:25:37"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 2885,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "decode",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2875,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2874,
+                  "name": "pos",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2885,
+                  "src": "658:11:37",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 2873,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "658:7:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "657:13:37"
+            },
+            "returnParameters": {
+              "id": 2878,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2877,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2885,
+                  "src": "692:22:37",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Position_$14464_memory_ptr",
+                    "typeString": "struct PosLib.Position"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 2876,
+                    "name": "PosLib.Position",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 14464,
+                    "src": "692:15:37",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Position_$14464_storage_ptr",
+                      "typeString": "struct PosLib.Position"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "691:24:37"
+            },
+            "scope": 2886,
+            "src": "642:116:37",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 2887,
+        "src": "97:663:37"
+      }
+    ],
+    "src": "0:761:37"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.617Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

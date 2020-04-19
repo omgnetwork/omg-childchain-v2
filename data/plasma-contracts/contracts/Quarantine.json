@@ -1,0 +1,2154 @@
+{
+  "contractName": "Quarantine",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"details\":\"The immunitiesRemaining member allows deployment to the platform with some pre-verified contracts that don't get quarantined\",\"methods\":{}},\"userdoc\":{\"methods\":{},\"notice\":\"Provides a way to quarantine (disable) contracts for a specified period of time\"}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/Quarantine.sol\":\"Quarantine\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/Quarantine.sol\":{\"keccak256\":\"0x1b685ea3de626e3d8961d0e384a67c3e87752874784cc2e59777857d130f2390\",\"urls\":[\"bzz-raw://28c30354aa580476f230c4d8e151d34337b923caabc6bccfe560d75ef37d446e\",\"dweb:/ipfs/Qmf9nCYFBhHDyMgHmxX5pSkqLpqb2W3XffPopdkJTHmnAA\"]}},\"version\":1}",
+  "bytecode": "0x60556023600b82828239805160001a607314601657fe5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a72315820fa547d59a104de83589144299644bd3d83ce0dadba23ba9377e01ecf0e81f7e464736f6c634300050b0032",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a72315820fa547d59a104de83589144299644bd3d83ce0dadba23ba9377e01ecf0e81f7e464736f6c634300050b0032",
+  "sourceMap": "260:1003:83:-;;132:2:-1;166:7;155:9;146:7;137:37;255:7;249:14;246:1;241:23;235:4;232:33;222:2;;269:9;222:2;293:9;290:1;283:20;323:4;314:7;306:22;347:7;338;331:24",
+  "deployedSourceMap": "260:1003:83:-;;;;;;;;",
+  "source": "pragma solidity 0.5.11;\n\n/**\n * @notice Provides a way to quarantine (disable) contracts for a specified period of time\n * @dev The immunitiesRemaining member allows deployment to the platform with some\n * pre-verified contracts that don't get quarantined\n */\nlibrary Quarantine {\n    struct Data {\n        mapping(address => uint256) store;\n        uint256 quarantinePeriod;\n        uint256 immunitiesRemaining;\n    }\n\n    /**\n     * @notice Checks whether a contract is quarantined\n     */\n    function isQuarantined(Data storage _self, address _contractAddress) internal view returns (bool) {\n        return block.timestamp < _self.store[_contractAddress];\n    }\n\n    /**\n     * @notice Places a contract into quarantine\n     * @param _contractAddress The address of the contract\n     */\n    function quarantine(Data storage _self, address _contractAddress) internal {\n        require(_contractAddress != address(0), \"An empty address cannot be quarantined\");\n        require(_self.store[_contractAddress] == 0, \"The contract is already quarantined\");\n\n        if (_self.immunitiesRemaining == 0) {\n            _self.store[_contractAddress] = block.timestamp + _self.quarantinePeriod;\n        } else {\n            _self.immunitiesRemaining--;\n        }\n    }\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/Quarantine.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/Quarantine.sol",
+    "exportedSymbols": {
+      "Quarantine": [
+        13297
+      ]
+    },
+    "id": 13298,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 13218,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:83"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": "@notice Provides a way to quarantine (disable) contracts for a specified period of time\n@dev The immunitiesRemaining member allows deployment to the platform with some\npre-verified contracts that don't get quarantined",
+        "fullyImplemented": true,
+        "id": 13297,
+        "linearizedBaseContracts": [
+          13297
+        ],
+        "name": "Quarantine",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "Quarantine.Data",
+            "id": 13227,
+            "members": [
+              {
+                "constant": false,
+                "id": 13222,
+                "name": "store",
+                "nodeType": "VariableDeclaration",
+                "scope": 13227,
+                "src": "307:33:83",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_mapping$_t_address_$_t_uint256_$",
+                  "typeString": "mapping(address => uint256)"
+                },
+                "typeName": {
+                  "id": 13221,
+                  "keyType": {
+                    "id": 13219,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "315:7:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "nodeType": "Mapping",
+                  "src": "307:27:83",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_mapping$_t_address_$_t_uint256_$",
+                    "typeString": "mapping(address => uint256)"
+                  },
+                  "valueType": {
+                    "id": 13220,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "326:7:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 13224,
+                "name": "quarantinePeriod",
+                "nodeType": "VariableDeclaration",
+                "scope": 13227,
+                "src": "350:24:83",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 13223,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "350:7:83",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 13226,
+                "name": "immunitiesRemaining",
+                "nodeType": "VariableDeclaration",
+                "scope": 13227,
+                "src": "384:27:83",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 13225,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "384:7:83",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "Data",
+            "nodeType": "StructDefinition",
+            "scope": 13297,
+            "src": "285:133:83",
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 13244,
+              "nodeType": "Block",
+              "src": "594:71:83",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 13242,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 13236,
+                        "name": "block",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 17439,
+                        "src": "611:5:83",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_magic_block",
+                          "typeString": "block"
+                        }
+                      },
+                      "id": 13237,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "timestamp",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": null,
+                      "src": "611:15:83",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "<",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "baseExpression": {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 13238,
+                          "name": "_self",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 13229,
+                          "src": "629:5:83",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                            "typeString": "struct Quarantine.Data storage pointer"
+                          }
+                        },
+                        "id": 13239,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "store",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 13222,
+                        "src": "629:11:83",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_mapping$_t_address_$_t_uint256_$",
+                          "typeString": "mapping(address => uint256)"
+                        }
+                      },
+                      "id": 13241,
+                      "indexExpression": {
+                        "argumentTypes": null,
+                        "id": 13240,
+                        "name": "_contractAddress",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 13231,
+                        "src": "641:16:83",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "nodeType": "IndexAccess",
+                      "src": "629:29:83",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "611:47:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "functionReturnParameters": 13235,
+                  "id": 13243,
+                  "nodeType": "Return",
+                  "src": "604:54:83"
+                }
+              ]
+            },
+            "documentation": "@notice Checks whether a contract is quarantined",
+            "id": 13245,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isQuarantined",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 13232,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 13229,
+                  "name": "_self",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 13245,
+                  "src": "519:18:83",
+                  "stateVariable": false,
+                  "storageLocation": "storage",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                    "typeString": "struct Quarantine.Data"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 13228,
+                    "name": "Data",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 13227,
+                    "src": "519:4:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                      "typeString": "struct Quarantine.Data"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 13231,
+                  "name": "_contractAddress",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 13245,
+                  "src": "539:24:83",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 13230,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "539:7:83",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "518:46:83"
+            },
+            "returnParameters": {
+              "id": 13235,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 13234,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 13245,
+                  "src": "588:4:83",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 13233,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "588:4:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "587:6:83"
+            },
+            "scope": 13297,
+            "src": "496:169:83",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 13295,
+              "nodeType": "Block",
+              "src": "870:391:83",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "id": 13257,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "id": 13253,
+                          "name": "_contractAddress",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 13249,
+                          "src": "888:16:83",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "!=",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "30",
+                              "id": 13255,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "number",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "916:1:83",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              },
+                              "value": "0"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              }
+                            ],
+                            "id": 13254,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "lValueRequested": false,
+                            "nodeType": "ElementaryTypeNameExpression",
+                            "src": "908:7:83",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_type$_t_address_$",
+                              "typeString": "type(address)"
+                            },
+                            "typeName": "address"
+                          },
+                          "id": 13256,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "typeConversion",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "908:10:83",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address_payable",
+                            "typeString": "address payable"
+                          }
+                        },
+                        "src": "888:30:83",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "416e20656d70747920616464726573732063616e6e6f742062652071756172616e74696e6564",
+                        "id": 13258,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "920:40:83",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_a335d3bf78cbdf398537cfbde57d4fa15c3a210c0114e85156deeeb5458568f0",
+                          "typeString": "literal_string \"An empty address cannot be quarantined\""
+                        },
+                        "value": "An empty address cannot be quarantined"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_a335d3bf78cbdf398537cfbde57d4fa15c3a210c0114e85156deeeb5458568f0",
+                          "typeString": "literal_string \"An empty address cannot be quarantined\""
+                        }
+                      ],
+                      "id": 13252,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "880:7:83",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 13259,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "880:81:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 13260,
+                  "nodeType": "ExpressionStatement",
+                  "src": "880:81:83"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "id": 13267,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "baseExpression": {
+                            "argumentTypes": null,
+                            "expression": {
+                              "argumentTypes": null,
+                              "id": 13262,
+                              "name": "_self",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 13247,
+                              "src": "979:5:83",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                                "typeString": "struct Quarantine.Data storage pointer"
+                              }
+                            },
+                            "id": 13263,
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "store",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 13222,
+                            "src": "979:11:83",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_mapping$_t_address_$_t_uint256_$",
+                              "typeString": "mapping(address => uint256)"
+                            }
+                          },
+                          "id": 13265,
+                          "indexExpression": {
+                            "argumentTypes": null,
+                            "id": 13264,
+                            "name": "_contractAddress",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 13249,
+                            "src": "991:16:83",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_address",
+                              "typeString": "address"
+                            }
+                          },
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "IndexAccess",
+                          "src": "979:29:83",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "==",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "hexValue": "30",
+                          "id": 13266,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "number",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "1012:1:83",
+                          "subdenomination": null,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_rational_0_by_1",
+                            "typeString": "int_const 0"
+                          },
+                          "value": "0"
+                        },
+                        "src": "979:34:83",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "54686520636f6e747261637420697320616c72656164792071756172616e74696e6564",
+                        "id": 13268,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1015:37:83",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_58ebe9ca33fe79ca122b9914e6d0b3cc909e780d0f82324e7cee676341565f1b",
+                          "typeString": "literal_string \"The contract is already quarantined\""
+                        },
+                        "value": "The contract is already quarantined"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_58ebe9ca33fe79ca122b9914e6d0b3cc909e780d0f82324e7cee676341565f1b",
+                          "typeString": "literal_string \"The contract is already quarantined\""
+                        }
+                      ],
+                      "id": 13261,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "971:7:83",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 13269,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "971:82:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 13270,
+                  "nodeType": "ExpressionStatement",
+                  "src": "971:82:83"
+                },
+                {
+                  "condition": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 13274,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 13271,
+                        "name": "_self",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 13247,
+                        "src": "1068:5:83",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                          "typeString": "struct Quarantine.Data storage pointer"
+                        }
+                      },
+                      "id": 13272,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "immunitiesRemaining",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 13226,
+                      "src": "1068:25:83",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "==",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "hexValue": "30",
+                      "id": 13273,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1097:1:83",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_0_by_1",
+                        "typeString": "int_const 0"
+                      },
+                      "value": "0"
+                    },
+                    "src": "1068:30:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "falseBody": {
+                    "id": 13293,
+                    "nodeType": "Block",
+                    "src": "1203:52:83",
+                    "statements": [
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 13291,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "UnaryOperation",
+                          "operator": "--",
+                          "prefix": false,
+                          "src": "1217:27:83",
+                          "subExpression": {
+                            "argumentTypes": null,
+                            "expression": {
+                              "argumentTypes": null,
+                              "id": 13288,
+                              "name": "_self",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 13247,
+                              "src": "1217:5:83",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                                "typeString": "struct Quarantine.Data storage pointer"
+                              }
+                            },
+                            "id": 13290,
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": true,
+                            "memberName": "immunitiesRemaining",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 13226,
+                            "src": "1217:25:83",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "id": 13292,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1217:27:83"
+                      }
+                    ]
+                  },
+                  "id": 13294,
+                  "nodeType": "IfStatement",
+                  "src": "1064:191:83",
+                  "trueBody": {
+                    "id": 13287,
+                    "nodeType": "Block",
+                    "src": "1100:97:83",
+                    "statements": [
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 13285,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "leftHandSide": {
+                            "argumentTypes": null,
+                            "baseExpression": {
+                              "argumentTypes": null,
+                              "expression": {
+                                "argumentTypes": null,
+                                "id": 13275,
+                                "name": "_self",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 13247,
+                                "src": "1114:5:83",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                                  "typeString": "struct Quarantine.Data storage pointer"
+                                }
+                              },
+                              "id": 13278,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberName": "store",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 13222,
+                              "src": "1114:11:83",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_mapping$_t_address_$_t_uint256_$",
+                                "typeString": "mapping(address => uint256)"
+                              }
+                            },
+                            "id": 13279,
+                            "indexExpression": {
+                              "argumentTypes": null,
+                              "id": 13277,
+                              "name": "_contractAddress",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 13249,
+                              "src": "1126:16:83",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                              }
+                            },
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": true,
+                            "nodeType": "IndexAccess",
+                            "src": "1114:29:83",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "nodeType": "Assignment",
+                          "operator": "=",
+                          "rightHandSide": {
+                            "argumentTypes": null,
+                            "commonType": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            },
+                            "id": 13284,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "leftExpression": {
+                              "argumentTypes": null,
+                              "expression": {
+                                "argumentTypes": null,
+                                "id": 13280,
+                                "name": "block",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 17439,
+                                "src": "1146:5:83",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_magic_block",
+                                  "typeString": "block"
+                                }
+                              },
+                              "id": 13281,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberName": "timestamp",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": null,
+                              "src": "1146:15:83",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "+",
+                            "rightExpression": {
+                              "argumentTypes": null,
+                              "expression": {
+                                "argumentTypes": null,
+                                "id": 13282,
+                                "name": "_self",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 13247,
+                                "src": "1164:5:83",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                                  "typeString": "struct Quarantine.Data storage pointer"
+                                }
+                              },
+                              "id": 13283,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberName": "quarantinePeriod",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 13224,
+                              "src": "1164:22:83",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "src": "1146:40:83",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "src": "1114:72:83",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "id": 13286,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1114:72:83"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "documentation": "@notice Places a contract into quarantine\n@param _contractAddress The address of the contract",
+            "id": 13296,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "quarantine",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 13250,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 13247,
+                  "name": "_self",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 13296,
+                  "src": "815:18:83",
+                  "stateVariable": false,
+                  "storageLocation": "storage",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                    "typeString": "struct Quarantine.Data"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 13246,
+                    "name": "Data",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 13227,
+                    "src": "815:4:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                      "typeString": "struct Quarantine.Data"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 13249,
+                  "name": "_contractAddress",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 13296,
+                  "src": "835:24:83",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 13248,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "835:7:83",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "814:46:83"
+            },
+            "returnParameters": {
+              "id": 13251,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "870:0:83"
+            },
+            "scope": 13297,
+            "src": "795:466:83",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 13298,
+        "src": "260:1003:83"
+      }
+    ],
+    "src": "0:1264:83"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/framework/utils/Quarantine.sol",
+    "exportedSymbols": {
+      "Quarantine": [
+        13297
+      ]
+    },
+    "id": 13298,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 13218,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:83"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": "@notice Provides a way to quarantine (disable) contracts for a specified period of time\n@dev The immunitiesRemaining member allows deployment to the platform with some\npre-verified contracts that don't get quarantined",
+        "fullyImplemented": true,
+        "id": 13297,
+        "linearizedBaseContracts": [
+          13297
+        ],
+        "name": "Quarantine",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "Quarantine.Data",
+            "id": 13227,
+            "members": [
+              {
+                "constant": false,
+                "id": 13222,
+                "name": "store",
+                "nodeType": "VariableDeclaration",
+                "scope": 13227,
+                "src": "307:33:83",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_mapping$_t_address_$_t_uint256_$",
+                  "typeString": "mapping(address => uint256)"
+                },
+                "typeName": {
+                  "id": 13221,
+                  "keyType": {
+                    "id": 13219,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "315:7:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "nodeType": "Mapping",
+                  "src": "307:27:83",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_mapping$_t_address_$_t_uint256_$",
+                    "typeString": "mapping(address => uint256)"
+                  },
+                  "valueType": {
+                    "id": 13220,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "326:7:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 13224,
+                "name": "quarantinePeriod",
+                "nodeType": "VariableDeclaration",
+                "scope": 13227,
+                "src": "350:24:83",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 13223,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "350:7:83",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 13226,
+                "name": "immunitiesRemaining",
+                "nodeType": "VariableDeclaration",
+                "scope": 13227,
+                "src": "384:27:83",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 13225,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "384:7:83",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "Data",
+            "nodeType": "StructDefinition",
+            "scope": 13297,
+            "src": "285:133:83",
+            "visibility": "public"
+          },
+          {
+            "body": {
+              "id": 13244,
+              "nodeType": "Block",
+              "src": "594:71:83",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 13242,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 13236,
+                        "name": "block",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 17439,
+                        "src": "611:5:83",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_magic_block",
+                          "typeString": "block"
+                        }
+                      },
+                      "id": 13237,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "timestamp",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": null,
+                      "src": "611:15:83",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "<",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "baseExpression": {
+                        "argumentTypes": null,
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 13238,
+                          "name": "_self",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 13229,
+                          "src": "629:5:83",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                            "typeString": "struct Quarantine.Data storage pointer"
+                          }
+                        },
+                        "id": 13239,
+                        "isConstant": false,
+                        "isLValue": true,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "store",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": 13222,
+                        "src": "629:11:83",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_mapping$_t_address_$_t_uint256_$",
+                          "typeString": "mapping(address => uint256)"
+                        }
+                      },
+                      "id": 13241,
+                      "indexExpression": {
+                        "argumentTypes": null,
+                        "id": 13240,
+                        "name": "_contractAddress",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 13231,
+                        "src": "641:16:83",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "nodeType": "IndexAccess",
+                      "src": "629:29:83",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "src": "611:47:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "functionReturnParameters": 13235,
+                  "id": 13243,
+                  "nodeType": "Return",
+                  "src": "604:54:83"
+                }
+              ]
+            },
+            "documentation": "@notice Checks whether a contract is quarantined",
+            "id": 13245,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isQuarantined",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 13232,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 13229,
+                  "name": "_self",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 13245,
+                  "src": "519:18:83",
+                  "stateVariable": false,
+                  "storageLocation": "storage",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                    "typeString": "struct Quarantine.Data"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 13228,
+                    "name": "Data",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 13227,
+                    "src": "519:4:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                      "typeString": "struct Quarantine.Data"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 13231,
+                  "name": "_contractAddress",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 13245,
+                  "src": "539:24:83",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 13230,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "539:7:83",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "518:46:83"
+            },
+            "returnParameters": {
+              "id": 13235,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 13234,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 13245,
+                  "src": "588:4:83",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 13233,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "588:4:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "587:6:83"
+            },
+            "scope": 13297,
+            "src": "496:169:83",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 13295,
+              "nodeType": "Block",
+              "src": "870:391:83",
+              "statements": [
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "id": 13257,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "id": 13253,
+                          "name": "_contractAddress",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 13249,
+                          "src": "888:16:83",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address",
+                            "typeString": "address"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "!=",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "hexValue": "30",
+                              "id": 13255,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "number",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "916:1:83",
+                              "subdenomination": null,
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              },
+                              "value": "0"
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_rational_0_by_1",
+                                "typeString": "int_const 0"
+                              }
+                            ],
+                            "id": 13254,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "lValueRequested": false,
+                            "nodeType": "ElementaryTypeNameExpression",
+                            "src": "908:7:83",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_type$_t_address_$",
+                              "typeString": "type(address)"
+                            },
+                            "typeName": "address"
+                          },
+                          "id": 13256,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "typeConversion",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "908:10:83",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_address_payable",
+                            "typeString": "address payable"
+                          }
+                        },
+                        "src": "888:30:83",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "416e20656d70747920616464726573732063616e6e6f742062652071756172616e74696e6564",
+                        "id": 13258,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "920:40:83",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_a335d3bf78cbdf398537cfbde57d4fa15c3a210c0114e85156deeeb5458568f0",
+                          "typeString": "literal_string \"An empty address cannot be quarantined\""
+                        },
+                        "value": "An empty address cannot be quarantined"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_a335d3bf78cbdf398537cfbde57d4fa15c3a210c0114e85156deeeb5458568f0",
+                          "typeString": "literal_string \"An empty address cannot be quarantined\""
+                        }
+                      ],
+                      "id": 13252,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "880:7:83",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 13259,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "880:81:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 13260,
+                  "nodeType": "ExpressionStatement",
+                  "src": "880:81:83"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "commonType": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "id": 13267,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "leftExpression": {
+                          "argumentTypes": null,
+                          "baseExpression": {
+                            "argumentTypes": null,
+                            "expression": {
+                              "argumentTypes": null,
+                              "id": 13262,
+                              "name": "_self",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 13247,
+                              "src": "979:5:83",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                                "typeString": "struct Quarantine.Data storage pointer"
+                              }
+                            },
+                            "id": 13263,
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "store",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 13222,
+                            "src": "979:11:83",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_mapping$_t_address_$_t_uint256_$",
+                              "typeString": "mapping(address => uint256)"
+                            }
+                          },
+                          "id": 13265,
+                          "indexExpression": {
+                            "argumentTypes": null,
+                            "id": 13264,
+                            "name": "_contractAddress",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 13249,
+                            "src": "991:16:83",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_address",
+                              "typeString": "address"
+                            }
+                          },
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "IndexAccess",
+                          "src": "979:29:83",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "nodeType": "BinaryOperation",
+                        "operator": "==",
+                        "rightExpression": {
+                          "argumentTypes": null,
+                          "hexValue": "30",
+                          "id": 13266,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "kind": "number",
+                          "lValueRequested": false,
+                          "nodeType": "Literal",
+                          "src": "1012:1:83",
+                          "subdenomination": null,
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_rational_0_by_1",
+                            "typeString": "int_const 0"
+                          },
+                          "value": "0"
+                        },
+                        "src": "979:34:83",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "54686520636f6e747261637420697320616c72656164792071756172616e74696e6564",
+                        "id": 13268,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1015:37:83",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_58ebe9ca33fe79ca122b9914e6d0b3cc909e780d0f82324e7cee676341565f1b",
+                          "typeString": "literal_string \"The contract is already quarantined\""
+                        },
+                        "value": "The contract is already quarantined"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_58ebe9ca33fe79ca122b9914e6d0b3cc909e780d0f82324e7cee676341565f1b",
+                          "typeString": "literal_string \"The contract is already quarantined\""
+                        }
+                      ],
+                      "id": 13261,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "971:7:83",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 13269,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "971:82:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 13270,
+                  "nodeType": "ExpressionStatement",
+                  "src": "971:82:83"
+                },
+                {
+                  "condition": {
+                    "argumentTypes": null,
+                    "commonType": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    },
+                    "id": 13274,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftExpression": {
+                      "argumentTypes": null,
+                      "expression": {
+                        "argumentTypes": null,
+                        "id": 13271,
+                        "name": "_self",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 13247,
+                        "src": "1068:5:83",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                          "typeString": "struct Quarantine.Data storage pointer"
+                        }
+                      },
+                      "id": 13272,
+                      "isConstant": false,
+                      "isLValue": true,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberName": "immunitiesRemaining",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 13226,
+                      "src": "1068:25:83",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "nodeType": "BinaryOperation",
+                    "operator": "==",
+                    "rightExpression": {
+                      "argumentTypes": null,
+                      "hexValue": "30",
+                      "id": 13273,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1097:1:83",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_0_by_1",
+                        "typeString": "int_const 0"
+                      },
+                      "value": "0"
+                    },
+                    "src": "1068:30:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "falseBody": {
+                    "id": 13293,
+                    "nodeType": "Block",
+                    "src": "1203:52:83",
+                    "statements": [
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 13291,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "nodeType": "UnaryOperation",
+                          "operator": "--",
+                          "prefix": false,
+                          "src": "1217:27:83",
+                          "subExpression": {
+                            "argumentTypes": null,
+                            "expression": {
+                              "argumentTypes": null,
+                              "id": 13288,
+                              "name": "_self",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 13247,
+                              "src": "1217:5:83",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                                "typeString": "struct Quarantine.Data storage pointer"
+                              }
+                            },
+                            "id": 13290,
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": true,
+                            "memberName": "immunitiesRemaining",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": 13226,
+                            "src": "1217:25:83",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "id": 13292,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1217:27:83"
+                      }
+                    ]
+                  },
+                  "id": 13294,
+                  "nodeType": "IfStatement",
+                  "src": "1064:191:83",
+                  "trueBody": {
+                    "id": 13287,
+                    "nodeType": "Block",
+                    "src": "1100:97:83",
+                    "statements": [
+                      {
+                        "expression": {
+                          "argumentTypes": null,
+                          "id": 13285,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "leftHandSide": {
+                            "argumentTypes": null,
+                            "baseExpression": {
+                              "argumentTypes": null,
+                              "expression": {
+                                "argumentTypes": null,
+                                "id": 13275,
+                                "name": "_self",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 13247,
+                                "src": "1114:5:83",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                                  "typeString": "struct Quarantine.Data storage pointer"
+                                }
+                              },
+                              "id": 13278,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberName": "store",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 13222,
+                              "src": "1114:11:83",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_mapping$_t_address_$_t_uint256_$",
+                                "typeString": "mapping(address => uint256)"
+                              }
+                            },
+                            "id": 13279,
+                            "indexExpression": {
+                              "argumentTypes": null,
+                              "id": 13277,
+                              "name": "_contractAddress",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 13249,
+                              "src": "1126:16:83",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_address",
+                                "typeString": "address"
+                              }
+                            },
+                            "isConstant": false,
+                            "isLValue": true,
+                            "isPure": false,
+                            "lValueRequested": true,
+                            "nodeType": "IndexAccess",
+                            "src": "1114:29:83",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "nodeType": "Assignment",
+                          "operator": "=",
+                          "rightHandSide": {
+                            "argumentTypes": null,
+                            "commonType": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            },
+                            "id": 13284,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "leftExpression": {
+                              "argumentTypes": null,
+                              "expression": {
+                                "argumentTypes": null,
+                                "id": 13280,
+                                "name": "block",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 17439,
+                                "src": "1146:5:83",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_magic_block",
+                                  "typeString": "block"
+                                }
+                              },
+                              "id": 13281,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberName": "timestamp",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": null,
+                              "src": "1146:15:83",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "nodeType": "BinaryOperation",
+                            "operator": "+",
+                            "rightExpression": {
+                              "argumentTypes": null,
+                              "expression": {
+                                "argumentTypes": null,
+                                "id": 13282,
+                                "name": "_self",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 13247,
+                                "src": "1164:5:83",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                                  "typeString": "struct Quarantine.Data storage pointer"
+                                }
+                              },
+                              "id": 13283,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberName": "quarantinePeriod",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 13224,
+                              "src": "1164:22:83",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            },
+                            "src": "1146:40:83",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
+                          },
+                          "src": "1114:72:83",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "id": 13286,
+                        "nodeType": "ExpressionStatement",
+                        "src": "1114:72:83"
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "documentation": "@notice Places a contract into quarantine\n@param _contractAddress The address of the contract",
+            "id": 13296,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "quarantine",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 13250,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 13247,
+                  "name": "_self",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 13296,
+                  "src": "815:18:83",
+                  "stateVariable": false,
+                  "storageLocation": "storage",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                    "typeString": "struct Quarantine.Data"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 13246,
+                    "name": "Data",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 13227,
+                    "src": "815:4:83",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_Data_$13227_storage_ptr",
+                      "typeString": "struct Quarantine.Data"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 13249,
+                  "name": "_contractAddress",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 13296,
+                  "src": "835:24:83",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 13248,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "835:7:83",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "814:46:83"
+            },
+            "returnParameters": {
+              "id": 13251,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "870:0:83"
+            },
+            "scope": 13297,
+            "src": "795:466:83",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 13298,
+        "src": "260:1003:83"
+      }
+    ],
+    "src": "0:1264:83"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.808Z",
+  "devdoc": {
+    "details": "The immunitiesRemaining member allows deployment to the platform with some pre-verified contracts that don't get quarantined",
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {},
+    "notice": "Provides a way to quarantine (disable) contracts for a specified period of time"
+  }
+}

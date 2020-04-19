@@ -1,0 +1,1470 @@
+{
+  "contractName": "SafeEthTransfer",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"details\":\"transfer is no longer the recommended way to do ETH transfer.     see issue: https://github.com/omisego/plasma-contracts/issues/312 *      This library limits the amount of gas used for external calls with value to protect against potential DOS/griefing attacks that try to use up all the gas.     see issue: https://github.com/omisego/plasma-contracts/issues/385\",\"methods\":{}},\"userdoc\":{\"methods\":{},\"notice\":\"Utility library to safely transfer ETH\"}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/SafeEthTransfer.sol\":\"SafeEthTransfer\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/utils/SafeEthTransfer.sol\":{\"keccak256\":\"0xe707370228eea8c9c613472dd4d44df94ba631892bc74077cf5af24097944aad\",\"urls\":[\"bzz-raw://803b2c876f40f8d8dbcbca8b6cde233d73a98c4d2384c90e259da1c169225de9\",\"dweb:/ipfs/QmZkb1kHBmFb4jGgZepfAJsiZM6beQJiS9x319QZxExiB4\"]}},\"version\":1}",
+  "bytecode": "0x60556023600b82828239805160001a607314601657fe5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a72315820ed3c93d8dcd13ace34e0b3bfef2e0be63888ebdcd9fdf5f4725c4e3c2e4f800564736f6c634300050b0032",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a72315820ed3c93d8dcd13ace34e0b3bfef2e0be63888ebdcd9fdf5f4725c4e3c2e4f800564736f6c634300050b0032",
+  "sourceMap": "460:1395:95:-;;132:2:-1;166:7;155:9;146:7;137:37;255:7;249:14;246:1;241:23;235:4;232:33;222:2;;269:9;222:2;293:9;290:1;283:20;323:4;314:7;306:22;347:7;338;331:24",
+  "deployedSourceMap": "460:1395:95:-;;;;;;;;",
+  "source": "pragma solidity 0.5.11;\n\n/**\n* @notice Utility library to safely transfer ETH\n* @dev transfer is no longer the recommended way to do ETH transfer.\n*      see issue: https://github.com/omisego/plasma-contracts/issues/312\n*\n*      This library limits the amount of gas used for external calls with value to protect against potential DOS/griefing attacks that try to use up all the gas.\n*      see issue: https://github.com/omisego/plasma-contracts/issues/385\n*/\nlibrary SafeEthTransfer {\n    /**\n     * @notice Try to transfer eth without using more gas than `gasStipend`.\n     *         Reverts if it fails to transfer the ETH.\n     * @param receiver the address to receive ETH\n     * @param amount the amount of ETH (in wei) to transfer\n     * @param gasStipend the maximum amount of gas to be used for the call\n     */\n    function transferRevertOnError(address payable receiver, uint256 amount, uint256 gasStipend)\n        internal\n    {\n        bool success = transferReturnResult(receiver, amount, gasStipend);\n        require(success, \"SafeEthTransfer: failed to transfer ETH\");\n    }\n\n    /**\n     * @notice Transfer ETH without using more gas than the `gasStipend`.\n     *         Returns whether the transfer call is successful or not.\n     * @dev EVM will revert with \"out of gas\" error if there is not enough gas left for the call\n     * @param receiver the address to receive ETH\n     * @param amount the amount of ETH (in wei) to transfer\n     * @param gasStipend the maximum amount of gas to be used during the transfer call\n     * @return a flag showing the call is successful or not\n     */\n    function transferReturnResult(address payable receiver, uint256 amount, uint256 gasStipend)\n        internal\n        returns (bool)\n    {\n        (bool success, ) = receiver.call.gas(gasStipend).value(amount)(\"\");\n        return success;\n    }\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/SafeEthTransfer.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/SafeEthTransfer.sol",
+    "exportedSymbols": {
+      "SafeEthTransfer": [
+        15277
+      ]
+    },
+    "id": 15278,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 15226,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:95"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": "@notice Utility library to safely transfer ETH\n@dev transfer is no longer the recommended way to do ETH transfer.\n     see issue: https://github.com/omisego/plasma-contracts/issues/312\n*      This library limits the amount of gas used for external calls with value to protect against potential DOS/griefing attacks that try to use up all the gas.\n     see issue: https://github.com/omisego/plasma-contracts/issues/385",
+        "fullyImplemented": true,
+        "id": 15277,
+        "linearizedBaseContracts": [
+          15277
+        ],
+        "name": "SafeEthTransfer",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 15248,
+              "nodeType": "Block",
+              "src": "938:151:95",
+              "statements": [
+                {
+                  "assignments": [
+                    15236
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 15236,
+                      "name": "success",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 15248,
+                      "src": "948:12:95",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      },
+                      "typeName": {
+                        "id": 15235,
+                        "name": "bool",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "948:4:95",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 15242,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 15238,
+                        "name": "receiver",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 15228,
+                        "src": "984:8:95",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 15239,
+                        "name": "amount",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 15230,
+                        "src": "994:6:95",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 15240,
+                        "name": "gasStipend",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 15232,
+                        "src": "1002:10:95",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "id": 15237,
+                      "name": "transferReturnResult",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 15276,
+                      "src": "963:20:95",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_nonpayable$_t_address_payable_$_t_uint256_$_t_uint256_$returns$_t_bool_$",
+                        "typeString": "function (address payable,uint256,uint256) returns (bool)"
+                      }
+                    },
+                    "id": 15241,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "963:50:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "948:65:95"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 15244,
+                        "name": "success",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 15236,
+                        "src": "1031:7:95",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "536166654574685472616e736665723a206661696c656420746f207472616e7366657220455448",
+                        "id": 15245,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1040:41:95",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_68909f08608d01426894b843d3ab03d0fcc022ad84b968a00dc8fc288701da72",
+                          "typeString": "literal_string \"SafeEthTransfer: failed to transfer ETH\""
+                        },
+                        "value": "SafeEthTransfer: failed to transfer ETH"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_68909f08608d01426894b843d3ab03d0fcc022ad84b968a00dc8fc288701da72",
+                          "typeString": "literal_string \"SafeEthTransfer: failed to transfer ETH\""
+                        }
+                      ],
+                      "id": 15243,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "1023:7:95",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 15246,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1023:59:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 15247,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1023:59:95"
+                }
+              ]
+            },
+            "documentation": "@notice Try to transfer eth without using more gas than `gasStipend`.\n        Reverts if it fails to transfer the ETH.\n@param receiver the address to receive ETH\n@param amount the amount of ETH (in wei) to transfer\n@param gasStipend the maximum amount of gas to be used for the call",
+            "id": 15249,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "transferRevertOnError",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 15233,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 15228,
+                  "name": "receiver",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15249,
+                  "src": "855:24:95",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address_payable",
+                    "typeString": "address payable"
+                  },
+                  "typeName": {
+                    "id": 15227,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "855:15:95",
+                    "stateMutability": "payable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address_payable",
+                      "typeString": "address payable"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 15230,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15249,
+                  "src": "881:14:95",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 15229,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "881:7:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 15232,
+                  "name": "gasStipend",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15249,
+                  "src": "897:18:95",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 15231,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "897:7:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "854:62:95"
+            },
+            "returnParameters": {
+              "id": 15234,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "938:0:95"
+            },
+            "scope": 15277,
+            "src": "824:265:95",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 15275,
+              "nodeType": "Block",
+              "src": "1746:107:95",
+              "statements": [
+                {
+                  "assignments": [
+                    15261,
+                    null
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 15261,
+                      "name": "success",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 15275,
+                      "src": "1757:12:95",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      },
+                      "typeName": {
+                        "id": 15260,
+                        "name": "bool",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1757:4:95",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    null
+                  ],
+                  "id": 15272,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "",
+                        "id": 15270,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1819:2:95",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+                          "typeString": "literal_string \"\""
+                        },
+                        "value": ""
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_stringliteral_c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+                          "typeString": "literal_string \"\""
+                        }
+                      ],
+                      "arguments": [
+                        {
+                          "argumentTypes": null,
+                          "id": 15268,
+                          "name": "amount",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 15253,
+                          "src": "1811:6:95",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "id": 15265,
+                              "name": "gasStipend",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 15255,
+                              "src": "1793:10:95",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            ],
+                            "expression": {
+                              "argumentTypes": null,
+                              "expression": {
+                                "argumentTypes": null,
+                                "id": 15262,
+                                "name": "receiver",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 15251,
+                                "src": "1775:8:95",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_address_payable",
+                                  "typeString": "address payable"
+                                }
+                              },
+                              "id": 15263,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberName": "call",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": null,
+                              "src": "1775:13:95",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_function_barecall_payable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$",
+                                "typeString": "function (bytes memory) payable returns (bool,bytes memory)"
+                              }
+                            },
+                            "id": 15264,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "gas",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": null,
+                            "src": "1775:17:95",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_setgas_pure$_t_uint256_$returns$_t_function_barecall_payable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$gas_$",
+                              "typeString": "function (uint256) pure returns (function (bytes memory) payable returns (bool,bytes memory))"
+                            }
+                          },
+                          "id": 15266,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1775:29:95",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_barecall_payable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$gas",
+                            "typeString": "function (bytes memory) payable returns (bool,bytes memory)"
+                          }
+                        },
+                        "id": 15267,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "value",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": null,
+                        "src": "1775:35:95",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_setvalue_pure$_t_uint256_$returns$_t_function_barecall_payable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$gasvalue_$gas",
+                          "typeString": "function (uint256) pure returns (function (bytes memory) payable returns (bool,bytes memory))"
+                        }
+                      },
+                      "id": 15269,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "1775:43:95",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_barecall_payable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$gasvalue",
+                        "typeString": "function (bytes memory) payable returns (bool,bytes memory)"
+                      }
+                    },
+                    "id": 15271,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1775:47:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_bool_$_t_bytes_memory_ptr_$",
+                      "typeString": "tuple(bool,bytes memory)"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1756:66:95"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 15273,
+                    "name": "success",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 15261,
+                    "src": "1839:7:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "functionReturnParameters": 15259,
+                  "id": 15274,
+                  "nodeType": "Return",
+                  "src": "1832:14:95"
+                }
+              ]
+            },
+            "documentation": "@notice Transfer ETH without using more gas than the `gasStipend`.\n        Returns whether the transfer call is successful or not.\n@dev EVM will revert with \"out of gas\" error if there is not enough gas left for the call\n@param receiver the address to receive ETH\n@param amount the amount of ETH (in wei) to transfer\n@param gasStipend the maximum amount of gas to be used during the transfer call\n@return a flag showing the call is successful or not",
+            "id": 15276,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "transferReturnResult",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 15256,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 15251,
+                  "name": "receiver",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15276,
+                  "src": "1640:24:95",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address_payable",
+                    "typeString": "address payable"
+                  },
+                  "typeName": {
+                    "id": 15250,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1640:15:95",
+                    "stateMutability": "payable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address_payable",
+                      "typeString": "address payable"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 15253,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15276,
+                  "src": "1666:14:95",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 15252,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1666:7:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 15255,
+                  "name": "gasStipend",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15276,
+                  "src": "1682:18:95",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 15254,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1682:7:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1639:62:95"
+            },
+            "returnParameters": {
+              "id": 15259,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 15258,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15276,
+                  "src": "1736:4:95",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 15257,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1736:4:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1735:6:95"
+            },
+            "scope": 15277,
+            "src": "1610:243:95",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 15278,
+        "src": "460:1395:95"
+      }
+    ],
+    "src": "0:1856:95"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/utils/SafeEthTransfer.sol",
+    "exportedSymbols": {
+      "SafeEthTransfer": [
+        15277
+      ]
+    },
+    "id": 15278,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 15226,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:95"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": "@notice Utility library to safely transfer ETH\n@dev transfer is no longer the recommended way to do ETH transfer.\n     see issue: https://github.com/omisego/plasma-contracts/issues/312\n*      This library limits the amount of gas used for external calls with value to protect against potential DOS/griefing attacks that try to use up all the gas.\n     see issue: https://github.com/omisego/plasma-contracts/issues/385",
+        "fullyImplemented": true,
+        "id": 15277,
+        "linearizedBaseContracts": [
+          15277
+        ],
+        "name": "SafeEthTransfer",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 15248,
+              "nodeType": "Block",
+              "src": "938:151:95",
+              "statements": [
+                {
+                  "assignments": [
+                    15236
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 15236,
+                      "name": "success",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 15248,
+                      "src": "948:12:95",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      },
+                      "typeName": {
+                        "id": 15235,
+                        "name": "bool",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "948:4:95",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 15242,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 15238,
+                        "name": "receiver",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 15228,
+                        "src": "984:8:95",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 15239,
+                        "name": "amount",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 15230,
+                        "src": "994:6:95",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "id": 15240,
+                        "name": "gasStipend",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 15232,
+                        "src": "1002:10:95",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address_payable",
+                          "typeString": "address payable"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      ],
+                      "id": 15237,
+                      "name": "transferReturnResult",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 15276,
+                      "src": "963:20:95",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_nonpayable$_t_address_payable_$_t_uint256_$_t_uint256_$returns$_t_bool_$",
+                        "typeString": "function (address payable,uint256,uint256) returns (bool)"
+                      }
+                    },
+                    "id": 15241,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "963:50:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "948:65:95"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "id": 15244,
+                        "name": "success",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 15236,
+                        "src": "1031:7:95",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "536166654574685472616e736665723a206661696c656420746f207472616e7366657220455448",
+                        "id": 15245,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1040:41:95",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_68909f08608d01426894b843d3ab03d0fcc022ad84b968a00dc8fc288701da72",
+                          "typeString": "literal_string \"SafeEthTransfer: failed to transfer ETH\""
+                        },
+                        "value": "SafeEthTransfer: failed to transfer ETH"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        {
+                          "typeIdentifier": "t_stringliteral_68909f08608d01426894b843d3ab03d0fcc022ad84b968a00dc8fc288701da72",
+                          "typeString": "literal_string \"SafeEthTransfer: failed to transfer ETH\""
+                        }
+                      ],
+                      "id": 15243,
+                      "name": "require",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        17452,
+                        17453
+                      ],
+                      "referencedDeclaration": 17453,
+                      "src": "1023:7:95",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+                        "typeString": "function (bool,string memory) pure"
+                      }
+                    },
+                    "id": 15246,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1023:59:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 15247,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1023:59:95"
+                }
+              ]
+            },
+            "documentation": "@notice Try to transfer eth without using more gas than `gasStipend`.\n        Reverts if it fails to transfer the ETH.\n@param receiver the address to receive ETH\n@param amount the amount of ETH (in wei) to transfer\n@param gasStipend the maximum amount of gas to be used for the call",
+            "id": 15249,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "transferRevertOnError",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 15233,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 15228,
+                  "name": "receiver",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15249,
+                  "src": "855:24:95",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address_payable",
+                    "typeString": "address payable"
+                  },
+                  "typeName": {
+                    "id": 15227,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "855:15:95",
+                    "stateMutability": "payable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address_payable",
+                      "typeString": "address payable"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 15230,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15249,
+                  "src": "881:14:95",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 15229,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "881:7:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 15232,
+                  "name": "gasStipend",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15249,
+                  "src": "897:18:95",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 15231,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "897:7:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "854:62:95"
+            },
+            "returnParameters": {
+              "id": 15234,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "938:0:95"
+            },
+            "scope": 15277,
+            "src": "824:265:95",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "internal"
+          },
+          {
+            "body": {
+              "id": 15275,
+              "nodeType": "Block",
+              "src": "1746:107:95",
+              "statements": [
+                {
+                  "assignments": [
+                    15261,
+                    null
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 15261,
+                      "name": "success",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 15275,
+                      "src": "1757:12:95",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      },
+                      "typeName": {
+                        "id": 15260,
+                        "name": "bool",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1757:4:95",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    null
+                  ],
+                  "id": 15272,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "arguments": [
+                      {
+                        "argumentTypes": null,
+                        "hexValue": "",
+                        "id": 15270,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "string",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1819:2:95",
+                        "subdenomination": null,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_stringliteral_c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+                          "typeString": "literal_string \"\""
+                        },
+                        "value": ""
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_stringliteral_c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+                          "typeString": "literal_string \"\""
+                        }
+                      ],
+                      "arguments": [
+                        {
+                          "argumentTypes": null,
+                          "id": 15268,
+                          "name": "amount",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 15253,
+                          "src": "1811:6:95",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        }
+                      ],
+                      "expression": {
+                        "argumentTypes": [
+                          {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            {
+                              "argumentTypes": null,
+                              "id": 15265,
+                              "name": "gasStipend",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": 15255,
+                              "src": "1793:10:95",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            }
+                          ],
+                          "expression": {
+                            "argumentTypes": [
+                              {
+                                "typeIdentifier": "t_uint256",
+                                "typeString": "uint256"
+                              }
+                            ],
+                            "expression": {
+                              "argumentTypes": null,
+                              "expression": {
+                                "argumentTypes": null,
+                                "id": 15262,
+                                "name": "receiver",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 15251,
+                                "src": "1775:8:95",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_address_payable",
+                                  "typeString": "address payable"
+                                }
+                              },
+                              "id": 15263,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "memberName": "call",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": null,
+                              "src": "1775:13:95",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_function_barecall_payable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$",
+                                "typeString": "function (bytes memory) payable returns (bool,bytes memory)"
+                              }
+                            },
+                            "id": 15264,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberName": "gas",
+                            "nodeType": "MemberAccess",
+                            "referencedDeclaration": null,
+                            "src": "1775:17:95",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_function_setgas_pure$_t_uint256_$returns$_t_function_barecall_payable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$gas_$",
+                              "typeString": "function (uint256) pure returns (function (bytes memory) payable returns (bool,bytes memory))"
+                            }
+                          },
+                          "id": 15266,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "kind": "functionCall",
+                          "lValueRequested": false,
+                          "names": [],
+                          "nodeType": "FunctionCall",
+                          "src": "1775:29:95",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_barecall_payable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$gas",
+                            "typeString": "function (bytes memory) payable returns (bool,bytes memory)"
+                          }
+                        },
+                        "id": 15267,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "lValueRequested": false,
+                        "memberName": "value",
+                        "nodeType": "MemberAccess",
+                        "referencedDeclaration": null,
+                        "src": "1775:35:95",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_setvalue_pure$_t_uint256_$returns$_t_function_barecall_payable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$gasvalue_$gas",
+                          "typeString": "function (uint256) pure returns (function (bytes memory) payable returns (bool,bytes memory))"
+                        }
+                      },
+                      "id": 15269,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "1775:43:95",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_barecall_payable$_t_bytes_memory_ptr_$returns$_t_bool_$_t_bytes_memory_ptr_$gasvalue",
+                        "typeString": "function (bytes memory) payable returns (bool,bytes memory)"
+                      }
+                    },
+                    "id": 15271,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1775:47:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_bool_$_t_bytes_memory_ptr_$",
+                      "typeString": "tuple(bool,bytes memory)"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1756:66:95"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 15273,
+                    "name": "success",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 15261,
+                    "src": "1839:7:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "functionReturnParameters": 15259,
+                  "id": 15274,
+                  "nodeType": "Return",
+                  "src": "1832:14:95"
+                }
+              ]
+            },
+            "documentation": "@notice Transfer ETH without using more gas than the `gasStipend`.\n        Returns whether the transfer call is successful or not.\n@dev EVM will revert with \"out of gas\" error if there is not enough gas left for the call\n@param receiver the address to receive ETH\n@param amount the amount of ETH (in wei) to transfer\n@param gasStipend the maximum amount of gas to be used during the transfer call\n@return a flag showing the call is successful or not",
+            "id": 15276,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "transferReturnResult",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 15256,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 15251,
+                  "name": "receiver",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15276,
+                  "src": "1640:24:95",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address_payable",
+                    "typeString": "address payable"
+                  },
+                  "typeName": {
+                    "id": 15250,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1640:15:95",
+                    "stateMutability": "payable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address_payable",
+                      "typeString": "address payable"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 15253,
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15276,
+                  "src": "1666:14:95",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 15252,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1666:7:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 15255,
+                  "name": "gasStipend",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15276,
+                  "src": "1682:18:95",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 15254,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1682:7:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1639:62:95"
+            },
+            "returnParameters": {
+              "id": 15259,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 15258,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 15276,
+                  "src": "1736:4:95",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 15257,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1736:4:95",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1735:6:95"
+            },
+            "scope": 15277,
+            "src": "1610:243:95",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 15278,
+        "src": "460:1395:95"
+      }
+    ],
+    "src": "0:1856:95"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.842Z",
+  "devdoc": {
+    "details": "transfer is no longer the recommended way to do ETH transfer.     see issue: https://github.com/omisego/plasma-contracts/issues/312 *      This library limits the amount of gas used for external calls with value to protect against potential DOS/griefing attacks that try to use up all the gas.     see issue: https://github.com/omisego/plasma-contracts/issues/385",
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {},
+    "notice": "Utility library to safely transfer ETH"
+  }
+}

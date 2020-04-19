@@ -1,0 +1,2032 @@
+{
+  "contractName": "PaymentInFlightExitRouterArgs",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.11+commit.c082d0b4\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/routers/PaymentInFlightExitRouterArgs.sol\":\"PaymentInFlightExitRouterArgs\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/routers/PaymentInFlightExitRouterArgs.sol\":{\"keccak256\":\"0x02f6d1cb1b9ddb30014d03e3a5fa08843583043e40d58a95e566429d93c420eb\",\"urls\":[\"bzz-raw://3a442e9100076555d32b333fec5ec6953a235bb8c5b5a2b1397adda9b50aa829\",\"dweb:/ipfs/QmZRTgLiw9rzg2ZCBAW7jW8dNnQS94jWyoDhQaQHKAfWte\"]}},\"version\":1}",
+  "bytecode": "0x60556023600b82828239805160001a607314601657fe5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a723158203edb4bb1241ec9635a8e7748e9880ea6197a8899908f035fa5290b42d2255abf64736f6c634300050b0032",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea265627a7a723158203edb4bb1241ec9635a8e7748e9880ea6197a8899908f035fa5290b42d2255abf64736f6c634300050b0032",
+  "sourceMap": "25:4541:63:-;;132:2:-1;166:7;155:9;146:7;137:37;255:7;249:14;246:1;241:23;235:4;232:33;222:2;;269:9;222:2;293:9;290:1;283:20;323:4;314:7;306:22;347:7;338;331:24",
+  "deployedSourceMap": "25:4541:63:-;;;;;;;;",
+  "source": "pragma solidity 0.5.11;\n\nlibrary PaymentInFlightExitRouterArgs {\n    /**\n    * @notice Wraps arguments for startInFlightExit.\n    * @param inFlightTx RLP encoded in-flight transaction.\n    * @param inputTxs Transactions that created the inputs to the in-flight transaction. In the same order as in-flight transaction inputs.\n    * @param inputUtxosPos Utxos that represent in-flight transaction inputs. In the same order as input transactions.\n    * @param inputTxsInclusionProofs Merkle proofs that show the input-creating transactions are valid. In the same order as input transactions.\n    * @param inFlightTxWitnesses Witnesses for in-flight transaction. In the same order as input transactions.\n    */\n    struct StartExitArgs {\n        bytes inFlightTx;\n        bytes[] inputTxs;\n        uint256[] inputUtxosPos;\n        bytes[] inputTxsInclusionProofs;\n        bytes[] inFlightTxWitnesses;\n    }\n\n    /**\n    * @notice Wraps arguments for piggybacking on in-flight transaction input exit\n    * @param inFlightTx RLP-encoded in-flight transaction\n    * @param inputIndex Index of the input to piggyback on\n    */\n    struct PiggybackInFlightExitOnInputArgs {\n        bytes inFlightTx;\n        uint16 inputIndex;\n    }\n\n    /**\n    * @notice Wraps arguments for piggybacking on in-flight transaction output exit\n    * @param inFlightTx RLP-encoded in-flight transaction\n    * @param outputIndex Index of the output to piggyback on\n    */\n    struct PiggybackInFlightExitOnOutputArgs {\n        bytes inFlightTx;\n        uint16 outputIndex;\n    }\n\n    /**\n     * @notice Wraps arguments for challenging non-canonical in-flight exits\n     * @param inputTx Transaction that created the input shared by the in-flight transaction and its competitor\n     * @param inputUtxoPos Position of input utxo\n     * @param inFlightTx RLP-encoded in-flight transaction\n     * @param inFlightTxInputIndex Index of the shared input in the in-flight transaction\n     * @param competingTx RLP-encoded competing transaction\n     * @param competingTxInputIndex Index of shared input in competing transaction\n     * @param competingTxPos (Optional) Position of competing transaction in the chain, if included. OutputIndex of the position should be 0.\n     * @param competingTxInclusionProof (Optional) Merkle proofs showing that the competing transaction was contained in chain\n     * @param competingTxWitness Witness for competing transaction\n     */\n    struct ChallengeCanonicityArgs {\n        bytes inputTx;\n        uint256 inputUtxoPos;\n        bytes inFlightTx;\n        uint16 inFlightTxInputIndex;\n        bytes competingTx;\n        uint16 competingTxInputIndex;\n        uint256 competingTxPos;\n        bytes competingTxInclusionProof;\n        bytes competingTxWitness;\n    }\n\n    /**\n     * @notice Wraps arguments for challenging in-flight exit input spent\n     * @param inFlightTx RLP-encoded in-flight transaction\n     * @param inFlightTxInputIndex Index of spent input\n     * @param challengingTx RLP-encoded challenging transaction\n     * @param challengingTxInputIndex Index of spent input in a challenging transaction\n     * @param challengingTxWitness Witness for challenging transactions\n     * @param inputTx RLP-encoded input transaction\n     * @param inputUtxoPos UTXO position of input transaction's output\n     * @param senderData A keccak256 hash of the sender's address\n     */\n    struct ChallengeInputSpentArgs {\n        bytes inFlightTx;\n        uint16 inFlightTxInputIndex;\n        bytes challengingTx;\n        uint16 challengingTxInputIndex;\n        bytes challengingTxWitness;\n        bytes inputTx;\n        uint256 inputUtxoPos;\n        bytes32 senderData;\n    }\n\n     /**\n     * @notice Wraps arguments for challenging in-flight transaction output exit\n     * @param inFlightTx RLP-encoded in-flight transaction\n     * @param inFlightTxInclusionProof Proof that an in-flight transaction is included in Plasma\n     * @param outputUtxoPos UTXO position of challenged output\n     * @param challengingTx RLP-encoded challenging transaction\n     * @param challengingTxInputIndex Input index of challenged output in a challenging transaction\n     * @param challengingTxWitness Witness for challenging transaction\n     * @param senderData A keccak256 hash of the sender's address\n     */\n    struct ChallengeOutputSpent {\n        bytes inFlightTx;\n        bytes inFlightTxInclusionProof;\n        uint256 outputUtxoPos;\n        bytes challengingTx;\n        uint16 challengingTxInputIndex;\n        bytes challengingTxWitness;\n        bytes32 senderData;\n    }\n}\n",
+  "sourcePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/routers/PaymentInFlightExitRouterArgs.sol",
+  "ast": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/routers/PaymentInFlightExitRouterArgs.sol",
+    "exportedSymbols": {
+      "PaymentInFlightExitRouterArgs": [
+        10222
+      ]
+    },
+    "id": 10223,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 10145,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:63"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 10222,
+        "linearizedBaseContracts": [
+          10222
+        ],
+        "name": "PaymentInFlightExitRouterArgs",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "PaymentInFlightExitRouterArgs.StartExitArgs",
+            "id": 10160,
+            "members": [
+              {
+                "constant": false,
+                "id": 10147,
+                "name": "inFlightTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10160,
+                "src": "742:16:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10146,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "742:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10150,
+                "name": "inputTxs",
+                "nodeType": "VariableDeclaration",
+                "scope": 10160,
+                "src": "768:16:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
+                  "typeString": "bytes[]"
+                },
+                "typeName": {
+                  "baseType": {
+                    "id": 10148,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "768:5:63",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "id": 10149,
+                  "length": null,
+                  "nodeType": "ArrayTypeName",
+                  "src": "768:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
+                    "typeString": "bytes[]"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10153,
+                "name": "inputUtxosPos",
+                "nodeType": "VariableDeclaration",
+                "scope": 10160,
+                "src": "794:23:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                  "typeString": "uint256[]"
+                },
+                "typeName": {
+                  "baseType": {
+                    "id": 10151,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "794:7:63",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 10152,
+                  "length": null,
+                  "nodeType": "ArrayTypeName",
+                  "src": "794:9:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                    "typeString": "uint256[]"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10156,
+                "name": "inputTxsInclusionProofs",
+                "nodeType": "VariableDeclaration",
+                "scope": 10160,
+                "src": "827:31:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
+                  "typeString": "bytes[]"
+                },
+                "typeName": {
+                  "baseType": {
+                    "id": 10154,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "827:5:63",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "id": 10155,
+                  "length": null,
+                  "nodeType": "ArrayTypeName",
+                  "src": "827:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
+                    "typeString": "bytes[]"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10159,
+                "name": "inFlightTxWitnesses",
+                "nodeType": "VariableDeclaration",
+                "scope": 10160,
+                "src": "868:27:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
+                  "typeString": "bytes[]"
+                },
+                "typeName": {
+                  "baseType": {
+                    "id": 10157,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "868:5:63",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "id": 10158,
+                  "length": null,
+                  "nodeType": "ArrayTypeName",
+                  "src": "868:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
+                    "typeString": "bytes[]"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "StartExitArgs",
+            "nodeType": "StructDefinition",
+            "scope": 10222,
+            "src": "711:191:63",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "PaymentInFlightExitRouterArgs.PiggybackInFlightExitOnInputArgs",
+            "id": 10165,
+            "members": [
+              {
+                "constant": false,
+                "id": 10162,
+                "name": "inFlightTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10165,
+                "src": "1173:16:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10161,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1173:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10164,
+                "name": "inputIndex",
+                "nodeType": "VariableDeclaration",
+                "scope": 10165,
+                "src": "1199:17:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint16",
+                  "typeString": "uint16"
+                },
+                "typeName": {
+                  "id": 10163,
+                  "name": "uint16",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1199:6:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "PiggybackInFlightExitOnInputArgs",
+            "nodeType": "StructDefinition",
+            "scope": 10222,
+            "src": "1123:100:63",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "PaymentInFlightExitRouterArgs.PiggybackInFlightExitOnOutputArgs",
+            "id": 10170,
+            "members": [
+              {
+                "constant": false,
+                "id": 10167,
+                "name": "inFlightTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10170,
+                "src": "1498:16:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10166,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1498:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10169,
+                "name": "outputIndex",
+                "nodeType": "VariableDeclaration",
+                "scope": 10170,
+                "src": "1524:18:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint16",
+                  "typeString": "uint16"
+                },
+                "typeName": {
+                  "id": 10168,
+                  "name": "uint16",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1524:6:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "PiggybackInFlightExitOnOutputArgs",
+            "nodeType": "StructDefinition",
+            "scope": 10222,
+            "src": "1447:102:63",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "PaymentInFlightExitRouterArgs.ChallengeCanonicityArgs",
+            "id": 10189,
+            "members": [
+              {
+                "constant": false,
+                "id": 10172,
+                "name": "inputTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2479:13:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10171,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2479:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10174,
+                "name": "inputUtxoPos",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2502:20:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10173,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2502:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10176,
+                "name": "inFlightTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2532:16:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10175,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2532:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10178,
+                "name": "inFlightTxInputIndex",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2558:27:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint16",
+                  "typeString": "uint16"
+                },
+                "typeName": {
+                  "id": 10177,
+                  "name": "uint16",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2558:6:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10180,
+                "name": "competingTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2595:17:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10179,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2595:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10182,
+                "name": "competingTxInputIndex",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2622:28:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint16",
+                  "typeString": "uint16"
+                },
+                "typeName": {
+                  "id": 10181,
+                  "name": "uint16",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2622:6:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10184,
+                "name": "competingTxPos",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2660:22:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10183,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2660:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10186,
+                "name": "competingTxInclusionProof",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2692:31:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10185,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2692:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10188,
+                "name": "competingTxWitness",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2733:24:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10187,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2733:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "ChallengeCanonicityArgs",
+            "nodeType": "StructDefinition",
+            "scope": 10222,
+            "src": "2438:326:63",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "PaymentInFlightExitRouterArgs.ChallengeInputSpentArgs",
+            "id": 10206,
+            "members": [
+              {
+                "constant": false,
+                "id": 10191,
+                "name": "inFlightTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10206,
+                "src": "3429:16:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10190,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "3429:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10193,
+                "name": "inFlightTxInputIndex",
+                "nodeType": "VariableDeclaration",
+                "scope": 10206,
+                "src": "3455:27:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint16",
+                  "typeString": "uint16"
+                },
+                "typeName": {
+                  "id": 10192,
+                  "name": "uint16",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "3455:6:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10195,
+                "name": "challengingTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10206,
+                "src": "3492:19:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10194,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "3492:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10197,
+                "name": "challengingTxInputIndex",
+                "nodeType": "VariableDeclaration",
+                "scope": 10206,
+                "src": "3521:30:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint16",
+                  "typeString": "uint16"
+                },
+                "typeName": {
+                  "id": 10196,
+                  "name": "uint16",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "3521:6:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10199,
+                "name": "challengingTxWitness",
+                "nodeType": "VariableDeclaration",
+                "scope": 10206,
+                "src": "3561:26:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10198,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "3561:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10201,
+                "name": "inputTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10206,
+                "src": "3597:13:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10200,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "3597:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10203,
+                "name": "inputUtxoPos",
+                "nodeType": "VariableDeclaration",
+                "scope": 10206,
+                "src": "3620:20:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10202,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "3620:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10205,
+                "name": "senderData",
+                "nodeType": "VariableDeclaration",
+                "scope": 10206,
+                "src": "3650:18:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes32",
+                  "typeString": "bytes32"
+                },
+                "typeName": {
+                  "id": 10204,
+                  "name": "bytes32",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "3650:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "ChallengeInputSpentArgs",
+            "nodeType": "StructDefinition",
+            "scope": 10222,
+            "src": "3388:287:63",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "PaymentInFlightExitRouterArgs.ChallengeOutputSpent",
+            "id": 10221,
+            "members": [
+              {
+                "constant": false,
+                "id": 10208,
+                "name": "inFlightTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10221,
+                "src": "4337:16:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10207,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "4337:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10210,
+                "name": "inFlightTxInclusionProof",
+                "nodeType": "VariableDeclaration",
+                "scope": 10221,
+                "src": "4363:30:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10209,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "4363:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10212,
+                "name": "outputUtxoPos",
+                "nodeType": "VariableDeclaration",
+                "scope": 10221,
+                "src": "4403:21:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10211,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "4403:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10214,
+                "name": "challengingTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10221,
+                "src": "4434:19:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10213,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "4434:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10216,
+                "name": "challengingTxInputIndex",
+                "nodeType": "VariableDeclaration",
+                "scope": 10221,
+                "src": "4463:30:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint16",
+                  "typeString": "uint16"
+                },
+                "typeName": {
+                  "id": 10215,
+                  "name": "uint16",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "4463:6:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10218,
+                "name": "challengingTxWitness",
+                "nodeType": "VariableDeclaration",
+                "scope": 10221,
+                "src": "4503:26:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10217,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "4503:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10220,
+                "name": "senderData",
+                "nodeType": "VariableDeclaration",
+                "scope": 10221,
+                "src": "4539:18:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes32",
+                  "typeString": "bytes32"
+                },
+                "typeName": {
+                  "id": 10219,
+                  "name": "bytes32",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "4539:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "ChallengeOutputSpent",
+            "nodeType": "StructDefinition",
+            "scope": 10222,
+            "src": "4299:265:63",
+            "visibility": "public"
+          }
+        ],
+        "scope": 10223,
+        "src": "25:4541:63"
+      }
+    ],
+    "src": "0:4567:63"
+  },
+  "legacyAST": {
+    "absolutePath": "/home/node/plasma-contracts/plasma_framework/contracts/src/exits/payment/routers/PaymentInFlightExitRouterArgs.sol",
+    "exportedSymbols": {
+      "PaymentInFlightExitRouterArgs": [
+        10222
+      ]
+    },
+    "id": 10223,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 10145,
+        "literals": [
+          "solidity",
+          "0.5",
+          ".11"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:63"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 10222,
+        "linearizedBaseContracts": [
+          10222
+        ],
+        "name": "PaymentInFlightExitRouterArgs",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "canonicalName": "PaymentInFlightExitRouterArgs.StartExitArgs",
+            "id": 10160,
+            "members": [
+              {
+                "constant": false,
+                "id": 10147,
+                "name": "inFlightTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10160,
+                "src": "742:16:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10146,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "742:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10150,
+                "name": "inputTxs",
+                "nodeType": "VariableDeclaration",
+                "scope": 10160,
+                "src": "768:16:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
+                  "typeString": "bytes[]"
+                },
+                "typeName": {
+                  "baseType": {
+                    "id": 10148,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "768:5:63",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "id": 10149,
+                  "length": null,
+                  "nodeType": "ArrayTypeName",
+                  "src": "768:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
+                    "typeString": "bytes[]"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10153,
+                "name": "inputUtxosPos",
+                "nodeType": "VariableDeclaration",
+                "scope": 10160,
+                "src": "794:23:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                  "typeString": "uint256[]"
+                },
+                "typeName": {
+                  "baseType": {
+                    "id": 10151,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "794:7:63",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "id": 10152,
+                  "length": null,
+                  "nodeType": "ArrayTypeName",
+                  "src": "794:9:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                    "typeString": "uint256[]"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10156,
+                "name": "inputTxsInclusionProofs",
+                "nodeType": "VariableDeclaration",
+                "scope": 10160,
+                "src": "827:31:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
+                  "typeString": "bytes[]"
+                },
+                "typeName": {
+                  "baseType": {
+                    "id": 10154,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "827:5:63",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "id": 10155,
+                  "length": null,
+                  "nodeType": "ArrayTypeName",
+                  "src": "827:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
+                    "typeString": "bytes[]"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10159,
+                "name": "inFlightTxWitnesses",
+                "nodeType": "VariableDeclaration",
+                "scope": 10160,
+                "src": "868:27:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
+                  "typeString": "bytes[]"
+                },
+                "typeName": {
+                  "baseType": {
+                    "id": 10157,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "868:5:63",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "id": 10158,
+                  "length": null,
+                  "nodeType": "ArrayTypeName",
+                  "src": "868:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_bytes_storage_$dyn_storage_ptr",
+                    "typeString": "bytes[]"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "StartExitArgs",
+            "nodeType": "StructDefinition",
+            "scope": 10222,
+            "src": "711:191:63",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "PaymentInFlightExitRouterArgs.PiggybackInFlightExitOnInputArgs",
+            "id": 10165,
+            "members": [
+              {
+                "constant": false,
+                "id": 10162,
+                "name": "inFlightTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10165,
+                "src": "1173:16:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10161,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1173:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10164,
+                "name": "inputIndex",
+                "nodeType": "VariableDeclaration",
+                "scope": 10165,
+                "src": "1199:17:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint16",
+                  "typeString": "uint16"
+                },
+                "typeName": {
+                  "id": 10163,
+                  "name": "uint16",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1199:6:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "PiggybackInFlightExitOnInputArgs",
+            "nodeType": "StructDefinition",
+            "scope": 10222,
+            "src": "1123:100:63",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "PaymentInFlightExitRouterArgs.PiggybackInFlightExitOnOutputArgs",
+            "id": 10170,
+            "members": [
+              {
+                "constant": false,
+                "id": 10167,
+                "name": "inFlightTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10170,
+                "src": "1498:16:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10166,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1498:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10169,
+                "name": "outputIndex",
+                "nodeType": "VariableDeclaration",
+                "scope": 10170,
+                "src": "1524:18:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint16",
+                  "typeString": "uint16"
+                },
+                "typeName": {
+                  "id": 10168,
+                  "name": "uint16",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "1524:6:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "PiggybackInFlightExitOnOutputArgs",
+            "nodeType": "StructDefinition",
+            "scope": 10222,
+            "src": "1447:102:63",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "PaymentInFlightExitRouterArgs.ChallengeCanonicityArgs",
+            "id": 10189,
+            "members": [
+              {
+                "constant": false,
+                "id": 10172,
+                "name": "inputTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2479:13:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10171,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2479:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10174,
+                "name": "inputUtxoPos",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2502:20:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10173,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2502:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10176,
+                "name": "inFlightTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2532:16:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10175,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2532:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10178,
+                "name": "inFlightTxInputIndex",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2558:27:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint16",
+                  "typeString": "uint16"
+                },
+                "typeName": {
+                  "id": 10177,
+                  "name": "uint16",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2558:6:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10180,
+                "name": "competingTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2595:17:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10179,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2595:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10182,
+                "name": "competingTxInputIndex",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2622:28:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint16",
+                  "typeString": "uint16"
+                },
+                "typeName": {
+                  "id": 10181,
+                  "name": "uint16",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2622:6:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10184,
+                "name": "competingTxPos",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2660:22:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10183,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2660:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10186,
+                "name": "competingTxInclusionProof",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2692:31:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10185,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2692:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10188,
+                "name": "competingTxWitness",
+                "nodeType": "VariableDeclaration",
+                "scope": 10189,
+                "src": "2733:24:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10187,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "2733:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "ChallengeCanonicityArgs",
+            "nodeType": "StructDefinition",
+            "scope": 10222,
+            "src": "2438:326:63",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "PaymentInFlightExitRouterArgs.ChallengeInputSpentArgs",
+            "id": 10206,
+            "members": [
+              {
+                "constant": false,
+                "id": 10191,
+                "name": "inFlightTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10206,
+                "src": "3429:16:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10190,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "3429:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10193,
+                "name": "inFlightTxInputIndex",
+                "nodeType": "VariableDeclaration",
+                "scope": 10206,
+                "src": "3455:27:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint16",
+                  "typeString": "uint16"
+                },
+                "typeName": {
+                  "id": 10192,
+                  "name": "uint16",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "3455:6:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10195,
+                "name": "challengingTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10206,
+                "src": "3492:19:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10194,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "3492:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10197,
+                "name": "challengingTxInputIndex",
+                "nodeType": "VariableDeclaration",
+                "scope": 10206,
+                "src": "3521:30:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint16",
+                  "typeString": "uint16"
+                },
+                "typeName": {
+                  "id": 10196,
+                  "name": "uint16",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "3521:6:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10199,
+                "name": "challengingTxWitness",
+                "nodeType": "VariableDeclaration",
+                "scope": 10206,
+                "src": "3561:26:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10198,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "3561:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10201,
+                "name": "inputTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10206,
+                "src": "3597:13:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10200,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "3597:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10203,
+                "name": "inputUtxoPos",
+                "nodeType": "VariableDeclaration",
+                "scope": 10206,
+                "src": "3620:20:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10202,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "3620:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10205,
+                "name": "senderData",
+                "nodeType": "VariableDeclaration",
+                "scope": 10206,
+                "src": "3650:18:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes32",
+                  "typeString": "bytes32"
+                },
+                "typeName": {
+                  "id": 10204,
+                  "name": "bytes32",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "3650:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "ChallengeInputSpentArgs",
+            "nodeType": "StructDefinition",
+            "scope": 10222,
+            "src": "3388:287:63",
+            "visibility": "public"
+          },
+          {
+            "canonicalName": "PaymentInFlightExitRouterArgs.ChallengeOutputSpent",
+            "id": 10221,
+            "members": [
+              {
+                "constant": false,
+                "id": 10208,
+                "name": "inFlightTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10221,
+                "src": "4337:16:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10207,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "4337:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10210,
+                "name": "inFlightTxInclusionProof",
+                "nodeType": "VariableDeclaration",
+                "scope": 10221,
+                "src": "4363:30:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10209,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "4363:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10212,
+                "name": "outputUtxoPos",
+                "nodeType": "VariableDeclaration",
+                "scope": 10221,
+                "src": "4403:21:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                },
+                "typeName": {
+                  "id": 10211,
+                  "name": "uint256",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "4403:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10214,
+                "name": "challengingTx",
+                "nodeType": "VariableDeclaration",
+                "scope": 10221,
+                "src": "4434:19:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10213,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "4434:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10216,
+                "name": "challengingTxInputIndex",
+                "nodeType": "VariableDeclaration",
+                "scope": 10221,
+                "src": "4463:30:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint16",
+                  "typeString": "uint16"
+                },
+                "typeName": {
+                  "id": 10215,
+                  "name": "uint16",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "4463:6:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint16",
+                    "typeString": "uint16"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10218,
+                "name": "challengingTxWitness",
+                "nodeType": "VariableDeclaration",
+                "scope": 10221,
+                "src": "4503:26:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes_storage_ptr",
+                  "typeString": "bytes"
+                },
+                "typeName": {
+                  "id": 10217,
+                  "name": "bytes",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "4503:5:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_storage_ptr",
+                    "typeString": "bytes"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              },
+              {
+                "constant": false,
+                "id": 10220,
+                "name": "senderData",
+                "nodeType": "VariableDeclaration",
+                "scope": 10221,
+                "src": "4539:18:63",
+                "stateVariable": false,
+                "storageLocation": "default",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bytes32",
+                  "typeString": "bytes32"
+                },
+                "typeName": {
+                  "id": 10219,
+                  "name": "bytes32",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "4539:7:63",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  }
+                },
+                "value": null,
+                "visibility": "internal"
+              }
+            ],
+            "name": "ChallengeOutputSpent",
+            "nodeType": "StructDefinition",
+            "scope": 10222,
+            "src": "4299:265:63",
+            "visibility": "public"
+          }
+        ],
+        "scope": 10223,
+        "src": "25:4541:63"
+      }
+    ],
+    "src": "0:4567:63"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.11+commit.c082d0b4.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.16",
+  "updatedAt": "2020-04-07T14:07:49.760Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}
