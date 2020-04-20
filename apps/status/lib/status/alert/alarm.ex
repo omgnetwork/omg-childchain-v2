@@ -6,9 +6,6 @@ defmodule Status.Alert.Alarm do
   alias Status.Alert.Alarm.Types
   alias Status.Alert.AlarmHandler
 
-  @typedoc """
-  The raw alarm being used to `set` the Alarm
-  """
   def alarm_types() do
     Keyword.drop(Types.module_info(:exports), [:__info__, :module_info])
   end
