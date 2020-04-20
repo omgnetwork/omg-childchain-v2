@@ -355,17 +355,6 @@ defmodule Engine.Ethereum.RootChain.AbiTest do
     %{"min_exit_period" => 20} = Abi.decode_function(data, "minExitPeriod()")
   end
 
-  test "exitGames(uint256) function call gets decoded properly" do
-    data =
-      "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-
-    %{
-      "block_hash" =>
-        <<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0>>,
-      "block_timestamp" => 0
-    } = Abi.decode_function(data, "blocks(uint256)")
-  end
-
   test "vaults(uint256) function call gets decoded properly" do
     data = "0x0000000000000000000000004e3aeff70f022a6d4cc5947423887e7152826cf7"
 
@@ -376,7 +365,10 @@ defmodule Engine.Ethereum.RootChain.AbiTest do
 
   test "getVersion() function call gets decoded properly" do
     data =
-      "0x0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000d312e302e342b6136396337363300000000000000000000000000000000000000"
+      "0x0000000000000000000000000000000000000000000000" <>
+        "000000000000000020000000000000000000000000000000" <>
+        "000000000000000000000000000000000d312e302e342b61" <>
+        "36396337363300000000000000000000000000000000000000"
 
     %{"version" => version} = Abi.decode_function(data, "getVersion()")
 

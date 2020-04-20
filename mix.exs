@@ -1,25 +1,10 @@
 defmodule Childchain.MixProject do
   use Mix.Project
 
-  @sha String.replace(
-         elem(
-           System.cmd("git", [
-             "rev-parse",
-             "--short=7",
-             "HEAD"
-           ]),
-           0
-         ),
-         "\n",
-         ""
-       )
-  @version "#{String.trim(File.read!("VERSION"))}" <>
-             "+" <> @sha
-
   def project do
     [
       apps_path: "apps",
-      version: @version,
+      version: version(),
       start_permanent: Mix.env() == :prod,
       build_path: "_build" <> docker(),
       deps_path: "deps" <> docker(),
@@ -28,9 +13,9 @@ defmodule Childchain.MixProject do
       releases: [
         childchain: [
           steps: steps(),
-          version: @version,
+          version: version(),
           applications: tools() ++ [engine: :permanent, rpc: :permanent],
-          config_providers: []
+          config_providers: [{Engine.ReleaseTasks.Contract, []}]
         ]
       ]
     ]
@@ -38,9 +23,8 @@ defmodule Childchain.MixProject do
 
   defp deps do
     [
-      {:ex_abi, "~> 0.2.1"},
       {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
+      {:dialyxir, "1.0.0", only: [:dev], runtime: false}
     ]
   end
 
@@ -94,5 +78,14 @@ defmodule Childchain.MixProject do
           runtime_tools: :permanent
         ]
     end
+  end
+
+  defp version() do
+    "#{String.trim(File.read!("VERSION"))}" <> "+" <> sha()
+  end
+
+  defp sha() do
+    git_sha = System.cmd("git", ["rev-parse", "--short=7", "HEAD"])
+    String.replace(elem(git_sha, 0), "\n", "")
   end
 end
