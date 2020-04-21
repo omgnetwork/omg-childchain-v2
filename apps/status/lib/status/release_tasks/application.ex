@@ -1,4 +1,4 @@
-defmodule Status.ReleaseTasks.SetApplication do
+defmodule Status.ReleaseTasks.Application do
   @moduledoc false
   @behaviour Config.Provider
 

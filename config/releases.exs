@@ -26,5 +26,10 @@ config :sentry,
   environment_name: System.get_env("APP_ENV"),
   enable_source_code_context: true,
   root_source_code_path: File.cwd!(),
-  included_environments: [System.get_env("APP_ENV")],
-  tags: [eth_network: get_env("ETHEREUM_NETWORK"), app_env: "#{app_env}", hostname: "#{hostname}"]
+  included_environments: ["development", "production", "staging", "stress", "sandbox"],
+  tags: %{
+    eth_network: System.get_env("ETHEREUM_NETWORK"),
+    app_env: System.get_env("APP_ENV"),
+    hostname: System.get_env("HOSTNAME"),
+    application: "childchain"
+  }

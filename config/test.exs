@@ -7,7 +7,6 @@ config :engine, Engine.Repo,
   hostname: "localhost"
 
 config :engine, ecto_repos: [Engine.Repo]
-config :logger, level: :info
 
 config :os_mon,
   disk_almost_full_threshold: 1,

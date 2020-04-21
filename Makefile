@@ -71,7 +71,7 @@ build-test: deps-childchain
 # Baremetal
 #
 
-childchain:
+childchain: localchain_contract_addresses.env
 	echo "Building Childchain" && \
 	make build-childchain-${BAREBUILD_ENV} && \
 	rm -f ./_build/${BAREBUILD_ENV}/rel/childchain/var/sys.config || true && \

@@ -47,4 +47,15 @@ config :engine, ecto_repos: [Engine.Repo]
 config :ethereumex,
   http_options: [recv_timeout: 20_000]
 
+config :logger, level: :info
+
+config :logger, :console,
+  format: "$date $time [$level] $metadata⋅$message⋅\n",
+  discard_threshold: 2000,
+  metadata: [:module, :function, :request_id, :trace_id, :span_id]
+
+config :logger, Ink,
+  name: "childchain",
+  exclude_hostname: true
+
 import_config "#{Mix.env()}.exs"
