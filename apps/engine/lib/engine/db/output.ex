@@ -11,6 +11,7 @@ defmodule Engine.DB.Output do
 
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query, only: [from: 2]
 
   @error_messages [
     cannot_be_zero: "can't be zero",
@@ -37,8 +38,8 @@ defmodule Engine.DB.Output do
 
     field(:state, :string, default: "pending")
 
-    belongs_to(:spending_transaction, Engine.Transaction2)
-    belongs_to(:creating_transaction, Engine.Transaction2)
+    belongs_to(:spending_transaction, Engine.DB.Transaction)
+    belongs_to(:creating_transaction, Engine.DB.Transaction)
 
     timestamps(type: :utc_datetime)
   end
@@ -52,4 +53,11 @@ defmodule Engine.DB.Output do
     |> cast(params, [:output_type, :output_data, :output_id])
   end
 
+  @doc """
+  Query to return all usable outputs.
+  """
+  def usable() do
+    from(o in __MODULE__,
+      where: is_nil(o.spending_transaction_id) and o.state == "confirmed")
+  end
 end

@@ -1,13 +1,26 @@
-defmodule Engine.DB.Transaction2Test do
+defmodule Engine.DB.TransactionTest do
   use ExUnit.Case, async: true
-  doctest Engine.DB.Transaction2, import: true
+  doctest Engine.DB.Transaction, import: true
   import Engine.Factory
 
-  alias Engine.DB.Transaction2, as: Transaction
+  alias Engine.DB.Transaction
   alias Engine.DB.Output
 
   describe "changeset/2" do
 
+    test "builds the outputs" do
+      params = params_for(:deposit, %{amount: 1})
+      changeset = Transaction.changeset(%Transaction{}, params)
+
+      assert %Output{} = hd(changeset.changes.outputs).data
+    end
+
+    test "builds the inputs" do
+      params = params_for(:payment_v1, %{amount: 1})
+      changeset = Transaction.changeset(%Transaction{}, params)
+
+      assert %Output{} = hd(changeset.changes.inputs).data
+    end
     test "validates the transactions with the stateless protocol" do
       params = params_for(:deposit, %{amount: 0})
       changeset = Transaction.changeset(%Transaction{}, params)
@@ -16,19 +29,13 @@ defmodule Engine.DB.Transaction2Test do
       assert {"can not be zero", []} = changeset.errors[:amount]
     end
 
-    test "builds the inputs" do
-      params = params_for(:deposit, %{amount: 1})
-      changeset = Transaction.changeset(%Transaction{}, params)
+    #test "validates input utxos exist" do
+      #params = params_for(:payment_v1, %{amount: 0})
+      #changeset = Transaction.changeset(%Transaction{}, params)
 
-      assert %Output{} = hd(changeset.changes.outputs).data
-    end
-
-    test "builds the outputs" do
-      params = params_for(:payment_v1, %{amount: 1})
-      changeset = Transaction.changeset(%Transaction{}, params)
-
-      assert %Output{} = hd(changeset.changes.inputs).data
-    end
+      #refute changeset.valid?
+      #assert {"bad", []} = changeset.errors[:inputs]
+    #end
   end
 
   describe "decode_changeset/2" do

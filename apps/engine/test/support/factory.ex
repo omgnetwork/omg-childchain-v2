@@ -3,7 +3,7 @@ defmodule Engine.Factory do
 
   use ExMachina.Ecto, repo: Engine.Repo
 
-  alias Engine.DB.Transaction2, as: Transaction
+  alias Engine.DB.Transaction
   alias Engine.DB.Output
 
   # This feels meh. Need to figure out how we want to handle
@@ -22,7 +22,10 @@ defmodule Engine.Factory do
   end
 
   def payment_v1_factory(%{amount: amount}) do
-    output_id = %{blknum: 1, txindex: 0, oindex: 0}
+    output_id =
+      %{blknum: 1, txindex: 0, oindex: 0}
+      |> ExPlasma.Output.Position.pos()
+      |> ExPlasma.Output.Position.to_map()
     input = %ExPlasma.Output{output_id: output_id}
 
     output_data = %{output_guard: <<1::160>>, token: <<0::160>>, amount: amount}

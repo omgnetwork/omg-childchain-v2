@@ -96,14 +96,6 @@
     #changeset |> get_field(:inputs) |> Enum.map(&ExPlasma.Utxo.pos/1)
   #end
 
-  #defp query_for_unspent_utxos(positions) do
-    #from(u in Engine.Utxo,
-      #where: u.pos in ^positions and is_nil(u.spending_transaction_id),
-      #limit: 4,
-      #select: u.pos
-    #)
-  #end
-
   #defp params_from_ex_plasma(struct) do
     #params = Map.from_struct(struct)
 
