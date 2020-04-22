@@ -15,7 +15,7 @@ defmodule Engine.DB.OutputTest do
       input = params_for(:input, output_id)
       changeset = Output.changeset(%Output{}, input)
 
-      assert output_id.position == changeset.changes.output_id.position
+      assert output_id.position == changeset.changes.position
     end
   end
 

@@ -51,7 +51,15 @@ defmodule Engine.DB.Output do
   def changeset(struct, params) do
     struct
     |> cast(params, [:output_type, :output_data, :output_id])
+    |> extract_position()
   end
+
+  defp extract_position(changeset) do
+    output_id = get_field(changeset, :output_id)
+    position = Map.get(output_id, :position)
+    put_change(changeset, :position, position)
+  end
+
 
   @doc """
   Query to return all usable outputs.
