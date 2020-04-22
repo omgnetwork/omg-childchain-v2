@@ -17,6 +17,8 @@ defmodule Status.Alert.AlarmPrinterTest do
     assert is_number(previous_backoff)
   end
 
+  # slow af
+  @tag :skip
   test "that the process sends itself a message after startup", %{alarm_printer: alarm_printer} do
     %{previous_backoff: previous_backoff} = :sys.get_state(alarm_printer)
     :erlang.trace(alarm_printer, true, [:send])
@@ -29,6 +31,8 @@ defmodule Status.Alert.AlarmPrinterTest do
     assert_receive {:trace, _, :send, {:notify, {:warn, _, {Logger, "An alarm was raised 3", {_, _}, _}}}, Logger}
   end
 
+  # slow af
+  @tag :skip
   test "that the process increases the backoff", %{alarm_printer: alarm_printer} do
     %{previous_backoff: previous_backoff} = :sys.get_state(alarm_printer)
     :erlang.trace(alarm_printer, true, [:send])
