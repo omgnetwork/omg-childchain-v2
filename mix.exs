@@ -66,7 +66,7 @@ defmodule Childchain.MixProject do
       ],
       ignore_warnings: "dialyzer.ignore-warnings",
       list_unused_filters: true,
-      plt_add_apps: [:keccakf1600, :ex_abi],
+      plt_add_apps: [:keccakf1600, :ex_abi, :vmstats],
       paths: paths
     ]
   end

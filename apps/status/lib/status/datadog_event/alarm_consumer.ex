@@ -17,7 +17,7 @@ defmodule Status.DatadogEvent.AlarmConsumer do
   - :release is the mode this current process is runing under (for example, currently we support watcher, child chain or watcher info)
   - :current_version is semver of the current code
   """
-  @spec prepare_child(keyword()) :: %{id: atom(), start: tuple()}
+  @spec prepare_child(keyword()) :: Supervisor.child_spec()
   def prepare_child(opts) do
     %{id: :alarm_consumer, start: {__MODULE__, :start_link, [opts]}, shutdown: :brutal_kill, type: :worker}
   end

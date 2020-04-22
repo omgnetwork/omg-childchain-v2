@@ -14,10 +14,15 @@ defmodule Status.ReleaseTasks.Validators do
     false
   end
 
+  @spec app_env(String.t(), list(String.t())) :: false | String.t()
   def app_env(app_env, included_environments) do
-    app_env in included_environments
+    case app_env in included_environments do
+      true -> app_env
+      _ -> false
+    end
   end
 
+  @spec logger(String.t() | nil, atom()) :: atom()
   def logger(logger, default_logger) when is_binary(logger) and byte_size(logger) > 0 do
     do_validate_logger(String.upcase(logger), default_logger)
   end
