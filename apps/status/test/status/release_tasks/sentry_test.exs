@@ -1,6 +1,5 @@
 defmodule Status.ReleaseTasks.SentryTest do
   use ExUnit.Case, async: true
-  import ExUnit.CaptureLog, only: [capture_log: 1]
 
   alias __MODULE__.SystemMock
   alias Status.ReleaseTasks.Sentry
