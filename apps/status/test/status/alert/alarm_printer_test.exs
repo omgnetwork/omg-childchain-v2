@@ -1,6 +1,5 @@
 defmodule Status.Alert.AlarmPrinterTest do
   use ExUnit.Case, async: true
-  import ExUnit.CaptureLog, only: [capture_log: 1]
 
   alias Status.AlarmPrinter
 
@@ -13,48 +12,36 @@ defmodule Status.Alert.AlarmPrinterTest do
   end
 
   test "if the process has a previous backoff set", %{alarm_printer: alarm_printer} do
-    assert capture_log(fn ->
-             :erlang.trace(alarm_printer, true, [:receive])
-             %{previous_backoff: previous_backoff} = :sys.get_state(alarm_printer)
-             assert is_number(previous_backoff)
-           end)
+    :erlang.trace(alarm_printer, true, [:receive])
+    %{previous_backoff: previous_backoff} = :sys.get_state(alarm_printer)
+    assert is_number(previous_backoff)
   end
 
   test "that the process sends itself a message after startup", %{alarm_printer: alarm_printer} do
-    assert capture_log(fn ->
-             %{previous_backoff: previous_backoff} = :sys.get_state(alarm_printer)
-             :erlang.trace(alarm_printer, true, [:send])
-             :ok = Process.sleep(previous_backoff)
+    %{previous_backoff: previous_backoff} = :sys.get_state(alarm_printer)
+    :erlang.trace(alarm_printer, true, [:send])
+    :ok = Process.sleep(previous_backoff)
 
-             assert_receive {:trace, _, :send, {:notify, {:warn, _, {Logger, "An alarm was raised 1", {_, _}, _}}},
-                             Logger}
+    assert_receive {:trace, _, :send, {:notify, {:warn, _, {Logger, "An alarm was raised 1", {_, _}, _}}}, Logger}
 
-             assert_receive {:trace, _, :send, {:notify, {:warn, _, {Logger, "An alarm was raised 2", {_, _}, _}}},
-                             Logger}
+    assert_receive {:trace, _, :send, {:notify, {:warn, _, {Logger, "An alarm was raised 2", {_, _}, _}}}, Logger}
 
-             assert_receive {:trace, _, :send, {:notify, {:warn, _, {Logger, "An alarm was raised 3", {_, _}, _}}},
-                             Logger}
-           end)
+    assert_receive {:trace, _, :send, {:notify, {:warn, _, {Logger, "An alarm was raised 3", {_, _}, _}}}, Logger}
   end
 
   test "that the process increases the backoff", %{alarm_printer: alarm_printer} do
-    assert capture_log(fn ->
-             %{previous_backoff: previous_backoff} = :sys.get_state(alarm_printer)
-             :erlang.trace(alarm_printer, true, [:send])
-             :ok = Process.sleep(previous_backoff)
+    %{previous_backoff: previous_backoff} = :sys.get_state(alarm_printer)
+    :erlang.trace(alarm_printer, true, [:send])
+    :ok = Process.sleep(previous_backoff)
 
-             assert_receive {:trace, _, :send, {:notify, {:warn, _, {Logger, "An alarm was raised 1", {_, _}, _}}},
-                             Logger}
+    assert_receive {:trace, _, :send, {:notify, {:warn, _, {Logger, "An alarm was raised 1", {_, _}, _}}}, Logger}
 
-             assert_receive {:trace, _, :send, {:notify, {:warn, _, {Logger, "An alarm was raised 2", {_, _}, _}}},
-                             Logger}
+    assert_receive {:trace, _, :send, {:notify, {:warn, _, {Logger, "An alarm was raised 2", {_, _}, _}}}, Logger}
 
-             assert_receive {:trace, _, :send, {:notify, {:warn, _, {Logger, "An alarm was raised 3", {_, _}, _}}},
-                             Logger}
+    assert_receive {:trace, _, :send, {:notify, {:warn, _, {Logger, "An alarm was raised 3", {_, _}, _}}}, Logger}
 
-             %{previous_backoff: previous_backoff_1} = :sys.get_state(alarm_printer)
-             assert previous_backoff_1 > previous_backoff
-           end)
+    %{previous_backoff: previous_backoff_1} = :sys.get_state(alarm_printer)
+    assert previous_backoff_1 > previous_backoff
   end
 
   defmodule Alarm do
