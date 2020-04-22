@@ -21,9 +21,13 @@ defmodule Engine.Factory do
     }
   end
 
-  def payment_v1_factory(%{amount: amount}) do
+  def payment_v1_factory(%{amount: amount} = attr) do
+    blknum = Map.get(attr, :blknum, 1)
+    txindex = Map.get(attr, :txindex, 0)
+    oindex = Map.get(attr, :oindex, 0)
+
     output_id =
-      %{blknum: 1, txindex: 0, oindex: 0}
+      %{blknum: blknum, txindex: txindex, oindex: oindex}
       |> ExPlasma.Output.Position.pos()
       |> ExPlasma.Output.Position.to_map()
     input = %ExPlasma.Output{output_id: output_id}
@@ -41,8 +45,15 @@ defmodule Engine.Factory do
   end
 
   def input_factory(attrs) do
-    %Output{output_type: 1, output_id: attrs}
+    output_id =
+      attrs
+      |> ExPlasma.Output.Position.pos()
+      |> ExPlasma.Output.Position.to_map()
+    %Output{position: output_id.position, output_type: 1, output_id: output_id}
   end
+
+  def spent(%Output{} = input), do: %{input | state: "spent"}
+  def confirmed(%Output{} = input), do: %{input | state: "confirmed"}
 
   def payment_v1_output_factory(attrs) do
     %Output{

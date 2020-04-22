@@ -26,16 +26,43 @@ defmodule Engine.DB.TransactionTest do
       changeset = Transaction.changeset(%Transaction{}, params)
 
       refute changeset.valid?
-      assert {"can not be zero", []} = changeset.errors[:amount]
+      assert {"can not be zero", _} = changeset.errors[:amount]
     end
 
-    #test "validates input utxos exist" do
-      #params = params_for(:payment_v1, %{amount: 0})
-      #changeset = Transaction.changeset(%Transaction{}, params)
+    test "validates inputs exist" do
+      params = params_for(:payment_v1, %{amount: 0})
+      changeset = Transaction.changeset(%Transaction{}, params)
 
-      #refute changeset.valid?
-      #assert {"bad", []} = changeset.errors[:inputs]
-    #end
+      refute changeset.valid?
+      assert {"input utxos 1000000000 are missing or spent", _} = changeset.errors[:inputs]
+    end
+
+    test "validates inputs are not spent" do
+      {result, changeset} =
+      :input 
+      |> build(%{blknum: 1, txindex: 0, oindex: 0})
+      |> spent()
+      |> Engine.Repo.insert()
+
+      params = params_for(:payment_v1, %{amount: 0})
+      changeset = Transaction.changeset(%Transaction{}, params)
+
+      refute changeset.valid?
+      assert {"input utxos 1000000000 are missing or spent", _} = changeset.errors[:inputs]
+    end
+
+    test "validates inputs are usable" do
+      {result, changeset} =
+      :input 
+      |> build(%{blknum: 2, txindex: 0, oindex: 0})
+      |> confirmed()
+      |> Engine.Repo.insert()
+
+      params = params_for(:payment_v1, %{blknum: 2, txindex: 0, oindex: 0, amount: 1})
+      changeset = Transaction.changeset(%Transaction{}, params)
+
+      assert changeset.valid?
+    end
   end
 
   describe "decode_changeset/2" do
