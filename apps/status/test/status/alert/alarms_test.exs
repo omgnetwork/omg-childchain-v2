@@ -17,6 +17,17 @@ defmodule Status.Alert.AlarmTest do
     Alarm.clear_all()
   end
 
+  describe "alarm_types/0" do
+    test "alarm types are correct" do
+      types = Alarm.alarm_types()
+
+      assert types ==
+               Types.module_info()
+               |> Keyword.fetch!(:exports)
+               |> Keyword.drop([:__info__, :module_info])
+    end
+  end
+
   test "raise and clear alarm based only on id" do
     alarm = {:id, "details"}
     :alarm_handler.set_alarm(alarm)

@@ -28,7 +28,8 @@ defmodule Engine.ReleaseTasks.Contract do
 
     authority_address = "AUTHORITY_ADDRESS" |> get_env() |> Validators.address!("AUTHORITY_ADDRESS")
     tx_hash = "TXHASH_CONTRACT" |> get_env() |> Validators.tx_hash!("TXHASH_CONTRACT")
-    rpc_url = "ETHEREUM_RPC_URL" |> get_env() |> Validators.url!("ETHEREUM_RPC_URL")
+    default_url = config |> Keyword.fetch!(:ethereumex) |> Keyword.fetch!(:url)
+    rpc_url = "ETHEREUM_RPC_URL" |> get_env() |> Validators.url("ETHEREUM_RPC_URL", default_url)
 
     [
       payment_exit_game,

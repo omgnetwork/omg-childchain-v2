@@ -7,9 +7,9 @@ defmodule Status.Application do
   alias Status.AlarmPrinter
   alias Status.Alert.Alarm
   alias Status.Alert.AlarmHandler
+  alias Status.Configuration
   alias Status.DatadogEvent.AlarmConsumer
   alias Status.Metric.Datadog
-  alias Status.Metric.Tracer
   alias Status.Metric.VmstatsSink
 
   def start(_type, _args) do
@@ -25,14 +25,14 @@ defmodule Status.Application do
 
         false ->
           [
-            {Status.Metric.StatsdMonitor, [alarm_module: Alarm, child_module: Datadog]},
+            {Datadog, []},
             VmstatsSink.prepare_child(),
             {SpandexDatadog.ApiServer, spandex_datadog_options()},
             {AlarmConsumer,
              [
                dd_alarm_handler: Status.DatadogEvent.AlarmHandler,
-               release: Application.get_env(:status, :release),
-               current_version: Application.get_env(:status, :current_version),
+               release: Configuration.release(),
+               current_version: Configuration.current_version(),
                publisher: Status.Metric.Datadog
              ]}
           ]
@@ -48,26 +48,10 @@ defmodule Status.Application do
 
   @spec is_disabled?() :: boolean()
   defp is_disabled?() do
-    Keyword.get(Application.get_env(:status, Tracer) || [], :disabled?, true)
+    Keyword.fetch!(Configuration.tracer(), :disabled?)
   end
 
   defp spandex_datadog_options() do
-    config = Application.get_all_env(:spandex_datadog)
-    config_host = config[:host]
-    config_port = config[:port]
-    config_batch_size = config[:batch_size]
-    config_sync_threshold = config[:sync_threshold]
-    config_http = config[:http]
-    spandex_datadog_options(config_host, config_port, config_batch_size, config_sync_threshold, config_http)
-  end
-
-  defp spandex_datadog_options(config_host, config_port, config_batch_size, config_sync_threshold, config_http) do
-    [
-      host: config_host || "localhost",
-      port: config_port || 8126,
-      batch_size: config_batch_size || 10,
-      sync_threshold: config_sync_threshold || 100,
-      http: config_http || HTTPoison
-    ]
+    Configuration.spandex_datadog()
   end
 end

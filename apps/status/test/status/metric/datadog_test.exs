@@ -7,7 +7,7 @@ defmodule Status.Metric.DatadogTest do
 
     {:ok, _} =
       Task.start(fn ->
-        {:ok, datadog_pid} = Datadog.start_link()
+        {:ok, datadog_pid} = Datadog.start_link([])
         port = Port.open({:spawn, "cat"}, [:binary])
         true = Process.link(datadog_pid)
         send(parent, {:data, port, datadog_pid})

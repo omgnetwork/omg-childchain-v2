@@ -58,4 +58,18 @@ config :logger, Ink,
   name: "childchain",
   exclude_hostname: true
 
+config :status, Status.Metric.Tracer,
+  service: :web,
+  adapter: SpandexDatadog.Adapter,
+  disabled?: true,
+  type: :web,
+  env: ""
+
+config :spandex_datadog,
+  host: "datadog",
+  port: 8126,
+  batch_size: 10,
+  sync_threshold: 100,
+  http: HTTPoison
+
 import_config "#{Mix.env()}.exs"

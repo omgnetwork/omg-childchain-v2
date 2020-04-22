@@ -14,13 +14,7 @@ defmodule Status.Alert.Alarm.Types do
            | :ethereum_connection_error
            | :ethereum_stalled_sync
            | :invalid_fee_source
-           | :statsd_client_connection
            | :main_supervisor_halted, alarm_detail}
-
-  @spec statsd_client_connection(module()) :: {:statsd_client_connection, alarm_detail}
-  def statsd_client_connection(reporter) do
-    {:statsd_client_connection, %{node: Node.self(), reporter: reporter}}
-  end
 
   @spec ethereum_connection_error(module()) :: {:ethereum_connection_error, alarm_detail}
   def ethereum_connection_error(reporter) do

@@ -1,7 +1,18 @@
 defmodule Status.Metric.Datadog do
   @moduledoc """
-  Datadog connection wrapper
+  Datadog connection wrapper - Statix
   """
+  use GenServer
+  alias Status.Configuration
+  require Logger
+
+  @doc """
+  Returns child_specs for the given metric setup, to be included e.g. in Supervisor's children.
+  """
+  @spec prepare_child() :: Supervisor.child_spec()
+  def prepare_child() do
+    %{id: :datadog_statix_worker, start: {__MODULE__, :start_link, []}}
+  end
 
   # we want to override Statix in :test
   # because we don't want to send metrics in unittests
@@ -10,14 +21,14 @@ defmodule Status.Metric.Datadog do
     _ -> use Statix, runtime_config: true
   end
 
-  use GenServer
-  require Logger
-
-  def start_link(), do: GenServer.start_link(__MODULE__, [], [])
+  def start_link(args) do
+    GenServer.start_link(__MODULE__, args, [])
+  end
 
   def init(_opts) do
     _ = Process.flag(:trap_exit, true)
-    _ = Logger.info("Starting #{inspect(__MODULE__)} and connecting to Datadog.")
+    statix = Configuration.statix()
+    _ = Logger.info("Starting #{inspect(__MODULE__)} and connecting to Datadog via #{inspect(statix)}.")
     __MODULE__.connect()
     _ = Logger.info("Connection opened #{inspect(current_conn())}")
     {:ok, current_conn()}

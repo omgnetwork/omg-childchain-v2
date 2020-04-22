@@ -1,5 +1,6 @@
 MAKEFLAGS += --silent
 OVERRIDING_START ?= start_iex
+OVERRIDING_VARIABLES ?= bin/variables
 SNAPSHOT ?= SNAPSHOT_MIX_EXIT_PERIOD_SECONDS_20
 BAREBUILD_ENV ?= dev
 ENV_TEST ?= env MIX_ENV=test
@@ -76,7 +77,9 @@ childchain: localchain_contract_addresses.env
 	make build-childchain-${BAREBUILD_ENV} && \
 	rm -f ./_build/${BAREBUILD_ENV}/rel/childchain/var/sys.config || true && \
 	echo "Init Childchain DB" && \
-	_build/${BAREBUILD_ENV}/rel/childchain/bin/childchain eval "Engine.ReleaseTasks.InitPostgresqlDB.migrate()"
+	. ${OVERRIDING_VARIABLES} && \
+	_build/${BAREBUILD_ENV}/rel/childchain/bin/childchain eval "Engine.ReleaseTasks.InitPostgresqlDB.migrate()" && \
+	. ${OVERRIDING_VARIABLES} && \
 	_build/${BAREBUILD_ENV}/rel/childchain/bin/childchain $(OVERRIDING_START)
 
 #

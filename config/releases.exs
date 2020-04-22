@@ -1,5 +1,11 @@
 import Config
 
+to_boolean = fn
+  "true" -> true
+  "false" -> false
+  _ -> nil
+end
+
 config :engine,
   network: System.get_env("ETHEREUM_NETWORK"),
   txhash_contract: System.get_env("TXHASH_CONTRACT"),
@@ -17,7 +23,7 @@ config :engine, Engine.Repo,
   backoff_type: :stop
 
 config :ethereumex,
-  url: System.get_env("ETHEREUM_RPC_URL"),
+  url: System.get_env("ETHEREUM_RPC_URL") || "http://localhost:8545",
   http_options: [recv_timeout: 20_000]
 
 config :sentry,
@@ -33,3 +39,24 @@ config :sentry,
     hostname: System.get_env("HOSTNAME"),
     application: "childchain"
   }
+
+statix_tags = [application: "childchain", app_env: System.get_env("APP_ENV"), hostname: System.get_env("HOSTNAME")]
+
+config :statix,
+  host: System.get_env("DD_HOSTNAME") || "datadog",
+  port: String.to_integer(System.get_env("DD_PORT") || "8125"),
+  tags: Enum.map(statix_tags, fn {key, value} -> "#{key}:#{value}" end)
+
+config :spandex_datadog,
+  host: System.get_env("DD_HOSTNAME") || "datadog",
+  port: String.to_integer(System.get_env("DD_APM_PORT") || "8126"),
+  batch_size: String.to_integer(System.get_env("BATCH_SIZE") || "10"),
+  sync_threshold: String.to_integer(System.get_env("SYNC_THRESHOLD") || "100"),
+  http: HTTPoison
+
+config :status, Status.Metric.Tracer,
+  service: :web,
+  adapter: SpandexDatadog.Adapter,
+  disabled?: to_boolean.(System.get_env("DD_DISABLED") || "true"),
+  type: :web,
+  env: System.get_env("APP_ENV") || ""

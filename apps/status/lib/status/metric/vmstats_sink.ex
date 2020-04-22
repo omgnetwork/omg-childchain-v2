@@ -6,12 +6,10 @@ defmodule Status.Metric.VmstatsSink do
 
   alias Status.Metric.Datadog
 
-  @type vm_stat :: {:vmstats_sup, :start_link, [any(), ...]}
-
   @doc """
   Returns child_specs for the given metric setup, to be included e.g. in Supervisor's children.
   """
-  @spec prepare_child() :: %{id: :vmstats_sup, start: vm_stat()}
+  @spec prepare_child() :: Supervisor.child_spec()
   def prepare_child() do
     %{id: :vmstats_sup, start: {:vmstats_sup, :start_link, [__MODULE__, base_key()]}}
   end
