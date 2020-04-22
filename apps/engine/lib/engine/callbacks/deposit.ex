@@ -36,30 +36,30 @@ defmodule Engine.Callbacks.Deposit do
   Inserts deposit events, recreating the transaction and forming the associated block,
   transaction, and UTXOs. This will wrap all the build deposits into one DB transaction.
   """
-  @spec callback(list()) :: {:ok, map()} | {:error, :atom, any(), any()}
-  def callback(events), do: do_callback(Ecto.Multi.new(), events)
+  #@spec callback(list()) :: {:ok, map()} | {:error, :atom, any(), any()}
+  #def callback(events), do: do_callback(Ecto.Multi.new(), events)
 
-  defp do_callback(multi, [event | tail]), do: multi |> build_deposit(event) |> do_callback(tail)
-  defp do_callback(multi, []), do: Engine.Repo.transaction(multi)
+  #defp do_callback(multi, [event | tail]), do: multi |> build_deposit(event) |> do_callback(tail)
+  #defp do_callback(multi, []), do: Engine.Repo.transaction(multi)
 
-  defp build_deposit(multi, %{} = event) do
-    utxo = %ExPlasma.Utxo{
-      blknum: event.blknum,
-      txindex: 0,
-      oindex: 0,
-      currency: event.currency,
-      owner: event.owner,
-      amount: event.amount
-    }
+  #defp build_deposit(multi, %{} = event) do
+    #utxo = %ExPlasma.Utxo{
+      #blknum: event.blknum,
+      #txindex: 0,
+      #oindex: 0,
+      #currency: event.currency,
+      #owner: event.owner,
+      #amount: event.amount
+    #}
 
-    {:ok, deposit} = ExDeposit.new(utxo)
-    tx_bytes = ExPlasma.encode(deposit)
+    #{:ok, deposit} = ExDeposit.new(utxo)
+    #tx_bytes = ExPlasma.encode(deposit)
 
-    changeset =
-      %Transaction{}
-      |> Transaction.changeset(tx_bytes)
-      |> put_change(:block, %Engine.Block{number: event.blknum})
+    #changeset =
+      #%Transaction{}
+      #|> Transaction.changeset(tx_bytes)
+      #|> put_change(:block, %Engine.Block{number: event.blknum})
 
-    Ecto.Multi.insert(multi, "deposit-blknum-#{event.blknum}", changeset)
-  end
+    #Ecto.Multi.insert(multi, "deposit-blknum-#{event.blknum}", changeset)
+  #end
 end

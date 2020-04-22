@@ -44,7 +44,7 @@ defmodule Engine.MixProject do
       {:ex_abi, "~> 0.2"},
       {:ethereumex, "0.6.1"},
       {:ecto_sql, "~> 3.1"},
-      {:ex_plasma, git: "https://github.com/omisego/ex_plasma.git"},
+      {:ex_plasma, git: "https://github.com/omisego/ex_plasma.git", branch: "achiurizo/output"},
       {:postgrex, "~> 0.14"},
       {:telemetry, "~> 0.4"},
       # TEST
