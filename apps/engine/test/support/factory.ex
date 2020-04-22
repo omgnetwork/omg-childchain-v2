@@ -21,6 +21,26 @@ defmodule Engine.Factory do
     }
   end
 
+  def payment_v1_factory(%{amount: amount}) do
+    output_id = %{blknum: 1, txindex: 0, oindex: 0}
+    input = %ExPlasma.Output{output_id: output_id}
+
+    output_data = %{output_guard: <<1::160>>, token: <<0::160>>, amount: amount}
+    output = %ExPlasma.Output{output_type: 1, output_data: output_data}
+    txn = %ExPlasma.Transaction{tx_type: 1, outputs: [output], inputs: [input]}
+    txbytes = ExPlasma.encode(txn)
+
+    %Transaction{
+      txbytes: txbytes,
+      inputs: [build(:input, output_id)],
+      outputs: [build(:payment_v1_output, %{amount: amount})]
+    }
+  end
+
+  def input_factory(attrs) do
+    %Output{output_type: 1, output_id: attrs}
+  end
+
   def payment_v1_output_factory(attrs) do
     %Output{
       output_type: 1,

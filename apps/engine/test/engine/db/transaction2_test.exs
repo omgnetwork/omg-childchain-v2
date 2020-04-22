@@ -4,6 +4,7 @@ defmodule Engine.DB.Transaction2Test do
   import Engine.Factory
 
   alias Engine.DB.Transaction2, as: Transaction
+  alias Engine.DB.Output
 
   describe "changeset/2" do
 
@@ -16,9 +17,17 @@ defmodule Engine.DB.Transaction2Test do
     end
 
     test "builds the inputs" do
+      params = params_for(:deposit, %{amount: 1})
+      changeset = Transaction.changeset(%Transaction{}, params)
+
+      assert %Output{} = hd(changeset.changes.outputs).data
     end
 
     test "builds the outputs" do
+      params = params_for(:payment_v1, %{amount: 1})
+      changeset = Transaction.changeset(%Transaction{}, params)
+
+      assert %Output{} = hd(changeset.changes.inputs).data
     end
   end
 
