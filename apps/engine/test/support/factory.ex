@@ -6,6 +6,15 @@ defmodule Engine.Factory do
   alias Engine.DB.Transaction
   alias Engine.DB.Output
 
+  def deposit_transaction_factory(%{amount: amount}) do
+    output_data = %{output_guard: <<1::160>>, token: <<0::160>>, amount: amount}
+    output = %ExPlasma.Output{output_type: 1, output_data: output_data}
+    txn = %ExPlasma.Transaction{tx_type: 1, outputs: [output]}
+    txbytes = ExPlasma.encode(txn)
+
+    txbytes |> Transaction.decode_changeset() |> Ecto.Changeset.apply_changes()
+  end
+
   # This feels meh. Need to figure out how we want to handle
   # creating transactions "from scratch" and how we
   # do transaction encoding the other way (childchain consumes txbytes)
