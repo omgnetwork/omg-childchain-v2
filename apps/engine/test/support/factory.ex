@@ -52,8 +52,8 @@ defmodule Engine.Factory do
     %Output{position: output_id.position, output_type: 1, output_id: output_id}
   end
 
-  def spent(%Output{} = input), do: %{input | state: "spent"}
-  def confirmed(%Output{} = input), do: %{input | state: "confirmed"}
+  def spent(%{} = input), do: %{input | state: "spent"}
+  def confirmed(%{} = input), do: %{input | state: "confirmed"}
 
   def payment_v1_output_factory(attrs) do
     %Output{

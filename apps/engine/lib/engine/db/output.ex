@@ -33,8 +33,8 @@ defmodule Engine.DB.Output do
     field(:position, :integer)
 
     field(:output_type, :integer)
-    field(:output_data, :map, default: %{})
-    field(:output_id, :map, default: %{})
+    field(:output_data, :binary)
+    field(:output_id, :binary)
 
     field(:state, :string, default: "pending")
 
@@ -50,16 +50,41 @@ defmodule Engine.DB.Output do
   """
   def changeset(struct, params) do
     struct
-    |> cast(params, [:output_type, :output_data, :output_id])
-    |> extract_position()
+    |> cast(params, [:state, :output_type])
+    |> extract_position(params)
+    |> encode_output_data(params)
+    |> encode_output_id(params)
   end
 
-  defp extract_position(changeset) do
-    output_id = get_field(changeset, :output_id)
+  # Extract the position from the output id and store it on the table.
+  # Used by the Transaction to find outputs quickly.
+  defp extract_position(changeset, params) do
+    output_id = Map.get(params, :output_id)  || %{}
     position = Map.get(output_id, :position)
     put_change(changeset, :position, position)
   end
 
+  # Doing this hacky work around so we don't need to convert to/from binary to hex string for the json column.
+  # Instead, we re-encoded as rlp encoded items per specification. This helps us future proof it a bit because
+  # we don't necessarily know what the future output data looks like yet. If there's data we need, we can
+  # at a later time pull them out and turn them into columns.
+  defp encode_output_data(changeset, params) do
+    case Map.get(params, :output_data) do
+      nil ->
+        changeset
+      data ->
+        put_change(changeset, :output_data, ExPlasma.Output.encode(params))
+    end
+  end
+
+  defp encode_output_id(changeset, params) do
+    case Map.get(params, :output_id) do
+      nil ->
+        changeset
+      data ->
+        put_change(changeset, :output_id, ExPlasma.Output.encode(params, as: :input))
+    end
+  end
 
   @doc """
   Query to return all usable outputs.

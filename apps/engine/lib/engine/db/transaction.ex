@@ -99,7 +99,7 @@ defmodule Engine.DB.Transaction do
     changeset |> get_field(:inputs) |> Enum.map(&get_input_position/1)
   end
 
-  defp get_input_position(%{output_id: %{position: position}}), do: position
+  defp get_input_position(%{position: position}), do: position
 
   def usable_outputs_for(positions) do
     Output.usable()

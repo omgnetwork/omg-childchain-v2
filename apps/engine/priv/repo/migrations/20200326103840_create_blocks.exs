@@ -5,12 +5,12 @@ defmodule Engine.Repo.Migrations.CreateBlocks do
     create table(:blocks) do
       add :hash, :binary
       add :number, :integer
-      add :status, :string
+      add :state, :string
 
       timestamps(type: :utc_datetime)
     end
 
     create unique_index(:blocks, [:number])
-    create unique_index(:blocks, [:status])
+    create unique_index(:blocks, [:state])
   end
 end

@@ -5,8 +5,8 @@ defmodule Engine.Repo.Migrations.CreateOutputs do
     create table(:outputs) do
       add :position, :bigint
 
-      add :output_data, :map, default: %{}
-      add :output_id, :map, default: %{}
+      add :output_data, :binary
+      add :output_id, :binary
       add :output_type, :integer
 
       add :state, :string, default: "pending"

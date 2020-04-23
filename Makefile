@@ -25,13 +25,19 @@ deps: deps-childchain
 deps-childchain:
 	HEX_HTTP_TIMEOUT=120 mix deps.get
 
-.PHONY: test test-console
+.PHONY: test test-console test-focus test-console-focus
 
 test:
 	$(ENV_TEST) mix test
 
+test-focus:
+	$(ENV_TEST) mix test --only focus
+
 test-console:
 	$(ENV_TEST) iex -S mix test
+
+test-console-focus:
+	$(ENV_TEST) iex -S mix test --only focus
 
 credo:
 	mix credo --strict

@@ -38,13 +38,10 @@ defmodule Engine.DB.TransactionTest do
     end
 
     test "validates inputs are not spent" do
-      {result, changeset} =
-      :input 
-      |> build(%{blknum: 1, txindex: 0, oindex: 0})
-      |> spent()
-      |> Engine.Repo.insert()
+      params = :input |> params_for(%{blknum: 1, txindex: 0, oindex: 0}) |> spent()
+      {:ok, _} = %Output{} |> Output.changeset(params) |> Engine.Repo.insert()
 
-      params = params_for(:payment_v1, %{amount: 0})
+      params = params_for(:payment_v1, %{amount: 1})
       changeset = Transaction.changeset(%Transaction{}, params)
 
       refute changeset.valid?
@@ -52,11 +49,8 @@ defmodule Engine.DB.TransactionTest do
     end
 
     test "validates inputs are usable" do
-      {result, changeset} =
-      :input 
-      |> build(%{blknum: 2, txindex: 0, oindex: 0})
-      |> confirmed()
-      |> Engine.Repo.insert()
+      params = :input |> params_for(%{blknum: 2, txindex: 0, oindex: 0}) |> confirmed()
+      {:ok, _} = %Output{} |> Output.changeset(params) |> Engine.Repo.insert()
 
       params = params_for(:payment_v1, %{blknum: 2, txindex: 0, oindex: 0, amount: 1})
       changeset = Transaction.changeset(%Transaction{}, params)

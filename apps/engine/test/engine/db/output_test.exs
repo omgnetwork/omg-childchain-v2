@@ -17,6 +17,28 @@ defmodule Engine.DB.OutputTest do
 
       assert output_id.position == changeset.changes.position
     end
+
+    test "encodes the output_data" do
+      params = params_for(:payment_v1_output, %{amount: 1})
+      encoded = ExPlasma.Output.encode(params)
+      changeset = Output.changeset(%Output{}, params)
+
+      assert encoded == changeset.changes.output_data
+    end
+
+    test "encodes the output_id" do
+      output_id =
+        %{blknum: 1, txindex: 0, oindex: 0}
+        |> ExPlasma.Output.Position.pos()
+        |> ExPlasma.Output.Position.to_map()
+
+      params = params_for(:input, output_id)
+
+      encoded = ExPlasma.Output.encode(params, as: :input)
+      changeset = Output.changeset(%Output{}, params)
+
+      assert encoded == changeset.changes.output_id
+    end
   end
 
   describe "usable/0" do
