@@ -16,8 +16,8 @@ defmodule Engine.Callbacks.Deposit do
 
   import Ecto.Changeset
 
-  alias Engine.Transaction
-  alias ExPlasma.Transaction.Deposit, as: ExDeposit
+  alias Engine.DB.Transaction
+  alias Engine.DB.Block
 
   @type address_binary :: <<_::160>>
 
@@ -36,30 +36,23 @@ defmodule Engine.Callbacks.Deposit do
   Inserts deposit events, recreating the transaction and forming the associated block,
   transaction, and UTXOs. This will wrap all the build deposits into one DB transaction.
   """
-  #@spec callback(list()) :: {:ok, map()} | {:error, :atom, any(), any()}
-  #def callback(events), do: do_callback(Ecto.Multi.new(), events)
+  @spec callback(list()) :: {:ok, map()} | {:error, :atom, any(), any()}
+  def callback(events), do: do_callback(Ecto.Multi.new(), events)
 
-  #defp do_callback(multi, [event | tail]), do: multi |> build_deposit(event) |> do_callback(tail)
-  #defp do_callback(multi, []), do: Engine.Repo.transaction(multi)
+  defp do_callback(multi, [event | tail]), do: multi |> build_deposit(event) |> do_callback(tail)
+  defp do_callback(multi, []), do: Engine.Repo.transaction(multi)
 
-  #defp build_deposit(multi, %{} = event) do
-    #utxo = %ExPlasma.Utxo{
-      #blknum: event.blknum,
-      #txindex: 0,
-      #oindex: 0,
-      #currency: event.currency,
-      #owner: event.owner,
-      #amount: event.amount
-    #}
+  defp build_deposit(multi, %{} = event) do
+    data = %{output_guard: event.owner, token: event.currency, amount: event.amount}
+    id   = %{blknum: event.blknum, txindex: 0, oindex: 0}
+    output = %ExPlasma.Output{output_id: id, output_type: 1, output_data: data}
+    transaction = %ExPlasma.Transaction{tx_type: 1, outputs: [output]}
+    txbytes = ExPlasma.encode(transaction)
 
-    #{:ok, deposit} = ExDeposit.new(utxo)
-    #tx_bytes = ExPlasma.encode(deposit)
+    changeset =
+      Transaction.decode_changeset(txbytes)
+      |> put_change(:block, %Block{number: event.blknum})
 
-    #changeset =
-      #%Transaction{}
-      #|> Transaction.changeset(tx_bytes)
-      #|> put_change(:block, %Engine.Block{number: event.blknum})
-
-    #Ecto.Multi.insert(multi, "deposit-blknum-#{event.blknum}", changeset)
-  #end
+    Ecto.Multi.insert(multi, "deposit-blknum-#{event.blknum}", changeset)
+  end
 end

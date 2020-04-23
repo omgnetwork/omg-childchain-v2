@@ -6,6 +6,7 @@ defmodule Engine.DB.Transaction do
   import Ecto.Query
 
   alias __MODULE__
+  alias Engine.DB.Block
   alias Engine.DB.Output
 
   @type txbytes() :: binary()
@@ -18,7 +19,7 @@ defmodule Engine.DB.Transaction do
   schema "transactions" do
     field(:txbytes, :binary)
 
-    belongs_to(:block, Engine.Block)
+    belongs_to(:block, Block)
     has_many(:inputs, Output, foreign_key: :spending_transaction_id)
     has_many(:outputs, Output, foreign_key: :creating_transaction_id)
 
