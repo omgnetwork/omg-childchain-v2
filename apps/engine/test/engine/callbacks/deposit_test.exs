@@ -5,6 +5,10 @@ defmodule Engine.Callbacks.DepositTest do
 
   alias Engine.Callbacks.Deposit
 
+  setup do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Engine.Repo)
+  end
+
   describe "deposit/1" do
     test "generates a confirmed transaction, block and utxo for the deposit" do
       deposit_event = %{
@@ -23,6 +27,7 @@ defmodule Engine.Callbacks.DepositTest do
       assert {:ok, %{"deposit-blknum-3" => transaction}} = Deposit.callback([deposit_event])
 
       assert transaction.block.number == 3
+      assert transaction.block.state == "confirmed"
     end
   end
 
@@ -59,5 +64,7 @@ defmodule Engine.Callbacks.DepositTest do
 
     assert transaction5.block.number == 5
     assert transaction6.block.number == 6
+    assert transaction5.block.state == "confirmed"
+    assert transaction6.block.state == "confirmed"
   end
 end

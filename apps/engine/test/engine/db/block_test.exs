@@ -7,6 +7,10 @@ defmodule Engine.DB.BlockTest do
 
   alias Engine.DB.Block
 
+  setup do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Engine.Repo)
+  end
+
   describe "form_block/0" do
     test "forms a block from the existing pending transactions" do
       insert(:deposit_transaction, %{amount: 1})

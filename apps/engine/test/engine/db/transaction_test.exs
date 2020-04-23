@@ -6,6 +6,10 @@ defmodule Engine.DB.TransactionTest do
   alias Engine.DB.Transaction
   alias Engine.DB.Output
 
+  setup do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Engine.Repo)
+  end
+
   describe "changeset/2" do
 
     test "builds the outputs" do

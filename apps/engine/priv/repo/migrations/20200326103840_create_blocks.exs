@@ -11,6 +11,5 @@ defmodule Engine.Repo.Migrations.CreateBlocks do
     end
 
     create unique_index(:blocks, [:number])
-    create unique_index(:blocks, [:state])
   end
 end

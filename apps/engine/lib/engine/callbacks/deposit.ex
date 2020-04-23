@@ -51,7 +51,7 @@ defmodule Engine.Callbacks.Deposit do
 
     changeset =
       Transaction.decode_changeset(txbytes)
-      |> put_change(:block, %Block{number: event.blknum})
+      |> put_change(:block, %Block{number: event.blknum, state: "confirmed"})
 
     Ecto.Multi.insert(multi, "deposit-blknum-#{event.blknum}", changeset)
   end
