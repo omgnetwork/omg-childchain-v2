@@ -5,6 +5,8 @@ defmodule Engine.DB.OutputTest do
 
   alias Engine.DB.Output
 
+  @moduletag :focus
+
   describe "changeset/2" do
     test "populates the position column" do
       output_id =
@@ -12,19 +14,19 @@ defmodule Engine.DB.OutputTest do
         |> ExPlasma.Output.Position.pos()
         |> ExPlasma.Output.Position.to_map()
 
-      input = %{output_type: 1, output_id: output_id, output_data: nil}
-      changeset = Output.changeset(%Output{}, input)
+      output = build(:output, output_id: output_id)
 
-      assert output_id.position == changeset.changes.position
+      assert output_id.position == output.position
     end
 
     test "encodes the output_data" do
       data = %{output_guard: <<1::160>>, token: <<0::160>>, amount: 1}
       params = %{output_id: nil, output_data: data, output_type: 1}
       encoded = ExPlasma.Output.encode(params)
-      changeset = Output.changeset(%Output{}, params)
 
-      assert encoded == changeset.changes.output_data
+      output = build(:output, output_data: data)
+
+      assert encoded == output.output_data
     end
 
     test "encodes the output_id" do
@@ -34,10 +36,9 @@ defmodule Engine.DB.OutputTest do
         |> ExPlasma.Output.Position.to_map()
 
       encoded = ExPlasma.Output.encode(%{output_id: output_id}, as: :input)
-      params = %{output_type: 1, output_id: output_id, output_data: nil}
-      changeset = Output.changeset(%Output{}, params)
+      output =  build(:output, output_id: output_id)
 
-      assert encoded == changeset.changes.output_id
+      assert encoded == output.output_id
     end
   end
 

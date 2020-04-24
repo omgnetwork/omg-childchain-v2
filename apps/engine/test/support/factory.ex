@@ -12,7 +12,7 @@ defmodule Engine.Factory do
     txn = %ExPlasma.Transaction{tx_type: 1, outputs: [output]}
     txbytes = ExPlasma.encode(txn)
 
-    txbytes |> Transaction.decode_changeset() |> Ecto.Changeset.apply_changes()
+    txbytes |> Transaction.decode() |> Ecto.Changeset.apply_changes()
   end
 
   # This feels meh. Need to figure out how we want to handle

@@ -1,5 +1,15 @@
 defmodule Engine.DB.Transaction do
-  @moduledoc false
+  @moduledoc """
+  The Transaction record. This is one of the main entry points for the system, specifically accepting
+  transactions into the Childchain as `txbytes`. This expands those bytes into:
+
+  * `txbytes` - A binary of a transaction encoded by RLP.
+  * `inputs`  - The outputs that the transaction is acting on, and changes state e.g marked as "spent"
+  * `outputs` - The newly created outputs
+
+  More information is contained in the `txbytes`. However, to keep the Childchain _lean_, we extract
+  data onto the record as needed.
+  """
 
   use Ecto.Schema
   import Ecto.Changeset
@@ -8,8 +18,9 @@ defmodule Engine.DB.Transaction do
   alias __MODULE__
   alias Engine.DB.Block
   alias Engine.DB.Output
+  alias Engine.Repo
 
-  @type txbytes() :: binary()
+  @type txbytes :: binary
 
   @error_messages [
     cannot_be_zero: "can not be zero",
@@ -26,7 +37,33 @@ defmodule Engine.DB.Transaction do
     timestamps(type: :utc_datetime)
   end
 
-  def changeset(struct, params) do
+  @doc """
+  The main action of the system. Takes txbytes and forms the appropriate
+  associations for the transaction and outputs and runs the changeset.
+  """
+  @spec decode(txbytes) :: Ecto.Changeset.t
+  def decode(txbytes) when is_binary(txbytes) do
+    params =
+      txbytes 
+      |> ExPlasma.decode() 
+      |> decode_params()
+      |> Map.put(:txbytes, txbytes)
+
+    changeset(%__MODULE__{}, params)
+  end
+
+  defp decode_params(%{inputs: inputs, outputs: outputs} = txn) do
+    %{ txn |
+      inputs: Enum.map(inputs, &Map.from_struct/1),
+      outputs: Enum.map(outputs, &Map.from_struct/1)
+    }
+  end
+
+  # TODO: We should extract the PaymentV1 specific behaviors out, like
+  #
+  # * checking if the input is not spent.
+  # * checking if the input/output amounts are the same.
+  defp changeset(struct, params) do
     struct
     |> Engine.Repo.preload(:inputs)
     |> Engine.Repo.preload(:outputs)
@@ -37,14 +74,13 @@ defmodule Engine.DB.Transaction do
     |> validate_usable_inputs()
   end
 
-  def decode_changeset(txbytes), do: changeset(%__MODULE__{}, decode(txbytes))
-
   # Does the state-less validation via ExPlasma.
   defp validate_protocol(changeset) do
-    results = changeset
-    |> get_field(:txbytes)
-    |> ExPlasma.decode()
-    |> ExPlasma.Transaction.validate()
+    results =
+      changeset
+      |> get_field(:txbytes)
+      |> ExPlasma.decode()
+      |> ExPlasma.Transaction.validate()
 
     case results do
       {:ok, _} ->
@@ -54,36 +90,12 @@ defmodule Engine.DB.Transaction do
     end
   end
 
-  @doc """
-  Decodes an rlp encoded transaction bytes into a param for ecto
-
-  ## Example
-  """
-  @spec decode(txbytes()) :: map()
-  def decode(txbytes) when is_binary(txbytes) do
-    txbytes 
-    |> ExPlasma.decode() 
-    |> decode_params()
-    |> Map.put(:txbytes, txbytes)
-  end
-
-  defp decode_params(%{inputs: inputs, outputs: outputs} = txn) do
-    %{ txn |
-      inputs: Enum.map(inputs, &Map.from_struct/1),
-      outputs: Enum.map(outputs, &Map.from_struct/1)
-    }
-  end
-
   # Validates that the given changesets inputs are correct. To create a transaction with inputs:
-  #   * The utxo position for the input must exist.
-  #   * The utxo position for the input must not have been spent.
+  #   * The position for the input must exist.
+  #   * The position for the input must not have been spent.
   defp validate_usable_inputs(changeset) do
     input_positions = get_input_positions(changeset)
-
-    unspent_positions =
-      input_positions
-      |> usable_outputs_for()
-      |> Engine.Repo.all()
+    unspent_positions = input_positions |> usable_outputs_for() |> Engine.Repo.all()
 
     case input_positions -- unspent_positions do
       [missing_inputs] ->
@@ -94,15 +106,14 @@ defmodule Engine.DB.Transaction do
     end
   end
 
-  # The base struct of the Transaction does not contain the calculated utxo position.
-  # So we run the UTXO through ExPlasma to do the calculation for the position.
   defp get_input_positions(changeset) do
     changeset |> get_field(:inputs) |> Enum.map(&get_input_position/1)
   end
 
   defp get_input_position(%{position: position}), do: position
 
-  def usable_outputs_for(positions) do
+  # Return all confirmed outputs that have the given positions.
+  defp usable_outputs_for(positions) do
     Output.usable()
     |> where([output], output.position in ^positions)
     |> select([output], output.position)

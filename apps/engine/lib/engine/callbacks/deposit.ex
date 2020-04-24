@@ -50,7 +50,7 @@ defmodule Engine.Callbacks.Deposit do
     txbytes = ExPlasma.encode(transaction)
 
     changeset =
-      Transaction.decode_changeset(txbytes)
+      Transaction.decode(txbytes)
       |> put_change(:block, %Block{number: event.blknum, state: "confirmed"})
 
     Ecto.Multi.insert(multi, "deposit-blknum-#{event.blknum}", changeset)

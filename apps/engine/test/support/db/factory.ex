@@ -52,7 +52,7 @@ defmodule Engine.DB.Factory do
     |> add_input(input.output_id)
     |> add_output(data)
     |> ExPlasma.encode()
-    |> Transaction.decode_changeset()
+    |> Transaction.decode()
     |> apply_changes()
   end
 

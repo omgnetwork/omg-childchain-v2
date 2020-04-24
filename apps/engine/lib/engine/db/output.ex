@@ -2,7 +2,7 @@ defmodule Engine.DB.Output do
   @moduledoc """
   Ecto schema for Outputs in the system. The Output can exist in two forms:
 
-  * Being built, as a new unspent output (Output). Since the blocks have not been formed, the full utxo position
+  * Being built, as a new unspent output (Output). Since the blocks have not been formed, the full output position
   information does not exist for the given Output. We only really know the oindex at this point.
 
   * Being formed into a block via the transaction. At this point we should have all the information available to
@@ -29,7 +29,7 @@ defmodule Engine.DB.Output do
   ]
 
   schema "outputs" do
-    # Output position information
+    # Extracted from `output_id`
     field(:position, :integer)
 
     field(:output_type, :integer)
@@ -58,9 +58,8 @@ defmodule Engine.DB.Output do
 
   # Extract the position from the output id and store it on the table.
   # Used by the Transaction to find outputs quickly.
-  defp extract_position(changeset, params) do
-    output_id = Map.get(params, :output_id)  || %{}
-    position = Map.get(output_id, :position)
+  defp extract_position(changeset, %{output_id: id}) do
+    position = Map.get(id || %{}, :position)
     put_change(changeset, :position, position)
   end
 
