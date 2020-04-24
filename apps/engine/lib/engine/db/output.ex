@@ -13,21 +13,6 @@ defmodule Engine.DB.Output do
   import Ecto.Changeset
   import Ecto.Query, only: [from: 2]
 
-  @error_messages [
-    cannot_be_zero: "can't be zero",
-    exceeds_maximum: "can't exceed maximum value"
-  ]
-
-  @states [
-    "pending",
-    "confirming",
-    "confirmed",
-    "spending",
-    "spent",
-    "exiting",
-    "exited"
-  ]
-
   schema "outputs" do
     # Extracted from `output_id`
     field(:position, :integer)
@@ -72,7 +57,7 @@ defmodule Engine.DB.Output do
       nil ->
         changeset
 
-      data ->
+      _output_data ->
         put_change(changeset, :output_data, ExPlasma.Output.encode(params))
     end
   end
@@ -82,7 +67,7 @@ defmodule Engine.DB.Output do
       nil ->
         changeset
 
-      data ->
+      _output_id ->
         put_change(changeset, :output_id, ExPlasma.Output.encode(params, as: :input))
     end
   end

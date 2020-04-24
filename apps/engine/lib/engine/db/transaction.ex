@@ -15,7 +15,6 @@ defmodule Engine.DB.Transaction do
   import Ecto.Changeset
   import Ecto.Query
 
-  alias __MODULE__
   alias Engine.DB.Block
   alias Engine.DB.Output
   alias Engine.Repo
@@ -67,8 +66,8 @@ defmodule Engine.DB.Transaction do
   # * checking if the input/output amounts are the same.
   defp changeset(struct, params) do
     struct
-    |> Engine.Repo.preload(:inputs)
-    |> Engine.Repo.preload(:outputs)
+    |> Repo.preload(:inputs)
+    |> Repo.preload(:outputs)
     |> cast(params, [:txbytes])
     |> cast_assoc(:inputs)
     |> cast_assoc(:outputs)
@@ -102,7 +101,7 @@ defmodule Engine.DB.Transaction do
   # If so, associate the records to this transaction.
   defp associate_usable_inputs(changeset) do
     input_positions = get_input_positions(changeset)
-    inputs = input_positions |> usable_outputs_for() |> Engine.Repo.all()
+    inputs = input_positions |> usable_outputs_for() |> Repo.all()
 
     case input_positions -- Enum.map(inputs, & &1.position) do
       [missing_inputs] ->

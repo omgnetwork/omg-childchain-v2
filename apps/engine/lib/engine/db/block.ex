@@ -3,10 +3,9 @@ defmodule Engine.DB.Block do
   Represent a block of transactions that will be submitted to the contracts.
   """
 
-  alias Engine.DB.Transaction
-
   use Ecto.Schema
-  import Ecto.Query, only: [from: 2]
+
+  alias Engine.DB.Transaction
 
   schema "blocks" do
     field(:hash, :binary)
