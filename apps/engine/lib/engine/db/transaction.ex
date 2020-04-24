@@ -71,10 +71,12 @@ defmodule Engine.DB.Transaction do
     |> cast_assoc(:inputs)
     |> cast_assoc(:outputs)
     |> validate_protocol()
-    |> validate_usable_inputs()
+    |> associate_usable_inputs()
   end
 
-  # Does the state-less validation via ExPlasma.
+  # Validate the transaction bytes with the generic transaction format protocol.
+  #
+  # see ExPlasma.Transaction.validate/1
   defp validate_protocol(changeset) do
     results =
       changeset
@@ -93,16 +95,17 @@ defmodule Engine.DB.Transaction do
   # Validates that the given changesets inputs are correct. To create a transaction with inputs:
   #   * The position for the input must exist.
   #   * The position for the input must not have been spent.
-  defp validate_usable_inputs(changeset) do
+  #
+  # If so, associate the records to this transaction.
+  defp associate_usable_inputs(changeset) do
     input_positions = get_input_positions(changeset)
-    unspent_positions = input_positions |> usable_outputs_for() |> Engine.Repo.all()
+    inputs = input_positions |> usable_outputs_for() |> Engine.Repo.all()
 
-    case input_positions -- unspent_positions do
+    case input_positions -- Enum.map(inputs, &(&1.position)) do
       [missing_inputs] ->
-        add_error(changeset, :inputs, "input utxos #{missing_inputs} are missing or spent")
-
+        add_error(changeset, :inputs, "input #{missing_inputs} are missing or spent")
       [] ->
-        changeset
+        put_change(changeset, :inputs, inputs)
     end
   end
 
@@ -116,6 +119,5 @@ defmodule Engine.DB.Transaction do
   defp usable_outputs_for(positions) do
     Output.usable()
     |> where([output], output.position in ^positions)
-    |> select([output], output.position)
   end
 end

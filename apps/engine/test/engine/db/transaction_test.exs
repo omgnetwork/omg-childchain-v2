@@ -3,6 +3,7 @@ defmodule Engine.DB.TransactionTest do
   doctest Engine.DB.Transaction, import: true
 
   import Engine.DB.Factory
+  import Ecto.Changeset, only: [get_field: 2]
 
   alias Engine.DB.{Block, Output, Transaction}
 
@@ -35,7 +36,7 @@ defmodule Engine.DB.TransactionTest do
       changeset = Transaction.decode(transaction.txbytes)
 
       refute changeset.valid?
-      assert {"input utxos 1000000000 are missing or spent", _} = changeset.errors[:inputs]
+      assert {"input 1000000000 are missing or spent", _} = changeset.errors[:inputs]
     end
 
     test "validates inputs are not spent" do
@@ -49,7 +50,7 @@ defmodule Engine.DB.TransactionTest do
       changeset = Transaction.decode(transaction.txbytes)
 
       refute changeset.valid?
-      assert {"input utxos 1000000000 are missing or spent", _} = changeset.errors[:inputs]
+      assert {"input 1000000000 are missing or spent", _} = changeset.errors[:inputs]
     end
 
     test "validates inputs are usable" do
@@ -61,12 +62,14 @@ defmodule Engine.DB.TransactionTest do
     end
 
     test "references existing inputs" do
-      _ = insert(:deposit_transaction)
-      transaction = build(:payment_v1_transaction)
-      _ = Transaction.decode(transaction.txbytes)
+      %Transaction{outputs: [output]} = insert(:deposit_transaction)
+      %Transaction{txbytes: txbytes} = build(:payment_v1_transaction)
 
-      #assert changeset.valid?
-      #assert hd(changeset.data.inputs).id
+      changeset = Transaction.decode(txbytes)
+      input = changeset |> get_field(:inputs) |> hd()
+
+      assert changeset.valid?
+      assert output.id == input.id
     end
   end
 end
