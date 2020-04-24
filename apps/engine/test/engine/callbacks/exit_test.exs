@@ -1,81 +1,81 @@
 defmodule Engine.Callbacks.ExitTest do
   @moduledoc false
   use ExUnit.Case, async: true
-  import Engine.Factory
+  import Engine.DB.Factory
   import Ecto.Query
 
   alias Engine.Callbacks.Exit
+  alias Engine.DB.Output
 
-  @moduletag :skip
+  setup do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Engine.Repo)
+  end
 
-  #describe "callback/1" do
-    #test "marks utxos that are exiting" do
-      #utxo = insert(:input_utxo, pos: 1)
+  @tag :focus
+  describe "callback/1" do
+    test "marks utxos that are exiting" do
+      %{outputs: [%{position: position}]} = insert(:deposit_transaction)
 
-      #exit_events = [
-        #%{
-          #call_data: %{
-            #output_tx: <<0>>,
-            #utxo_pos: utxo.pos
-          #},
-          #eth_height: 1676,
-          #event_signature: "ExitStarted(address,uint160)",
-          #exit_id: 2_812_721_707_145_513_089_028_719_506_236_303_203_225_368,
-          #log_index: 1,
-          #owner: <<43, 240, 242, 172, 73, 83, 240, 173, 228, 58, 95, 61, 91, 148, 170, 3, 238, 172, 173, 157>>,
-          #root_chain_txhash:
-            #<<22, 115, 252, 106, 26, 193, 50, 43, 145, 150, 64, 164, 140, 100, 3, 4, 45, 193, 97, 40, 231, 41, 105, 130,
-              #118, 28, 128, 196, 88, 132, 207, 163>>
-        #}
-      #]
+      exit_events = [
+        %{
+          call_data: %{
+            output_tx: <<0>>,
+            utxo_pos: position,
+          },
+          eth_height: 1676,
+          event_signature: "ExitStarted(address,uint160)",
+          exit_id: 2_812_721_707_145_513_089_028_719_506_236_303_203_225_368,
+          log_index: 1,
+          owner: <<43, 240, 242, 172, 73, 83, 240, 173, 228, 58, 95, 61, 91, 148, 170, 3, 238, 172, 173, 157>>,
+          root_chain_txhash:
+            <<22, 115, 252, 106, 26, 193, 50, 43, 145, 150, 64, 164, 140, 100, 3, 4, 45, 193, 97, 40, 231, 41, 105, 130,
+              118, 28, 128, 196, 88, 132, 207, 163>>
+        }
+      ]
 
-      #assert {1, nil} = Exit.callback(exit_events)
+      assert {1, nil} = Exit.callback(exit_events)
+      query = from(o in Output, where: o.position == ^position, select: o.state)
+      assert "exited" = Engine.Repo.one(query)
+    end
 
-      #query = from(u in Engine.Utxo, where: u.pos == ^utxo.pos, select: u.state)
+    test "marks multiple utxos as exiting" do
+      %{outputs: [%{position: pos1}]} = insert(:deposit_transaction)
+      %{outputs: [%{position: pos2}]} = insert(:deposit_transaction)
 
-      #assert "exited" = Engine.Repo.one(query)
-    #end
+      exit_events = [
+        %{
+          call_data: %{
+            output_tx: <<0>>,
+            utxo_pos: pos1,
+          },
+          eth_height: 1676,
+          event_signature: "ExitStarted(address,uint160)",
+          exit_id: 2_812_721_707_145_513_089_028_719_506_236_303_203_225_368,
+          log_index: 1,
+          owner: <<43, 240, 242, 172, 73, 83, 240, 173, 228, 58, 95, 61, 91, 148, 170, 3, 238, 172, 173, 157>>,
+          root_chain_txhash:
+            <<22, 115, 252, 106, 26, 193, 50, 43, 145, 150, 64, 164, 140, 100, 3, 4, 45, 193, 97, 40, 231, 41, 105, 130,
+              118, 28, 128, 196, 88, 132, 207, 163>>
+        },
+        %{
+          call_data: %{
+            output_tx: <<0>>,
+            utxo_pos: pos2,
+          },
+          eth_height: 1676,
+          event_signature: "ExitStarted(address,uint160)",
+          exit_id: 2_812_721_707_145_513_089_028_719_506_236_303_203_225_368,
+          log_index: 1,
+          owner: <<43, 240, 242, 172, 73, 83, 240, 173, 228, 58, 95, 61, 91, 148, 170, 3, 238, 172, 173, 157>>,
+          root_chain_txhash:
+            <<22, 115, 252, 106, 26, 193, 50, 43, 145, 150, 64, 164, 140, 100, 3, 4, 45, 193, 97, 40, 231, 41, 105, 130,
+              118, 28, 128, 196, 88, 132, 207, 163>>
+        }
+      ]
 
-    #test "marks multiple utxos as exiting" do
-      #utxo = insert(:input_utxo, pos: 2)
-      #utxo2 = insert(:input_utxo, pos: 3)
-
-      #exit_events = [
-        #%{
-          #call_data: %{
-            #output_tx: <<0>>,
-            #utxo_pos: utxo.pos
-          #},
-          #eth_height: 1676,
-          #event_signature: "ExitStarted(address,uint160)",
-          #exit_id: 2_812_721_707_145_513_089_028_719_506_236_303_203_225_368,
-          #log_index: 1,
-          #owner: <<43, 240, 242, 172, 73, 83, 240, 173, 228, 58, 95, 61, 91, 148, 170, 3, 238, 172, 173, 157>>,
-          #root_chain_txhash:
-            #<<22, 115, 252, 106, 26, 193, 50, 43, 145, 150, 64, 164, 140, 100, 3, 4, 45, 193, 97, 40, 231, 41, 105, 130,
-              #118, 28, 128, 196, 88, 132, 207, 163>>
-        #},
-        #%{
-          #call_data: %{
-            #output_tx: <<0>>,
-            #utxo_pos: utxo2.pos
-          #},
-          #eth_height: 1676,
-          #event_signature: "ExitStarted(address,uint160)",
-          #exit_id: 2_812_721_707_145_513_089_028_719_506_236_303_203_225_368,
-          #log_index: 1,
-          #owner: <<43, 240, 242, 172, 73, 83, 240, 173, 228, 58, 95, 61, 91, 148, 170, 3, 238, 172, 173, 157>>,
-          #root_chain_txhash:
-            #<<22, 115, 252, 106, 26, 193, 50, 43, 145, 150, 64, 164, 140, 100, 3, 4, 45, 193, 97, 40, 231, 41, 105, 130,
-              #118, 28, 128, 196, 88, 132, 207, 163>>
-        #}
-      #]
-
-      #assert {2, nil} = Exit.callback(exit_events)
-
-      #query = from(u in Engine.Utxo, where: u.pos in [^utxo.pos, ^utxo2.pos], select: u.state)
-
-      #assert ["exited", "exited"] = Engine.Repo.all(query)
-    #end
-  #end
+      assert {2, nil} = Exit.callback(exit_events)
+      query = from(o in Output, where: o.position in [^pos1, ^pos2], select: o.state)
+      assert ["exited", "exited"] = Engine.Repo.all(query)
+    end
+  end
 end
