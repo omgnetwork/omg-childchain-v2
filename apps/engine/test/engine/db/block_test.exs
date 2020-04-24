@@ -2,10 +2,11 @@ defmodule Engine.DB.BlockTest do
   use ExUnit.Case, async: true
   doctest Engine.DB.Block, import: true
 
-  import Engine.Factory
+  import Engine.DB.Factory
   import Ecto.Query, only: [from: 2]
 
   alias Engine.DB.Block
+  alias Engine.DB.Transaction
 
   setup do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Engine.Repo)
@@ -13,16 +14,14 @@ defmodule Engine.DB.BlockTest do
 
   describe "form_block/0" do
     test "forms a block from the existing pending transactions" do
-      insert(:deposit_transaction, %{amount: 1})
-      insert(:deposit_transaction, %{amount: 1})
+      _ = insert(:deposit_transaction)
+      _ = insert(:payment_v1_transaction)
 
-      {:ok, {block_id, total_records}} = Block.form_block()
+      assert = {:ok, %{"new-block" => block}} = Block.form()
 
-      query = from(t in Engine.DB.Transaction, where: t.block_id == ^block_id)
-      size = query |> Engine.Repo.all() |> length()
+      transactions = from(t in Transaction, where: t.block_id == ^block.id) |> Engine.Repo.all()
 
-      assert size == 2
-      assert total_records == size
+      assert 1 = length(transactions)
     end
   end
 end

@@ -38,6 +38,11 @@ defmodule Engine.DB.Transaction do
   end
 
   @doc """
+  Query all transactions that have not been formed into a block.
+  """
+  def pending(), do: from(t in __MODULE__, where: is_nil(t.block_id))
+
+  @doc """
   The main action of the system. Takes txbytes and forms the appropriate
   associations for the transaction and outputs and runs the changeset.
   """
