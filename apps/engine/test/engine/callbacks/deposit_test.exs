@@ -4,6 +4,8 @@ defmodule Engine.Callbacks.DepositTest do
   use ExUnit.Case, async: true
 
   alias Engine.Callbacks.Deposit
+  alias Engine.DB.Transaction
+  alias Engine.DB.Output
 
   setup do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Engine.Repo)
@@ -25,6 +27,8 @@ defmodule Engine.Callbacks.DepositTest do
       }
 
       assert {:ok, %{"deposit-blknum-3" => transaction}} = Deposit.callback([deposit_event])
+
+      assert %Transaction{outputs: [%Output{state: "confirmed"}]} = transaction
 
       assert transaction.block.number == 3
       assert transaction.block.state == "confirmed"
@@ -66,5 +70,8 @@ defmodule Engine.Callbacks.DepositTest do
     assert transaction6.block.number == 6
     assert transaction5.block.state == "confirmed"
     assert transaction6.block.state == "confirmed"
+
+    assert %Transaction{outputs: [%Output{state: "confirmed"}]} = transaction5
+    assert %Transaction{outputs: [%Output{state: "confirmed"}]} = transaction6
   end
 end
