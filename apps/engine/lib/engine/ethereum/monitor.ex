@@ -22,9 +22,9 @@ defmodule Engine.Ethereum.Monitor do
     GenServer.start_link(__MODULE__, opts, server_opts)
   end
 
-  def init(otps) do
-    alarm_handler = Keyword.fetch!(otps, :alarm_handler)
-    child_spec = Keyword.fetch!(otps, :child_spec)
+  def init(opts) do
+    alarm_handler = Keyword.fetch!(opts, :alarm_handler)
+    child_spec = Keyword.fetch!(opts, :child_spec)
     subscribe_to_alarms(alarm_handler, __MODULE__)
     Process.flag(:trap_exit, true)
     # we raise the alarms first, because we get a health checkin when all

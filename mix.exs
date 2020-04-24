@@ -14,8 +14,13 @@ defmodule Childchain.MixProject do
         childchain: [
           steps: steps(),
           version: version(),
-          applications: tools() ++ [engine: :permanent, rpc: :permanent],
-          config_providers: [{Engine.ReleaseTasks.Contract, []}]
+          applications: tools() ++ [engine: :permanent, rpc: :permanent, status: :permanent],
+          config_providers: [
+            {Engine.ReleaseTasks.Contract, []},
+            {Status.ReleaseTasks.Logger, [sentry_logger: Sentry.LoggerBackend, default_logger: Ink]},
+            {Status.ReleaseTasks.Sentry, [current_version: version()]},
+            {Status.ReleaseTasks.Application, [release: "childchain", current_version: version()]}
+          ]
         ]
       ]
     ]
@@ -23,8 +28,9 @@ defmodule Childchain.MixProject do
 
   defp deps do
     [
-      {:credo, "~> 1.3", only: [:dev, :test], runtime: false},
-      {:dialyxir, "1.0.0", only: [:dev], runtime: false}
+      {:ex_abi, "~> 0.2.1"},
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
   end
 
@@ -60,7 +66,7 @@ defmodule Childchain.MixProject do
       ],
       ignore_warnings: "dialyzer.ignore-warnings",
       list_unused_filters: true,
-      plt_add_apps: [:keccakf1600, :ex_abi],
+      plt_add_apps: [:keccakf1600, :ex_abi, :vmstats],
       paths: paths
     ]
   end

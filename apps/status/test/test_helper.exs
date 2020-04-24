@@ -4,5 +4,5 @@
 # (mix ecto.drop)
 # ** (Mix) The database for Engine.Repo couldn't be dropped: ERROR 55006 (object_in_use):
 # What I mean is ... Meaning Engine.Repo process isn't running.
-Application.start(:engine)
-ExUnit.start(capture_log: true, assert_receive_timeout: 1000)
+Application.stop(:engine)
+ExUnit.start(capture_log: true)
