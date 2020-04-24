@@ -18,14 +18,14 @@ defmodule Engine.DB.Factory do
     amount = Map.get(attr, :amount, 1)
     data = %{output_guard: <<1::160>>, token: <<0::160>>, amount: amount}
 
-    id = 
+    id =
       %{blknum: blknum, txindex: 0, oindex: 0}
       |> ExPlasma.Output.Position.pos()
       |> ExPlasma.Output.Position.to_map()
 
     txbytes = new_txn() |> add_output(data) |> ExPlasma.encode()
 
-    output = 
+    output =
       :output
       |> build(output_id: id, output_data: data, output_type: 1)
       |> set_state("confirmed")
@@ -38,17 +38,18 @@ defmodule Engine.DB.Factory do
   end
 
   def payment_v1_transaction_factory(attr) do
-    id = 
+    id =
       %{blknum: Map.get(attr, :blknum, 1), txindex: 0, oindex: 0}
       |> ExPlasma.Output.Position.pos()
       |> ExPlasma.Output.Position.to_map()
 
-    input = Engine.Repo.one(Output.usable()) || 
-      params_for(:output, output_id: id)
+    input =
+      Engine.Repo.one(Output.usable()) ||
+        params_for(:output, output_id: id)
 
     data = %{output_guard: <<1::160>>, token: <<0::160>>, amount: 1}
 
-    new_txn() 
+    new_txn()
     |> add_input(input.output_id)
     |> add_output(data)
     |> ExPlasma.encode()
@@ -76,14 +77,14 @@ defmodule Engine.DB.Factory do
 
   # position_map is %{blknum: 1, txindex: 0, oindex: 0}
   defp add_input(ex_txn, %{} = position_map) do
-    output_id = 
+    output_id =
       position_map
       |> ExPlasma.Output.Position.pos()
       |> ExPlasma.Output.Position.to_map()
 
     input = %ExPlasma.Output{output_id: output_id}
 
-    %{ex_txn | inputs: [input] ++ ex_txn.inputs }
+    %{ex_txn | inputs: [input] ++ ex_txn.inputs}
   end
 
   defp add_input(ex_txn, encoded) do
@@ -93,6 +94,6 @@ defmodule Engine.DB.Factory do
 
   defp add_output(ex_txn, %{} = output_data) do
     output = %ExPlasma.Output{output_type: 1, output_data: output_data}
-    %{ex_txn | outputs: [output] ++ ex_txn.outputs }
+    %{ex_txn | outputs: [output] ++ ex_txn.outputs}
   end
 end

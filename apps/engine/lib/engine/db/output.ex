@@ -71,6 +71,7 @@ defmodule Engine.DB.Output do
     case Map.get(params, :output_data) do
       nil ->
         changeset
+
       data ->
         put_change(changeset, :output_data, ExPlasma.Output.encode(params))
     end
@@ -80,6 +81,7 @@ defmodule Engine.DB.Output do
     case Map.get(params, :output_id) do
       nil ->
         changeset
+
       data ->
         put_change(changeset, :output_id, ExPlasma.Output.encode(params, as: :input))
     end
@@ -90,6 +92,7 @@ defmodule Engine.DB.Output do
   """
   def usable() do
     from(o in __MODULE__,
-      where: is_nil(o.spending_transaction_id) and o.state == "confirmed")
+      where: is_nil(o.spending_transaction_id) and o.state == "confirmed"
+    )
   end
 end

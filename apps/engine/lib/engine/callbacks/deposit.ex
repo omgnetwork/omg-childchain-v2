@@ -44,7 +44,7 @@ defmodule Engine.Callbacks.Deposit do
 
   defp build_deposit(multi, %{} = event) do
     data = %{output_guard: event.owner, token: event.currency, amount: event.amount}
-    id   = %{blknum: event.blknum, txindex: 0, oindex: 0}
+    id = %{blknum: event.blknum, txindex: 0, oindex: 0}
     output = %ExPlasma.Output{output_id: id, output_type: 1, output_data: data}
     transaction = %ExPlasma.Transaction{tx_type: 1, outputs: [output]}
     txbytes = ExPlasma.encode(transaction)

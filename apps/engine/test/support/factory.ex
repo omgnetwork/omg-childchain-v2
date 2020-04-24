@@ -39,6 +39,7 @@ defmodule Engine.Factory do
       %{blknum: blknum, txindex: txindex, oindex: oindex}
       |> ExPlasma.Output.Position.pos()
       |> ExPlasma.Output.Position.to_map()
+
     input = %ExPlasma.Output{output_id: output_id}
 
     output_data = %{output_guard: <<1::160>>, token: <<0::160>>, amount: amount}
@@ -58,6 +59,7 @@ defmodule Engine.Factory do
       attrs
       |> ExPlasma.Output.Position.pos()
       |> ExPlasma.Output.Position.to_map()
+
     %Output{position: output_id.position, output_type: 1, output_id: output_id}
   end
 
@@ -68,84 +70,84 @@ defmodule Engine.Factory do
     %Output{
       output_type: 1,
       output_data: %{
-        output_guard: <<1::160>>, 
-        token: <<0::160>>, 
+        output_guard: <<1::160>>,
+        token: <<0::160>>,
         amount: attrs.amount
       }
     }
   end
 
-  #def deposit_transaction_factory(attrs) do
-    #%{blknum: blknum} = attrs
+  # def deposit_transaction_factory(attrs) do
+  # %{blknum: blknum} = attrs
 
-    #%Engine.Transaction{
-      #tx_type: 1,
-      #tx_data: 0,
-      #metadata: <<0::160>>,
-      #inputs: [],
-      #outputs:
-        #build(:output_utxo, %{
-          #blknum: blknum || :rand.uniform(100) + 1,
-          #txindex: 0,
-          #oindex: 0
-        #})
-    #}
-  #end
+  # %Engine.Transaction{
+  # tx_type: 1,
+  # tx_data: 0,
+  # metadata: <<0::160>>,
+  # inputs: [],
+  # outputs:
+  # build(:output_utxo, %{
+  # blknum: blknum || :rand.uniform(100) + 1,
+  # txindex: 0,
+  # oindex: 0
+  # })
+  # }
+  # end
 
-  #def deposit_block_factory() do
-    ## NB: Hax to ensure we don't use whole numbers, which are
-    ## the non-deposit blocks
-    #blknum = :rand.uniform(100) + 1
+  # def deposit_block_factory() do
+  ## NB: Hax to ensure we don't use whole numbers, which are
+  ## the non-deposit blocks
+  # blknum = :rand.uniform(100) + 1
 
-    #%Engine.Block{
-      #number: blknum,
-      #transactions:
-        #build(:deposit_transaction, %{
-          #blknum: blknum
-        #})
-    #}
-  #end
+  # %Engine.Block{
+  # number: blknum,
+  # transactions:
+  # build(:deposit_transaction, %{
+  # blknum: blknum
+  # })
+  # }
+  # end
 
-  #def transaction_factory() do
-    #%Engine.Transaction{
-      #tx_type: 1,
-      #tx_data: 0,
-      #metadata: <<0::160>>,
-      #inputs: [build(:input_utxo)],
-      #outputs: [build(:output_utxo)]
-    #}
-  #end
+  # def transaction_factory() do
+  # %Engine.Transaction{
+  # tx_type: 1,
+  # tx_data: 0,
+  # metadata: <<0::160>>,
+  # inputs: [build(:input_utxo)],
+  # outputs: [build(:output_utxo)]
+  # }
+  # end
 
-  #def input_utxo_factory() do
-    #blknum = :rand.uniform(100)
+  # def input_utxo_factory() do
+  # blknum = :rand.uniform(100)
 
-    #%Engine.Utxo{
-      #blknum: blknum,
-      #txindex: 0,
-      #oindex: 0,
-      #owner: <<1::160>>,
-      #currency: <<0::160>>,
-      #amount: :rand.uniform(100)
-    #}
-  #end
+  # %Engine.Utxo{
+  # blknum: blknum,
+  # txindex: 0,
+  # oindex: 0,
+  # owner: <<1::160>>,
+  # currency: <<0::160>>,
+  # amount: :rand.uniform(100)
+  # }
+  # end
 
-  #def spent_utxo_factory() do
-    #%Engine.Utxo{
-      #blknum: :rand.uniform(100),
-      #txindex: 0,
-      #oindex: 0,
-      #owner: <<1::160>>,
-      #currency: <<0::160>>,
-      #amount: :random.uniform(100),
-      #spending_transaction: build(:transaction)
-    #}
-  #end
+  # def spent_utxo_factory() do
+  # %Engine.Utxo{
+  # blknum: :rand.uniform(100),
+  # txindex: 0,
+  # oindex: 0,
+  # owner: <<1::160>>,
+  # currency: <<0::160>>,
+  # amount: :random.uniform(100),
+  # spending_transaction: build(:transaction)
+  # }
+  # end
 
-  #def output_utxo_factory() do
-    #%Engine.Utxo{
-      #owner: <<1::160>>,
-      #currency: <<0::160>>,
-      #amount: :rand.uniform(100)
-    #}
-  #end
+  # def output_utxo_factory() do
+  # %Engine.Utxo{
+  # owner: <<1::160>>,
+  # currency: <<0::160>>,
+  # amount: :rand.uniform(100)
+  # }
+  # end
 end

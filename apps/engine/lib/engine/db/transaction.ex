@@ -41,11 +41,11 @@ defmodule Engine.DB.Transaction do
   The main action of the system. Takes txbytes and forms the appropriate
   associations for the transaction and outputs and runs the changeset.
   """
-  @spec decode(txbytes) :: Ecto.Changeset.t
+  @spec decode(txbytes) :: Ecto.Changeset.t()
   def decode(txbytes) when is_binary(txbytes) do
     params =
-      txbytes 
-      |> ExPlasma.decode() 
+      txbytes
+      |> ExPlasma.decode()
       |> decode_params()
       |> Map.put(:txbytes, txbytes)
 
@@ -53,10 +53,7 @@ defmodule Engine.DB.Transaction do
   end
 
   defp decode_params(%{inputs: inputs, outputs: outputs} = txn) do
-    %{ txn |
-      inputs: Enum.map(inputs, &Map.from_struct/1),
-      outputs: Enum.map(outputs, &Map.from_struct/1)
-    }
+    %{txn | inputs: Enum.map(inputs, &Map.from_struct/1), outputs: Enum.map(outputs, &Map.from_struct/1)}
   end
 
   # TODO: We should extract the PaymentV1 specific behaviors out, like
@@ -87,8 +84,9 @@ defmodule Engine.DB.Transaction do
     case results do
       {:ok, _} ->
         changeset
+
       {:error, {field, message}} ->
-          add_error(changeset, field, @error_messages[message])
+        add_error(changeset, field, @error_messages[message])
     end
   end
 
@@ -101,9 +99,10 @@ defmodule Engine.DB.Transaction do
     input_positions = get_input_positions(changeset)
     inputs = input_positions |> usable_outputs_for() |> Engine.Repo.all()
 
-    case input_positions -- Enum.map(inputs, &(&1.position)) do
+    case input_positions -- Enum.map(inputs, & &1.position) do
       [missing_inputs] ->
         add_error(changeset, :inputs, "input #{missing_inputs} are missing or spent")
+
       [] ->
         put_change(changeset, :inputs, inputs)
     end

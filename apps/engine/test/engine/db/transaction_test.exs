@@ -12,7 +12,6 @@ defmodule Engine.DB.TransactionTest do
   end
 
   describe "decode/1" do
-
     test "decodes txbytes and validates" do
       params = build(:deposit_transaction, amount: 0)
       changeset = Transaction.decode(params.txbytes)
@@ -41,7 +40,7 @@ defmodule Engine.DB.TransactionTest do
 
     test "validates inputs are not spent" do
       %Transaction{block: %Block{number: number}} =
-        :deposit_transaction 
+        :deposit_transaction
         |> build()
         |> spent()
         |> insert()

@@ -36,13 +36,13 @@ defmodule Engine.DB.OutputTest do
         |> ExPlasma.Output.Position.to_map()
 
       encoded = ExPlasma.Output.encode(%{output_id: output_id}, as: :input)
-      output =  build(:output, output_id: output_id)
+      output = build(:output, output_id: output_id)
 
       assert encoded == output.output_id
     end
   end
 
   describe "usable/0" do
-    #test "returns all confirmed and usable outputs"
+    # test "returns all confirmed and usable outputs"
   end
 end
