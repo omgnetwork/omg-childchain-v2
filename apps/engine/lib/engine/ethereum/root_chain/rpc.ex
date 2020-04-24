@@ -37,4 +37,9 @@ defmodule Engine.Ethereum.RootChain.Rpc do
     data = signature |> ABI.encode(args) |> Encoding.to_hex()
     Ethereumex.HttpClient.eth_call(%{to: contract, data: data}, "latest", opts)
   end
+
+  @spec get_ethereum_height(keyword()) :: {:ok, map()} | {:error, map() | binary() | atom()}
+  def get_ethereum_height(opts) do
+    Ethereumex.HttpClient.eth_block_number(opts)
+  end
 end

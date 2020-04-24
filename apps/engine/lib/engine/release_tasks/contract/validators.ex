@@ -21,8 +21,9 @@ defmodule Engine.ReleaseTasks.Contract.Validators do
   @spec url(String.t(), String.t(), String.t()) :: no_return() | String.t()
   def url(url, key, _) when is_binary(url) and byte_size(url) > 0 do
     uri = URI.parse(url)
+    domain = uri.host |> String.to_charlist() |> :inet_parse.domain()
 
-    case uri.scheme != nil && uri.host |> String.to_charlist() |> :inet_parse.domain() do
+    case uri.scheme != nil && domain do
       true -> url
       _ -> raise ArgumentError, message: "#{key} must be set to a valid URL."
     end
