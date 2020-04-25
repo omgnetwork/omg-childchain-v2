@@ -19,7 +19,7 @@ defmodule Engine.ReleaseTasks.ContractTest do
           "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f"
         end
 
-        def get_env("TXHASH_CONTRACT") do
+        def get_env("TX_HASH_CONTRACT") do
           "0xb836b6c4eb016e430b8e7495db92357896c1da263c6a3de73320b669eb5912d3"
         end
 

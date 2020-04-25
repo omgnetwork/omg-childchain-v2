@@ -27,7 +27,7 @@ defmodule Engine.ReleaseTasks.Contract do
       "CONTRACT_ADDRESS_PLASMA_FRAMEWORK" |> get_env() |> Validators.address!("CONTRACT_ADDRESS_PLASMA_FRAMEWORK")
 
     authority_address = "AUTHORITY_ADDRESS" |> get_env() |> Validators.address!("AUTHORITY_ADDRESS")
-    tx_hash = "TXHASH_CONTRACT" |> get_env() |> Validators.tx_hash!("TXHASH_CONTRACT")
+    tx_hash = "TX_HASH_CONTRACT" |> get_env() |> Validators.tx_hash!("TX_HASH_CONTRACT")
     default_url = config |> Keyword.fetch!(:ethereumex) |> Keyword.fetch!(:url)
     rpc_url = "ETHEREUM_RPC_URL" |> get_env() |> Validators.url("ETHEREUM_RPC_URL", default_url)
 
