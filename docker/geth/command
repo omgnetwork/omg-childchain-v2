@@ -6,7 +6,8 @@
 # CAREFUL with --allow-insecure-unlock!
 # Starts geth
 # Websocket is not used by the applications but enabled for debugging/testing convenience
-geth --miner.gastarget 7500000 \
+geth \
+--miner.gastarget 7500000 \
 --nousb \
 --miner.gasprice "10" \
 --nodiscover \
