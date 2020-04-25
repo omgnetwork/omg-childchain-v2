@@ -28,32 +28,38 @@ defmodule Engine.Callbacks.Piggyback do
   @spec callback(list()) :: {:ok, map()} | {:error, :atom, any(), any()}
   def callback(events), do: do_callback(Ecto.Multi.new(), events)
 
-  defp do_callback(multi, [event | tail]), do: multi |> mark_piggybacked_output(event) |> do_callback(tail)
+  defp do_callback(multi, [event | tail]), do: multi |> piggyback_output(event) |> do_callback(tail)
   defp do_callback(multi, []), do: Engine.Repo.transaction(multi)
 
   # A `txhash` isn't unique, so we just kinda take the `txhash` as a short-hand
   # to figure out which `txhash` it could possibly be with the given `oindex`.
+  # Additionally, in the old system, 'spent' outputs were just removed from the system.
+  # For us, we keep track of the history to some degree(e.g state change).
   #
   # See: https://github.com/omisego/elixir-omg/blob/master/apps/omg/lib/omg/state/utxo_set.ex#L81
-  defp mark_piggybacked_output(multi, %{output_index: oindex, tx_hash: txhash}) do
+
+  defp piggyback_output(multi, %{omg_data: %{piggyback_type: :input}} = event), do: do_piggyback(multi, :inputs, event)
+  defp piggyback_output(multi, %{omg_data: %{piggyback_type: :output}} = event), do: do_piggyback(multi, :outputs, event)
+
+  defp do_piggyback(multi, type, %{output_index: oindex, tx_hash: txhash}) do
     transaction =
       Transaction.find_by_txhash(txhash)
       |> Engine.Repo.one()
-      |> Engine.Repo.preload(:outputs)
+      |> Engine.Repo.preload(type)
 
     case transaction do
       nil ->
         multi
 
-      %Transaction{outputs: outputs} ->
-        case Enum.at(outputs, oindex) do
-          nil ->
-            multi
-
-          output ->
-            changeset = outputs |> Enum.at(oindex) |> change(state: "piggybacked")
+      transaction ->
+        case transaction |> Map.get(type) |> Enum.at(oindex) do
+          %Output{state: "confirmed"} = output ->
+            changeset = change(output, state: "piggybacked")
             position = get_field(changeset, :position)
-            Ecto.Multi.update(multi, "piggyback-output-#{position}", changeset)
+            Ecto.Multi.update(multi, "piggyback-#{type}-#{position}", changeset)
+
+          _ ->
+            multi
         end
     end
   end
