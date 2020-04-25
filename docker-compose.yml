@@ -39,3 +39,4 @@ services:
       - ./data:/data
       - ./docker/geth/command:/data/command
       - ./docker/geth/geth-blank-password:/data/geth-blank-password
+      
