@@ -12,7 +12,7 @@ defmodule Engine.Callbacks.Piggyback do
   alias Engine.DB.Transaction
 
   @type event() :: %{
-          eth_height: non_neg_integer,
+          eth_height: non_neg_integer(),
           event_signature: String.t(),
           log_index: non_neg_integer(),
           omg_data: map(),
