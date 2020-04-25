@@ -28,6 +28,7 @@ defmodule Engine.DB.Transaction do
 
   schema "transactions" do
     field(:txbytes, :binary)
+    field(:txhash, :binary)
 
     belongs_to(:block, Block)
     has_many(:inputs, Output, foreign_key: :spending_transaction_id)
@@ -71,8 +72,14 @@ defmodule Engine.DB.Transaction do
     |> cast(params, [:txbytes])
     |> cast_assoc(:inputs)
     |> cast_assoc(:outputs)
+    |> build_txhash()
     |> validate_protocol()
     |> associate_usable_inputs()
+  end
+
+  defp build_txhash(changeset) do
+    txhash = changeset |> get_field(:txbytes) |> ExPlasma.hash() 
+    put_change(changeset, :txhash, txhash) 
   end
 
   # Validate the transaction bytes with the generic transaction format protocol.

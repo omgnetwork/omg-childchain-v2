@@ -3,13 +3,14 @@ defmodule Engine.Repo.Migrations.CreateTransactions do
 
   def change do
     create table(:transactions) do
-      # meta information
       add :txbytes, :binary
+      add :txhash, :binary
 
       add :block_id, references(:blocks)
       timestamps(type: :utc_datetime)
     end
 
     create index(:transactions, [:block_id])
+    create unique_index(:transactions, [:txhash])
   end
 end
