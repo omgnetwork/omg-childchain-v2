@@ -57,12 +57,12 @@ defmodule Engine.Ethereum.RootChain.Abi do
 
   def common_parse_event(
         result,
-        %{"blockNumber" => eth_height, "transactionHash" => root_chain_txhash, "logIndex" => log_index} = event
+        %{"blockNumber" => eth_height, "transactionHash" => root_chain_tx_hash, "logIndex" => log_index} = event
       ) do
     # NOTE: we're using `put_new` here, because `merge` would allow us to overwrite data fields in case of conflict
     result
     |> Map.put_new(:eth_height, Encoding.to_int(eth_height))
-    |> Map.put_new(:root_chain_txhash, Encoding.to_binary(root_chain_txhash))
+    |> Map.put_new(:root_chain_tx_hash, Encoding.to_binary(root_chain_tx_hash))
     |> Map.put_new(:log_index, Encoding.to_int(log_index))
     # just copy `event_signature` over, if it's present (could use tidying up)
     |> Map.put_new(:event_signature, event[:event_signature])

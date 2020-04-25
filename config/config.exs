@@ -27,7 +27,7 @@ contracts = parse_contracts.()
 
 config :engine,
   network: "TEST",
-  txhash_contract: contracts["TXHASH_CONTRACT"],
+  tx_hash_contract: contracts["TX_HASH_CONTRACT"],
   authority_address: contracts["AUTHORITY_ADDRESS"],
   plasma_framework: contracts["CONTRACT_ADDRESS_PLASMA_FRAMEWORK"],
   erc20_vault: contracts["CONTRACT_ADDRESS_ERC20_VAULT"],

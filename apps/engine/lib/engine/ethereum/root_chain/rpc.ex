@@ -28,8 +28,8 @@ defmodule Engine.Ethereum.RootChain.Rpc do
   @type contracts :: list(String.t()) | String.t()
 
   @spec transaction_receipt(String.t(), keyword()) :: {:ok, map()} | {:error, map() | binary() | atom()}
-  def transaction_receipt(txhash, opts) do
-    Ethereumex.HttpClient.eth_get_transaction_receipt(txhash, opts)
+  def transaction_receipt(tx_hash, opts) do
+    Ethereumex.HttpClient.eth_get_transaction_receipt(tx_hash, opts)
   end
 
   @spec call_contract(String.t(), String.t(), any(), keyword()) :: {:ok, binary()} | {:error, map() | binary() | atom()}
