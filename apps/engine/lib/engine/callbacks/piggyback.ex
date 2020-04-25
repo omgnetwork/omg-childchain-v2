@@ -36,8 +36,7 @@ defmodule Engine.Callbacks.Piggyback do
   # Additionally, in the old system, 'spent' outputs were just removed from the system.
   # For us, we keep track of the history to some degree(e.g state change).
   #
-  # See: https://github.com/omisego/elixir-omg/blob/master/apps/omg/lib/omg/state/utxo_set.ex#L81
-
+  # See: https://github.com/omisego/elixir-omg/blob/8189b812b4b3cf9256111bd812235fb342a6fd50/apps/omg/lib/omg/state/utxo_set.ex#L81
   defp piggyback_output(multi, %{omg_data: %{piggyback_type: :input}} = event), do: do_piggyback(multi, :inputs, event)
   defp piggyback_output(multi, %{omg_data: %{piggyback_type: :output}} = event), do: do_piggyback(multi, :outputs, event)
 
