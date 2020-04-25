@@ -11,6 +11,5 @@ defmodule Engine.Repo.Migrations.CreateTransactions do
     end
 
     create index(:transactions, [:block_id])
-    create unique_index(:transactions, [:txhash])
   end
 end

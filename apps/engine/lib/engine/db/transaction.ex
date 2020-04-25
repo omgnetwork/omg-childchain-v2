@@ -43,6 +43,11 @@ defmodule Engine.DB.Transaction do
   def pending(), do: from(t in __MODULE__, where: is_nil(t.block_id))
 
   @doc """
+  Find transactions by the txhash.
+  """
+  def find_by_txhash(txhash), do: from(t in __MODULE__, where: t.txhash == ^txhash)
+
+  @doc """
   The main action of the system. Takes txbytes and forms the appropriate
   associations for the transaction and outputs and runs the changeset.
   """
@@ -65,7 +70,7 @@ defmodule Engine.DB.Transaction do
   #
   # * checking if the input is not spent.
   # * checking if the input/output amounts are the same.
-  defp changeset(struct, params) do
+  def changeset(struct, params) do
     struct
     |> Repo.preload(:inputs)
     |> Repo.preload(:outputs)
@@ -78,8 +83,8 @@ defmodule Engine.DB.Transaction do
   end
 
   defp build_txhash(changeset) do
-    txhash = changeset |> get_field(:txbytes) |> ExPlasma.hash() 
-    put_change(changeset, :txhash, txhash) 
+    txhash = changeset |> get_field(:txbytes) |> ExPlasma.hash()
+    put_change(changeset, :txhash, txhash)
   end
 
   # Validate the transaction bytes with the generic transaction format protocol.
