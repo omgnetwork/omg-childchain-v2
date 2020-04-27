@@ -6,7 +6,6 @@ defmodule Engine.Callbacks.Piggyback do
   """
 
   import Ecto.Changeset, only: [change: 2, get_field: 2]
-  import Ecto.Query
 
   alias Engine.DB.Output
   alias Engine.DB.Transaction
