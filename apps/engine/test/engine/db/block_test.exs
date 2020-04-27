@@ -19,7 +19,7 @@ defmodule Engine.DB.BlockTest do
 
       assert = {:ok, %{"new-block" => block}} = Block.form()
 
-      transactions = from(t in Transaction, where: t.block_id == ^block.id) |> Engine.Repo.all()
+      transactions = Engine.Repo.all(from(t in Transaction, where: t.block_id == ^block.id))
 
       assert 1 = length(transactions)
     end
