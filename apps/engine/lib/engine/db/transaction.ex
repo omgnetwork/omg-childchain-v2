@@ -28,6 +28,7 @@ defmodule Engine.DB.Transaction do
 
   schema "transactions" do
     field(:txbytes, :binary)
+    field(:txhash, :binary)
 
     belongs_to(:block, Block)
     has_many(:inputs, Output, foreign_key: :spending_transaction_id)
@@ -40,6 +41,11 @@ defmodule Engine.DB.Transaction do
   Query all transactions that have not been formed into a block.
   """
   def pending(), do: from(t in __MODULE__, where: is_nil(t.block_id))
+
+  @doc """
+  Find transactions by the txhash.
+  """
+  def find_by_txhash(txhash), do: from(t in __MODULE__, where: t.txhash == ^txhash)
 
   @doc """
   The main action of the system. Takes txbytes and forms the appropriate
@@ -64,15 +70,21 @@ defmodule Engine.DB.Transaction do
   #
   # * checking if the input is not spent.
   # * checking if the input/output amounts are the same.
-  defp changeset(struct, params) do
+  def changeset(struct, params) do
     struct
     |> Repo.preload(:inputs)
     |> Repo.preload(:outputs)
     |> cast(params, [:txbytes])
     |> cast_assoc(:inputs)
     |> cast_assoc(:outputs)
+    |> build_txhash()
     |> validate_protocol()
     |> associate_usable_inputs()
+  end
+
+  defp build_txhash(changeset) do
+    txhash = changeset |> get_field(:txbytes) |> ExPlasma.hash()
+    put_change(changeset, :txhash, txhash)
   end
 
   # Validate the transaction bytes with the generic transaction format protocol.

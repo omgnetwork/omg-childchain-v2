@@ -15,8 +15,9 @@ defmodule Engine.DB.Factory do
   def deposit_transaction_factory(attr \\ %{}) do
     # Pick an available block number.
     blknum = (Engine.Repo.one(from(b in Block, select: b.number)) || 0) + 1
+    output_guard = Map.get(attr, :output_guard) || <<1::160>>
     amount = Map.get(attr, :amount, 1)
-    data = %{output_guard: <<1::160>>, token: <<0::160>>, amount: amount}
+    data = %{output_guard: output_guard, token: <<0::160>>, amount: amount}
 
     id =
       %{blknum: blknum, txindex: 0, oindex: 0}
@@ -32,6 +33,7 @@ defmodule Engine.DB.Factory do
 
     %Transaction{
       txbytes: txbytes,
+      txhash: ExPlasma.hash(txbytes),
       outputs: [output],
       block: %Block{state: "confirmed", number: blknum}
     }
