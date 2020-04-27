@@ -48,10 +48,12 @@ defmodule Engine.MixProject do
       {:postgrex, "~> 0.14"},
       {:telemetry, "~> 0.4"},
       # TEST
-      {:ex_machina, "~> 2.4", only: [:test]}
+      {:ex_machina, "~> 2.4", only: [:test]},
+      {:briefly, "~> 0.3.0", only: [:test]},
+      {:yaml_elixir, "~> 2.4.0", only: [:test]}
     ]
   end
 
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:test), do: ["lib", "test/support", "integration_test/support"]
   defp elixirc_paths(_), do: ["lib"]
 end
