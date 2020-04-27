@@ -39,9 +39,10 @@ defmodule Engine.Callbacks.Piggyback do
   defp piggyback_output(multi, %{omg_data: %{piggyback_type: :input}} = event), do: do_piggyback(multi, :inputs, event)
   defp piggyback_output(multi, %{omg_data: %{piggyback_type: :output}} = event), do: do_piggyback(multi, :outputs, event)
 
-  defp do_piggyback(multi, type, %{output_index: oindex, tx_hash: txhash}) do
+  defp do_piggyback(multi, type, %{output_index: oindex, tx_hash: tx_hash}) do
     transaction =
-      Transaction.find_by_txhash(txhash)
+      tx_hash
+      |> Transaction.find_by_txhash()
       |> Engine.Repo.one()
       |> Engine.Repo.preload(type)
 
