@@ -9,6 +9,8 @@ services:
       POSTGRES_USER: omisego_dev
       POSTGRES_PASSWORD: omisego_dev
       POSTGRES_DB: engine_repo
+    networks: 
+      - default
   childchain:
     image: omisego/childchain:latest
     command: "full_local"
@@ -23,6 +25,8 @@ services:
       ETHEREUM_RPC_URL: http://geth:8545
     expose:
       - "9656"
+    networks: 
+      - default
   geth:
     image: ethereum/client-go:v1.9.13
     entrypoint: /bin/sh -c ". data/command"
@@ -39,4 +43,8 @@ services:
       - ./data:/data
       - ./docker/geth/command:/data/command
       - ./docker/geth/geth-blank-password:/data/geth-blank-password
-      
+    networks: 
+      - default
+networks:
+  default:
+    name: childchain_default
