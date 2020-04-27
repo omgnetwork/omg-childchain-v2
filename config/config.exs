@@ -27,7 +27,7 @@ contracts = parse_contracts.()
 
 config :engine,
   network: "TEST",
-  txhash_contract: contracts["TXHASH_CONTRACT"],
+  tx_hash_contract: contracts["TX_HASH_CONTRACT"],
   authority_address: contracts["AUTHORITY_ADDRESS"],
   plasma_framework: contracts["CONTRACT_ADDRESS_PLASMA_FRAMEWORK"],
   erc20_vault: contracts["CONTRACT_ADDRESS_ERC20_VAULT"],
@@ -46,5 +46,30 @@ config :engine, ecto_repos: [Engine.Repo]
 
 config :ethereumex,
   http_options: [recv_timeout: 20_000]
+
+config :logger, level: :info
+
+config :logger, :console,
+  format: "$date $time [$level] $metadata⋅$message⋅\n",
+  discard_threshold: 2000,
+  metadata: [:module, :function, :request_id, :trace_id, :span_id]
+
+config :logger, Ink,
+  name: "childchain",
+  exclude_hostname: true
+
+config :status, Status.Metric.Tracer,
+  service: :web,
+  adapter: SpandexDatadog.Adapter,
+  disabled?: true,
+  type: :web,
+  env: ""
+
+config :spandex_datadog,
+  host: "datadog",
+  port: 8126,
+  batch_size: 10,
+  sync_threshold: 100,
+  http: HTTPoison
 
 import_config "#{Mix.env()}.exs"

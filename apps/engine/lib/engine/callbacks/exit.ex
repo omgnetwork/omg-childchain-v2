@@ -19,7 +19,7 @@ defmodule Engine.Callbacks.Exit do
           exit_id: non_neg_integer(),
           log_index: non_neg_integer(),
           owner: binary(),
-          root_chain_txhash: binary()
+          root_chain_tx_hash: binary()
         }
 
   @doc """

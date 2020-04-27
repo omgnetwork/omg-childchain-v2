@@ -24,7 +24,7 @@ defmodule Engine.Callbacks.Deposit do
   @type tx_hash() :: <<_::256>>
 
   @type event() :: %{
-          root_chain_txhash: tx_hash(),
+          root_chain_tx_hash: tx_hash(),
           log_index: non_neg_integer(),
           blknum: non_neg_integer(),
           currency: address_binary(),

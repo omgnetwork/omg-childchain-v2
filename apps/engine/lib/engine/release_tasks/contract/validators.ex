@@ -17,4 +17,18 @@ defmodule Engine.ReleaseTasks.Contract.Validators do
   def tx_hash!(_, key) do
     raise ArgumentError, message: "#{key} must be set to a valid Ethereum transaction hash."
   end
+
+  @spec url(String.t(), String.t(), String.t()) :: no_return() | String.t()
+  def url(url, key, _) when is_binary(url) and byte_size(url) > 0 do
+    uri = URI.parse(url)
+
+    case uri.scheme != nil && uri.host |> String.to_charlist() |> :inet_parse.domain() do
+      true -> url
+      _ -> raise ArgumentError, message: "#{key} must be set to a valid URL."
+    end
+  end
+
+  def url(_, _, url) do
+    url
+  end
 end

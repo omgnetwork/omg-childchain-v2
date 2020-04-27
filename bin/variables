@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+export LOGGER_BACKEND=console
+export DD_HOSTNAME=localhost
+export DD_DISABLED=false
+FILE='./localchain_contract_addresses.env'
+while IFS= read -r line; do
+    DATA_TO_EXPORT='export '$line
+    eval $DATA_TO_EXPORT
+done < ${FILE}

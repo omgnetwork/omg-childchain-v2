@@ -19,7 +19,7 @@ defmodule Engine.ReleaseTasks.ContractTest do
           "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f"
         end
 
-        def get_env("TXHASH_CONTRACT") do
+        def get_env("TX_HASH_CONTRACT") do
           "0xb836b6c4eb016e430b8e7495db92357896c1da263c6a3de73320b669eb5912d3"
         end
 
@@ -32,6 +32,7 @@ defmodule Engine.ReleaseTasks.ContractTest do
       execution = response_handler_function()
 
       engine_setup = [
+        ethereumex: [url: "default_url"],
         engine: [
           authority_address: "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f",
           plasma_framework: "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f",
@@ -46,7 +47,7 @@ defmodule Engine.ReleaseTasks.ContractTest do
       ]
 
       Agent.start_link(fn -> execution end, name: test_name)
-      assert Contract.load([], system_adapter: :system_mock) == engine_setup
+      assert Contract.load([ethereumex: [url: "default_url"]], system_adapter: :system_mock) == engine_setup
       Kernel.send(pid, :stop)
     end
   end

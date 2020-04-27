@@ -17,14 +17,13 @@ jobs:
       - checkout
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
-          key: v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v2-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run: mix do deps.get, compile --warnings-as-errors --force
       - save_cache:
-          key: v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v2-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
           paths:
             - "deps"
             - "_build"
-            - "dialyzer.ignore-warnings"
 
   test:
     working_directory: ~/childchain
@@ -42,7 +41,7 @@ jobs:
       - checkout
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
-          key: v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v2-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run: mix test
 
   credo:
@@ -55,8 +54,20 @@ jobs:
       - checkout
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
-          key: v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v2-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run: mix do credo --strict, format --check-formatted --dry-run
+      - run:
+          name: "Consistent naming of TX_HASH - it's tx_hash not txhash"
+          command: |
+            export SHELL=/bin/bash
+            set +eo pipefail
+            _counter=$(grep -r "txhash" . | grep -c "txhash")
+            echo "Current Credo.Check.Readability.SinglePipe occurrences:"
+            echo $_counter
+            if [ $_counter -gt 2 ]; then
+              echo "Have you been naughty or nice? Find out if Santa knows."
+              exit 1
+            fi 
 
   dialyzer:
     working_directory: ~/childchain
@@ -68,7 +79,7 @@ jobs:
       - checkout
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
-          key: v1-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v2-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - restore_cache:
           key: v1-dialyzer-plts-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run:
@@ -78,7 +89,11 @@ jobs:
             cp plts/dialyxir*.plt _build/dev/ || true
             mkdir -p ~/.mix
             cp plts/dialyxir*.plt ~/.mix/ || true
-      - run: mix dialyzer
+      - run:
+          name: Dialyzer
+          command: |
+            mix dialyzer
+          no_output_timeout: 2400
       - run:
           name: Pack PLT cache
           command: |
