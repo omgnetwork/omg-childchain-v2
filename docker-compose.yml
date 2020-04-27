@@ -32,7 +32,6 @@ services:
     entrypoint: /bin/sh -c ". data/command"
     environment:
       RPC_PORT: 8545
-      DATADIR: "data/"
     ports:
       - "8545:8545"
       - "8546:8546"
@@ -48,3 +47,4 @@ services:
 networks:
   default:
     name: childchain_default
+
