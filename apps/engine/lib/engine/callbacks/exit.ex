@@ -34,11 +34,6 @@ defmodule Engine.Callbacks.Exit do
   defp do_callback(positions, []), do: update_positions_as_exiting(positions)
 
   # Grab's all the Output positions.
-  #
-  # TODO: Should we be checking that the owner matches with what
-  # we have recorded in DB?
-  #
-  # TODO: Should we be checking that the Output has not been spent yet?
   defp mark_exiting_utxo(positions, %{} = event) do
     %{call_data: %{utxo_pos: position}} = event
     positions ++ [position]

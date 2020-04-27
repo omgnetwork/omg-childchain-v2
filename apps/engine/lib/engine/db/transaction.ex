@@ -66,10 +66,6 @@ defmodule Engine.DB.Transaction do
     %{txn | inputs: Enum.map(inputs, &Map.from_struct/1), outputs: Enum.map(outputs, &Map.from_struct/1)}
   end
 
-  # TODO: We should extract the PaymentV1 specific behaviors out, like
-  #
-  # * checking if the input is not spent.
-  # * checking if the input/output amounts are the same.
   def changeset(struct, params) do
     struct
     |> Repo.preload(:inputs)
