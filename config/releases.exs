@@ -8,7 +8,7 @@ end
 
 config :engine,
   network: System.get_env("ETHEREUM_NETWORK"),
-  txhash_contract: System.get_env("TXHASH_CONTRACT"),
+  tx_hash_contract: System.get_env("TX_HASH_CONTRACT"),
   authority_address: System.get_env("AUTHORITY_ADDRESS"),
   plasma_framework: System.get_env("CONTRACT_ADDRESS_PLASMA_FRAMEWORK"),
   erc20_vault: nil,

@@ -45,7 +45,7 @@ defmodule Engine.Ethereum.RootChain.AbiTest do
       event_signature: "DepositCreated(address,uint256,address,uint256)",
       log_index: 0,
       owner: <<59, 159, 76, 29, 210, 110, 11, 229, 147, 55, 59, 29, 54, 206, 226, 0, 140, 190, 184, 55>>,
-      root_chain_txhash:
+      root_chain_tx_hash:
         <<77, 114, 166, 63, 244, 47, 29, 181, 10, 242, 195, 110, 139, 49, 65, 1, 210, 254, 163, 224, 0, 53, 117, 243, 2,
           152, 233, 21, 63, 227, 216, 238>>
     }
@@ -77,7 +77,7 @@ defmodule Engine.Ethereum.RootChain.AbiTest do
       log_index: 0,
       output_index: 1,
       owner: <<21, 19, 171, 205, 53, 144, 162, 94, 11, 237, 132, 6, 82, 217, 87, 57, 29, 222, 153, 85>>,
-      root_chain_txhash:
+      root_chain_tx_hash:
         <<12, 201, 229, 85, 107, 189, 110, 234, 244, 48, 47, 68, 173, 202, 33, 87, 134, 255, 8, 207, 164, 74, 52, 190,
           23, 96, 236, 166, 15, 151, 54, 79>>,
       tx_hash:
@@ -113,7 +113,7 @@ defmodule Engine.Ethereum.RootChain.AbiTest do
       log_index: 1,
       output_index: 1,
       owner: <<21, 19, 171, 205, 53, 144, 162, 94, 11, 237, 132, 6, 82, 217, 87, 57, 29, 222, 153, 85>>,
-      root_chain_txhash:
+      root_chain_tx_hash:
         <<124, 244, 58, 96, 128, 233, 150, 119, 222, 224, 178, 108, 35, 228, 105, 177, 223, 156, 251, 86, 165, 195, 242,
           160, 18, 61, 246, 237, 174, 123, 91, 94>>,
       tx_hash:
@@ -148,7 +148,7 @@ defmodule Engine.Ethereum.RootChain.AbiTest do
              event_signature: "InFlightExitStarted(address,bytes32)",
              initiator: <<44, 106, 159, 66, 49, 128, 37, 205, 102, 39, 186, 242, 28, 70, 130, 1, 98, 32, 32, 223>>,
              log_index: 0,
-             root_chain_txhash:
+             root_chain_tx_hash:
                <<240, 228, 74, 240, 210, 100, 67, 185, 229, 19, 60, 100, 245, 167, 31, 6, 164, 212, 208, 212, 12, 94,
                  116, 18, 181, 234, 13, 252, 178, 241, 161, 51>>,
              tx_hash:
@@ -278,7 +278,7 @@ defmodule Engine.Ethereum.RootChain.AbiTest do
              exit_id: 961_120_214_746_159_734_848_620_722_848_998_552_444_082_017,
              log_index: 1,
              owner: <<8, 133, 129, 36, 179, 184, 128, 198, 139, 54, 15, 211, 25, 204, 97, 218, 39, 84, 94, 154>>,
-             root_chain_txhash:
+             root_chain_tx_hash:
                <<74, 130, 72, 184, 138, 23, 178, 190, 76, 96, 134, 161, 152, 70, 34, 222, 26, 96, 221, 163, 201, 221,
                  158, 206, 30, 249, 126, 209, 142, 250, 2, 140>>
            }
