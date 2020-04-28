@@ -46,18 +46,13 @@ jobs:
 
   integration:
     working_directory: ~/childchain
-    docker:
-      - image: circleci/elixir:1.10.2
-      - image: circleci/postgres:12-alpine
-        environment:
-          POSTGRES_USER: omisego_dev
-          POSTGRES_PASSWORD: omisego_dev
-          POSTGRES_DB: engine_repo_test
-          CIRLCECI: true
+    machine:
+      image: ubuntu-1604:201903-01
     environment:
       MIX_ENV=test
     steps:
       - checkout
+      - run: docker-compose up -d postgres
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
           key: v2-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
