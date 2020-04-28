@@ -37,7 +37,9 @@ defmodule Engine.Callbacks.Piggyback do
   #
   # See: https://github.com/omisego/elixir-omg/blob/8189b812b4b3cf9256111bd812235fb342a6fd50/apps/omg/lib/omg/state/utxo_set.ex#L81
   defp piggyback_output(multi, %{omg_data: %{piggyback_type: :input}} = event), do: do_piggyback(multi, :inputs, event)
-  defp piggyback_output(multi, %{omg_data: %{piggyback_type: :output}} = event), do: do_piggyback(multi, :outputs, event)
+
+  defp piggyback_output(multi, %{omg_data: %{piggyback_type: :output}} = event),
+    do: do_piggyback(multi, :outputs, event)
 
   defp do_piggyback(multi, type, %{output_index: oindex, tx_hash: tx_hash}) do
     transaction =
