@@ -74,6 +74,8 @@ defmodule Engine.Geth do
     geth_image = docker_compose["services"]["geth"]["image"]
     url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/v1.40/images/create?fromImage=#{geth_image}"
     response = HTTPoison.post!(url, "", [])
+IO.inspect response, label: "response"
+IO.inspect geth_image, label: "geth_image"
     200 = response.status_code
   end
 
