@@ -32,4 +32,17 @@ defmodule Engine.Configuration do
   def ethereum_stalled_sync_threshold_ms() do
     60_000
   end
+
+  def contracts() do
+    [
+      Application.get_env(@app, :plasma_framework),
+      Application.get_env(@app, :erc20_vault),
+      Application.get_env(@app, :eth_vault),
+      Application.get_env(@app, :payment_exit_game)
+    ]
+  end
+
+  def url() do
+    Application.get_env(@app, :rpc_url)
+  end
 end

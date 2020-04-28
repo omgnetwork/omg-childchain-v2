@@ -6,6 +6,12 @@ defmodule Engine.Ethereum.HeightMonitorTest do
   alias Engine.Ethereum.HeightMonitor
 
   setup_all do
+    {:ok, apps} = Application.ensure_all_started(:bus)
+
+    on_exit(fn ->
+      apps |> Enum.reverse() |> Enum.each(&Application.stop/1)
+    end)
+
     {:ok, _} = EthereumClientMock.start_link()
     _ = Agent.start_link(fn -> %{} end, name: :connector)
     :ok

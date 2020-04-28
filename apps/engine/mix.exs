@@ -12,26 +12,16 @@ defmodule Engine.MixProject do
       elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      deps: deps(),
-      aliases: aliases()
+      deps: deps()
     ]
   end
 
   # Run "mix help compile.app" to learn about applications.
-  def application do
+  def application() do
     [
       extra_applications: [:logger, :sasl],
       start_phases: [{:boot_done, []}],
       mod: {Engine.Application, []}
-    ]
-  end
-
-  defp aliases do
-    [
-      # NB: Think about adding a seed routine here
-      "ecto.setup": ["ecto.create", "ecto.migrate"],
-      "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.reset", "test"]
     ]
   end
 
@@ -54,6 +44,6 @@ defmodule Engine.MixProject do
     ]
   end
 
-  defp elixirc_paths(:test), do: ["lib", "test/support", "integration_test/support"]
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 end

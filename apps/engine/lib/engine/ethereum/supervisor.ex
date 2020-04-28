@@ -30,7 +30,7 @@ defmodule Engine.Ethereum.Supervisor do
          alarm_module: Alarm,
          event_bus_module: Bus
        ]},
-      {Height, [event_bus: Bus]}
+      {Height, []}
     ]
 
     opts = [strategy: :one_for_one]

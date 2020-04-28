@@ -10,6 +10,7 @@ defmodule Childchain.MixProject do
       deps_path: "deps" <> docker(),
       deps: deps(),
       dialyzer: dialyzer(),
+      aliases: aliases(),
       releases: [
         childchain: [
           steps: steps(),
@@ -23,6 +24,15 @@ defmodule Childchain.MixProject do
           ]
         ]
       ]
+    ]
+  end
+
+  defp aliases() do
+    [
+      # NB: Think about adding a seed routine here
+      "ecto.setup": ["ecto.create", "ecto.migrate"],
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      test: ["test --no-start"]
     ]
   end
 

@@ -3,6 +3,17 @@ defmodule Engine.Ethereum.HeightTest do
 
   alias Engine.Ethereum.Height
 
+  setup_all do
+    {:ok, apps} = Application.ensure_all_started(:bus)
+    start_supervised({Height, []})
+
+    on_exit(fn ->
+      apps |> Enum.reverse() |> Enum.each(&Application.stop/1)
+    end)
+
+    :ok
+  end
+
   test "starting state is initialized with an error tuple" do
     {:ok, {:error, :ethereum_height}} = Height.init(event_bus: Bus)
   end

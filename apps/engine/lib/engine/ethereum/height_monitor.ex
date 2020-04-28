@@ -56,7 +56,10 @@ defmodule Engine.Ethereum.HeightMonitor do
 
   def init(opts) do
     _ = Logger.info("Starting Ethereum height monitor.")
-    _ = install_alarm_handler()
+
+    alarm_handler = Keyword.get(opts, :alarm_handler, __MODULE__.AlarmHandler)
+
+    :ok = subscribe_to_alarms(alarm_handler, __MODULE__)
 
     state = %__MODULE__{
       check_interval_ms: Keyword.fetch!(opts, :check_interval_ms),
@@ -165,10 +168,11 @@ defmodule Engine.Ethereum.HeightMonitor do
   # Alarms management
   #
 
-  defp install_alarm_handler() do
-    case Enum.member?(:gen_event.which_handlers(:alarm_handler), __MODULE__.AlarmHandler) do
+  @spec subscribe_to_alarms(module(), module()) :: :gen_event.add_handler_ret()
+  defp subscribe_to_alarms(handler, consumer) do
+    case Enum.member?(:gen_event.which_handlers(:alarm_handler), handler) do
       true -> :ok
-      _ -> :alarm_handler.add_alarm_handler(__MODULE__.AlarmHandler, consumer: __MODULE__)
+      _ -> :alarm_handler.add_alarm_handler(handler, consumer: consumer)
     end
   end
 

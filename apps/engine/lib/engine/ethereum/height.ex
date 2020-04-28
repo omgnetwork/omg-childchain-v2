@@ -17,7 +17,7 @@ defmodule Engine.Ethereum.Height do
   end
 
   def init(opts) do
-    event_bus = Keyword.fetch!(opts, :event_bus)
+    event_bus = Keyword.get(opts, :event_bus, Bus)
     :ok = event_bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
     {:ok, {:error, :ethereum_height}}
   end

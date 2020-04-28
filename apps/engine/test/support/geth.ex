@@ -20,6 +20,7 @@ defmodule Engine.Geth do
     _ = pull_geth_image()
     datadir = create_temp_geth_dir()
     container_id = create_geth_container(port, datadir)
+    # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
     Process.register(self(), String.to_atom(container_id))
     start_container(container_id)
     {:reply, {:ok, container_id}, container_id}
