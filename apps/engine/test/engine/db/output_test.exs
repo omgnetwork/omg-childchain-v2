@@ -3,11 +3,7 @@ defmodule Engine.DB.OutputTest do
   doctest Engine.DB.Output, import: true
   import Engine.DB.Factory
 
-  alias Engine.DB.Output
-
   alias ExPlasma.Output.Position
-
-  @moduletag :focus
 
   describe "changeset/2" do
     test "populates the position column" do

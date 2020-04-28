@@ -2,12 +2,10 @@ defmodule Engine.Callbacks.PiggybackTest do
   @moduledoc false
   use ExUnit.Case, async: true
   import Engine.DB.Factory
-  import Ecto.Query
   import Ecto.Changeset
 
   alias Ecto.Adapters.SQL.Sandbox
   alias Engine.Callbacks.Piggyback
-  alias Engine.DB.Output
   alias Engine.Repo
 
   setup do
