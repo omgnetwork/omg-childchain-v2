@@ -3,6 +3,7 @@ defmodule Engine.Geth do
     Interaction with docker's geth instance
   """
   use GenServer
+  @docker_engine_api "v1.39"
 
   def start(port) do
     {:ok, _} = Application.ensure_all_started(:briefly)
@@ -23,9 +24,9 @@ defmodule Engine.Geth do
   end
 
   def handle_call({:start, port}, _, _state) do
-    _ = pull_geth_image()
+    geth_image = pull_geth_image()
     datadir = create_temp_geth_dir()
-    container_id = create_geth_container(port, datadir)
+    container_id = create_geth_container(port, datadir, geth_image)
     # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
     Process.register(self(), String.to_atom(container_id))
     start_container(container_id, port)
@@ -33,7 +34,7 @@ defmodule Engine.Geth do
   end
 
   def terminate(_, container_id) when is_binary(container_id) do
-    url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/v1.40/containers/#{container_id}/stop"
+    url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/containers/#{container_id}/stop"
     response = HTTPoison.post!(url, "", [{"content-type", "application/json"}], timeout: 60_000, recv_timeout: 60_000)
     204 = response.status_code
   end
@@ -50,7 +51,7 @@ defmodule Engine.Geth do
   end
 
   defp start_container(container_id, port) do
-    url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/v1.40/containers/#{container_id}/start"
+    url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/containers/#{container_id}/start"
     response = HTTPoison.post!(url, "", [{"content-type", "application/json"}], timeout: 60_000, recv_timeout: 60_000)
 
     case response.status_code do
@@ -59,9 +60,9 @@ defmodule Engine.Geth do
     end
   end
 
-  defp create_geth_container(port, datadir) do
-    body = Jason.encode!(geth(port, datadir))
-    url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/v1.40/containers/create"
+  defp create_geth_container(port, datadir, geth_image) do
+    body = Jason.encode!(geth(port, datadir, geth_image))
+    url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/containers/create"
     response = HTTPoison.post!(url, body, [{"content-type", "application/json"}], timeout: 60_000, recv_timeout: 60_000)
     201 = response.status_code
     %{"Id" => id} = Jason.decode!(response.body)
@@ -72,11 +73,10 @@ defmodule Engine.Geth do
     path = Path.join([Mix.Project.build_path(), "../../", "docker-compose.yml"])
     {:ok, docker_compose} = YamlElixir.read_from_file(path)
     geth_image = docker_compose["services"]["geth"]["image"]
-    url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/v1.40/images/create?fromImage=#{geth_image}"
+    url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/images/create?fromImage=#{geth_image}"
     response = HTTPoison.post!(url, "", [])
-IO.inspect response, label: "response"
-IO.inspect geth_image, label: "geth_image"
     200 = response.status_code
+    geth_image
   end
 
   defp create_temp_geth_dir() do
@@ -86,11 +86,11 @@ IO.inspect geth_image, label: "geth_image"
     datadir
   end
 
-  defp geth(port, datadir) do
+  defp geth(port, datadir, geth_image) do
     root_path = Path.join([Mix.Project.build_path(), "../../"])
 
     %{
-      "Image" => "ethereum/client-go:v1.9.13",
+      "Image" => geth_image,
       "Entrypoint" => [
         "/bin/sh",
         "-c",
