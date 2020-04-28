@@ -16,8 +16,8 @@ defmodule Engine.Callbacks.Deposit do
 
   import Ecto.Changeset
 
-  alias Engine.DB.Transaction
   alias Engine.DB.Block
+  alias Engine.DB.Transaction
 
   @type address_binary :: <<_::160>>
 

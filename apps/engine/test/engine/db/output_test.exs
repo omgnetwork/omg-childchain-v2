@@ -5,15 +5,13 @@ defmodule Engine.DB.OutputTest do
 
   alias Engine.DB.Output
 
+  alias ExPlasma.Output.Position
+
   @moduletag :focus
 
   describe "changeset/2" do
     test "populates the position column" do
-      output_id =
-        %{blknum: 1, txindex: 0, oindex: 0}
-        |> ExPlasma.Output.Position.pos()
-        |> ExPlasma.Output.Position.to_map()
-
+      output_id = %{blknum: 1, txindex: 0, oindex: 0} |> Position.pos() |> Position.to_map()
       output = build(:output, output_id: output_id)
 
       assert output_id.position == output.position
@@ -30,19 +28,11 @@ defmodule Engine.DB.OutputTest do
     end
 
     test "encodes the output_id" do
-      output_id =
-        %{blknum: 1, txindex: 0, oindex: 0}
-        |> ExPlasma.Output.Position.pos()
-        |> ExPlasma.Output.Position.to_map()
-
+      output_id = %{blknum: 1, txindex: 0, oindex: 0} |> Position.pos() |> Position.to_map()
       encoded = ExPlasma.Output.encode(%{output_id: output_id}, as: :input)
       output = build(:output, output_id: output_id)
 
       assert encoded == output.output_id
     end
-  end
-
-  describe "usable/0" do
-    # test "returns all confirmed and usable outputs"
   end
 end

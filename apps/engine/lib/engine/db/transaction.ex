@@ -128,7 +128,6 @@ defmodule Engine.DB.Transaction do
 
   # Return all confirmed outputs that have the given positions.
   defp usable_outputs_for(positions) do
-    Output.usable()
-    |> where([output], output.position in ^positions)
+    where(Output.usable(), [output], output.position in ^positions)
   end
 end

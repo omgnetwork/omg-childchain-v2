@@ -40,7 +40,7 @@ defmodule Engine.Callbacks.Exit do
   end
 
   defp update_positions_as_exiting(positions) do
-    query = Output.usable() |> where([output], output.position in ^positions)
+    query = where(Output.usable(), [output], output.position in ^positions)
 
     Engine.Repo.update_all(query,
       set: [

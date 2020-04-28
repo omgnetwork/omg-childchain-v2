@@ -5,12 +5,13 @@ defmodule Engine.DB.Factory do
 
   use ExMachina.Ecto, repo: Engine.Repo
 
-  alias Engine.DB.Block
-  alias Engine.DB.Transaction
-  alias Engine.DB.Output
-
   import Ecto.Changeset
   import Ecto.Query
+
+  alias Engine.DB.Block
+  alias Engine.DB.Output
+  alias Engine.DB.Transaction
+  alias ExPlasma.Output.Position
 
   def deposit_transaction_factory(attr \\ %{}) do
     # Pick an available block number.
@@ -21,8 +22,8 @@ defmodule Engine.DB.Factory do
 
     id =
       %{blknum: blknum, txindex: 0, oindex: 0}
-      |> ExPlasma.Output.Position.pos()
-      |> ExPlasma.Output.Position.to_map()
+      |> Position.pos()
+      |> Position.to_map()
 
     txbytes = new_txn() |> add_output(data) |> ExPlasma.encode()
 
@@ -42,8 +43,8 @@ defmodule Engine.DB.Factory do
   def payment_v1_transaction_factory(attr) do
     id =
       %{blknum: Map.get(attr, :blknum, 1), txindex: 0, oindex: 0}
-      |> ExPlasma.Output.Position.pos()
-      |> ExPlasma.Output.Position.to_map()
+      |> Position.pos()
+      |> Position.to_map()
 
     input =
       Engine.Repo.one(Output.usable()) ||
@@ -81,8 +82,8 @@ defmodule Engine.DB.Factory do
   defp add_input(ex_txn, %{} = position_map) do
     output_id =
       position_map
-      |> ExPlasma.Output.Position.pos()
-      |> ExPlasma.Output.Position.to_map()
+      |> Position.pos()
+      |> Position.to_map()
 
     input = %ExPlasma.Output{output_id: output_id}
 

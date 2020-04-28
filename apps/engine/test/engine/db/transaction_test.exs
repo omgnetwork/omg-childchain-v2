@@ -5,10 +5,14 @@ defmodule Engine.DB.TransactionTest do
   import Engine.DB.Factory
   import Ecto.Changeset, only: [get_field: 2]
 
-  alias Engine.DB.{Block, Output, Transaction}
+  alias Ecto.Adapters.SQL.Sandbox
+  alias Engine.DB.Block
+  alias Engine.DB.Output
+  alias Engine.DB.Transaction
+  alias Engine.Repo
 
   setup do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Engine.Repo)
+    :ok = Sandbox.checkout(Repo)
   end
 
   describe "decode/1" do

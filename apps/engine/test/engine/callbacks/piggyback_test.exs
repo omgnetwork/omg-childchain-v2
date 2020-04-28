@@ -5,11 +5,13 @@ defmodule Engine.Callbacks.PiggybackTest do
   import Ecto.Query
   import Ecto.Changeset
 
+  alias Ecto.Adapters.SQL.Sandbox
   alias Engine.Callbacks.Piggyback
   alias Engine.DB.Output
+  alias Engine.Repo
 
   setup do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Engine.Repo)
+    :ok = Sandbox.checkout(Repo)
   end
 
   describe "callback/1" do
@@ -32,7 +34,7 @@ defmodule Engine.Callbacks.PiggybackTest do
       }
 
       key = "piggyback-outputs-#{output.position}"
-      assert {:ok, %{ ^key => output}} = Piggyback.callback([event])
+      assert {:ok, %{^key => output}} = Piggyback.callback([event])
       assert output.state == "piggybacked"
     end
   end
@@ -41,7 +43,7 @@ defmodule Engine.Callbacks.PiggybackTest do
     owner = <<180, 121, 214, 88, 10, 185, 115, 237, 127, 113, 101, 78, 28, 82, 108, 57, 64, 154, 219, 241>>
     _ = insert(:deposit_transaction, output_guard: owner)
     transaction = insert(:payment_v1_transaction)
-    input = transaction.inputs |> hd()
+    input = hd(transaction.inputs)
 
     event = %{
       eth_height: 497,
@@ -56,9 +58,8 @@ defmodule Engine.Callbacks.PiggybackTest do
       tx_hash: transaction.txhash
     }
 
-
     key = "piggyback-inputs-#{input.position}"
-    assert {:ok, %{ ^key => input}} = Piggyback.callback([event])
+    assert {:ok, %{^key => input}} = Piggyback.callback([event])
     assert input.state == "piggybacked"
   end
 
@@ -66,7 +67,7 @@ defmodule Engine.Callbacks.PiggybackTest do
     owner = <<180, 121, 214, 88, 10, 185, 115, 237, 127, 113, 101, 78, 28, 82, 108, 57, 64, 154, 219, 241>>
     _ = insert(:deposit_transaction, output_guard: owner)
     transaction = insert(:payment_v1_transaction)
-    input = transaction.inputs |> hd()
+    input = hd(transaction.inputs)
 
     input |> change(state: "spent") |> Engine.Repo.update()
 
@@ -90,7 +91,7 @@ defmodule Engine.Callbacks.PiggybackTest do
     owner = <<180, 121, 214, 88, 10, 185, 115, 237, 127, 113, 101, 78, 28, 82, 108, 57, 64, 154, 219, 241>>
     _ = insert(:deposit_transaction, output_guard: owner)
     transaction = insert(:payment_v1_transaction)
-    output = transaction.outputs |> hd()
+    output = hd(transaction.outputs)
 
     output |> change(state: "exited") |> Engine.Repo.update()
 

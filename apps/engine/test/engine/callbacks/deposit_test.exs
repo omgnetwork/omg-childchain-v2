@@ -3,12 +3,14 @@ defmodule Engine.Callbacks.DepositTest do
 
   use ExUnit.Case, async: true
 
+  alias Ecto.Adapters.SQL.Sandbox
   alias Engine.Callbacks.Deposit
-  alias Engine.DB.Transaction
   alias Engine.DB.Output
+  alias Engine.DB.Transaction
+  alias Engine.Repo
 
   setup do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Engine.Repo)
+    :ok = Sandbox.checkout(Repo)
   end
 
   describe "deposit/1" do

@@ -5,11 +5,13 @@ defmodule Engine.DB.BlockTest do
   import Engine.DB.Factory
   import Ecto.Query, only: [from: 2]
 
+  alias Ecto.Adapters.SQL.Sandbox
   alias Engine.DB.Block
   alias Engine.DB.Transaction
+  alias Engine.Repo
 
   setup do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Engine.Repo)
+    :ok = Sandbox.checkout(Repo)
   end
 
   describe "form/0" do

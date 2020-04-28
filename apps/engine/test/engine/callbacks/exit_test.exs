@@ -4,11 +4,13 @@ defmodule Engine.Callbacks.ExitTest do
   import Engine.DB.Factory
   import Ecto.Query
 
+  alias Ecto.Adapters.SQL.Sandbox
   alias Engine.Callbacks.Exit
   alias Engine.DB.Output
+  alias Engine.Repo
 
   setup do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Engine.Repo)
+    :ok = Sandbox.checkout(Repo)
   end
 
   @tag :focus
@@ -35,7 +37,7 @@ defmodule Engine.Callbacks.ExitTest do
 
       assert {1, nil} = Exit.callback(exit_events)
       query = from(o in Output, where: o.position == ^position, select: o.state)
-      assert "exited" = Engine.Repo.one(query)
+      assert "exited" = Repo.one(query)
     end
 
     test "marks multiple utxos as exiting" do
@@ -75,7 +77,7 @@ defmodule Engine.Callbacks.ExitTest do
 
       assert {2, nil} = Exit.callback(exit_events)
       query = from(o in Output, where: o.position in [^pos1, ^pos2], select: o.state)
-      assert ["exited", "exited"] = Engine.Repo.all(query)
+      assert ["exited", "exited"] = Repo.all(query)
     end
   end
 end
