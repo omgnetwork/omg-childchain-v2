@@ -6,7 +6,7 @@ defmodule Engine.Callbacks.Deposit do
 
   When you deposit into the network, you send a 'deposit' transaction to the
   contract directly. Upon success, the contract generates a block just for that
-  single transaction(incrementing blknum by `1` vs `1000` in blocks submitted 
+  single transaction(incrementing blknum by `1` vs `1000` in blocks submitted
   by the childchain). Example:
 
     - blknum 1000, this is submitted by the childchain and contains non-deposit transactions
@@ -49,7 +49,7 @@ defmodule Engine.Callbacks.Deposit do
     transaction = %ExPlasma.Transaction{tx_type: 1, outputs: [output]}
     txbytes = ExPlasma.encode(transaction)
 
-    confirming_output = 
+    confirming_output =
       txbytes
       |> Transaction.decode()
       |> get_field(:outputs)
