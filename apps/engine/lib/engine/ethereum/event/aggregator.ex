@@ -7,7 +7,7 @@ defmodule Engine.Ethereum.Event.Aggregator do
 
   alias Engine.Ethereum.RootChain.Abi
   alias Engine.Ethereum.RootChain.Event
-  alias Engine.Ethereum.RootChain.Rpc
+
   require Logger
   @timeout 55_000
   @type result() :: {:ok, list(map())} | {:error, :check_range}
@@ -17,11 +17,19 @@ defmodule Engine.Ethereum.Event.Aggregator do
           event_signatures: list(binary()),
           events: list(atom()),
           contracts: list(binary()),
-          rpc: module(),
+          event_interface: module(),
           opts: Keyword.t()
         }
 
-  defstruct [:delete_events_threshold_height_blknum, :ets_bucket, :event_signatures, :events, :contracts, :rpc, :opts]
+  defstruct [
+    :delete_events_threshold_height_blknum,
+    :ets_bucket,
+    :event_signatures,
+    :events,
+    :contracts,
+    :event_interface,
+    :opts
+  ]
 
   @spec deposit_created(GenServer.server(), pos_integer(), pos_integer()) :: result()
   def deposit_created(server \\ __MODULE__, from_block, to_block) do
@@ -66,7 +74,7 @@ defmodule Engine.Ethereum.Event.Aggregator do
       |> Event.get_events()
 
     ets_bucket = Keyword.fetch!(opts, :ets_bucket)
-    rpc = Keyword.get(opts, :rpc, Rpc)
+    event_interface = Keyword.get(opts, :event_interface, Event)
     opts = Keyword.fetch!(opts, :opts)
 
     {:ok,
@@ -77,7 +85,7 @@ defmodule Engine.Ethereum.Event.Aggregator do
        event_signatures: events_signatures,
        events: events,
        contracts: contracts,
-       rpc: rpc,
+       event_interface: event_interface,
        opts: opts
      }}
   end
@@ -131,14 +139,21 @@ defmodule Engine.Ethereum.Event.Aggregator do
   end
 
   defp get_logs(from_height, to_height, state) do
-    {:ok, logs} = state.rpc.get_ethereum_events(from_height, to_height, state.event_signatures, state.contracts)
+    {:ok, logs} =
+      state.event_interface.get_ethereum_events(
+        from_height,
+        to_height,
+        state.event_signatures,
+        state.contracts,
+        state.opts
+      )
+
     Enum.map(logs, &Abi.decode_log(&1))
   end
 
   # we get the logs from RPC and we cross check with the event definition if we need to enrich them
   defp enrich_logs_with_call_data(decoded_logs, state) do
     events = state.events
-    rpc = state.rpc
 
     Enum.map(decoded_logs, fn decoded_log ->
       decoded_log_signature = decoded_log.event_signature
@@ -147,7 +162,7 @@ defmodule Engine.Ethereum.Event.Aggregator do
 
       case Keyword.fetch!(event, :enrich) do
         true ->
-          {:ok, enriched_data} = rpc.get_call_data(decoded_log.root_chain_tx_hash)
+          {:ok, enriched_data} = state.event_interface.get_call_data(decoded_log.root_chain_tx_hash)
 
           enriched_data_decoded = enriched_data |> from_hex |> Abi.decode_function()
           Map.put(decoded_log, :call_data, enriched_data_decoded)

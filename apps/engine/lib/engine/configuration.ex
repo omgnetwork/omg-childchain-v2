@@ -42,6 +42,10 @@ defmodule Engine.Configuration do
     ]
   end
 
+  def eth_vault() do
+    Application.get_env(@app, :eth_vault)
+  end
+
   def url() do
     Application.get_env(@app, :rpc_url)
   end

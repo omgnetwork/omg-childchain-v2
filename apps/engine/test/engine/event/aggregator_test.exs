@@ -14,7 +14,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       {Aggregator,
        opts: [url: "yolo"],
        name: event_fetcher_name,
-       contracts: %{},
+       contracts: [],
        ets_bucket: table,
        events: [
          [name: :deposit_created, enrich: false],
@@ -33,7 +33,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
     defmodule test_name do
       alias Engine.Ethereum.Event.AggregatorTest
 
-      def get_ethereum_events(_from_block, to_block, _signatures, _contracts) do
+      def get_ethereum_events(_from_block, to_block, _signatures, _contracts, _opts) do
         deposits = for n <- 1..10_000, do: AggregatorTest.deposit_created_log(n)
         {:ok, [AggregatorTest.in_flight_exit_input_piggybacked_log(to_block) | deposits]}
       end
@@ -45,7 +45,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
     from_block = 1
     to_block = 80_000
-    :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :rpc, test_name) end)
+    :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :event_interface, test_name) end)
     events = event_fetcher_name |> :sys.get_state() |> Map.get(:events)
     Aggregator.deposit_created(event_fetcher_name, from_block, to_block)
     assert Enum.count(:ets.tab2list(table)) == Enum.count(events) * 80_000
@@ -105,7 +105,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       defmodule test_name do
         alias Engine.Ethereum.Event.AggregatorTest
 
-        def get_ethereum_events(from_block, to_block, _signatures, _contracts) do
+        def get_ethereum_events(from_block, to_block, _signatures, _contracts, _opts) do
           {:ok,
            [
              AggregatorTest.deposit_created_log(from_block),
@@ -122,7 +122,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
       from_block = 1
       to_block = 3
-      :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :rpc, test_name) end)
+      :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :event_interface, test_name) end)
       :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :delete_events_threshold_height_blknum, 1) end)
       events = event_fetcher_name |> :sys.get_state() |> Map.get(:events)
 
@@ -200,7 +200,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       defmodule test_name do
         alias Engine.Ethereum.Event.AggregatorTest
 
-        def get_ethereum_events(from_block, to_block, _signatures, _contracts) do
+        def get_ethereum_events(from_block, to_block, _signatures, _contracts, _opts) do
           {:ok,
            [
              AggregatorTest.deposit_created_log(from_block),
@@ -217,7 +217,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       end
 
       # we need to set the RPC module with our mocked implementation
-      :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :rpc, test_name) end)
+      :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :event_interface, test_name) end)
       # we read the events from the aggregators state so that we're able to build the
       # event data later
       events = event_fetcher_name |> :sys.get_state() |> Map.get(:events)
@@ -280,7 +280,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       defmodule test_name do
         alias Engine.Ethereum.Event.AggregatorTest
 
-        def get_ethereum_events(from_block, to_block, _signatures, _contracts) do
+        def get_ethereum_events(from_block, to_block, _signatures, _contracts, _opts) do
           {:ok,
            [
              AggregatorTest.deposit_created_log(from_block),
@@ -295,7 +295,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
         end
       end
 
-      :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :rpc, test_name) end)
+      :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :event_interface, test_name) end)
       from_block = 1
       to_block = 1
       deposit_created = from_block |> deposit_created_log() |> Abi.decode_log()
@@ -341,7 +341,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       defmodule test_name do
         alias Engine.Ethereum.Event.AggregatorTest
 
-        def get_ethereum_events(_from_block, _to_block, _signatures, _contracts) do
+        def get_ethereum_events(_from_block, _to_block, _signatures, _contracts, _opts) do
           {:ok,
            [
              AggregatorTest.deposit_created_log(1),
@@ -403,7 +403,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       # data gets inserted into the ETS table that the event aggregator us using
       true = :ets.insert(table, event_data)
       # we want the event aggregator to use our mocked RPC module
-      :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :rpc, test_name) end)
+      :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :event_interface, test_name) end)
       # we assert that if we pull deposits in the from_block and to_block range
       # the deposits that we created above are returned in the correct order
       # and that there's no more non *empty* deposits, only those that we defined

@@ -9,11 +9,17 @@ defmodule Engine.Geth do
     {:ok, _} = Application.ensure_all_started(:httpoison)
     {:ok, pid} = GenServer.start_link(__MODULE__, [])
     {:ok, container_id} = GenServer.call(pid, {:start, port}, 60_000)
-    container_id
+    wait(port)
+    {:ok, {pid, container_id}}
   end
 
   def init(_) do
+    Process.flag(:trap_exit, true)
     {:ok, %{}}
+  end
+
+  def handle_info({:EXIT, _, :normal}, state) do
+    {:stop, :parent, state}
   end
 
   def handle_call({:start, port}, _, _state) do
@@ -22,7 +28,7 @@ defmodule Engine.Geth do
     container_id = create_geth_container(port, datadir)
     # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
     Process.register(self(), String.to_atom(container_id))
-    start_container(container_id)
+    start_container(container_id, port)
     {:reply, {:ok, container_id}, container_id}
   end
 
@@ -32,10 +38,25 @@ defmodule Engine.Geth do
     204 = response.status_code
   end
 
-  defp start_container(container_id) do
+  defp wait(port) do
+    case Ethereumex.HttpClient.web3_client_version(url: "http://127.0.0.1:#{port}") do
+      {:error, :closed} ->
+        Process.sleep(500)
+        wait(port)
+
+      _ ->
+        :ok
+    end
+  end
+
+  defp start_container(container_id, port) do
     url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/v1.40/containers/#{container_id}/start"
     response = HTTPoison.post!(url, "", [{"content-type", "application/json"}], timeout: 60_000, recv_timeout: 60_000)
-    204 = response.status_code
+
+    case response.status_code do
+      204 -> :ok
+      500 -> raise ArgumentError, message: "Something is running on Geth port #{port}."
+    end
   end
 
   defp create_geth_container(port, datadir) do
