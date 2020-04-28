@@ -64,7 +64,7 @@ jobs:
             _counter=$(grep -r "txhash" . | grep -c "txhash")
             echo "Current occurrences of txhash:"
             echo $_counter
-            if [ $_counter -gt 2 ]; then
+            if [ $_counter -gt 3 ]; then
               echo "Have you been naughty or nice? Find out if Santa knows."
               exit 1
             fi 
