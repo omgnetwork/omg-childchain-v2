@@ -77,7 +77,7 @@ jobs:
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
           key: v2-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
-      - run: mix test --only integration
+      - run: mix test.integration
 
   credo:
     working_directory: ~/childchain

@@ -1,6 +1,6 @@
 defmodule Poller do
   @moduledoc """
-    Geth poller for transaction status
+    Geth poller for anything that just takes time...
   """
   alias ExPlasma.Encoding
   require Logger
@@ -12,7 +12,9 @@ defmodule Poller do
     wait_on_receipt_status(receipt_hash, "0x1", @retry_count, opts)
   end
 
-  defp wait_on_receipt_status(receipt_hash, _status, 0, opts), do: get_transaction_receipt(receipt_hash, opts)
+  defp wait_on_receipt_status(receipt_hash, _status, 0, opts) do
+    get_transaction_receipt(receipt_hash, opts)
+  end
 
   defp wait_on_receipt_status(receipt_hash, status, counter, opts) do
     _ = Logger.info("Waiting on #{receipt_hash} for status #{status} for #{counter} seconds")

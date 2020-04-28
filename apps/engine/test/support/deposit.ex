@@ -3,7 +3,7 @@ defmodule Deposit do
   alias ExPlasma.Encoding
 
   @zero_metadata <<0::256>>
-  @output_type 1
+  @output_type ExPlasma.payment_v1()
 
   defstruct [:inputs, :outputs, metadata: @zero_metadata]
 

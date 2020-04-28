@@ -56,9 +56,7 @@ defmodule Engine.Ethereum.RootChainCoordinator do
     {:ok, _} = schedule_get_ethereum_height(coordinator_eth_height_check_interval_ms)
     state = Core.init(configs_services, rootchain_height)
 
-    configs_services
-    |> Map.keys()
-    |> request_sync()
+    configs_services |> Map.keys() |> request_sync()
 
     {:ok, _} = :timer.send_interval(metrics_collection_interval, self(), :send_metrics)
 

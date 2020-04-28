@@ -34,9 +34,27 @@ defmodule Engine.Geth do
   end
 
   def terminate(_, container_id) when is_binary(container_id) do
-    url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/containers/#{container_id}/stop"
-    response = HTTPoison.post!(url, "", [{"content-type", "application/json"}], timeout: 60_000, recv_timeout: 60_000)
-    204 = response.status_code
+    stop_container_url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/containers/#{container_id}/stop"
+
+    stop_response =
+      HTTPoison.post!(stop_container_url, "", [{"content-type", "application/json"}],
+        timeout: 60_000,
+        recv_timeout: 60_000
+      )
+
+    204 = stop_response.status_code
+
+    delete_container_url =
+      "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/containers/#{container_id}?v=true&force=true"
+
+    delete_response =
+      HTTPoison.delete!(delete_container_url, [{"content-type", "application/json"}],
+        timeout: 60_000,
+        recv_timeout: 60_000
+      )
+
+    204 = delete_response.status_code
+    _ = Briefly.cleanup()
   end
 
   defp wait(port) do
@@ -99,6 +117,9 @@ defmodule Engine.Geth do
       "Env" => [
         "RPC_PORT=#{port}"
       ],
+      # -p
+      "PortBindings" => %{"#{port}/tcp" => [%{"HostIP" => "0.0.0.0", "HostPort" => "#{port}"}]},
+      "ExposedPorts" => %{"#{port}/tcp" => %{}},
       "HostConfig" => %{
         "PortBindings" => %{
           "#{port}/tcp" => [

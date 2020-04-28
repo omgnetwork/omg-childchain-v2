@@ -45,7 +45,7 @@ defmodule Engine.Ethereum.RootChain.Rpc do
     Ethereumex.HttpClient.eth_block_number(opts)
   end
 
-  @spec eth_get_logs(map(), keyword()) :: {:ok, map()} | {:error, map() | binary() | atom()}
+  @spec eth_get_logs(map(), keyword()) :: {:ok, list(map())} | {:error, map() | binary() | atom()}
   def eth_get_logs(params, opts) do
     Ethereumex.HttpClient.eth_get_logs(params, opts)
   end

@@ -39,7 +39,7 @@ defmodule Engine.MixProject do
       {:telemetry, "~> 0.4"},
       # TEST
       {:ex_machina, "~> 2.4", only: [:test]},
-      {:briefly, "~> 0.3.0", only: [:test]},
+      {:briefly, git: "https://github.com/CargoSense/briefly.git", only: [:test]},
       {:yaml_elixir, "~> 2.4.0", only: [:test]}
     ]
   end

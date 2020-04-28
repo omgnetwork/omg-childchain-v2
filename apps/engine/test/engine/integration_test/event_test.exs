@@ -1,4 +1,4 @@
-defmodule Event do
+defmodule EventTest do
   use ExUnit.Case, async: true
 
   alias Engine.Configuration
@@ -10,14 +10,9 @@ defmodule Event do
   @gas 180_000
 
   setup_all do
-    {:ok, ethereumex} = Application.ensure_all_started(:ethereumex)
-    port = 8545
+    {:ok, _ethereumex} = Application.ensure_all_started(:ethereumex)
+    port = Enum.random(35_000..40_000)
     {:ok, {_geth_pid, _container_id}} = Geth.start(port)
-
-    on_exit(fn ->
-      ethereumex |> Enum.reverse() |> Enum.each(&Application.stop/1)
-    end)
-
     :ets.new(:events_bucket_test, [:bag, :public, :named_table])
     url = "http://127.0.0.1:#{port}"
     contracts = Configuration.contracts()
