@@ -27,7 +27,7 @@ defmodule Engine.Callbacks.Piggyback do
   @spec callback(list()) :: {:ok, map()} | {:error, :atom, any(), any()}
   def callback(events), do: do_callback(Ecto.Multi.new(), events)
 
-  defp do_callback(multi, [event | tail]), do: multi |> piggyback_output(event) |> do_callback(tail)
+  defp do_callback(multi, [event | tail]), do: multi |> piggyback(event) |> do_callback(tail)
   defp do_callback(multi, []), do: Engine.Repo.transaction(multi)
 
   # A `tx_hash` isn't unique, so we just kinda take the `tx_hash` as a short-hand
@@ -36,9 +36,9 @@ defmodule Engine.Callbacks.Piggyback do
   # For us, we keep track of the history to some degree(e.g state change).
   #
   # See: https://github.com/omisego/elixir-omg/blob/8189b812b4b3cf9256111bd812235fb342a6fd50/apps/omg/lib/omg/state/utxo_set.ex#L81
-  defp piggyback_output(multi, %{omg_data: %{piggyback_type: :input}} = event), do: do_piggyback(multi, :inputs, event)
+  defp piggyback(multi, %{omg_data: %{piggyback_type: :input}} = event), do: do_piggyback(multi, :inputs, event)
 
-  defp piggyback_output(multi, %{omg_data: %{piggyback_type: :output}} = event),
+  defp piggyback(multi, %{omg_data: %{piggyback_type: :output}} = event),
     do: do_piggyback(multi, :outputs, event)
 
   defp do_piggyback(multi, type, %{output_index: oindex, tx_hash: tx_hash}) do

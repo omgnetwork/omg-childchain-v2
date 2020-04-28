@@ -49,8 +49,11 @@ defmodule Engine.Callbacks.Deposit do
     transaction = %ExPlasma.Transaction{tx_type: 1, outputs: [output]}
     txbytes = ExPlasma.encode(transaction)
 
-    changeset = Transaction.decode(txbytes)
-    confirming_output = changeset |> get_field(:outputs) |> hd()
+    confirming_output = 
+      txbytes
+      |> Transaction.decode()
+      |> get_field(:outputs)
+      |> hd()
 
     insertion =
       txbytes
