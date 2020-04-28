@@ -73,6 +73,7 @@ jobs:
           paths:
             - ~/.asdf
             - ~/.asdf-vm
+      - run: make init-contracts
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
           key: v2-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
