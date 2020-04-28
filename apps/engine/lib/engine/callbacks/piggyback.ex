@@ -30,8 +30,8 @@ defmodule Engine.Callbacks.Piggyback do
   defp do_callback(multi, [event | tail]), do: multi |> piggyback_output(event) |> do_callback(tail)
   defp do_callback(multi, []), do: Engine.Repo.transaction(multi)
 
-  # A `txhash` isn't unique, so we just kinda take the `txhash` as a short-hand
-  # to figure out which `txhash` it could possibly be with the given `oindex`.
+  # A `tx_hash` isn't unique, so we just kinda take the `tx_hash` as a short-hand
+  # to figure out which `tx_hash` it could possibly be with the given `oindex`.
   # Additionally, in the old system, 'spent' outputs were just removed from the system.
   # For us, we keep track of the history to some degree(e.g state change).
   #
@@ -44,7 +44,7 @@ defmodule Engine.Callbacks.Piggyback do
   defp do_piggyback(multi, type, %{output_index: oindex, tx_hash: tx_hash}) do
     transaction =
       tx_hash
-      |> Transaction.find_by_txhash()
+      |> Transaction.find_by_tx_hash()
       |> Engine.Repo.one()
       |> Engine.Repo.preload(type)
 

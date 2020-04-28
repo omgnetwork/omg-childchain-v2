@@ -28,7 +28,7 @@ defmodule Engine.DB.Transaction do
 
   schema "transactions" do
     field(:txbytes, :binary)
-    field(:txhash, :binary)
+    field(:tx_hash, :binary)
 
     belongs_to(:block, Block)
     has_many(:inputs, Output, foreign_key: :spending_transaction_id)
@@ -43,9 +43,9 @@ defmodule Engine.DB.Transaction do
   def pending(), do: from(t in __MODULE__, where: is_nil(t.block_id))
 
   @doc """
-  Find transactions by the txhash.
+  Find transactions by the tx_hash.
   """
-  def find_by_txhash(txhash), do: from(t in __MODULE__, where: t.txhash == ^txhash)
+  def find_by_tx_hash(tx_hash), do: from(t in __MODULE__, where: t.tx_hash == ^tx_hash)
 
   @doc """
   The main action of the system. Takes txbytes and forms the appropriate
@@ -73,14 +73,14 @@ defmodule Engine.DB.Transaction do
     |> cast(params, [:txbytes])
     |> cast_assoc(:inputs)
     |> cast_assoc(:outputs)
-    |> build_txhash()
+    |> build_tx_hash()
     |> validate_protocol()
     |> associate_usable_inputs()
   end
 
-  defp build_txhash(changeset) do
-    txhash = changeset |> get_field(:txbytes) |> ExPlasma.hash()
-    put_change(changeset, :txhash, txhash)
+  defp build_tx_hash(changeset) do
+    tx_hash = changeset |> get_field(:txbytes) |> ExPlasma.hash()
+    put_change(changeset, :tx_hash, tx_hash)
   end
 
   # Validate the transaction bytes with the generic transaction format protocol.

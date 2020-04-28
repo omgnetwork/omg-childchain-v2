@@ -75,14 +75,14 @@ defmodule Engine.DB.TransactionTest do
       assert output.id == input.id
     end
 
-    test "builds the txhash" do
+    test "builds the tx_hash" do
       _ = insert(:deposit_transaction)
       transaction = build(:payment_v1_transaction)
       changeset = Transaction.decode(transaction.txbytes)
-      txhash = ExPlasma.hash(transaction.txbytes)
+      tx_hash = ExPlasma.hash(transaction.txbytes)
 
       assert changeset.valid?
-      assert txhash == get_field(changeset, :txhash)
+      assert tx_hash == get_field(changeset, :tx_hash)
     end
   end
 end

@@ -34,7 +34,7 @@ defmodule Engine.DB.Factory do
 
     %Transaction{
       txbytes: txbytes,
-      txhash: ExPlasma.hash(txbytes),
+      tx_hash: ExPlasma.hash(txbytes),
       outputs: [output],
       block: %Block{state: "confirmed", number: blknum}
     }

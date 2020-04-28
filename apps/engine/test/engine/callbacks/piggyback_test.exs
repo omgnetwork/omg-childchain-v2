@@ -30,7 +30,7 @@ defmodule Engine.Callbacks.PiggybackTest do
         root_chain_txhash:
           <<212, 219, 104, 41, 4, 36, 0, 15, 174, 188, 194, 119, 144, 2, 194, 146, 29, 58, 74, 12, 131, 195, 142, 160,
             155, 40, 118, 247, 141, 135, 74, 138>>,
-        tx_hash: deposit.txhash
+        tx_hash: deposit.tx_hash
       }
 
       key = "piggyback-outputs-#{output.position}"
@@ -55,7 +55,7 @@ defmodule Engine.Callbacks.PiggybackTest do
       root_chain_txhash:
         <<40, 134, 206, 183, 182, 72, 20, 81, 62, 216, 72, 67, 230, 224, 13, 68, 105, 10, 217, 188, 142, 121, 93, 122,
           84, 202, 240, 9, 175, 223, 226, 12>>,
-      tx_hash: transaction.txhash
+      tx_hash: transaction.tx_hash
     }
 
     key = "piggyback-inputs-#{input.position}"
@@ -81,7 +81,7 @@ defmodule Engine.Callbacks.PiggybackTest do
       root_chain_txhash:
         <<40, 134, 206, 183, 182, 72, 20, 81, 62, 216, 72, 67, 230, 224, 13, 68, 105, 10, 217, 188, 142, 121, 93, 122,
           84, 202, 240, 9, 175, 223, 226, 12>>,
-      tx_hash: transaction.txhash
+      tx_hash: transaction.tx_hash
     }
 
     assert {:ok, %{}} = Piggyback.callback([event])
@@ -105,7 +105,7 @@ defmodule Engine.Callbacks.PiggybackTest do
       root_chain_txhash:
         <<40, 134, 206, 183, 182, 72, 20, 81, 62, 216, 72, 67, 230, 224, 13, 68, 105, 10, 217, 188, 142, 121, 93, 122,
           84, 202, 240, 9, 175, 223, 226, 12>>,
-      tx_hash: transaction.txhash
+      tx_hash: transaction.tx_hash
     }
 
     assert {:ok, %{}} = Piggyback.callback([event])
