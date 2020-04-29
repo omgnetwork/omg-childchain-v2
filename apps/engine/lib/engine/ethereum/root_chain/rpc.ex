@@ -21,7 +21,9 @@ defmodule Engine.Ethereum.RootChain.Rpc do
     This will allow us to run integration tests concurrently!
   """
   alias ExPlasma.Encoding
+
   require Logger
+
   @type option :: {:url, String.t()}
   @type block :: non_neg_integer()
   @type signatures :: list(String.t()) | String.t()
@@ -36,5 +38,15 @@ defmodule Engine.Ethereum.RootChain.Rpc do
   def call_contract(contract, signature, args, opts) do
     data = signature |> ABI.encode(args) |> Encoding.to_hex()
     Ethereumex.HttpClient.eth_call(%{to: contract, data: data}, "latest", opts)
+  end
+
+  @spec get_ethereum_height(keyword()) :: {:ok, map()} | {:error, map() | binary() | atom()}
+  def get_ethereum_height(opts) do
+    Ethereumex.HttpClient.eth_block_number(opts)
+  end
+
+  @spec eth_get_logs(map(), keyword()) :: {:ok, list(map())} | {:error, map() | binary() | atom()}
+  def eth_get_logs(params, opts) do
+    Ethereumex.HttpClient.eth_get_logs(params, opts)
   end
 end

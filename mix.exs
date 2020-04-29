@@ -10,6 +10,7 @@ defmodule Childchain.MixProject do
       deps_path: "deps" <> docker(),
       deps: deps(),
       dialyzer: dialyzer(),
+      aliases: aliases(),
       releases: [
         childchain: [
           steps: steps(),
@@ -22,7 +23,19 @@ defmodule Childchain.MixProject do
             {Status.ReleaseTasks.Application, [release: "childchain", current_version: version()]}
           ]
         ]
-      ]
+      ],
+      preferred_cli_env: ["test.integration": :test, "test.all": :test]
+    ]
+  end
+
+  defp aliases() do
+    [
+      # NB: Think about adding a seed routine here
+      "ecto.setup": ["ecto.create", "ecto.migrate"],
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      test: ["test --no-start"],
+      "test.integration": ["test --only integration"],
+      "test.all": ["test --include integration"]
     ]
   end
 

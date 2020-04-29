@@ -5,6 +5,12 @@ defmodule Status.Alert.AlarmHandlerTest do
   alias Status.Alert.AlarmHandler.Table
 
   setup_all do
+    {:ok, apps} = Application.ensure_all_started(:status)
+
+    on_exit(fn ->
+      apps |> Enum.reverse() |> Enum.each(&Application.stop/1)
+    end)
+
     handlers = :gen_event.which_handlers(:alarm_handler)
     Enum.each(handlers -- [AlarmHandler], fn handler -> :gen_event.delete_handler(:alarm_handler, handler, []) end)
     [AlarmHandler] = :gen_event.which_handlers(:alarm_handler)

@@ -6,6 +6,12 @@ defmodule Engine.ReleaseTasks.Contract.ExternalTest do
   alias Engine.ReleaseTasks.Contract.External
 
   setup_all do
+    {:ok, apps} = Application.ensure_all_started(:ethereumex)
+
+    on_exit(fn ->
+      apps |> Enum.reverse() |> Enum.each(&Application.stop/1)
+    end)
+
     starting_port = 9000
     Agent.start_link(fn -> starting_port end, name: __MODULE__)
     :ok
