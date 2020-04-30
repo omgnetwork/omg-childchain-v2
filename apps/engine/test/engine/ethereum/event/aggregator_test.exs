@@ -240,8 +240,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
       in_flight_exit_output_piggybacked_log = in_flight_exit_output_piggybacked_log_decoded(from_block)
 
-      in_flight_exit_input_piggybacked_log =
-        to_block |> in_flight_exit_input_piggybacked_log() |> Abi.decode_log(keccak_signatures_pair())
+      in_flight_exit_input_piggybacked_log = in_flight_exit_input_piggybacked_log_decoded(to_block)
 
       assert Aggregator.deposit_created(event_fetcher_name, from_block, to_block) ==
                {:ok, [deposit_created, deposit_created_2]}
@@ -315,8 +314,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
       in_flight_exit_output_piggybacked_log = in_flight_exit_output_piggybacked_log_decoded(from_block)
 
-      in_flight_exit_input_piggybacked_log =
-        to_block |> in_flight_exit_input_piggybacked_log() |> Abi.decode_log(keccak_signatures_pair())
+      in_flight_exit_input_piggybacked_log = in_flight_exit_input_piggybacked_log_decoded(to_block)
 
       assert Aggregator.in_flight_exit_piggybacked(event_fetcher_name, from_block, to_block) ==
                {:ok, [in_flight_exit_input_piggybacked_log, in_flight_exit_output_piggybacked_log]}
