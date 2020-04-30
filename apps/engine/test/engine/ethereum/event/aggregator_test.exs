@@ -129,7 +129,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       # create data that we need
       deposit_created = deposit_created_log_decoded(from_block)
 
-      deposit_created_2 = from_block |> Kernel.+(1) |> deposit_created_log_decoded()
+      deposit_created_2 = deposit_created_log_decoded(from_block + 1)
 
       exit_started_log =
         to_block
