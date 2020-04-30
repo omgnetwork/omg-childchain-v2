@@ -6,16 +6,28 @@ defmodule Engine.Ethereum.RootChain.Event do
   alias Engine.Ethereum.RootChain.AbiEventSelector
   alias Engine.Ethereum.RootChain.Rpc
   alias ExPlasma.Encoding
+  defstruct [:event_signature, :data, :call_data, :eth_height, :root_chain_tx_hash, :log_index]
+
+  @type t() :: %__MODULE__{
+          event_signature: binary(),
+          log_index: non_neg_integer(),
+          data: map(),
+          call_data: map() | nil,
+          eth_height: non_neg_integer(),
+          root_chain_tx_hash: binary()
+        }
+
+  def event_topic_for_signature(signature) do
+    signature
+    |> Encoding.keccak_hash()
+    |> Encoding.to_hex()
+  end
 
   @doc """
   Event preprocessing and fetching from RPC
   """
-  def get_ethereum_events(block_from, block_to, [_ | _] = signatures, [_ | _] = contracts, opts) do
-    topics = Enum.map(signatures, fn signature -> event_topic_for_signature(signature) end)
-
-    topics_and_signatures =
-      Enum.reduce(Enum.zip(topics, signatures), %{}, fn {topic, signature}, acc -> Map.put(acc, topic, signature) end)
-
+  def get_ethereum_logs(block_from, block_to, [_ | _] = keccak_event_signatures, [_ | _] = contracts, opts) do
+    topics = keccak_event_signatures
     contracts = Enum.map(contracts, &Encoding.to_hex(&1))
     block_from = Encoding.to_hex(block_from)
     block_to = Encoding.to_hex(block_to)
@@ -28,20 +40,19 @@ defmodule Engine.Ethereum.RootChain.Event do
     }
 
     {:ok, logs} = Rpc.eth_get_logs(params, opts)
-    filtered_and_enriched_logs = handle_result(logs, topics, topics_and_signatures)
-    {:ok, filtered_and_enriched_logs}
+    {:ok, Enum.filter(logs, &filter_removed/1)}
   end
 
-  def get_ethereum_events(block_from, block_to, [_ | _] = signatures, contract, opts) do
-    get_ethereum_events(block_from, block_to, signatures, [contract], opts)
+  def get_ethereum_logs(block_from, block_to, [_ | _] = keccak_event_signatures, contract, opts) do
+    get_ethereum_logs(block_from, block_to, keccak_event_signatures, [contract], opts)
   end
 
-  def get_ethereum_events(block_from, block_to, signature, [_ | _] = contracts, opts) do
-    get_ethereum_events(block_from, block_to, [signature], contracts, opts)
+  def get_ethereum_logs(block_from, block_to, keccak_event_signature, [_ | _] = contracts, opts) do
+    get_ethereum_logs(block_from, block_to, [keccak_event_signature], contracts, opts)
   end
 
-  def get_ethereum_events(block_from, block_to, signature, contract, opts) do
-    get_ethereum_events(block_from, block_to, [signature], [contract], opts)
+  def get_ethereum_logs(block_from, block_to, keccak_event_signature, contract, opts) do
+    get_ethereum_logs(block_from, block_to, [keccak_event_signature], [contract], opts)
   end
 
   @doc """
@@ -58,30 +69,8 @@ defmodule Engine.Ethereum.RootChain.Event do
     |> Enum.reverse()
   end
 
-  defp event_topic_for_signature(signature) do
-    signature
-    |> ExthCrypto.Hash.hash(ExthCrypto.Hash.kec())
-    |> Encoding.to_hex()
-  end
-
-  defp handle_result(logs, topics, topics_and_signatures) do
-    acc = []
-    handle_result(logs, topics, topics_and_signatures, acc)
-  end
-
-  defp handle_result([], _topics, _topics_and_signatures, acc), do: acc
-
-  defp handle_result([%{"removed" => true} | _logs], _topics, _topics_and_signatures, acc) do
-    acc
-  end
-
-  defp handle_result([log | logs], topics, topics_and_signatures, acc) do
-    topic = Enum.find(topics, fn topic -> Enum.at(log["topics"], 0) == topic end)
-    enriched_log = put_signature(log, Map.get(topics_and_signatures, topic))
-    handle_result(logs, topics, topics_and_signatures, [enriched_log | acc])
-  end
-
-  defp put_signature(log, signature), do: Map.put(log, :event_signature, signature)
+  defp filter_removed(%{"removed" => true}), do: false
+  defp filter_removed(_), do: true
 
   # Event definition via event selectors in ABI
   # pull all exported functions out the AbiEventSelector module
