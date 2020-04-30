@@ -12,7 +12,7 @@ defmodule Engine.Ethereum.RootChain.Event do
           event_signature: binary(),
           log_index: non_neg_integer(),
           data: map(),
-          call_data: map(),
+          call_data: map() | nil,
           eth_height: non_neg_integer(),
           root_chain_tx_hash: binary()
         }

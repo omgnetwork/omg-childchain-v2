@@ -79,6 +79,7 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
     |> Write.logs(from_block, to_block, state)
   end
 
+  @spec get_events(pos_integer(), pos_integer(), Aggregator.t()) :: list(Event.t())
   defp get_events(from_height, to_height, state) do
     {:ok, logs} =
       state.event_interface.get_ethereum_logs(
@@ -94,7 +95,7 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
   end
 
   # we get the logs from RPC and we cross check with the event definition if we need to enrich them
-  @spec enrich_events_with_call_data(list(Event.t()), Aggregator.t()) :: Event.t()
+  @spec enrich_events_with_call_data(list(Event.t()), Aggregator.t()) :: list(Event.t())
   defp enrich_events_with_call_data(decoded_events, state) do
     events = state.events
 

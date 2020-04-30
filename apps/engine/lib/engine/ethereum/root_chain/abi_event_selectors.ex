@@ -9,7 +9,7 @@ defmodule Engine.Ethereum.RootChain.AbiEventSelector do
   def exit_started() do
     %ABI.FunctionSelector{
       function: "ExitStarted",
-      input_names: ["owner", "exitId"],
+      input_names: ["owner", "exit_id"],
       inputs_indexed: [true, false],
       method_id: <<221, 111, 117, 92>>,
       returns: [],
@@ -22,7 +22,7 @@ defmodule Engine.Ethereum.RootChain.AbiEventSelector do
   def in_flight_exit_started() do
     %ABI.FunctionSelector{
       function: "InFlightExitStarted",
-      input_names: ["initiator", "txHash"],
+      input_names: ["initiator", "tx_hash"],
       inputs_indexed: [true, true],
       method_id: <<213, 241, 254, 157>>,
       returns: [],
@@ -48,7 +48,7 @@ defmodule Engine.Ethereum.RootChain.AbiEventSelector do
   def in_flight_exit_input_piggybacked() do
     %ABI.FunctionSelector{
       function: "InFlightExitInputPiggybacked",
-      input_names: ["exitTarget", "txHash", "inputIndex"],
+      input_names: ["exit_target", "tx_hash", "input_index"],
       inputs_indexed: [true, true, false],
       method_id: <<169, 60, 14, 155>>,
       returns: [],
@@ -61,7 +61,7 @@ defmodule Engine.Ethereum.RootChain.AbiEventSelector do
   def in_flight_exit_output_piggybacked() do
     %ABI.FunctionSelector{
       function: "InFlightExitOutputPiggybacked",
-      input_names: ["exitTarget", "txHash", "outputIndex"],
+      input_names: ["exit_target", "tx_hash", "output_index"],
       inputs_indexed: [true, true, false],
       method_id: <<110, 205, 142, 121>>,
       returns: [],

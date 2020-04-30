@@ -26,7 +26,7 @@ defmodule Engine.Ethereum.RootChain.Abi do
     decode_function_call_result(function_spec, data)
   end
 
-  @spec decode_log(Event.t(), map()) :: Event.t()
+  @spec decode_log(map(), map()) :: Event.t()
   def decode_log(log, keccak_signatures_pair) do
     event_specs =
       Enum.reduce(AbiEventSelector.module_info(:exports), [], fn

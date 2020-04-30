@@ -96,7 +96,7 @@ jobs:
           command: |
             export SHELL=/bin/bash
             set +eo pipefail
-            _counter=$(grep -r "txhash" . | grep -c "txhash")
+            _counter=$(grep -ri "txhash" . | grep -c "txhash")
             echo "Current Credo.Check.Readability.SinglePipe occurrences:"
             echo $_counter
             if [ $_counter -gt 2 ]; then
