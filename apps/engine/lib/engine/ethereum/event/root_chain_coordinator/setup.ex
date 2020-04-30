@@ -1,4 +1,4 @@
-defmodule Engine.Ethereum.RootChainCoordinator.CoordinatorSetup do
+defmodule Engine.Ethereum.Event.RootChainCoordinator.Setup do
   @moduledoc """
    The setup of `RootChainCoordinator` for the child chain server - configures the relations between different
    event listeners

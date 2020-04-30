@@ -6,7 +6,7 @@ defmodule Engine.Ethereum.SyncSupervisor do
   alias Engine.Configuration
   alias Engine.Ethereum.Event.Aggregator
   alias Engine.Ethereum.RootChainCoordinator
-  alias Engine.Ethereum.RootChainCoordinator.CoordinatorSetup
+  alias Engine.Ethereum.RootChainCoordinator.Setup
   require Logger
 
   @events_bucket :events_bucket
@@ -33,7 +33,7 @@ defmodule Engine.Ethereum.SyncSupervisor do
 
     [
       {RootChainCoordinator,
-       CoordinatorSetup.coordinator_setup(
+       Setup.coordinator_setup(
          metrics_collection_interval,
          coordinator_eth_height_check_interval_ms,
          deposit_finality_margin

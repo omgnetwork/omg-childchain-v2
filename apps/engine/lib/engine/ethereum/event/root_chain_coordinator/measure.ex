@@ -1,4 +1,4 @@
-defmodule OMG.RootChainCoordinator.Measure do
+defmodule Engine.Ethereum.Event.RootChainCoordinator.Measure do
   @moduledoc """
   Counting business metrics sent to Datadog
   """

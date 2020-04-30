@@ -1,4 +1,4 @@
-defmodule Engine.Ethereum.RootChainCoordinator.Core do
+defmodule Engine.Ethereum.Event.RootChainCoordinator.Core do
   @moduledoc """
   Synchronizes multiple log-reading services on root chain height.
   Each synchronized service must have a unique name.
@@ -16,8 +16,8 @@ defmodule Engine.Ethereum.RootChainCoordinator.Core do
       cause them to process any events twice! All services must ensure they process everything!
   """
 
-  alias Engine.Ethereum.RootChainCoordinator.Service
-  alias Engine.Ethereum.RootChainCoordinator.SyncGuide
+  alias Engine.Ethereum.Event.RootChainCoordinator.Service
+  alias Engine.Ethereum.Event.RootChainCoordinator.SyncGuide
 
   require Logger
 
@@ -48,7 +48,7 @@ defmodule Engine.Ethereum.RootChainCoordinator.Core do
          being the name of the service, or a `{service_name, :no_margin}` pair, if the waiting should bypass the
          finality margin of the awaited process.
 
-     An example config can be seen in `OMG.Watcher.CoordinatorSetup`
+     An example config can be seen in `RootChainCoordinator.Setup`
    - `root_chain_height` - current root chain height
   """
   @spec init(map(), non_neg_integer()) :: t()
