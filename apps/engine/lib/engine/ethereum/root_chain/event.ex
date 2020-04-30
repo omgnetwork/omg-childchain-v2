@@ -19,7 +19,7 @@ defmodule Engine.Ethereum.RootChain.Event do
 
   def event_topic_for_signature(signature) do
     signature
-    |> ExthCrypto.Hash.hash(ExthCrypto.Hash.kec())
+    |> Encoding.keccak_hash()
     |> Encoding.to_hex()
   end
 
