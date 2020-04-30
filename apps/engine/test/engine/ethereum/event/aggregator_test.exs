@@ -127,18 +127,16 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       events = event_fetcher_name |> :sys.get_state() |> Map.get(:events)
 
       # create data that we need
-      deposit_created = from_block |> deposit_created_log() |> Abi.decode_log(keccak_signatures_pair())
+      deposit_created = deposit_created_log_decoded(from_block)
 
-      deposit_created_2 = from_block |> Kernel.+(1) |> deposit_created_log() |> Abi.decode_log(keccak_signatures_pair())
+      deposit_created_2 = from_block |> Kernel.+(1) |> deposit_created_log_decoded()
 
       exit_started_log =
         to_block
-        |> exit_started_log()
-        |> Abi.decode_log(keccak_signatures_pair())
+        |> exit_started_log_decoded()
         |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary() |> Abi.decode_function())
 
-      in_flight_exit_output_piggybacked_log =
-        from_block |> in_flight_exit_output_piggybacked_log() |> Abi.decode_log(keccak_signatures_pair())
+      in_flight_exit_output_piggybacked_log = in_flight_exit_output_piggybacked_log_decoded(from_block)
 
       in_flight_exit_input_piggybacked_log = in_flight_exit_input_piggybacked_log_decoded(to_block)
 
@@ -231,18 +229,16 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       # we need to create events that we later expect when we call the aggregator APIs
       # for example, deposit_created and deposit_created_2 are expected if the range is from 1 to 3
 
-      deposit_created = from_block |> deposit_created_log() |> Abi.decode_log(keccak_signatures_pair())
+      deposit_created = deposit_created_log_decoded(from_block)
 
-      deposit_created_2 = from_block |> Kernel.+(1) |> deposit_created_log() |> Abi.decode_log(keccak_signatures_pair())
+      deposit_created_2 = deposit_created_log_decoded(from_block + 1)
 
       exit_started_log =
         to_block
-        |> exit_started_log()
-        |> Abi.decode_log(keccak_signatures_pair())
+        |> exit_started_log_decoded()
         |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary() |> Abi.decode_function())
 
-      in_flight_exit_output_piggybacked_log =
-        from_block |> in_flight_exit_output_piggybacked_log() |> Abi.decode_log(keccak_signatures_pair())
+      in_flight_exit_output_piggybacked_log = in_flight_exit_output_piggybacked_log_decoded(from_block)
 
       in_flight_exit_input_piggybacked_log =
         to_block |> in_flight_exit_input_piggybacked_log() |> Abi.decode_log(keccak_signatures_pair())
@@ -305,21 +301,19 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :event_interface, test_name) end)
       from_block = 1
       to_block = 1
-      deposit_created = from_block |> deposit_created_log() |> Abi.decode_log(keccak_signatures_pair())
+      deposit_created = deposit_created_log_decoded(from_block)
 
       assert Aggregator.deposit_created(event_fetcher_name, from_block, to_block) ==
                {:ok, [deposit_created]}
 
       exit_started_log =
         to_block
-        |> exit_started_log()
-        |> Abi.decode_log(keccak_signatures_pair())
+        |> exit_started_log_decoded()
         |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary() |> Abi.decode_function())
 
       assert Aggregator.exit_started(event_fetcher_name, from_block, to_block) == {:ok, [exit_started_log]}
 
-      in_flight_exit_output_piggybacked_log =
-        from_block |> in_flight_exit_output_piggybacked_log() |> Abi.decode_log(keccak_signatures_pair())
+      in_flight_exit_output_piggybacked_log = in_flight_exit_output_piggybacked_log_decoded(from_block)
 
       in_flight_exit_input_piggybacked_log =
         to_block |> in_flight_exit_input_piggybacked_log() |> Abi.decode_log(keccak_signatures_pair())
@@ -373,18 +367,16 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       # create data that we need
       # two deposits, one exit started and one in flight exit output piggybacked
       # and one in flight exit input piggynacked
-      deposit_created = from_block |> deposit_created_log() |> Abi.decode_log(keccak_signatures_pair())
+      deposit_created = deposit_created_log_decoded(from_block)
 
-      deposit_created_2 = from_block |> Kernel.+(1) |> deposit_created_log() |> Abi.decode_log(keccak_signatures_pair())
+      deposit_created_2 = deposit_created_log(from_block + 1)
 
       exit_started_log =
         to_block
-        |> exit_started_log()
-        |> Abi.decode_log(keccak_signatures_pair())
+        |> exit_started_log_decoded()
         |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary() |> Abi.decode_function())
 
-      in_flight_exit_output_piggybacked_log =
-        from_block |> in_flight_exit_output_piggybacked_log() |> Abi.decode_log(keccak_signatures_pair())
+      in_flight_exit_output_piggybacked_log = in_flight_exit_output_piggybacked_log_decoded(from_block)
 
       in_flight_exit_input_piggybacked_log = in_flight_exit_input_piggybacked_log_decoded(to_block)
 
@@ -523,7 +515,25 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
   def in_flight_exit_input_piggybacked_log_decoded(block_number) do
     block_number
-    |> in_flight_exit_input_piggybacked_log
+    |> in_flight_exit_input_piggybacked_log()
+    |> Abi.decode_log(keccak_signatures_pair())
+  end
+
+  def in_flight_exit_output_piggybacked_log_decoded(block_number) do
+    block_number
+    |> in_flight_exit_output_piggybacked_log()
+    |> Abi.decode_log(keccak_signatures_pair())
+  end
+
+  def exit_started_log_decoded(block_number) do
+    block_number
+    |> exit_started_log()
+    |> Abi.decode_log(keccak_signatures_pair())
+  end
+
+  def deposit_created_log_decoded(block_number) do
+    block_number
+    |> deposit_created_log()
     |> Abi.decode_log(keccak_signatures_pair())
   end
 
