@@ -41,7 +41,7 @@ defmodule Engine.Ethereum.RootChain.Abi do
         topic -> Encoding.to_binary(topic)
       end)
 
-    {event_spec, data} =
+    {_event_spec, data} =
       ABI.Event.find_and_decode(
         event_specs,
         Enum.at(topics, 0),
