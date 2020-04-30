@@ -140,8 +140,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       in_flight_exit_output_piggybacked_log =
         from_block |> in_flight_exit_output_piggybacked_log() |> Abi.decode_log(keccak_signatures_pair())
 
-      in_flight_exit_input_piggybacked_log =
-        to_block |> in_flight_exit_input_piggybacked_log() |> Abi.decode_log(keccak_signatures_pair())
+      in_flight_exit_input_piggybacked_log = in_flight_exit_input_piggybacked_log_decoded(to_block)
 
       data = [
         {from_block, get_signature_from_event(events, :deposit_created), [deposit_created]},
@@ -387,8 +386,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       in_flight_exit_output_piggybacked_log =
         from_block |> in_flight_exit_output_piggybacked_log() |> Abi.decode_log(keccak_signatures_pair())
 
-      in_flight_exit_input_piggybacked_log =
-        to_block |> in_flight_exit_input_piggybacked_log() |> Abi.decode_log(keccak_signatures_pair())
+      in_flight_exit_input_piggybacked_log = in_flight_exit_input_piggybacked_log_decoded(to_block)
 
       # we put the events into a list of events below
       # some are empty, others get filled by the data we created above
@@ -521,6 +519,12 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       "transactionHash" => "0x0cc9e5556bbd6eeaf4302f44adca215786ff08cfa44a34be1760eca60f97364f",
       "transactionIndex" => "0x0"
     }
+  end
+
+  def in_flight_exit_input_piggybacked_log_decoded(block_number) do
+    block_number
+    |> in_flight_exit_input_piggybacked_log
+    |> Abi.decode_log(keccak_signatures_pair())
   end
 
   def start_standard_exit_log() do
