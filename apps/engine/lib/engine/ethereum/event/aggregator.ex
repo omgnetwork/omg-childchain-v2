@@ -16,6 +16,8 @@ defmodule Engine.Ethereum.Event.Aggregator do
           delete_events_threshold_height_blknum: pos_integer(),
           ets_bucket: atom(),
           event_signatures: list(binary()),
+          keccak_event_signatures: list(binary()),
+          keccak_signatures_pair: map(),
           events: list(atom()),
           contracts: list(binary()),
           event_interface: module(),
@@ -26,6 +28,8 @@ defmodule Engine.Ethereum.Event.Aggregator do
     :delete_events_threshold_height_blknum,
     :ets_bucket,
     :event_signatures,
+    :keccak_event_signatures,
+    :keccak_signatures_pair,
     :events,
     :contracts,
     :event_interface,
@@ -74,6 +78,13 @@ defmodule Engine.Ethereum.Event.Aggregator do
       |> Enum.map(&Keyword.fetch!(&1, :name))
       |> Event.get_events()
 
+    keccak_event_signatures = Enum.map(events_signatures, &Event.event_topic_for_signature/1)
+
+    keccak_signatures_pair =
+      Enum.reduce(events_signatures, %{}, fn event_signature, acc ->
+        Map.put(acc, Event.event_topic_for_signature(event_signature), event_signature)
+      end)
+
     ets_bucket = Keyword.fetch!(opts, :ets_bucket)
     event_interface = Keyword.get(opts, :event_interface, Event)
     opts = Keyword.fetch!(opts, :opts)
@@ -84,6 +95,8 @@ defmodule Engine.Ethereum.Event.Aggregator do
        delete_events_threshold_height_blknum: 200,
        ets_bucket: ets_bucket,
        event_signatures: events_signatures,
+       keccak_event_signatures: keccak_event_signatures,
+       keccak_signatures_pair: keccak_signatures_pair,
        events: events,
        contracts: contracts,
        event_interface: event_interface,

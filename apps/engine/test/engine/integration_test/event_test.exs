@@ -3,6 +3,7 @@ defmodule EventTest do
 
   alias Engine.Configuration
   alias Engine.Ethereum.Event.Aggregator
+  alias Engine.Ethereum.RootChain.Event
   alias Engine.Geth
   alias ExPlasma.Encoding
 
@@ -39,18 +40,20 @@ defmodule EventTest do
     deposit(port)
     {:ok, [deposit]} = Aggregator.deposit_created(pid, 1, 6000)
 
-    assert deposit ==
-             %{
-               amount: 1_000_000,
-               blknum: 1,
-               currency: <<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0>>,
-               eth_height: deposit.eth_height,
-               event_signature: "DepositCreated(address,uint256,address,uint256)",
-               log_index: 0,
-               owner:
+    assert deposit == %Event{
+             eth_height: deposit.eth_height,
+             event_signature: "DepositCreated(address,uint256,address,uint256)",
+             log_index: 0,
+             root_chain_tx_hash: deposit.root_chain_tx_hash,
+             call_data: nil,
+             data: %{
+               "amount" => 1_000_000,
+               "blknum" => 1,
+               "depositor" =>
                  <<109, 228, 179, 185, 194, 142, 156, 62, 132, 194, 178, 211, 168, 117, 201, 71, 168, 77, 230, 141>>,
-               root_chain_tx_hash: deposit.root_chain_tx_hash
+               "token" => <<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0>>
              }
+           }
   end
 
   defp deposit(port) do

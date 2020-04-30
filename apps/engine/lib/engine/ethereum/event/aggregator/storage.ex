@@ -3,8 +3,10 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
     Storage interaction for Ethereum aggregator
   """
 
+  alias Engine.Ethereum.Event.Aggregator
   alias Engine.Ethereum.Event.Aggregator.Storage.Write
   alias Engine.Ethereum.RootChain.Abi
+  alias Engine.Ethereum.RootChain.Event
   alias ExPlasma.Encoding
 
   require Logger
@@ -69,44 +71,47 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
     end
   end
 
+  # raw data is logs which gets transformed into events
   defp retrieve_and_store_logs(from_block, to_block, state) do
     from_block
-    |> get_logs(to_block, state)
-    |> enrich_logs_with_call_data(state)
+    |> get_events(to_block, state)
+    |> enrich_events_with_call_data(state)
     |> Write.logs(from_block, to_block, state)
   end
 
-  defp get_logs(from_height, to_height, state) do
+  defp get_events(from_height, to_height, state) do
     {:ok, logs} =
-      state.event_interface.get_ethereum_events(
+      state.event_interface.get_ethereum_logs(
         from_height,
         to_height,
-        state.event_signatures,
+        state.keccak_event_signatures,
         state.contracts,
         state.opts
       )
 
-    Enum.map(logs, &Abi.decode_log(&1))
+    # we now return events!
+    Enum.map(logs, &Abi.decode_log(&1, state.keccak_signatures_pair))
   end
 
   # we get the logs from RPC and we cross check with the event definition if we need to enrich them
-  defp enrich_logs_with_call_data(decoded_logs, state) do
+  @spec enrich_events_with_call_data(list(Event.t()), Aggregator.t()) :: Event.t()
+  defp enrich_events_with_call_data(decoded_events, state) do
     events = state.events
 
-    Enum.map(decoded_logs, fn decoded_log ->
-      decoded_log_signature = decoded_log.event_signature
+    Enum.map(decoded_events, fn decoded_event ->
+      decoded_log_signature = decoded_event.event_signature
 
-      event = Enum.find(events, fn event -> Keyword.fetch!(event, :signature) == decoded_log_signature end)
+      event_definition = Enum.find(events, fn event -> Keyword.fetch!(event, :signature) == decoded_log_signature end)
 
-      case Keyword.fetch!(event, :enrich) do
+      case Keyword.fetch!(event_definition, :enrich) do
         true ->
-          {:ok, enriched_data} = state.event_interface.get_call_data(decoded_log.root_chain_tx_hash)
+          {:ok, enriched_data} = state.event_interface.get_call_data(decoded_event.root_chain_tx_hash)
 
           enriched_data_decoded = enriched_data |> Encoding.to_binary() |> Abi.decode_function()
-          Map.put(decoded_log, :call_data, enriched_data_decoded)
+          struct(decoded_event, call_data: enriched_data_decoded)
 
         _ ->
-          decoded_log
+          decoded_event
       end
     end)
   end

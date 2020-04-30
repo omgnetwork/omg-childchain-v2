@@ -17,6 +17,7 @@ defmodule Engine.Ethereum.RootChain.AbiTest do
 
   use ExUnit.Case, async: true
   alias Engine.Ethereum.RootChain.Abi
+  alias Engine.Ethereum.RootChain.Event
 
   test "if deposit created event can be decoded from log" do
     deposit_created_log = %{
@@ -37,20 +38,23 @@ defmodule Engine.Ethereum.RootChain.AbiTest do
       "transactionIndex" => "0x0"
     }
 
-    expected_event_parsed = %{
-      amount: 10,
-      blknum: 1,
-      currency: <<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0>>,
+    expected_event_parsed = %Event{
       eth_height: 390,
       event_signature: "DepositCreated(address,uint256,address,uint256)",
       log_index: 0,
-      owner: <<59, 159, 76, 29, 210, 110, 11, 229, 147, 55, 59, 29, 54, 206, 226, 0, 140, 190, 184, 55>>,
       root_chain_tx_hash:
         <<77, 114, 166, 63, 244, 47, 29, 181, 10, 242, 195, 110, 139, 49, 65, 1, 210, 254, 163, 224, 0, 53, 117, 243, 2,
-          152, 233, 21, 63, 227, 216, 238>>
+          152, 233, 21, 63, 227, 216, 238>>,
+      call_data: nil,
+      data: %{
+        "amount" => 10,
+        "blknum" => 1,
+        "depositor" => <<59, 159, 76, 29, 210, 110, 11, 229, 147, 55, 59, 29, 54, 206, 226, 0, 140, 190, 184, 55>>,
+        "token" => <<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0>>
+      }
     }
 
-    assert Abi.decode_log(deposit_created_log) == expected_event_parsed
+    assert Abi.decode_log(deposit_created_log, keccak_signatures_pair()) == expected_event_parsed
   end
 
   test "if input piggybacked event log can be decoded" do
@@ -71,22 +75,24 @@ defmodule Engine.Ethereum.RootChain.AbiTest do
       "transactionIndex" => "0x0"
     }
 
-    expected_event_parsed = %{
+    expected_event_parsed = %Event{
       eth_height: 410,
       event_signature: "InFlightExitInputPiggybacked(address,bytes32,uint16)",
       log_index: 0,
-      output_index: 1,
-      owner: <<21, 19, 171, 205, 53, 144, 162, 94, 11, 237, 132, 6, 82, 217, 87, 57, 29, 222, 153, 85>>,
       root_chain_tx_hash:
         <<12, 201, 229, 85, 107, 189, 110, 234, 244, 48, 47, 68, 173, 202, 33, 87, 134, 255, 8, 207, 164, 74, 52, 190,
           23, 96, 236, 166, 15, 151, 54, 79>>,
-      tx_hash:
-        <<255, 144, 183, 115, 3, 229, 107, 210, 48, 169, 173, 244, 166, 85, 58, 149, 245, 255, 181, 99, 72, 98, 5, 214,
-          251, 162, 93, 62, 70, 89, 73, 64>>,
-      omg_data: %{piggyback_type: :input}
+      call_data: nil,
+      data: %{
+        "exitTarget" => <<21, 19, 171, 205, 53, 144, 162, 94, 11, 237, 132, 6, 82, 217, 87, 57, 29, 222, 153, 85>>,
+        "inputIndex" => 1,
+        "txHash" =>
+          <<255, 144, 183, 115, 3, 229, 107, 210, 48, 169, 173, 244, 166, 85, 58, 149, 245, 255, 181, 99, 72, 98, 5,
+            214, 251, 162, 93, 62, 70, 89, 73, 64>>
+      }
     }
 
-    assert Abi.decode_log(input_piggybacked_log) == expected_event_parsed
+    assert Abi.decode_log(input_piggybacked_log, keccak_signatures_pair()) == expected_event_parsed
   end
 
   test "if output piggybacked event log can be decoded" do
@@ -107,22 +113,24 @@ defmodule Engine.Ethereum.RootChain.AbiTest do
       "transactionIndex" => "0x0"
     }
 
-    expected_event_parsed = %{
+    expected_event_parsed = %Event{
       eth_height: 408,
       event_signature: "InFlightExitOutputPiggybacked(address,bytes32,uint16)",
       log_index: 1,
-      output_index: 1,
-      owner: <<21, 19, 171, 205, 53, 144, 162, 94, 11, 237, 132, 6, 82, 217, 87, 57, 29, 222, 153, 85>>,
       root_chain_tx_hash:
         <<124, 244, 58, 96, 128, 233, 150, 119, 222, 224, 178, 108, 35, 228, 105, 177, 223, 156, 251, 86, 165, 195, 242,
           160, 18, 61, 246, 237, 174, 123, 91, 94>>,
-      tx_hash:
-        <<255, 144, 183, 115, 3, 229, 107, 210, 48, 169, 173, 244, 166, 85, 58, 149, 245, 255, 181, 99, 72, 98, 5, 214,
-          251, 162, 93, 62, 70, 89, 73, 64>>,
-      omg_data: %{piggyback_type: :output}
+      call_data: nil,
+      data: %{
+        "exitTarget" => <<21, 19, 171, 205, 53, 144, 162, 94, 11, 237, 132, 6, 82, 217, 87, 57, 29, 222, 153, 85>>,
+        "outputIndex" => 1,
+        "txHash" =>
+          <<255, 144, 183, 115, 3, 229, 107, 210, 48, 169, 173, 244, 166, 85, 58, 149, 245, 255, 181, 99, 72, 98, 5,
+            214, 251, 162, 93, 62, 70, 89, 73, 64>>
+      }
     }
 
-    assert Abi.decode_log(output_piggybacked_log) == expected_event_parsed
+    assert Abi.decode_log(output_piggybacked_log, keccak_signatures_pair()) == expected_event_parsed
   end
 
   test "if in flight exit started can be decoded" do
@@ -143,18 +151,23 @@ defmodule Engine.Ethereum.RootChain.AbiTest do
       "transactionIndex" => "0x0"
     }
 
-    assert Abi.decode_log(in_flight_exit_started_log) == %{
-             eth_height: 726,
-             event_signature: "InFlightExitStarted(address,bytes32)",
-             initiator: <<44, 106, 159, 66, 49, 128, 37, 205, 102, 39, 186, 242, 28, 70, 130, 1, 98, 32, 32, 223>>,
-             log_index: 0,
-             root_chain_tx_hash:
-               <<240, 228, 74, 240, 210, 100, 67, 185, 229, 19, 60, 100, 245, 167, 31, 6, 164, 212, 208, 212, 12, 94,
-                 116, 18, 181, 234, 13, 252, 178, 241, 161, 51>>,
-             tx_hash:
-               <<79, 70, 5, 59, 93, 245, 133, 9, 76, 198, 82, 221, 216, 195, 101, 150, 42, 56, 137, 194, 5, 53, 146,
-                 241, 131, 49, 185, 90, 125, 255, 98, 14>>
-           }
+    assert Abi.decode_log(in_flight_exit_started_log, keccak_signatures_pair()) ==
+             %Event{
+               eth_height: 726,
+               event_signature: "InFlightExitStarted(address,bytes32)",
+               log_index: 0,
+               root_chain_tx_hash:
+                 <<240, 228, 74, 240, 210, 100, 67, 185, 229, 19, 60, 100, 245, 167, 31, 6, 164, 212, 208, 212, 12, 94,
+                   116, 18, 181, 234, 13, 252, 178, 241, 161, 51>>,
+               call_data: nil,
+               data: %{
+                 "initiator" =>
+                   <<44, 106, 159, 66, 49, 128, 37, 205, 102, 39, 186, 242, 28, 70, 130, 1, 98, 32, 32, 223>>,
+                 "txHash" =>
+                   <<79, 70, 5, 59, 93, 245, 133, 9, 76, 198, 82, 221, 216, 195, 101, 150, 42, 56, 137, 194, 5, 53, 146,
+                     241, 131, 49, 185, 90, 125, 255, 98, 14>>
+               }
+             }
   end
 
   test "if start in flight exit can be decoded " do
@@ -272,15 +285,18 @@ defmodule Engine.Ethereum.RootChain.AbiTest do
       "transactionIndex" => "0x0"
     }
 
-    assert Abi.decode_log(exit_started_log) == %{
+    assert Abi.decode_log(exit_started_log, keccak_signatures_pair()) == %Event{
              eth_height: 759,
              event_signature: "ExitStarted(address,uint160)",
-             exit_id: 961_120_214_746_159_734_848_620_722_848_998_552_444_082_017,
              log_index: 1,
-             owner: <<8, 133, 129, 36, 179, 184, 128, 198, 139, 54, 15, 211, 25, 204, 97, 218, 39, 84, 94, 154>>,
              root_chain_tx_hash:
                <<74, 130, 72, 184, 138, 23, 178, 190, 76, 96, 134, 161, 152, 70, 34, 222, 26, 96, 221, 163, 201, 221,
-                 158, 206, 30, 249, 126, 209, 142, 250, 2, 140>>
+                 158, 206, 30, 249, 126, 209, 142, 250, 2, 140>>,
+             call_data: nil,
+             data: %{
+               "exitId" => 961_120_214_746_159_734_848_620_722_848_998_552_444_082_017,
+               "owner" => <<8, 133, 129, 36, 179, 184, 128, 198, 139, 54, 15, 211, 25, 204, 97, 218, 39, 84, 94, 154>>
+             }
            }
   end
 
@@ -379,5 +395,18 @@ defmodule Engine.Ethereum.RootChain.AbiTest do
     data = "0x00000000000000000000000000000000000000000000000000000000000003e8"
 
     %{"child_block_interval" => 1000} = Abi.decode_function(data, "childBlockInterval()")
+  end
+
+  defp keccak_signatures_pair() do
+    %{
+      "0x18569122d84f30025bb8dffb33563f1bdbfb9637f21552b11b8305686e9cb307" =>
+        "DepositCreated(address,uint256,address,uint256)",
+      "0x6ecd8e79a5f67f6c12b54371ada2ffb41bc128c61d9ac1e969f0aa2aca46cd78" =>
+        "InFlightExitOutputPiggybacked(address,bytes32,uint16)",
+      "0xa93c0e9b202feaf554acf6ef1185b898c9f214da16e51740b06b5f7487b018e5" =>
+        "InFlightExitInputPiggybacked(address,bytes32,uint16)",
+      "0xd5f1fe9d48880b57daa227004b16d320c0eb885d6c49d472d54c16a05fa3179e" => "InFlightExitStarted(address,bytes32)",
+      "0xdd6f755cba05d0a420007aef6afc05e4889ab424505e2e440ecd1c434ba7082e" => "ExitStarted(address,uint160)"
+    }
   end
 end
