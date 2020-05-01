@@ -14,7 +14,7 @@ defmodule Engine.Ethereum.Event.Aggregator do
   @type result() :: {:ok, list(map())} | {:error, :check_range}
   @type t() :: %__MODULE__{
           delete_events_threshold_height_blknum: pos_integer(),
-          ets_bucket: atom(),
+          ets: atom(),
           event_signatures: list(binary()),
           keccak_event_signatures: list(binary()),
           keccak_signatures_pair: map(),
@@ -26,7 +26,7 @@ defmodule Engine.Ethereum.Event.Aggregator do
 
   defstruct [
     :delete_events_threshold_height_blknum,
-    :ets_bucket,
+    :ets,
     :event_signatures,
     :keccak_event_signatures,
     :keccak_signatures_pair,
@@ -85,7 +85,7 @@ defmodule Engine.Ethereum.Event.Aggregator do
         Map.put(acc, Event.event_topic_for_signature(event_signature), event_signature)
       end)
 
-    ets_bucket = Keyword.fetch!(opts, :ets_bucket)
+    ets = Keyword.fetch!(opts, :ets)
     event_interface = Keyword.get(opts, :event_interface, Event)
     opts = Keyword.fetch!(opts, :opts)
 
@@ -93,7 +93,7 @@ defmodule Engine.Ethereum.Event.Aggregator do
      %__MODULE__{
        # 200 blocks of events will be kept in memory
        delete_events_threshold_height_blknum: 200,
-       ets_bucket: ets_bucket,
+       ets: ets,
        event_signatures: events_signatures,
        keccak_event_signatures: keccak_event_signatures,
        keccak_signatures_pair: keccak_signatures_pair,

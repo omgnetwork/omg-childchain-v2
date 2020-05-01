@@ -26,7 +26,7 @@ defmodule Engine.Configuration do
   end
 
   def ethereum_events_check_interval_ms() do
-    8000
+    Application.get_env(@app, :ethereum_events_check_interval_ms)
   end
 
   def ethereum_stalled_sync_threshold_ms() do

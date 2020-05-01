@@ -10,7 +10,7 @@ defmodule Engine.Ethereum.Event.EventListener.Core do
 
   Leverages a rudimentary in-memory cache for events, to be able to ask for right-sized batches of events
   """
-  alias Engine.Ethereum.RootChainCoordinator.SyncGuide
+  alias Engine.Ethereum.Event.RootChainCoordinator.SyncGuide
 
   # use Spandex.Decorators
 
@@ -24,7 +24,8 @@ defmodule Engine.Ethereum.Event.EventListener.Core do
               request_max_size: 1000,
               # until which height the events have been pulled and cached
               events_upper_bound: 0
-            }
+            },
+            ets: nil
 
   @type event :: %{eth_height: non_neg_integer()}
 
@@ -36,23 +37,26 @@ defmodule Engine.Ethereum.Event.EventListener.Core do
             request_max_size: pos_integer(),
             events_upper_bound: non_neg_integer()
           },
-          ethereum_events_check_interval_ms: non_neg_integer()
+          ethereum_events_check_interval_ms: non_neg_integer(),
+          ets: atom()
         }
 
   @doc """
   Initializes the listener logic based on its configuration and the last persisted Ethereum height, till which events
   were processed
   """
-  @spec init(atom(), atom(), non_neg_integer(), non_neg_integer(), non_neg_integer()) :: {t(), non_neg_integer()}
+  @spec init(atom(), atom(), non_neg_integer(), non_neg_integer(), non_neg_integer(), atom()) ::
+          {t(), non_neg_integer()}
 
   def init(
         update_key,
         service_name,
         last_synced_ethereum_height,
         ethereum_events_check_interval_ms,
-        request_max_size \\ 1000
+        request_max_size,
+        ets
       ) do
-    initial_state = %__MODULE__{
+    %__MODULE__{
       synced_height_update_key: update_key,
       synced_height: last_synced_ethereum_height,
       service_name: service_name,
@@ -61,45 +65,34 @@ defmodule Engine.Ethereum.Event.EventListener.Core do
         request_max_size: request_max_size,
         events_upper_bound: last_synced_ethereum_height
       },
-      ethereum_events_check_interval_ms: ethereum_events_check_interval_ms
+      ethereum_events_check_interval_ms: ethereum_events_check_interval_ms,
+      ets: ets
     }
-
-    {initial_state, get_height_to_check_in(initial_state)}
   end
-
-  @doc """
-  Provides a uniform way to get the height to check in.
-
-  Every call to RootChainCoordinator.check_in should use value taken from this, after all mutations to the state
-  """
-  @spec get_height_to_check_in(t()) :: non_neg_integer()
-  def get_height_to_check_in(state), do: state.synced_height
 
   @doc """
   Returns range Ethereum height to download
   """
-  # @decorate span(service: :ethereum_event_listener, type: :backend, name: "get_events_range_for_download/2")
   @spec get_events_range_for_download(t(), SyncGuide.t()) ::
           {:dont_fetch_events, t()} | {:get_events, {non_neg_integer, non_neg_integer}, t()}
-  def get_events_range_for_download(%__MODULE__{cached: %{events_upper_bound: upper}} = state, %SyncGuide{
-        sync_height: sync_height
-      })
-      when sync_height <= upper do
-    {:dont_fetch_events, state}
-  end
-
   # @decorate span(service: :ethereum_event_listener, type: :backend, name: "get_events_range_for_download/2")
   def get_events_range_for_download(state, sync_guide) do
-    # grab as much as allowed, but not higher than current root_chain_height and at least as much as needed to sync
-    # NOTE: both root_chain_height and sync_height are assumed to have any required finality margins applied by caller
-    next_upper_bound =
-      max(
-        min(sync_guide.root_chain_height, state.cached.events_upper_bound + state.cached.request_max_size),
-        sync_guide.sync_height
-      )
+    case sync_guide.sync_height <= state.cached.events_upper_bound do
+      true ->
+        {:dont_fetch_events, state}
 
-    {:get_events, {state.cached.events_upper_bound + 1, next_upper_bound},
-     struct(state, cached: %{state.cached | events_upper_bound: next_upper_bound})}
+      _ ->
+        # grab as much as allowed, but not higher than current root_chain_height and at least as much as needed to sync
+        # both root_chain_height and sync_height are assumed to have any required finality margins applied by caller
+        root_chain_height = sync_guide.root_chain_height
+        events_upper_bound = state.cached.events_upper_bound
+        request_max_size = state.cached.request_max_size
+
+        next_upper_bound = max(min(root_chain_height, events_upper_bound + request_max_size), sync_guide.sync_height)
+
+        {:get_events, {events_upper_bound + 1, next_upper_bound},
+         struct(state, cached: %{state.cached | events_upper_bound: next_upper_bound})}
+    end
   end
 
   @doc """
@@ -120,13 +113,11 @@ defmodule Engine.Ethereum.Event.EventListener.Core do
     {events, new_data} = Enum.split_while(state.cached.data, fn %{eth_height: height} -> height <= new_sync_height end)
 
     new_state =
-      state
-      |> Map.update!(:synced_height, &max(&1, new_sync_height))
-      |> Map.update!(:cached, &%{&1 | data: new_data})
-      |> struct!()
+      struct(state,
+        cached: Map.put(state.cached, :data, new_data),
+        synced_height: max(state.synced_height, new_sync_height)
+      )
 
-    height_to_check_in = get_height_to_check_in(new_state)
-    db_update = [{:put, state.synced_height_update_key, height_to_check_in}]
-    {:ok, events, db_update, height_to_check_in, new_state}
+    {:ok, events, new_state.synced_height, new_state}
   end
 end

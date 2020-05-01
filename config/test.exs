@@ -13,3 +13,8 @@ config :os_mon,
   system_memory_high_watermark: 1
 
 config :briefly, directory: ["/tmp/omgisego/childchain"]
+
+config :engine,
+  deposit_finality_margin: 1,
+  ethereum_events_check_interval_ms: 10,
+  coordinator_eth_height_check_interval_ms: 10
