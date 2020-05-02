@@ -17,6 +17,10 @@ defmodule Engine.Configuration do
     Application.fetch_env(@app, :root_deployment_height)
   end
 
+  def contract_deployment_height() do
+    76
+  end
+
   def metrics_collection_interval() do
     60_000
   end

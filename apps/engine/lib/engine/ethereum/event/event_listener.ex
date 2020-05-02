@@ -18,7 +18,7 @@ defmodule Engine.Ethereum.Event.EventListener do
   This `synced_height` is updated after every batch of Ethereum events get successfully consumed by
   `callbacks.process_events_callback`, as called in `sync_height/2`, together with all the `OMG.DB` updates this
   callback returns, atomically.
-  The key in `OMG.DB` used to persist `synced_height` is defined by the value of `synced_height_update_key`.
+  The key in `PG` used to persist `synced_height` is defined by the value of `service_name`.
 
   What specific Ethereum events it fetches, and what it does with them is up to predefined `callbacks`.
 
@@ -31,6 +31,7 @@ defmodule Engine.Ethereum.Event.EventListener do
   alias Engine.Ethereum.Event.EventListener.Core
   alias Engine.Ethereum.Event.EventListener.Storage
   alias Engine.Ethereum.Event.RootChainCoordinator
+  alias Engine.SyncedHeight
 
   require Logger
 
@@ -68,28 +69,27 @@ defmodule Engine.Ethereum.Event.EventListener do
   """
   def handle_continue(:setup, opts) do
     contract_deployment_height = Keyword.fetch!(opts, :contract_deployment_height)
-    synced_height_update_key = Keyword.fetch!(opts, :synced_height_update_key)
     service_name = Keyword.fetch!(opts, :service_name)
     get_events_callback = Keyword.fetch!(opts, :get_events_callback)
     process_events_callback = Keyword.fetch!(opts, :process_events_callback)
     metrics_collection_interval = Keyword.fetch!(opts, :metrics_collection_interval)
-    ethereum_events_check_interval_ms = Keyword.fetch!(opts, :ethereum_events_check_interval_ms)
     ets = Keyword.fetch!(opts, :ets)
     _ = Logger.info("Starting #{inspect(__MODULE__)} for #{service_name}.")
 
-    {:ok, last_synced_event_block_height} = Storage.get_local_synced_height(synced_height_update_key, ets)
-    # TODO get postgres height and max/2 the height you start from!!!!
-
     # we don't need to ever look at earlier than contract deployment
-    last_event_block_height = max(last_synced_event_block_height, contract_deployment_height)
+    last_event_block_height =
+      max_of_three(
+        Storage.get_local_synced_height(service_name, ets),
+        contract_deployment_height,
+        SyncedHeight.get_height(service_name)
+      )
+
     request_max_size = 1000
 
     state =
       Core.init(
-        synced_height_update_key,
         service_name,
         last_event_block_height,
-        ethereum_events_check_interval_ms,
         request_max_size,
         ets
       )
@@ -99,7 +99,7 @@ defmodule Engine.Ethereum.Event.EventListener do
       process_events_callback: process_events_callback
     }
 
-    {:ok, _} = schedule_get_events(ethereum_events_check_interval_ms)
+    :ok = Bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
     :ok = RootChainCoordinator.check_in(state.synced_height, service_name)
     {:ok, _} = :timer.send_interval(metrics_collection_interval, self(), :send_metrics)
 
@@ -115,6 +115,7 @@ defmodule Engine.Ethereum.Event.EventListener do
 
   @doc """
   Main worker function, called on a cadence as initialized in `handle_continue/2`.
+  The cadence is every change of ethereum height, notified via Bus.
 
   Does the following:
    - asks `RootChainCoordinator` about how to sync, with respect to other services listening to Ethereum
@@ -125,25 +126,30 @@ defmodule Engine.Ethereum.Event.EventListener do
       callbacks returned to persist
    - (`sync_height/2`) `RootChainCoordinator.check_in` to tell the rest what Ethereum height was processed.
   """
-  #  @decorate trace(service: :ethereum_event_listener, type: :backend)
-  def handle_info(:sync, {state, callbacks}) do
-    :ok = :telemetry.execute([:trace, __MODULE__], %{}, state)
-
+  def handle_info({:internal_event_bus, :ethereum_new_height, _new_height}, {state, callbacks}) do
     case RootChainCoordinator.get_sync_info() do
       :nosync ->
         :ok = RootChainCoordinator.check_in(state.synced_height, state.service_name)
-        {:ok, _} = schedule_get_events(state.ethereum_events_check_interval_ms)
         {:noreply, {state, callbacks}}
 
       sync_info ->
         new_state = sync_height(state, callbacks, sync_info)
-        {:ok, _} = schedule_get_events(state.ethereum_events_check_interval_ms)
         {:noreply, {new_state, callbacks}}
     end
   end
 
-  # see `handle_info/2`, clause for `:sync`
-  # @decorate span(service: :ethereum_event_listener, type: :backend, name: "sync_height/2")
+  def handle_cast(:sync, {state, callbacks}) do
+    case RootChainCoordinator.get_sync_info() do
+      :nosync ->
+        :ok = RootChainCoordinator.check_in(state.synced_height, state.service_name)
+        {:noreply, {state, callbacks}}
+
+      sync_info ->
+        new_state = sync_height(state, callbacks, sync_info)
+        {:noreply, {new_state, callbacks}}
+    end
+  end
+
   defp sync_height(state, callbacks, sync_guide) do
     {:ok, events, height_to_check_in, new_state} =
       state
@@ -155,25 +161,19 @@ defmodule Engine.Ethereum.Event.EventListener do
     :ok = callbacks.process_events_callback.(events)
     :ok = :telemetry.execute([:process, __MODULE__], %{events: events}, new_state)
     :ok = publish_events(events)
-    :ok = Storage.update_synced_height(new_state.synced_height_update_key, height_to_check_in, new_state.ets)
+    :ok = Storage.update_synced_height(new_state.service_name, height_to_check_in, new_state.ets)
     :ok = RootChainCoordinator.check_in(height_to_check_in, state.service_name)
 
     new_state
   end
 
-  # @decorate span(service: :ethereum_event_listener, type: :backend, name: "update_event_cache/2")
   defp update_event_cache({:get_events, {from, to}, state}, get_events_callback) do
     {:ok, new_events} = get_events_callback.(from, to)
     Core.add_new_events(state, new_events)
   end
 
-  #  @decorate span(service: :ethereum_event_listener, type: :backend, name: "update_event_cache/2")
   defp update_event_cache({:dont_fetch_events, state}, _callback) do
     state
-  end
-
-  defp schedule_get_events(ethereum_events_check_interval_ms) do
-    :timer.send_after(ethereum_events_check_interval_ms, self(), :sync)
   end
 
   defp publish_events([%{event_signature: event_signature} | _] = data) do
@@ -185,4 +185,10 @@ defmodule Engine.Ethereum.Event.EventListener do
   end
 
   defp publish_events([]), do: :ok
+
+  defp max_of_three(a, b, c) do
+    a
+    |> max(b)
+    |> max(c)
+  end
 end

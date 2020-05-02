@@ -4,6 +4,7 @@ defmodule Engine.Telemetry.Handler do
   """
 
   require Logger
+  alias Status.Alert.Alarm
 
   def supported_events() do
     [
@@ -31,10 +32,11 @@ defmodule Engine.Telemetry.Handler do
 
   def handle_event([:monitor, :main_ethereum_supervisor_halted, :set], %{reason: reason}, _, _config) do
     _ = Logger.error("Ethereum supervisor crashed. Raising alarm. Reason #{inspect(reason)}")
-    # alarm_module.set(alarm_module.main_supervisor_halted(__MODULE__))
+    Alarm.set(Alarm.Types.main_supervisor_halted(__MODULE__))
   end
 
   def handle_event([:monitor, :main_ethereum_supervisor_halted, :clear], _, _, _config) do
     _ = Logger.info("Ethereum supervisor started. Clearing alarm.")
+    Alarm.clear(Alarm.Types.main_supervisor_halted(__MODULE__))
   end
 end

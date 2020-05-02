@@ -15,6 +15,8 @@ defmodule Engine.Ethereum.HeightMonitor do
   The alarm is cleared once the block height starts increasing again.
   """
   use GenServer
+  alias ExPlasma.Encoding
+
   require Logger
 
   @type t() :: %__MODULE__{
@@ -70,14 +72,8 @@ defmodule Engine.Ethereum.HeightMonitor do
       event_bus_module: Keyword.fetch!(opts, :event_bus_module)
     }
 
-    {:ok, state, {:continue, :first_check}}
-  end
-
-  # We want the first check immediately upon start, but we cannot do it while the monitor
-  # is not fully initialized, so we need to trigger it in a :continue instruction.
-  def handle_continue(:first_check, state) do
     _ = send(self(), :check_new_height)
-    {:noreply, state}
+    {:ok, state}
   end
 
   def handle_info(:check_new_height, state) do
@@ -89,7 +85,6 @@ defmodule Engine.Ethereum.HeightMonitor do
     _ = stall_alarm(state.alarm_module, state.stall_alarm_raised, stalled?)
 
     state = update_height(state, height)
-
     {:ok, tref} = :timer.send_after(state.check_interval_ms, :check_new_height)
     {:noreply, %{state | tref: tref}}
   end
@@ -143,9 +138,9 @@ defmodule Engine.Ethereum.HeightMonitor do
 
   @spec fetch_height(module()) :: non_neg_integer() | :error
   defp fetch_height(eth_module) do
-    case eth_module.get_ethereum_height(url: "http://localhost:1111") do
+    case eth_module.get_ethereum_height(url: "http://localhost:8545") do
       {:ok, height} ->
-        height
+        Encoding.to_int(height)
 
       error ->
         _ = Logger.warn("Error retrieving Ethereum height: #{inspect(error)}")

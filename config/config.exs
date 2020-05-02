@@ -47,7 +47,7 @@ config :engine, ecto_repos: [Engine.Repo]
 config :ethereumex,
   http_options: [recv_timeout: 20_000]
 
-config :logger, level: :info
+config :logger, level: :debug
 
 config :logger, :console,
   format: "$date $time [$level] $metadata⋅$message⋅\n",

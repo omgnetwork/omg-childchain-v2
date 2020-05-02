@@ -5,7 +5,7 @@ defmodule Engine.Ethereum.Event.RootChainCoordinator.Measure do
 
   import Status.Metric.Event, only: [name: 2]
 
-  alias Engine.Ethereum.RootChainCoordinator
+  alias Engine.Ethereum.Event.RootChainCoordinator
   alias Status.Metric.Datadog
 
   def handle_event([:process, RootChainCoordinator], _, state, _config) do

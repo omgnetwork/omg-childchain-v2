@@ -5,7 +5,7 @@ defmodule Engine.Application do
 
   use Application
 
-  alias Engine.Ethereum.Monitor, as: EthereumMonitor
+  alias Engine.Ethereum.Monitor, as: SyncMonitor
   alias Engine.Ethereum.Monitor.AlarmHandler
   alias Engine.Ethereum.Supervisor, as: EthereumSupervisor
   alias Engine.Ethereum.SyncSupervisor
@@ -18,10 +18,10 @@ defmodule Engine.Application do
     attach_telemetry()
     # RootChain.get_root_deployment_height()
     {:ok, contract_deployment_height} = {:ok, 30}
-    child_args = [[contract_deployment_height: contract_deployment_height]]
+    child_args = [monitor: SyncMonitor, contract_deployment_height: contract_deployment_height]
 
     monitor_args = [
-      name: EthereumMonitor,
+      name: SyncMonitor,
       alarm_handler: AlarmHandler,
       child_spec:
         Supervisor.child_spec({SyncSupervisor, child_args},
@@ -41,9 +41,9 @@ defmodule Engine.Application do
     repo_args = [child_spec: repo_child_spec]
 
     children = [
-      Supervisor.child_spec({RepoMonitor, repo_args}, id: RepoMonitor),
       EthereumSupervisor.child_spec([]),
-      Supervisor.child_spec({EthereumMonitor, monitor_args}, id: EthereumMonitor)
+      Supervisor.child_spec({RepoMonitor, repo_args}, id: RepoMonitor),
+      Supervisor.child_spec({SyncMonitor, monitor_args}, id: SyncMonitor)
     ]
 
     _ = Logger.info("Starting #{__MODULE__}")

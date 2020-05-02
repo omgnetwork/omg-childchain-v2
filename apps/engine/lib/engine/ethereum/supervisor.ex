@@ -21,6 +21,7 @@ defmodule Engine.Ethereum.Supervisor do
     stall_threshold_ms = Configuration.ethereum_stalled_sync_threshold_ms()
 
     children = [
+      {Height, []},
       {HeightMonitor,
        [
          name: HeightMonitor,
@@ -29,8 +30,7 @@ defmodule Engine.Ethereum.Supervisor do
          eth_module: Rpc,
          alarm_module: Alarm,
          event_bus_module: Bus
-       ]},
-      {Height, []}
+       ]}
     ]
 
     opts = [strategy: :one_for_one]

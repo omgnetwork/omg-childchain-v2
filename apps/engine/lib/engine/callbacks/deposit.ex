@@ -29,10 +29,14 @@ defmodule Engine.Callbacks.Deposit do
   transaction, and UTXOs. This will wrap all the build deposits into one DB transaction.
   """
   @spec callback(list(Event.t())) :: {:ok, map()} | {:error, :atom, any(), any()}
-  def callback(events), do: do_callback(Ecto.Multi.new(), events)
+  def callback(events), do: do_callback(Ecto.Multi.new(), events, find_tip_eth_height(events))
 
-  defp do_callback(multi, [event | tail]), do: multi |> build_deposit(event) |> do_callback(tail)
-  defp do_callback(multi, []), do: Engine.Repo.transaction(multi)
+  defp do_callback(multi, [event | tail], tip_blknum),
+    do: multi |> build_deposit(event) |> do_callback(tail, tip_blknum)
+
+  defp do_callback(multi, [], tip_blknum) do
+    Engine.Repo.transaction(multi)
+  end
 
   defp build_deposit(multi, %{} = event) do
     utxo = %ExPlasma.Utxo{
@@ -53,5 +57,9 @@ defmodule Engine.Callbacks.Deposit do
       |> put_change(:block, %Engine.Block{number: event.data["blknum"]})
 
     Ecto.Multi.insert(multi, "deposit-blknum-#{event.data["blknum"]}", changeset)
+  end
+
+  defp find_tip_eth_height(events) do
+    Enum.max_by(events, fn event -> event.eth_height end, fn -> 0 end)
   end
 end

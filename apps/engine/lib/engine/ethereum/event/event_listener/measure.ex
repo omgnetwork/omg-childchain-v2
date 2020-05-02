@@ -32,8 +32,4 @@ defmodule Engine.Ethereum.Event.EventListener.Measure do
 
     _ = Datadog.gauge(name(state.service_name, :message_queue_len), value)
   end
-
-  def handle_event([:trace, _], %{}, state, _config) do
-    Tracer.update_top_span(service: state.service_name, tags: [])
-  end
 end
