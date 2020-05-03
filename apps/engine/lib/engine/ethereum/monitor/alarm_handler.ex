@@ -23,6 +23,14 @@ defmodule Engine.Ethereum.Monitor.AlarmHandler do
     {:ok, state}
   end
 
+  def handle_event({:clear_alarm, {:db_connection_lost, _}}, state) do
+    alarm = :db_connection_lost
+    _ = Logger.warn("#{alarm} alarm was cleared. Beginning to restart processes.")
+
+    :ok = GenServer.cast(state.consumer, :start_child)
+    {:ok, state}
+  end
+
   # flush
   def handle_event(_event, state) do
     {:ok, state}

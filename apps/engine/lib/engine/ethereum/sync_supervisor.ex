@@ -32,12 +32,12 @@ defmodule Engine.Ethereum.SyncSupervisor do
 
   defp children(args) do
     monitor = Keyword.fetch!(args, :monitor)
+    contract_deployment_height = Keyword.fetch!(args, :contract_deployment_height)
     deposit_finality_margin = Configuration.deposit_finality_margin()
     metrics_collection_interval = Configuration.metrics_collection_interval()
     coordinator_eth_height_check_interval_ms = Configuration.coordinator_eth_height_check_interval_ms()
     contracts = Configuration.contracts()
     url = Configuration.url()
-    contract_deployment_height = Configuration.contract_deployment_height()
 
     [
       {RootChainCoordinator,
@@ -63,7 +63,7 @@ defmodule Engine.Ethereum.SyncSupervisor do
         contract_deployment_height: contract_deployment_height,
         service_name: :depositor,
         get_events_callback: &Aggregator.deposit_created/2,
-        process_events_callback: &Deposit.callback/1
+        process_events_callback: &Deposit.callback/2
       ),
       {ChildObserver, [monitor: monitor]}
     ]

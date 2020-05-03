@@ -13,12 +13,8 @@ defmodule Engine.Configuration do
     10
   end
 
-  def root_deployment_height() do
-    Application.fetch_env(@app, :root_deployment_height)
-  end
-
   def contract_deployment_height() do
-    76
+    Application.fetch_env!(:engine, :contract_deployment_height)
   end
 
   def metrics_collection_interval() do
@@ -54,7 +50,7 @@ defmodule Engine.Configuration do
 
   @spec url() :: String.t()
   def url() do
-    Application.get_env(@app, :rpc_url)
+    Application.get_env(@app, :url)
   end
 
   @spec plasma_framework() :: String.t()

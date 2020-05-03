@@ -50,13 +50,17 @@ defmodule Engine.Repo.Monitor do
   end
 
   def handle_info(:timeout, state) do
+    _ = Logger.info("Performing DB health check after crash.")
+
     case Process.alive?(state.child.pid) do
       true ->
+        _ = Logger.info("DB health check after crash status OK.")
         :ok = :telemetry.execute([:monitor, :db_connection_lost, :clear], %{}, %{})
         backoff = Backoff.reset(state.backoff)
         {:noreply, %{state | backoff: backoff}}
 
       _ ->
+        _ = Logger.info("DB health check after crash status NOT OK.")
         {:noreply, state}
     end
   end

@@ -2,9 +2,8 @@ defmodule Engine.Telemetry.Handler do
   @moduledoc """
     Telemetry handler for raising and clearing alarms, logging.
   """
-
-  require Logger
   alias Status.Alert.Alarm
+  require Logger
 
   def supported_events() do
     [
@@ -17,17 +16,17 @@ defmodule Engine.Telemetry.Handler do
 
   def handle_event([:monitor, :db_connection_lost, :set], %{reason: reason, timeout: timeout}, _, _config) do
     _ = Logger.error("DB supervisor crashed. Raising alarm. Reason #{inspect(reason)}. Reconnect in #{timeout}.")
-    # alarm_module.set(alarm_module.db_connection_lost(__MODULE__))
+    Alarm.set(Alarm.Types.db_connection_lost(__MODULE__))
   end
 
   def handle_event([:monitor, :db_connection_lost, :set], %{reason: :init}, _, _config) do
     _ = Logger.error("DB supervisor initializing. Raising alarm.")
-    # alarm_module.set(alarm_module.db_connection_lost(__MODULE__))
+    Alarm.set(Alarm.Types.db_connection_lost(__MODULE__))
   end
 
   def handle_event([:monitor, :db_connection_lost, :clear], _, _, _config) do
     Logger.info("DB supervisor started. Clearing alarm.")
-    # alarm_module.set(alarm_module.db_connection_lost(__MODULE__))
+    Alarm.clear(Alarm.Types.db_connection_lost(__MODULE__))
   end
 
   def handle_event([:monitor, :main_ethereum_supervisor_halted, :set], %{reason: reason}, _, _config) do

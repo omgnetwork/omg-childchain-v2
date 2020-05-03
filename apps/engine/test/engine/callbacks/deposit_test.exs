@@ -44,7 +44,8 @@ defmodule Engine.Callbacks.DepositTest do
   #       event_signature: "DepositCreated(address,uint256,address,uint256)",
   #       log_index: 1,
   #       root_chain_tx_hash:
-  #         <<191, 246, 172, 55, 42, 126, 149, 188, 255, 83, 244, 160, 188, 185, 201, 27, 233, 75, 169, 8, 119, 161, 147,
+  #         <<191, 246, 172, 55, 42, 126, 149, 188, 255, 83, 244, 160, 188, 185, 201, 27, 233, 75, 169, 8,
+  # 119, 161, 147,
   #           41, 211, 49, 109, 57, 127, 103, 30, 201>>
   #     },
   #     %{
@@ -58,7 +59,8 @@ defmodule Engine.Callbacks.DepositTest do
   #       event_signature: "DepositCreated(address,uint256,address,uint256)",
   #       log_index: 0,
   #       root_chain_tx_hash:
-  #         <<64, 27, 200, 238, 249, 169, 198, 242, 109, 48, 50, 67, 31, 41, 151, 149, 123, 75, 245, 129, 30, 47, 40, 235,
+  #         <<64, 27, 200, 238, 249, 169, 198, 242, 109, 48, 50, 67, 31, 41, 151, 149, 123, 75, 245, 129, 30,
+  # 47, 40, 235,
   #           10, 1, 129, 162, 25, 167, 144, 253>>
   #     }
   #   ]
@@ -155,7 +157,8 @@ defmodule Engine.Callbacks.DepositTest do
 
     assert {:ok, %{"deposit-blknum-6" => transaction6, "deposit-blknum-5" => transaction5}} =
              Deposit.callback(deposit_events1, :depositor)
-IO.inspect Deposit.callback(deposit_events2, :depositor), label: "failure"
+
+    # IO.inspect(Deposit.callback(deposit_events2, :depositor), label: "failure")
 
     assert transaction5.block.number == 5
     assert transaction6.block.number == 6

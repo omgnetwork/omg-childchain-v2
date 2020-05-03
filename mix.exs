@@ -3,6 +3,7 @@ defmodule Childchain.MixProject do
 
   def project do
     [
+      default_task: "childchain.start",
       apps_path: "apps",
       version: version(),
       start_permanent: Mix.env() == :prod,

@@ -47,7 +47,7 @@ config :engine, ecto_repos: [Engine.Repo]
 config :ethereumex,
   http_options: [recv_timeout: 20_000]
 
-config :logger, level: :debug
+config :logger, level: :info
 
 config :logger, :console,
   format: "$date $time [$level] $metadata⋅$message⋅\n",
@@ -71,5 +71,9 @@ config :spandex_datadog,
   batch_size: 10,
   sync_threshold: 100,
   http: HTTPoison
+
+config :os_mon,
+  disk_almost_full_threshold: 1,
+  system_memory_high_watermark: 1
 
 import_config "#{Mix.env()}.exs"

@@ -11,10 +11,15 @@ defmodule Status.Alert.Alarm.Types do
   """
   @type alarms ::
           {:boot_in_progress
+           | :db_connection_lost
            | :ethereum_connection_error
            | :ethereum_stalled_sync
            | :invalid_fee_source
            | :main_supervisor_halted, alarm_detail}
+  @spec db_connection_lost(module()) :: {:db_connection_lost, alarm_detail}
+  def db_connection_lost(reporter) do
+    {:db_connection_lost, %{node: Node.self(), reporter: reporter}}
+  end
 
   @spec ethereum_connection_error(module()) :: {:ethereum_connection_error, alarm_detail}
   def ethereum_connection_error(reporter) do

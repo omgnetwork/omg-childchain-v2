@@ -17,6 +17,7 @@ defmodule Engine.Ethereum.Height do
   end
 
   def init(opts) do
+    _ = Logger.info("Starting #{__MODULE__} service.")
     event_bus = Keyword.get(opts, :event_bus, Bus)
     :ok = event_bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
     {:ok, {:error, :ethereum_height}}

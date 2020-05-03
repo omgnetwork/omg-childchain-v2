@@ -17,8 +17,8 @@ defmodule Engine.Callbacks.Deposit do
   import Ecto.Changeset
 
   alias Engine.Ethereum.RootChain.Event
-  alias Engine.Transaction
   alias Engine.SyncedHeight
+  alias Engine.Transaction
   alias ExPlasma.Transaction.Deposit, as: ExDeposit
 
   @type address_binary :: <<_::160>>

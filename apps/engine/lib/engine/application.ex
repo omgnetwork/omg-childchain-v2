@@ -5,6 +5,7 @@ defmodule Engine.Application do
 
   use Application
 
+  alias Engine.Configuration
   alias Engine.Ethereum.Monitor, as: SyncMonitor
   alias Engine.Ethereum.Monitor.AlarmHandler
   alias Engine.Ethereum.Supervisor, as: EthereumSupervisor
@@ -16,8 +17,7 @@ defmodule Engine.Application do
 
   def start(_type, _args) do
     attach_telemetry()
-    # RootChain.get_root_deployment_height()
-    {:ok, contract_deployment_height} = {:ok, 30}
+    contract_deployment_height = Configuration.contract_deployment_height()
     child_args = [monitor: SyncMonitor, contract_deployment_height: contract_deployment_height]
 
     monitor_args = [

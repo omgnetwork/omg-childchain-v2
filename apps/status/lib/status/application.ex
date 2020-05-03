@@ -14,7 +14,10 @@ defmodule Status.Application do
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
+    # IO.inspect(Application.ensure_all_started(:sasl), label: "sas; start")
+    # IO.inspect(Application.ensure_all_started(:os_mon), label: "os mon start")
 
+    # :ok = AlarmHandler.install(Alarm.alarm_types())
     is_datadog_disabled = is_disabled?()
 
     children =

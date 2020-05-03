@@ -38,7 +38,7 @@ defmodule Engine.ReleaseTasks.Contract do
       min_exit_period_seconds,
       contract_semver,
       child_block_interval,
-      root_deployment_height
+      contract_deployment_height
     ] = external_data(plasma_framework, tx_hash, rpc_url)
 
     Config.Reader.merge(config,
@@ -52,7 +52,7 @@ defmodule Engine.ReleaseTasks.Contract do
         min_exit_period_seconds: min_exit_period_seconds,
         contract_semver: contract_semver,
         child_block_interval: child_block_interval,
-        root_deployment_height: root_deployment_height
+        contract_deployment_height: contract_deployment_height
       ]
     )
   end
@@ -64,7 +64,7 @@ defmodule Engine.ReleaseTasks.Contract do
     min_exit_period_seconds = External.min_exit_period(plasma_framework, url: rpc_url)
     contract_semver = External.contract_semver(plasma_framework, url: rpc_url)
     child_block_interval = External.child_block_interval(plasma_framework, url: rpc_url)
-    root_deployment_height = External.root_deployment_height(plasma_framework, tx_hash, url: rpc_url)
+    contract_deployment_height = External.contract_deployment_height(plasma_framework, tx_hash, url: rpc_url)
 
     [
       payment_exit_game,
@@ -73,7 +73,7 @@ defmodule Engine.ReleaseTasks.Contract do
       min_exit_period_seconds,
       contract_semver,
       child_block_interval,
-      root_deployment_height
+      contract_deployment_height
     ]
   end
 

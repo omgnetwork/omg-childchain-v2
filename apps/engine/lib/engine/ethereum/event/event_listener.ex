@@ -158,7 +158,7 @@ defmodule Engine.Ethereum.Event.EventListener do
       |> Core.get_events(sync_guide.sync_height)
 
     # process_events_callback sorts persistence!
-    :ok = callbacks.process_events_callback.(events)
+    :ok = callbacks.process_events_callback.(events, state.service_name)
     :ok = :telemetry.execute([:process, __MODULE__], %{events: events}, new_state)
     :ok = publish_events(events)
     :ok = Storage.update_synced_height(new_state.service_name, height_to_check_in, new_state.ets)
@@ -186,7 +186,8 @@ defmodule Engine.Ethereum.Event.EventListener do
 
   defp publish_events([]), do: :ok
 
-  defp max_of_three(a, b, c) do
+  # the guard are here to protect us from number to term comparison
+  defp max_of_three(a, b, c) when is_number(a) and is_number(b) and is_number(c) do
     a
     |> max(b)
     |> max(c)
