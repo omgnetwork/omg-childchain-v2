@@ -8,7 +8,6 @@ defmodule Engine.SyncedHeight do
 
   @primary_key {:listener, :string, []}
   schema "synced_height" do
-    # field(:listener, :string)
     field(:height, :integer)
 
     timestamps(type: :utc_datetime)
