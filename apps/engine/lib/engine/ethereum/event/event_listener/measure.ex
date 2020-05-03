@@ -11,7 +11,8 @@ defmodule Engine.Ethereum.Event.EventListener.Measure do
   import Status.Metric.Event, only: [name: 2]
 
   alias Status.Metric.Datadog
-#  alias Status.Metric.Tracer
+
+  #  alias Status.Metric.Tracer
 
   @supported_events [
     [:process, Engine.Ethereum.EventListener],
