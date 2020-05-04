@@ -8,7 +8,7 @@ defmodule Engine.Ethereum.SyncSupervisor do
   alias Engine.Configuration
   alias Engine.Ethereum.ChildObserver
   alias Engine.Ethereum.Event.Aggregator
-  alias Engine.Ethereum.Event.EventListener
+  alias Engine.Ethereum.Event.Listener
   alias Engine.Ethereum.Event.RootChainCoordinator
   alias Engine.Ethereum.Event.RootChainCoordinator.Setup
 
@@ -57,7 +57,7 @@ defmodule Engine.Ethereum.SyncSupervisor do
          [name: :in_flight_exit_output_piggybacked, enrich: false],
          [name: :exit_started, enrich: true]
        ]},
-      EventListener.prepare_child(
+      Listener.prepare_child(
         ets: @listener_checkin,
         metrics_collection_interval: metrics_collection_interval,
         contract_deployment_height: contract_deployment_height,

@@ -1,6 +1,6 @@
-defmodule Engine.Ethereum.Event.EventListener.Core do
+defmodule Engine.Ethereum.Event.Listener.Core do
   @moduledoc """
-  Logic module for the `OMG.EthereumEventListener`
+  Logic module for the `Listener`
 
   Responsible for:
     - deciding what ranges of Ethereum events should be fetched from the Ethereum node

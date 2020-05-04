@@ -1,9 +1,7 @@
-defmodule Engine.Ethereum.Event.EventListener.Storage do
+defmodule Engine.Ethereum.Event.Listener.Storage do
   @moduledoc """
   In memory storage for event listeners
   """
-
-  # alias Engine.Ethereum.Event.EventListener.Core
 
   @spec get_local_synced_height(atom(), atom()) :: pos_integer()
   def get_local_synced_height(key, ets) do

@@ -1,7 +1,7 @@
-defmodule Engine.Ethereum.Event.EventListener.CoreTest do
+defmodule Engine.Ethereum.Event.Listener.CoreTest do
   use ExUnit.Case, async: true
 
-  alias Engine.Ethereum.Event.EventListener.Core
+  alias Engine.Ethereum.Event.Listener.Core
   alias Engine.Ethereum.Event.RootChainCoordinator.SyncGuide
 
   @service_name :name

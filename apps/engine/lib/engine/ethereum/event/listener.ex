@@ -1,4 +1,4 @@
-defmodule Engine.Ethereum.Event.EventListener do
+defmodule Engine.Ethereum.Event.Listener do
   @moduledoc """
   GenServer running the listener.
 
@@ -22,12 +22,12 @@ defmodule Engine.Ethereum.Event.EventListener do
 
   What specific Ethereum events it fetches, and what it does with them is up to predefined `callbacks`.
 
-  See `EventListener.Core` for the implementation of the business logic for the listener.
+  See `Listener.Core` for the implementation of the business logic for the listener.
   """
   use GenServer
 
-  alias Engine.Ethereum.Event.EventListener.Core
-  alias Engine.Ethereum.Event.EventListener.Storage
+  alias Engine.Ethereum.Event.Listener.Core
+  alias Engine.Ethereum.Event.Listener.Storage
   alias Engine.Ethereum.Event.RootChainCoordinator
   alias Engine.Ethereum.RootChain.Event
   alias Engine.SyncedHeight
@@ -43,7 +43,7 @@ defmodule Engine.Ethereum.Event.EventListener do
   end
 
   @doc """
-  Returns child_specs for the given `EventListener` setup, to be included e.g. in Supervisor's children.
+  Returns child_specs for the given `Listener` setup, to be included e.g. in Supervisor's children.
   See `handle_continue/2` for the required keyword arguments.
   """
   @spec prepare_child(keyword()) :: Supervisor.child_spec()
@@ -63,7 +63,7 @@ defmodule Engine.Ethereum.Event.EventListener do
 
   @doc """
   Reads the status of listening (till which Ethereum height were the events processed) from the `OMG.DB` and initializes
-  the logic `EventListener.Core` with it. Does an initial `RootChainCoordinator.check_in` with the
+  the logic `Listener.Core` with it. Does an initial `RootChainCoordinator.check_in` with the
   Ethereum height it last stopped on. Next, it continues to monitor and fetch the events as usual.
   """
   def handle_continue(:setup, opts) do
@@ -119,7 +119,7 @@ defmodule Engine.Ethereum.Event.EventListener do
   Does the following:
    - asks `RootChainCoordinator` about how to sync, with respect to other services listening to Ethereum
    - (`sync_height/2`) figures out what is the suitable range of Ethereum blocks to download events for
-   - (`sync_height/2`) if necessary fetches those events to the in-memory cache in `OMG.EthereumEventListener.Core`
+   - (`sync_height/2`) if necessary fetches those events to the in-memory cache in `Listener.Core`
    - (`sync_height/2`) executes the related event-consuming callback with events as arguments
    - (`sync_height/2`) does `OMG.DB` updates that persist the processes Ethereum height as well as whatever the
       callbacks returned to persist

@@ -1,4 +1,4 @@
-defmodule Engine.Ethereum.Event.EventListener.Measure do
+defmodule Engine.Ethereum.Event.Listener.Measure do
   @moduledoc """
   Counting business metrics sent to Datadog.
   We don't want to pattern match on :ok to Datadog because the connection
@@ -15,17 +15,17 @@ defmodule Engine.Ethereum.Event.EventListener.Measure do
   #  alias Status.Metric.Tracer
 
   @supported_events [
-    [:process, Engine.Ethereum.EventListener],
-    [:trace, Engine.Ethereum.EventListener],
+    [:process, Engine.Ethereum.Listener],
+    [:trace, Engine.Ethereum.Listener],
     [:trace, Engine.Ethereum.Listener.Core]
   ]
   def supported_events(), do: @supported_events
 
-  def handle_event([:process, Engine.Ethereum.EventListener], %{events: events}, state, _config) do
+  def handle_event([:process, Engine.Ethereum.Listener], %{events: events}, state, _config) do
     _ = Datadog.gauge(name(state.service_name, :events), length(events))
   end
 
-  def handle_event([:process, Engine.Ethereum.EventListener], %{}, state, _config) do
+  def handle_event([:process, Engine.Ethereum.Listener], %{}, state, _config) do
     value =
       self()
       |> Process.info(:message_queue_len)
