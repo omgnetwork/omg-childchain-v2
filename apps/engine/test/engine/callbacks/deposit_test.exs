@@ -106,7 +106,7 @@ defmodule Engine.Callbacks.DepositTest do
         }
       ]
 
-      eposit_events_listener3 = [
+      deposit_events_listener3 = [
         %{
           data: %{
             "amount" => 1_000_000_000_000_000_000,
