@@ -4,6 +4,7 @@ defmodule Engine.Ethereum.HeightMonitorTest do
   alias __MODULE__.EthereumClientMock
   alias __MODULE__.EventBusListener
   alias Engine.Ethereum.HeightMonitor
+  alias Engine.Ethereum.HeightMonitor.AlarmManagement
   alias ExPlasma.Encoding
 
   setup_all do
@@ -82,7 +83,7 @@ defmodule Engine.Ethereum.HeightMonitorTest do
 
     # Assert the alarm and event are present
     assert pull_client_alarm(
-             [ethereum_connection_error: %{node: :nonode@nohost, reporter: HeightMonitor.AlarmManagement}],
+             [ethereum_connection_error: %{node: :nonode@nohost, reporter: AlarmManagement}],
              100
            ) == :ok
   end
@@ -93,7 +94,7 @@ defmodule Engine.Ethereum.HeightMonitorTest do
 
     :ok =
       pull_client_alarm(
-        [ethereum_connection_error: %{node: :nonode@nohost, reporter: HeightMonitor.AlarmManagement}],
+        [ethereum_connection_error: %{node: :nonode@nohost, reporter: AlarmManagement}],
         100
       )
 
@@ -118,7 +119,7 @@ defmodule Engine.Ethereum.HeightMonitorTest do
 
     # Assert alarm now present
     assert pull_client_alarm(
-             [ethereum_stalled_sync: %{node: :nonode@nohost, reporter: HeightMonitor.AlarmManagement}],
+             [ethereum_stalled_sync: %{node: :nonode@nohost, reporter: AlarmManagement}],
              200
            ) == :ok
   end
@@ -127,8 +128,7 @@ defmodule Engine.Ethereum.HeightMonitorTest do
     # Initialize as unhealthy
     _ = EthereumClientMock.set_stalled(true)
 
-    :ok =
-      pull_client_alarm([ethereum_stalled_sync: %{node: :nonode@nohost, reporter: HeightMonitor.AlarmManagement}], 300)
+    :ok = pull_client_alarm([ethereum_stalled_sync: %{node: :nonode@nohost, reporter: AlarmManagement}], 300)
 
     # Toggle unstalled height
     _ = EthereumClientMock.set_stalled(false)

@@ -81,11 +81,11 @@ defmodule Engine.Ethereum.HeightMonitor do
   end
 
   def handle_continue(:check_new_height, state) do
-    handle_timer(state)
+    check_new_height(state)
   end
 
   def handle_info(:check_new_height, state) do
-    handle_timer(state)
+    check_new_height(state)
   end
 
   #
@@ -110,7 +110,7 @@ defmodule Engine.Ethereum.HeightMonitor do
     {:noreply, %{state | stall_alarm_raised: false}}
   end
 
-  defp handle_timer(state) do
+  defp check_new_height(state) do
     height = Core.fetch_height(state.eth_module, state.opts)
     stalled? = Core.stalled?(height, state.ethereum_height, state.synced_at, state.stall_threshold_ms)
     :ok = Core.broadcast_on_new_height(state.event_bus_module, height)

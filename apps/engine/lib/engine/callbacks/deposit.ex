@@ -41,19 +41,7 @@ defmodule Engine.Callbacks.Deposit do
     |> Ecto.Multi.run(:synced_height, fn repo, _changes ->
       {:ok, repo.get(SyncedHeight, "#{new_synced_height.listener}") || %SyncedHeight{}}
     end)
-    |> Ecto.Multi.insert_or_update(:update, fn
-      %{synced_height: %{height: nil} = synced_height} ->
-        Ecto.Changeset.change(synced_height, new_synced_height)
-
-      %{synced_height: synced_height} ->
-        case new_synced_height.height > synced_height.height do
-          true ->
-            Ecto.Changeset.change(synced_height, new_synced_height)
-
-          _ ->
-            Ecto.Changeset.change(synced_height, %{})
-        end
-    end)
+    |> Ecto.Multi.insert_or_update(:update, &synced_height(&1, new_synced_height))
     |> Engine.Repo.transaction()
   end
 
@@ -75,10 +63,24 @@ defmodule Engine.Callbacks.Deposit do
       |> Transaction.changeset(tx_bytes)
       |> put_change(:block, %Engine.Block{number: event.data["blknum"]})
 
-    Ecto.Multi.insert(multi, "deposit-blknum-#{event.data["blknum"]}", changeset, on_conflict: :nothing)
+    Ecto.Multi.insert(multi, "deposit-blknum-#{event.data["blknum"]}", changeset)
   end
 
   defp find_tip_eth_height(events) do
     Enum.max_by(events, fn event -> event.eth_height end, fn -> 0 end).eth_height
+  end
+
+  defp synced_height(%{synced_height: %{height: nil} = synced_height}, new_synced_height) do
+    Ecto.Changeset.change(synced_height, new_synced_height)
+  end
+
+  defp synced_height(%{synced_height: synced_height}, new_synced_height) do
+    case new_synced_height.height > synced_height.height do
+      true ->
+        Ecto.Changeset.change(synced_height, new_synced_height)
+
+      _ ->
+        Ecto.Changeset.change(synced_height, %{})
+    end
   end
 end
