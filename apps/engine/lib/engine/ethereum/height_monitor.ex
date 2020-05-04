@@ -81,16 +81,11 @@ defmodule Engine.Ethereum.HeightMonitor do
   end
 
   def handle_continue(:check_new_height, state) do
-    height = Core.fetch_height(state.eth_module, state.opts)
-    stalled? = Core.stalled?(height, state.ethereum_height, state.synced_at, state.stall_threshold_ms)
-    :ok = Core.broadcast_on_new_height(state.event_bus_module, height)
+    handle_timer(state)
+  end
 
-    _ = AlarmManagement.connection_alarm(state.alarm_module, state.connection_alarm_raised, height)
-    _ = AlarmManagement.stall_alarm(state.alarm_module, state.stall_alarm_raised, stalled?)
-
-    state = Core.update_height(state, height)
-    {:ok, tref} = :timer.send_after(state.check_interval_ms, :check_new_height)
-    {:noreply, %{state | tref: tref}}
+  def handle_info(:check_new_height, state) do
+    handle_timer(state)
   end
 
   #
@@ -113,5 +108,18 @@ defmodule Engine.Ethereum.HeightMonitor do
 
   def handle_cast({:clear_alarm, :ethereum_stalled_sync}, state) do
     {:noreply, %{state | stall_alarm_raised: false}}
+  end
+
+  defp handle_timer(state) do
+    height = Core.fetch_height(state.eth_module, state.opts)
+    stalled? = Core.stalled?(height, state.ethereum_height, state.synced_at, state.stall_threshold_ms)
+    :ok = Core.broadcast_on_new_height(state.event_bus_module, height)
+
+    _ = AlarmManagement.connection_alarm(state.alarm_module, state.connection_alarm_raised, height)
+    _ = AlarmManagement.stall_alarm(state.alarm_module, state.stall_alarm_raised, stalled?)
+
+    state = Core.update_height(state, height)
+    {:ok, tref} = :timer.send_after(state.check_interval_ms, :check_new_height)
+    {:noreply, %{state | tref: tref}}
   end
 end

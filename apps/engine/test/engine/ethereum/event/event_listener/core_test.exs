@@ -1,11 +1,9 @@
 defmodule Engine.Ethereum.Event.EventListener.CoreTest do
   use ExUnit.Case, async: true
 
-  alias Engine.Configuration
   alias Engine.Ethereum.Event.EventListener.Core
   alias Engine.Ethereum.Event.RootChainCoordinator.SyncGuide
 
-  @db_key :db_key
   @service_name :name
   @request_max_size 5
 
@@ -206,9 +204,8 @@ defmodule Engine.Ethereum.Event.EventListener.CoreTest do
     # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
     ets = :ets.new(String.to_atom("test-#{:rand.uniform(2000)}"), [:set, :public, :named_table])
     request_max_size = Keyword.get(opts, :request_max_size, @request_max_size)
-    ethereum_events_check_interval_ms = Configuration.ethereum_events_check_interval_ms()
     # this assert is meaningful - currently we want to explicitly check_in the height read from DB
-    state = Core.init(@db_key, @service_name, height, ethereum_events_check_interval_ms, request_max_size, ets)
+    state = Core.init(@service_name, height, request_max_size, ets)
     assert ^height = state.synced_height
     state
   end
