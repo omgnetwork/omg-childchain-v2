@@ -7,6 +7,7 @@ defmodule Engine.Application do
 
   alias Engine.Ethereum.Monitor, as: EthereumMonitor
   alias Engine.Ethereum.Monitor.AlarmHandler
+  alias Engine.Ethereum.Supervisor, as: EthereumSupervisor
   alias Engine.Ethereum.SyncSupervisor
   alias Engine.Repo.Monitor, as: RepoMonitor
   alias Engine.Telemetry.Handler
@@ -20,6 +21,7 @@ defmodule Engine.Application do
     child_args = [[contract_deployment_height: contract_deployment_height]]
 
     monitor_args = [
+      name: EthereumMonitor,
       alarm_handler: AlarmHandler,
       child_spec:
         Supervisor.child_spec({SyncSupervisor, child_args},
@@ -40,6 +42,7 @@ defmodule Engine.Application do
 
     children = [
       Supervisor.child_spec({RepoMonitor, repo_args}, id: RepoMonitor),
+      EthereumSupervisor.child_spec([]),
       Supervisor.child_spec({EthereumMonitor, monitor_args}, id: EthereumMonitor)
     ]
 

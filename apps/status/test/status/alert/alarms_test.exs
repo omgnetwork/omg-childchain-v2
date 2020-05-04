@@ -4,6 +4,12 @@ defmodule Status.Alert.AlarmTest do
   alias Status.Alert.Alarm.Types
 
   setup do
+    {:ok, apps} = Application.ensure_all_started(:status)
+
+    on_exit(fn ->
+      apps |> Enum.reverse() |> Enum.each(&Application.stop/1)
+    end)
+
     Alarm.clear_all()
   end
 

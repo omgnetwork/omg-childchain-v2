@@ -12,11 +12,11 @@ geth \
 --miner.gasprice "10" \
 --nodiscover \
 --maxpeers 0 \
---datadir ${DATADIR} \
---syncmode 'full' \
+--datadir data/ \
+--syncmode 'fast' \
 --networkid 1337 \
 --gasprice '1' \
---keystore=./data/geth/keystore/ \
+--keystore ./data/geth/keystore/ \
 --password /data/geth-blank-password \
 --unlock "0,1" \
 --rpc \

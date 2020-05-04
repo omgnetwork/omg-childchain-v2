@@ -43,6 +43,7 @@ defmodule Engine.ReleaseTasks.Contract do
 
     Config.Reader.merge(config,
       engine: [
+        rpc_url: rpc_url,
         authority_address: authority_address,
         plasma_framework: plasma_framework,
         eth_vault: eth_vault,
