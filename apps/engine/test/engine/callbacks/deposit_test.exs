@@ -15,7 +15,6 @@ defmodule Engine.Callbacks.DepositTest do
     :ok = Sandbox.checkout(Repo)
   end
 
-  @tag :focus
   describe "deposit/1" do
     test "generates a confirmed transaction, block and utxo for the deposit" do
       deposit_event = %{

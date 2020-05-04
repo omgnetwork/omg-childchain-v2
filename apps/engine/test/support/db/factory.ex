@@ -11,6 +11,7 @@ defmodule Engine.DB.Factory do
   alias Engine.DB.Block
   alias Engine.DB.Output
   alias Engine.DB.Transaction
+  alias ExPlasma.Builder
   alias ExPlasma.Output.Position
 
   def deposit_transaction_factory(attr \\ %{}) do
@@ -25,7 +26,11 @@ defmodule Engine.DB.Factory do
       |> Position.pos()
       |> Position.to_map()
 
-    txbytes = new_txn() |> add_output(data) |> ExPlasma.encode()
+    txbytes =
+      [tx_type: 1]
+      |> Builder.new()
+      |> Builder.add_output(output_guard: output_guard, token: <<0::160>>, amount: amount)
+      |> ExPlasma.encode()
 
     output =
       :output
@@ -41,20 +46,10 @@ defmodule Engine.DB.Factory do
   end
 
   def payment_v1_transaction_factory(attr) do
-    id =
-      %{blknum: Map.get(attr, :blknum, 1), txindex: 0, oindex: 0}
-      |> Position.pos()
-      |> Position.to_map()
-
-    input =
-      Engine.Repo.one(Output.usable()) ||
-        params_for(:output, output_id: id)
-
-    data = %{output_guard: <<1::160>>, token: <<0::160>>, amount: 1}
-
-    new_txn()
-    |> add_input(input.output_id)
-    |> add_output(data)
+    [tx_type: 1]
+    |> Builder.new()
+    |> Builder.add_input(blknum: Map.get(attr, :blknum, 1), txindex: 0, oindex: 0)
+    |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
     |> ExPlasma.encode()
     |> Transaction.decode()
     |> apply_changes()
@@ -75,28 +70,4 @@ defmodule Engine.DB.Factory do
 
   def set_state(%Transaction{outputs: [output]}, state), do: %{output | state: state}
   def set_state(%Output{} = output, state), do: %{output | state: state}
-
-  defp new_txn(), do: %ExPlasma.Transaction{tx_type: 1}
-
-  # position_map is %{blknum: 1, txindex: 0, oindex: 0}
-  defp add_input(ex_txn, %{} = position_map) do
-    output_id =
-      position_map
-      |> Position.pos()
-      |> Position.to_map()
-
-    input = %ExPlasma.Output{output_id: output_id}
-
-    %{ex_txn | inputs: [input] ++ ex_txn.inputs}
-  end
-
-  defp add_input(ex_txn, encoded) do
-    input = ExPlasma.Output.decode_id(encoded)
-    %{ex_txn | inputs: [input] ++ ex_txn.inputs}
-  end
-
-  defp add_output(ex_txn, %{} = output_data) do
-    output = %ExPlasma.Output{output_type: 1, output_data: output_data}
-    %{ex_txn | outputs: [output] ++ ex_txn.outputs}
-  end
 end
