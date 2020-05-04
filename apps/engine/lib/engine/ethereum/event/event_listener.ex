@@ -26,13 +26,11 @@ defmodule Engine.Ethereum.Event.EventListener do
   """
   use GenServer
 
-  #  use Spandex.Decorators
-
   alias Engine.Ethereum.Event.EventListener.Core
   alias Engine.Ethereum.Event.EventListener.Storage
   alias Engine.Ethereum.Event.RootChainCoordinator
-  alias Engine.SyncedHeight
   alias Engine.Ethereum.RootChain.Event
+  alias Engine.SyncedHeight
 
   require Logger
 
