@@ -11,6 +11,7 @@ defmodule Engine.Ethereum.Event.EventListener.Core do
   Leverages a rudimentary in-memory cache for events, to be able to ask for right-sized batches of events
   """
   alias Engine.Ethereum.Event.RootChainCoordinator.SyncGuide
+  alias Engine.Ethereum.RootChain.Event
 
   # use Spandex.Decorators
 
@@ -25,12 +26,10 @@ defmodule Engine.Ethereum.Event.EventListener.Core do
             },
             ets: nil
 
-  @type event :: %{eth_height: non_neg_integer()}
-
   @type t() :: %__MODULE__{
           service_name: atom(),
           cached: %{
-            data: list(event),
+            data: list(Event.t()),
             request_max_size: pos_integer(),
             events_upper_bound: non_neg_integer()
           },
@@ -41,9 +40,7 @@ defmodule Engine.Ethereum.Event.EventListener.Core do
   Initializes the listener logic based on its configuration and the last persisted Ethereum height, till which events
   were processed
   """
-  @spec init(atom(), non_neg_integer(), non_neg_integer(), atom()) ::
-          {t(), non_neg_integer()}
-
+  @spec init(atom(), non_neg_integer(), non_neg_integer(), atom()) :: t()
   def init(service_name, last_synced_ethereum_height, request_max_size, ets) do
     %__MODULE__{
       synced_height: last_synced_ethereum_height,
@@ -62,7 +59,6 @@ defmodule Engine.Ethereum.Event.EventListener.Core do
   """
   @spec get_events_range_for_download(t(), SyncGuide.t()) ::
           {:dont_fetch_events, t()} | {:get_events, {non_neg_integer, non_neg_integer}, t()}
-  # @decorate span(service: :ethereum_event_listener, type: :backend, name: "get_events_range_for_download/2")
   def get_events_range_for_download(state, sync_guide) do
     case sync_guide.sync_height <= state.cached.events_upper_bound do
       true ->
@@ -86,7 +82,7 @@ defmodule Engine.Ethereum.Event.EventListener.Core do
   Stores the freshly fetched ethereum events into a memory-cache
   """
   # @decorate span(service: :ethereum_event_listener, type: :backend, name: "add_new_events/2")
-  @spec add_new_events(t(), list(event)) :: t()
+  @spec add_new_events(t(), list(Event.t())) :: t()
   def add_new_events(state, new_events) do
     %__MODULE__{state | cached: %{state.cached | data: state.cached.data ++ new_events}}
   end
@@ -95,7 +91,7 @@ defmodule Engine.Ethereum.Event.EventListener.Core do
   Pop some ethereum events stored in the memory-cache, up to a certain height
   """
   # @decorate span(service: :ethereum_event_listener, type: :backend, name: "get_events/2")
-  @spec get_events(t(), non_neg_integer) :: {:ok, list(event), list(), non_neg_integer, t()}
+  @spec get_events(t(), non_neg_integer) :: {:ok, list(Event.t()), non_neg_integer, t()}
   def get_events(state, new_sync_height) do
     {events, new_data} = Enum.split_while(state.cached.data, fn %{eth_height: height} -> height <= new_sync_height end)
 

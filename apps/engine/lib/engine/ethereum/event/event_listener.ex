@@ -32,6 +32,7 @@ defmodule Engine.Ethereum.Event.EventListener do
   alias Engine.Ethereum.Event.EventListener.Storage
   alias Engine.Ethereum.Event.RootChainCoordinator
   alias Engine.SyncedHeight
+  alias Engine.Ethereum.RootChain.Event
 
   require Logger
 
@@ -176,6 +177,7 @@ defmodule Engine.Ethereum.Event.EventListener do
     state
   end
 
+  @spec publish_events(list(Event.t())) :: :ok | {:error, term()}
   defp publish_events([%{event_signature: event_signature} | _] = data) do
     [event_signature, _] = String.split(event_signature, "(")
 

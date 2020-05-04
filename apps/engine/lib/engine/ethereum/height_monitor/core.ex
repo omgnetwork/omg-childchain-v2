@@ -10,7 +10,7 @@ defmodule Engine.Ethereum.HeightMonitor.Core do
   @spec force_send_height(HeightMonitor.t()) :: HeightMonitor.t()
   def force_send_height(state) do
     height = fetch_height(state.eth_module, state.opts)
-    broadcast_on_new_height(state.event_bus_module, height)
+    :ok = broadcast_on_new_height(state.event_bus_module, height)
     update_height(state, height)
   end
 
