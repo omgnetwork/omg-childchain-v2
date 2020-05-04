@@ -1,20 +1,27 @@
 defmodule Engine.Callbacks.ExitTest do
   @moduledoc false
   use ExUnit.Case, async: true
-  import Engine.Factory
+  import Engine.DB.Factory
   import Ecto.Query
 
+  alias Ecto.Adapters.SQL.Sandbox
   alias Engine.Callbacks.Exit
+  alias Engine.DB.Output
+  alias Engine.Repo
+
+  setup do
+    :ok = Sandbox.checkout(Repo)
+  end
 
   describe "callback/1" do
     test "marks utxos that are exiting" do
-      utxo = insert(:input_utxo, pos: 1)
+      %{outputs: [%{position: position}]} = insert(:deposit_transaction)
 
       exit_events = [
         %{
           call_data: %{
             output_tx: <<0>>,
-            utxo_pos: utxo.pos
+            utxo_pos: position
           },
           eth_height: 1676,
           event_signature: "ExitStarted(address,uint160)",
@@ -28,21 +35,19 @@ defmodule Engine.Callbacks.ExitTest do
       ]
 
       assert {1, nil} = Exit.callback(exit_events)
-
-      query = from(u in Engine.Utxo, where: u.pos == ^utxo.pos, select: u.state)
-
-      assert "exited" = Engine.Repo.one(query)
+      query = from(o in Output, where: o.position == ^position, select: o.state)
+      assert "exited" = Repo.one(query)
     end
 
     test "marks multiple utxos as exiting" do
-      utxo = insert(:input_utxo, pos: 2)
-      utxo2 = insert(:input_utxo, pos: 3)
+      %{outputs: [%{position: pos1}]} = insert(:deposit_transaction)
+      %{outputs: [%{position: pos2}]} = insert(:deposit_transaction)
 
       exit_events = [
         %{
           call_data: %{
             output_tx: <<0>>,
-            utxo_pos: utxo.pos
+            utxo_pos: pos1
           },
           eth_height: 1676,
           event_signature: "ExitStarted(address,uint160)",
@@ -56,7 +61,7 @@ defmodule Engine.Callbacks.ExitTest do
         %{
           call_data: %{
             output_tx: <<0>>,
-            utxo_pos: utxo2.pos
+            utxo_pos: pos2
           },
           eth_height: 1676,
           event_signature: "ExitStarted(address,uint160)",
@@ -70,10 +75,8 @@ defmodule Engine.Callbacks.ExitTest do
       ]
 
       assert {2, nil} = Exit.callback(exit_events)
-
-      query = from(u in Engine.Utxo, where: u.pos in [^utxo.pos, ^utxo2.pos], select: u.state)
-
-      assert ["exited", "exited"] = Engine.Repo.all(query)
+      query = from(o in Output, where: o.position in [^pos1, ^pos2], select: o.state)
+      assert ["exited", "exited"] = Repo.all(query)
     end
   end
 end

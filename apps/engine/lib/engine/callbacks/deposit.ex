@@ -6,7 +6,7 @@ defmodule Engine.Callbacks.Deposit do
 
   When you deposit into the network, you send a 'deposit' transaction to the
   contract directly. Upon success, the contract generates a block just for that
-  single transaction(incrementing blknum by `1` vs `1000` in blocks submitted 
+  single transaction(incrementing blknum by `1` vs `1000` in blocks submitted
   by the childchain). Example:
 
     - blknum 1000, this is submitted by the childchain and contains non-deposit transactions
@@ -16,10 +16,11 @@ defmodule Engine.Callbacks.Deposit do
 
   import Ecto.Changeset
 
+  alias Engine.DB.Block
+  alias Engine.DB.Transaction
   alias Engine.Ethereum.RootChain.Event
   alias Engine.SyncedHeight
-  alias Engine.Transaction
-  alias ExPlasma.Transaction.Deposit, as: ExDeposit
+  alias ExPlasma.Builder
 
   @type address_binary :: <<_::160>>
 
@@ -46,24 +47,36 @@ defmodule Engine.Callbacks.Deposit do
   end
 
   defp build_deposit(multi, %{} = event) do
-    utxo = %ExPlasma.Utxo{
-      blknum: event.data["blknum"],
-      txindex: 0,
-      oindex: 0,
-      currency: event.data["token"],
-      owner: event.data["depositor"],
-      amount: event.data["amount"]
-    }
+    tx_bytes =
+      [tx_type: 1]
+      |> Builder.new()
+      |> Builder.add_output(
+        output_guard: event.data["depositor"],
+        token: event.data["token"],
+        amount: event.data["amount"]
+      )
+      |> ExPlasma.encode()
 
-    {:ok, deposit} = ExDeposit.new(utxo)
-    tx_bytes = ExPlasma.encode(deposit)
+    confirmed_output =
+      tx_bytes
+      |> Transaction.decode()
+      |> get_field(:outputs)
+      |> hd()
 
-    changeset =
-      %Transaction{}
-      |> Transaction.changeset(tx_bytes)
-      |> put_change(:block, %Engine.Block{number: event.data["blknum"]})
+    transaction =
+      tx_bytes
+      |> Transaction.decode()
+      |> put_change(:outputs, [%{confirmed_output | state: "confirmed"}])
 
-    Ecto.Multi.insert(multi, "deposit-blknum-#{event.data["blknum"]}", changeset)
+    insertion =
+      %Block{}
+      |> Block.changeset(%{number: event.data["blknum"], state: "confirmed"})
+      |> put_change(:transactions, [transaction])
+
+    Ecto.Multi.insert(multi, "deposit-blknum-#{event.data["blknum"]}", insertion,
+      on_conflict: :nothing,
+      conflict_target: :number
+    )
   end
 
   defp find_tip_eth_height(events) do

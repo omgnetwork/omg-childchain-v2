@@ -1,11 +1,13 @@
 defmodule Engine.Callbacks.Exit do
   @moduledoc """
   Contains the business logic around recognizing exits on the chain. When a
-  standard exit is detected, we need to ensure the childchain state of UTXOs is
+  standard exit is detected, we need to ensure the childchain state of Outputs is
   correct and mark them as `exiting` to prevent them from being used.
   """
 
-  import Ecto.Query, only: [from: 2]
+  import Ecto.Query
+
+  alias Engine.DB.Output
 
   @type event() :: %{
           call_data: %{
@@ -21,7 +23,7 @@ defmodule Engine.Callbacks.Exit do
         }
 
   @doc """
-  Gather all the UTXO positions in the list of exit events.
+  Gather all the Output positions in the list of exit events.
   """
   @spec callback(list()) :: tuple()
   def callback(events), do: do_callback([], events)
@@ -31,22 +33,14 @@ defmodule Engine.Callbacks.Exit do
 
   defp do_callback(positions, []), do: update_positions_as_exiting(positions)
 
-  # Grab's all the UTXO positions.
-  #
-  # TODO: Should we be checking that the owner matches with what
-  # we have recorded in DB?
-  #
-  # TODO: Should we be checking that the UTXO has not been spent yet?
+  # Grab's all the Output positions.
   defp mark_exiting_utxo(positions, %{} = event) do
     %{call_data: %{utxo_pos: position}} = event
     positions ++ [position]
   end
 
   defp update_positions_as_exiting(positions) do
-    query =
-      from(u in Engine.Utxo,
-        where: u.pos in ^positions and u.state not in ["spent", "exited"]
-      )
+    query = where(Output.usable(), [output], output.position in ^positions)
 
     Engine.Repo.update_all(query,
       set: [
