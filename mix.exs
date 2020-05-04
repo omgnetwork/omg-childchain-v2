@@ -3,6 +3,7 @@ defmodule Childchain.MixProject do
 
   def project do
     [
+      default_task: "childchain.start",
       apps_path: "apps",
       version: version(),
       start_permanent: Mix.env() == :prod,
@@ -79,7 +80,7 @@ defmodule Childchain.MixProject do
       ],
       ignore_warnings: "dialyzer.ignore-warnings",
       list_unused_filters: true,
-      plt_add_apps: [:keccakf1600, :ex_abi, :vmstats],
+      plt_add_apps: [:keccakf1600, :ex_abi, :vmstats, :mix],
       paths: paths
     ]
   end

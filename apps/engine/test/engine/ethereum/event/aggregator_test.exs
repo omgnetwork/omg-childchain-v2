@@ -16,7 +16,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
        opts: [url: "yolo"],
        name: event_fetcher_name,
        contracts: [],
-       ets_bucket: table,
+       ets: table,
        events: [
          [name: :deposit_created, enrich: false],
          [name: :exit_started, enrich: true],

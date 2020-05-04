@@ -1,4 +1,4 @@
-defmodule Engine.Ethereum.RootChainCoordinator.Service do
+defmodule Engine.Ethereum.Event.RootChainCoordinator.Service do
   @moduledoc """
   Represents a state of a service that is coordinated by `RootChainCoordinator.Core`
   """

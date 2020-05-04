@@ -10,10 +10,6 @@ defmodule Engine.Ethereum.Monitor do
 
   require Logger
 
-  def health_checkin() do
-    GenServer.cast(__MODULE__, :health_checkin)
-  end
-
   @type t :: %__MODULE__{child: Child.t()}
   defstruct child: nil
 

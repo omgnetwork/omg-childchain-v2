@@ -50,7 +50,7 @@ defmodule Engine.ReleaseTasks.Contract.External do
     child_block_interval
   end
 
-  def root_deployment_height(plasma_framework, tx_hash, opts) do
+  def contract_deployment_height(plasma_framework, tx_hash, opts) do
     {:ok, %{"contractAddress" => ^plasma_framework, "blockNumber" => height}} = Rpc.transaction_receipt(tx_hash, opts)
     Encoding.to_int(height)
   end

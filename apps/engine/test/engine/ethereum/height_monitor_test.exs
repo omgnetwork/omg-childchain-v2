@@ -4,6 +4,8 @@ defmodule Engine.Ethereum.HeightMonitorTest do
   alias __MODULE__.EthereumClientMock
   alias __MODULE__.EventBusListener
   alias Engine.Ethereum.HeightMonitor
+  alias Engine.Ethereum.HeightMonitor.AlarmManagement
+  alias ExPlasma.Encoding
 
   setup_all do
     {:ok, apps} = Application.ensure_all_started(:bus)
@@ -30,7 +32,8 @@ defmodule Engine.Ethereum.HeightMonitorTest do
         stall_threshold_ms: stall_threshold_ms,
         eth_module: EthereumClientMock,
         alarm_module: Alarm,
-        event_bus_module: Bus
+        event_bus_module: Bus,
+        opts: [url: "not used"]
       )
 
     test_pid = self()
@@ -73,11 +76,14 @@ defmodule Engine.Ethereum.HeightMonitorTest do
     _ = EthereumClientMock.set_faulty_response(false)
 
     # Toggle faulty response
-    _ = EthereumClientMock.set_faulty_response(true)
+    spawn(fn ->
+      Process.sleep(70)
+      _ = EthereumClientMock.set_faulty_response(true)
+    end)
 
     # Assert the alarm and event are present
     assert pull_client_alarm(
-             [ethereum_connection_error: %{node: :nonode@nohost, reporter: HeightMonitor}],
+             [ethereum_connection_error: %{node: :nonode@nohost, reporter: AlarmManagement}],
              100
            ) == :ok
   end
@@ -88,7 +94,7 @@ defmodule Engine.Ethereum.HeightMonitorTest do
 
     :ok =
       pull_client_alarm(
-        [ethereum_connection_error: %{node: :nonode@nohost, reporter: HeightMonitor}],
+        [ethereum_connection_error: %{node: :nonode@nohost, reporter: AlarmManagement}],
         100
       )
 
@@ -113,7 +119,7 @@ defmodule Engine.Ethereum.HeightMonitorTest do
 
     # Assert alarm now present
     assert pull_client_alarm(
-             [ethereum_stalled_sync: %{node: :nonode@nohost, reporter: HeightMonitor}],
+             [ethereum_stalled_sync: %{node: :nonode@nohost, reporter: AlarmManagement}],
              200
            ) == :ok
   end
@@ -122,7 +128,7 @@ defmodule Engine.Ethereum.HeightMonitorTest do
     # Initialize as unhealthy
     _ = EthereumClientMock.set_stalled(true)
 
-    :ok = pull_client_alarm([ethereum_stalled_sync: %{node: :nonode@nohost, reporter: HeightMonitor}], 300)
+    :ok = pull_client_alarm([ethereum_stalled_sync: %{node: :nonode@nohost, reporter: AlarmManagement}], 300)
 
     # Toggle unstalled height
     _ = EthereumClientMock.set_stalled(false)
@@ -154,11 +160,11 @@ defmodule Engine.Ethereum.HeightMonitorTest do
     """
     use GenServer
 
-    @initial_state %{height: 0, faulty: false, stalled: false}
+    @initial_state %{height: "0x0", faulty: false, stalled: false}
 
     def start_link(), do: GenServer.start_link(__MODULE__, [], name: __MODULE__)
 
-    def get_ethereum_height(_), do: GenServer.call(__MODULE__, :get_ethereum_height)
+    def eth_block_number(_), do: GenServer.call(__MODULE__, :eth_block_number)
 
     def set_faulty_response(faulty), do: GenServer.call(__MODULE__, {:set_faulty_response, faulty})
 
@@ -186,20 +192,20 @@ defmodule Engine.Ethereum.HeightMonitorTest do
 
     # Heights management
 
-    def handle_call(:get_ethereum_height, _, %{faulty: true} = state) do
+    def handle_call(:eth_block_number, _, %{faulty: true} = state) do
       {:reply, :error, state}
     end
 
-    def handle_call(:get_ethereum_height, _, %{long_response: milliseconds} = state) when is_number(milliseconds) do
+    def handle_call(:eth_block_number, _, %{long_response: milliseconds} = state) when is_number(milliseconds) do
       _ = Process.sleep(milliseconds)
       {:reply, {:ok, state.height}, %{state | height: next_height(state.height, state.stalled)}}
     end
 
-    def handle_call(:get_ethereum_height, _, state) do
+    def handle_call(:eth_block_number, _, state) do
       {:reply, {:ok, state.height}, %{state | height: next_height(state.height, state.stalled)}}
     end
 
-    defp next_height(height, false), do: height + 1
+    defp next_height(height, false), do: Encoding.to_hex(Encoding.to_int(height) + 1)
     defp next_height(height, true), do: height
   end
 

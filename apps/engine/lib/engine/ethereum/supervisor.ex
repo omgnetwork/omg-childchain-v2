@@ -19,8 +19,10 @@ defmodule Engine.Ethereum.Supervisor do
   def init(_args) do
     check_interval_ms = Configuration.ethereum_events_check_interval_ms()
     stall_threshold_ms = Configuration.ethereum_stalled_sync_threshold_ms()
+    url = Configuration.url()
 
     children = [
+      {Height, []},
       {HeightMonitor,
        [
          name: HeightMonitor,
@@ -28,9 +30,9 @@ defmodule Engine.Ethereum.Supervisor do
          stall_threshold_ms: stall_threshold_ms,
          eth_module: Rpc,
          alarm_module: Alarm,
-         event_bus_module: Bus
-       ]},
-      {Height, []}
+         event_bus_module: Bus,
+         opts: [url: url]
+       ]}
     ]
 
     opts = [strategy: :one_for_one]

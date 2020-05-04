@@ -13,8 +13,8 @@ defmodule Engine.Configuration do
     10
   end
 
-  def root_deployment_height() do
-    Application.fetch_env(@app, :root_deployment_height)
+  def contract_deployment_height() do
+    Application.fetch_env!(:engine, :contract_deployment_height)
   end
 
   def metrics_collection_interval() do
@@ -26,7 +26,7 @@ defmodule Engine.Configuration do
   end
 
   def ethereum_events_check_interval_ms() do
-    8000
+    Application.get_env(@app, :ethereum_events_check_interval_ms)
   end
 
   def ethereum_stalled_sync_threshold_ms() do
@@ -50,7 +50,7 @@ defmodule Engine.Configuration do
 
   @spec url() :: String.t()
   def url() do
-    Application.get_env(@app, :rpc_url)
+    Application.get_env(@app, :url)
   end
 
   @spec plasma_framework() :: String.t()

@@ -93,13 +93,13 @@ defmodule Status.Metric.Event do
   def name(:multiread), do: "db_multiread"
 
   @doc """
-    We're interested in the events queue length that particular  EthereumEventListener service process
+    We're interested in the events queue length that particular  Listener service process
     is handling.
   """
   def name(service, :events) when service in @services, do: events_name(service)
 
   @doc """
-    We're interested in the message queue length of particular  EthereumEventListener service process
+    We're interested in the message queue length of particular Listener service process
   """
   def name(service, :message_queue_len) when service in @services, do: message_queue_len_name(service)
 

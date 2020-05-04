@@ -16,6 +16,8 @@ defmodule Engine.Callbacks.Deposit do
 
   import Ecto.Changeset
 
+  alias Engine.Ethereum.RootChain.Event
+  alias Engine.SyncedHeight
   alias Engine.Transaction
   alias ExPlasma.Transaction.Deposit, as: ExDeposit
 
@@ -23,33 +25,34 @@ defmodule Engine.Callbacks.Deposit do
 
   @type tx_hash() :: <<_::256>>
 
-  @type event() :: %{
-          root_chain_tx_hash: tx_hash(),
-          log_index: non_neg_integer(),
-          blknum: non_neg_integer(),
-          currency: address_binary(),
-          owner: address_binary(),
-          amount: non_neg_integer()
-        }
-
   @doc """
   Inserts deposit events, recreating the transaction and forming the associated block,
   transaction, and UTXOs. This will wrap all the build deposits into one DB transaction.
   """
-  @spec callback(list()) :: {:ok, map()} | {:error, :atom, any(), any()}
-  def callback(events), do: do_callback(Ecto.Multi.new(), events)
+  @spec callback(list(Event.t()), atom()) :: {:ok, map()} | {:error, :atom, any(), any()}
+  def callback(events, listener),
+    do: do_callback(Ecto.Multi.new(), events, %{listener: "#{listener}", height: find_tip_eth_height(events)})
 
-  defp do_callback(multi, [event | tail]), do: multi |> build_deposit(event) |> do_callback(tail)
-  defp do_callback(multi, []), do: Engine.Repo.transaction(multi)
+  defp do_callback(multi, [event | tail], synced_height),
+    do: multi |> build_deposit(event) |> do_callback(tail, synced_height)
+
+  defp do_callback(multi, [], new_synced_height) do
+    multi
+    |> Ecto.Multi.run(:synced_height, fn repo, _changes ->
+      {:ok, repo.get(SyncedHeight, "#{new_synced_height.listener}") || %SyncedHeight{}}
+    end)
+    |> Ecto.Multi.insert_or_update(:update, &synced_height(&1, new_synced_height))
+    |> Engine.Repo.transaction()
+  end
 
   defp build_deposit(multi, %{} = event) do
     utxo = %ExPlasma.Utxo{
-      blknum: event.blknum,
+      blknum: event.data["blknum"],
       txindex: 0,
       oindex: 0,
-      currency: event.currency,
-      owner: event.owner,
-      amount: event.amount
+      currency: event.data["token"],
+      owner: event.data["depositor"],
+      amount: event.data["amount"]
     }
 
     {:ok, deposit} = ExDeposit.new(utxo)
@@ -58,8 +61,26 @@ defmodule Engine.Callbacks.Deposit do
     changeset =
       %Transaction{}
       |> Transaction.changeset(tx_bytes)
-      |> put_change(:block, %Engine.Block{number: event.blknum})
+      |> put_change(:block, %Engine.Block{number: event.data["blknum"]})
 
-    Ecto.Multi.insert(multi, "deposit-blknum-#{event.blknum}", changeset)
+    Ecto.Multi.insert(multi, "deposit-blknum-#{event.data["blknum"]}", changeset)
+  end
+
+  defp find_tip_eth_height(events) do
+    Enum.max_by(events, fn event -> event.eth_height end, fn -> 0 end).eth_height
+  end
+
+  defp synced_height(%{synced_height: %{height: nil} = synced_height}, new_synced_height) do
+    Ecto.Changeset.change(synced_height, new_synced_height)
+  end
+
+  defp synced_height(%{synced_height: synced_height}, new_synced_height) do
+    case new_synced_height.height > synced_height.height do
+      true ->
+        Ecto.Changeset.change(synced_height, new_synced_height)
+
+      _ ->
+        Ecto.Changeset.change(synced_height, %{})
+    end
   end
 end

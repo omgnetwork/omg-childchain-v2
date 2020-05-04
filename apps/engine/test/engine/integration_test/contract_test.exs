@@ -34,7 +34,7 @@ defmodule ContractTest do
           min_exit_period_seconds: 20,
           contract_semver: "1.0.4+a69c763",
           child_block_interval: 1000,
-          root_deployment_height: 67
+          contract_deployment_height: 67
         ]
       ]
 
