@@ -46,7 +46,7 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage.Write do
         {blknum, signature}
       end)
 
-    true = :ets.insert(state.ets_bucket, data)
+    true = :ets.insert(state.ets, data)
     :ok
   end
 end

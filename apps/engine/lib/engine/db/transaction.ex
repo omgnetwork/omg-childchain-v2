@@ -1,13 +1,13 @@
 defmodule Engine.DB.Transaction do
   @moduledoc """
   The Transaction record. This is one of the main entry points for the system, specifically accepting
-  transactions into the Childchain as `txbytes`. This expands those bytes into:
+  transactions into the Childchain as `tx_bytes`. This expands those bytes into:
 
-  * `txbytes` - A binary of a transaction encoded by RLP.
+  * `tx_bytes` - A binary of a transaction encoded by RLP.
   * `inputs`  - The outputs that the transaction is acting on, and changes state e.g marked as "spent"
   * `outputs` - The newly created outputs
 
-  More information is contained in the `txbytes`. However, to keep the Childchain _lean_, we extract
+  More information is contained in the `tx_bytes`. However, to keep the Childchain _lean_, we extract
   data onto the record as needed.
   """
 
@@ -19,7 +19,7 @@ defmodule Engine.DB.Transaction do
   alias Engine.DB.Output
   alias Engine.Repo
 
-  @type txbytes :: binary
+  @type tx_bytes :: binary
 
   @error_messages [
     cannot_be_zero: "can not be zero",
@@ -27,7 +27,7 @@ defmodule Engine.DB.Transaction do
   ]
 
   schema "transactions" do
-    field(:txbytes, :binary)
+    field(:tx_bytes, :binary)
     field(:tx_hash, :binary)
 
     belongs_to(:block, Block)
@@ -48,16 +48,16 @@ defmodule Engine.DB.Transaction do
   def find_by_tx_hash(tx_hash), do: from(t in __MODULE__, where: t.tx_hash == ^tx_hash)
 
   @doc """
-  The main action of the system. Takes txbytes and forms the appropriate
+  The main action of the system. Takes tx_bytes and forms the appropriate
   associations for the transaction and outputs and runs the changeset.
   """
-  @spec decode(txbytes) :: Ecto.Changeset.t()
-  def decode(txbytes) when is_binary(txbytes) do
+  @spec decode(tx_bytes) :: Ecto.Changeset.t()
+  def decode(tx_bytes) when is_binary(tx_bytes) do
     params =
-      txbytes
+      tx_bytes
       |> ExPlasma.decode()
       |> decode_params()
-      |> Map.put(:txbytes, txbytes)
+      |> Map.put(:tx_bytes, tx_bytes)
 
     changeset(%__MODULE__{}, params)
   end
@@ -74,7 +74,7 @@ defmodule Engine.DB.Transaction do
     struct
     |> Repo.preload(:inputs)
     |> Repo.preload(:outputs)
-    |> cast(params, [:txbytes])
+    |> cast(params, [:tx_bytes])
     |> cast_assoc(:inputs)
     |> cast_assoc(:outputs)
     |> build_tx_hash()
@@ -83,7 +83,7 @@ defmodule Engine.DB.Transaction do
   end
 
   defp build_tx_hash(changeset) do
-    tx_hash = changeset |> get_field(:txbytes) |> ExPlasma.hash()
+    tx_hash = changeset |> get_field(:tx_bytes) |> ExPlasma.hash()
     put_change(changeset, :tx_hash, tx_hash)
   end
 
@@ -93,7 +93,7 @@ defmodule Engine.DB.Transaction do
   defp validate_protocol(changeset) do
     results =
       changeset
-      |> get_field(:txbytes)
+      |> get_field(:tx_bytes)
       |> ExPlasma.decode()
       |> ExPlasma.Transaction.validate()
 

@@ -15,6 +15,10 @@ defmodule Engine.Ethereum.HeightMonitor do
   The alarm is cleared once the block height starts increasing again.
   """
   use GenServer
+
+  alias Engine.Ethereum.HeightMonitor.AlarmManagement
+  alias Engine.Ethereum.HeightMonitor.Core
+
   require Logger
 
   @type t() :: %__MODULE__{
@@ -27,7 +31,8 @@ defmodule Engine.Ethereum.HeightMonitor do
           ethereum_height: integer(),
           synced_at: DateTime.t(),
           connection_alarm_raised: boolean(),
-          stall_alarm_raised: boolean()
+          stall_alarm_raised: boolean(),
+          opts: keyword()
         }
 
   defstruct check_interval_ms: 10_000,
@@ -39,7 +44,8 @@ defmodule Engine.Ethereum.HeightMonitor do
             ethereum_height: 0,
             synced_at: nil,
             connection_alarm_raised: false,
-            stall_alarm_raised: false
+            stall_alarm_raised: false,
+            opts: []
 
   #
   # GenServer APIs
@@ -55,11 +61,11 @@ defmodule Engine.Ethereum.HeightMonitor do
   #
 
   def init(opts) do
-    _ = Logger.info("Starting Ethereum height monitor.")
+    _ = Logger.info("Starting #{__MODULE__} service.")
 
     alarm_handler = Keyword.get(opts, :alarm_handler, __MODULE__.AlarmHandler)
 
-    :ok = subscribe_to_alarms(alarm_handler, __MODULE__)
+    :ok = AlarmManagement.subscribe_to_alarms(alarm_handler, __MODULE__)
 
     state = %__MODULE__{
       check_interval_ms: Keyword.fetch!(opts, :check_interval_ms),
@@ -67,31 +73,19 @@ defmodule Engine.Ethereum.HeightMonitor do
       synced_at: DateTime.utc_now(),
       eth_module: Keyword.fetch!(opts, :eth_module),
       alarm_module: Keyword.fetch!(opts, :alarm_module),
-      event_bus_module: Keyword.fetch!(opts, :event_bus_module)
+      event_bus_module: Keyword.fetch!(opts, :event_bus_module),
+      opts: Keyword.fetch!(opts, :opts)
     }
 
-    {:ok, state, {:continue, :first_check}}
+    {:ok, Core.force_send_height(state), {:continue, :check_new_height}}
   end
 
-  # We want the first check immediately upon start, but we cannot do it while the monitor
-  # is not fully initialized, so we need to trigger it in a :continue instruction.
-  def handle_continue(:first_check, state) do
-    _ = send(self(), :check_new_height)
-    {:noreply, state}
+  def handle_continue(:check_new_height, state) do
+    check_new_height(state)
   end
 
   def handle_info(:check_new_height, state) do
-    height = fetch_height(state.eth_module)
-    stalled? = stalled?(height, state.ethereum_height, state.synced_at, state.stall_threshold_ms)
-
-    :ok = broadcast_on_new_height(state.event_bus_module, height)
-    _ = connection_alarm(state.alarm_module, state.connection_alarm_raised, height)
-    _ = stall_alarm(state.alarm_module, state.stall_alarm_raised, stalled?)
-
-    state = update_height(state, height)
-
-    {:ok, tref} = :timer.send_after(state.check_interval_ms, :check_new_height)
-    {:noreply, %{state | tref: tref}}
+    check_new_height(state)
   end
 
   #
@@ -116,93 +110,16 @@ defmodule Engine.Ethereum.HeightMonitor do
     {:noreply, %{state | stall_alarm_raised: false}}
   end
 
-  #
-  # Private functions
-  #
+  defp check_new_height(state) do
+    height = Core.fetch_height(state.eth_module, state.opts)
+    stalled? = Core.stalled?(height, state.ethereum_height, state.synced_at, state.stall_threshold_ms)
+    :ok = Core.broadcast_on_new_height(state.event_bus_module, height)
 
-  @spec update_height(t(), non_neg_integer() | :error) :: t()
-  defp update_height(state, :error), do: state
+    _ = AlarmManagement.connection_alarm(state.alarm_module, state.connection_alarm_raised, height)
+    _ = AlarmManagement.stall_alarm(state.alarm_module, state.stall_alarm_raised, stalled?)
 
-  defp update_height(state, height) do
-    case height > state.ethereum_height do
-      true -> %{state | ethereum_height: height, synced_at: DateTime.utc_now()}
-      false -> state
-    end
+    state = Core.update_height(state, height)
+    {:ok, tref} = :timer.send_after(state.check_interval_ms, :check_new_height)
+    {:noreply, %{state | tref: tref}}
   end
-
-  @spec stalled?(non_neg_integer() | :error, non_neg_integer(), DateTime.t(), non_neg_integer()) :: boolean()
-  defp stalled?(height, previous_height, synced_at, stall_threshold_ms) do
-    case height do
-      height when is_integer(height) and height > previous_height ->
-        false
-
-      _ ->
-        DateTime.diff(DateTime.utc_now(), synced_at, :millisecond) > stall_threshold_ms
-    end
-  end
-
-  @spec fetch_height(module()) :: non_neg_integer() | :error
-  defp fetch_height(eth_module) do
-    case eth_module.get_ethereum_height(url: "http://localhost:1111") do
-      {:ok, height} ->
-        height
-
-      error ->
-        _ = Logger.warn("Error retrieving Ethereum height: #{inspect(error)}")
-        :error
-    end
-  end
-
-  @spec broadcast_on_new_height(module(), non_neg_integer() | :error) :: :ok | {:error, term()}
-  defp broadcast_on_new_height(_event_bus_module, :error), do: :ok
-
-  # we need to publish every height we fetched so that we can re-examine blocks in case of re-orgs
-  # clients subscribed to this topic need to be aware of that and if a block number repeats,
-  # it needs to re-write logs, for example
-  defp broadcast_on_new_height(event_bus_module, height) do
-    event = Bus.Event.new({:root_chain, "ethereum_new_height"}, :ethereum_new_height, height)
-    apply(event_bus_module, :broadcast, [event])
-  end
-
-  #
-  # Alarms management
-  #
-
-  @spec subscribe_to_alarms(module(), module()) :: :gen_event.add_handler_ret()
-  defp subscribe_to_alarms(handler, consumer) do
-    case Enum.member?(:gen_event.which_handlers(:alarm_handler), handler) do
-      true -> :ok
-      _ -> :alarm_handler.add_alarm_handler(handler, consumer: consumer)
-    end
-  end
-
-  # Raise or clear the :ethereum_client_connnection alarm
-  @spec connection_alarm(module(), boolean(), non_neg_integer() | :error) :: :ok | :duplicate
-  defp connection_alarm(alarm_module, connection_alarm_raised, raise_alarm)
-
-  defp connection_alarm(alarm_module, false, :error) do
-    alarm_module.set(Module.safe_concat(alarm_module, Types).ethereum_connection_error(__MODULE__))
-  end
-
-  defp connection_alarm(alarm_module, true, height) when is_integer(height) do
-    alarm_module.clear(Module.safe_concat(alarm_module, Types).ethereum_connection_error(__MODULE__))
-  end
-
-  defp connection_alarm(_, _, _) do
-    :ok
-  end
-
-  # Raise or clear the :ethereum_stalled_sync alarm
-  @spec stall_alarm(module(), boolean(), boolean()) :: :ok | :duplicate
-  defp stall_alarm(alarm_module, stall_alarm_raised, raise_alarm)
-
-  defp stall_alarm(alarm_module, false, true) do
-    alarm_module.set(Module.safe_concat(alarm_module, Types).ethereum_stalled_sync(__MODULE__))
-  end
-
-  defp stall_alarm(alarm_module, true, false) do
-    alarm_module.clear(Module.safe_concat(alarm_module, Types).ethereum_stalled_sync(__MODULE__))
-  end
-
-  defp stall_alarm(_alarm_module, _, _), do: :ok
 end

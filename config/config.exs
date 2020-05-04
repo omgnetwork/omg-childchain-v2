@@ -72,4 +72,8 @@ config :spandex_datadog,
   sync_threshold: 100,
   http: HTTPoison
 
+config :os_mon,
+  disk_almost_full_threshold: 1,
+  system_memory_high_watermark: 1
+
 import_config "#{Mix.env()}.exs"

@@ -21,7 +21,7 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
        [true]}
     ]
 
-    :ets.select_delete(state.ets_bucket, match_spec)
+    :ets.select_delete(state.ets, match_spec)
   end
 
   # allow ethereum event listeners to retrieve logs from ETS in bulk
@@ -46,8 +46,8 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
        ], [:"$1"]}
     ]
 
-    events = state.ets_bucket |> :ets.select(event_match_spec) |> List.flatten()
-    blknum_list = :ets.select(state.ets_bucket, block_range)
+    events = state.ets |> :ets.select(event_match_spec) |> List.flatten()
+    blknum_list = :ets.select(state.ets, block_range)
 
     # we may not have all the block information the ethereum event listener wants
     # so we check for that and find all logs for missing blocks

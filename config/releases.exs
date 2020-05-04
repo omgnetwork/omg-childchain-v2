@@ -1,4 +1,5 @@
 import Config
+rpc_url = System.get_env("ETHEREUM_RPC_URL") || "http://localhost:8545"
 
 to_boolean = fn
   "true" -> true
@@ -7,6 +8,7 @@ to_boolean = fn
 end
 
 config :engine,
+  url: rpc_url,
   network: System.get_env("ETHEREUM_NETWORK"),
   tx_hash_contract: System.get_env("TX_HASH_CONTRACT"),
   authority_address: System.get_env("AUTHORITY_ADDRESS"),
@@ -23,7 +25,7 @@ config :engine, Engine.Repo,
   backoff_type: :stop
 
 config :ethereumex,
-  url: System.get_env("ETHEREUM_RPC_URL") || "http://localhost:8545",
+  url: rpc_url,
   http_options: [recv_timeout: 20_000]
 
 config :sentry,

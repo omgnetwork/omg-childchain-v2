@@ -23,7 +23,7 @@ defmodule EventTest do
         {Aggregator,
          opts: [url: url],
          contracts: contracts,
-         ets_bucket: :events_bucket_test,
+         ets: :events_bucket_test,
          events: [
            [name: :deposit_created, enrich: false],
            [name: :in_flight_exit_started, enrich: true],

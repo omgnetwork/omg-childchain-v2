@@ -16,9 +16,9 @@ defmodule Engine.DB.TransactionTest do
   end
 
   describe "decode/1" do
-    test "decodes txbytes and validates" do
+    test "decodes tx_bytes and validates" do
       params = build(:deposit_transaction, amount: 0)
-      changeset = Transaction.decode(params.txbytes)
+      changeset = Transaction.decode(params.tx_bytes)
 
       refute changeset.valid?
       assert {"can not be zero", []} = changeset.errors[:amount]
@@ -36,7 +36,7 @@ defmodule Engine.DB.TransactionTest do
 
     test "validates inputs exist" do
       transaction = build(:payment_v1_transaction)
-      changeset = Transaction.decode(transaction.txbytes)
+      changeset = Transaction.decode(transaction.tx_bytes)
 
       refute changeset.valid?
       assert {"input 1000000000 are missing or spent", _} = changeset.errors[:inputs]
@@ -50,7 +50,7 @@ defmodule Engine.DB.TransactionTest do
         |> insert()
 
       transaction = build(:payment_v1_transaction, blknum: number)
-      changeset = Transaction.decode(transaction.txbytes)
+      changeset = Transaction.decode(transaction.tx_bytes)
 
       refute changeset.valid?
       assert {"input 1000000000 are missing or spent", _} = changeset.errors[:inputs]
@@ -59,16 +59,16 @@ defmodule Engine.DB.TransactionTest do
     test "validates inputs are usable" do
       _ = insert(:deposit_transaction)
       transaction = build(:payment_v1_transaction)
-      changeset = Transaction.decode(transaction.txbytes)
+      changeset = Transaction.decode(transaction.tx_bytes)
 
       assert changeset.valid?
     end
 
     test "references existing inputs" do
       %Transaction{outputs: [output]} = insert(:deposit_transaction)
-      %Transaction{txbytes: txbytes} = build(:payment_v1_transaction)
+      %Transaction{tx_bytes: tx_bytes} = build(:payment_v1_transaction)
 
-      changeset = Transaction.decode(txbytes)
+      changeset = Transaction.decode(tx_bytes)
       input = changeset |> get_field(:inputs) |> hd()
 
       assert changeset.valid?
@@ -78,8 +78,8 @@ defmodule Engine.DB.TransactionTest do
     test "builds the tx_hash" do
       _ = insert(:deposit_transaction)
       transaction = build(:payment_v1_transaction)
-      changeset = Transaction.decode(transaction.txbytes)
-      tx_hash = ExPlasma.hash(transaction.txbytes)
+      changeset = Transaction.decode(transaction.tx_bytes)
+      tx_hash = ExPlasma.hash(transaction.tx_bytes)
 
       assert changeset.valid?
       assert tx_hash == get_field(changeset, :tx_hash)

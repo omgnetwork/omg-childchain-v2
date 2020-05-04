@@ -1,12 +1,12 @@
-defmodule Engine.Ethereum.RootChainCoordinator do
+defmodule Engine.Ethereum.Event.RootChainCoordinator do
   @moduledoc """
-  Synchronizes services on root chain height, see `OMG.RootChainCoordinator.Core`
+  Synchronizes services on root chain height, see `RootChainCoordinator.Core`
   """
   use GenServer
 
+  alias Engine.Ethereum.Event.RootChainCoordinator.Core
+  alias Engine.Ethereum.Event.RootChainCoordinator.SyncGuide
   alias Engine.Ethereum.Height
-  alias Engine.Ethereum.RootChainCoordinator.Core
-  alias Engine.Ethereum.RootChainCoordinator.SyncGuide
 
   require Logger
 
@@ -29,14 +29,6 @@ defmodule Engine.Ethereum.RootChainCoordinator do
   @spec get_sync_info() :: SyncGuide.t() | :nosync
   def get_sync_info() do
     GenServer.call(__MODULE__, :get_sync_info)
-  end
-
-  @doc """
-  Gets all the current synced height for all the services checked in
-  """
-  @spec get_ethereum_heights() :: {:ok, Core.ethereum_heights_result_t()}
-  def get_ethereum_heights() do
-    GenServer.call(__MODULE__, :get_ethereum_heights)
   end
 
   @spec start_link(Core.configs_services()) :: GenServer.on_start()
@@ -95,14 +87,6 @@ defmodule Engine.Ethereum.RootChainCoordinator do
   end
 
   defp request_sync(services) do
-    Enum.each(services, fn service -> safe_send(service, :sync) end)
-  end
-
-  # wtf is this
-  defp safe_send(registered_name_or_pid, msg) do
-    send(registered_name_or_pid, msg)
-  rescue
-    ArgumentError ->
-      msg
+    Enum.each(services, fn service -> GenServer.cast(service, :sync) end)
   end
 end

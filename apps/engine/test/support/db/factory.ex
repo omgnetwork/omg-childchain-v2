@@ -26,7 +26,7 @@ defmodule Engine.DB.Factory do
       |> Position.pos()
       |> Position.to_map()
 
-    txbytes =
+    tx_bytes =
       [tx_type: 1]
       |> Builder.new()
       |> Builder.add_output(output_guard: output_guard, token: <<0::160>>, amount: amount)
@@ -38,8 +38,8 @@ defmodule Engine.DB.Factory do
       |> set_state("confirmed")
 
     %Transaction{
-      txbytes: txbytes,
-      tx_hash: ExPlasma.hash(txbytes),
+      tx_bytes: tx_bytes,
+      tx_hash: ExPlasma.hash(tx_bytes),
       outputs: [output],
       block: %Block{state: "confirmed", number: blknum}
     }

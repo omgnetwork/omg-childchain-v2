@@ -43,7 +43,7 @@ defmodule Engine.ReleaseTasks.ContractTest do
           min_exit_period_seconds: 20,
           contract_semver: "1.0.4+a69c763",
           child_block_interval: 20,
-          root_deployment_height: 1
+          contract_deployment_height: 1
         ]
       ]
 

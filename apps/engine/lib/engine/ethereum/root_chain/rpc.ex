@@ -40,8 +40,8 @@ defmodule Engine.Ethereum.RootChain.Rpc do
     Ethereumex.HttpClient.eth_call(%{to: contract, data: data}, "latest", opts)
   end
 
-  @spec get_ethereum_height(keyword()) :: {:ok, map()} | {:error, map() | binary() | atom()}
-  def get_ethereum_height(opts) do
+  @spec eth_block_number(keyword()) :: {:ok, map()} | {:error, map() | binary() | atom()}
+  def eth_block_number(opts) do
     Ethereumex.HttpClient.eth_block_number(opts)
   end
 
