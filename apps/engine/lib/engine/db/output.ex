@@ -58,7 +58,8 @@ defmodule Engine.DB.Output do
         changeset
 
       _output_data ->
-        put_change(changeset, :output_data, ExPlasma.Output.encode(params))
+        output = struct(%ExPlasma.Output{}, params)
+        put_change(changeset, :output_data, ExPlasma.Output.encode(output))
     end
   end
 
@@ -68,7 +69,8 @@ defmodule Engine.DB.Output do
         changeset
 
       _output_id ->
-        put_change(changeset, :output_id, ExPlasma.Output.encode(params, as: :input))
+        output = struct(%ExPlasma.Output{}, params)
+        put_change(changeset, :output_id, ExPlasma.Output.encode(output, as: :input))
     end
   end
 

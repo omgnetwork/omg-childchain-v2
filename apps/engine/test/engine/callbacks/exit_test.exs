@@ -13,7 +13,6 @@ defmodule Engine.Callbacks.ExitTest do
     :ok = Sandbox.checkout(Repo)
   end
 
-  @tag :focus
   describe "callback/1" do
     test "marks utxos that are exiting" do
       %{outputs: [%{position: position}]} = insert(:deposit_transaction)

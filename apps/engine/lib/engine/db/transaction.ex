@@ -66,6 +66,10 @@ defmodule Engine.DB.Transaction do
     %{txn | inputs: Enum.map(inputs, &Map.from_struct/1), outputs: Enum.map(outputs, &Map.from_struct/1)}
   end
 
+  def changeset(struct, %ExPlasma.Transaction{} = txn) do
+    changeset(struct, Map.from_struct(txn))
+  end
+
   def changeset(struct, params) do
     struct
     |> Repo.preload(:inputs)
