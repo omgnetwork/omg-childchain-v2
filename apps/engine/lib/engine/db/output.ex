@@ -41,6 +41,15 @@ defmodule Engine.DB.Output do
     |> encode_output_id(params)
   end
 
+  @doc """
+  Query to return all usable outputs.
+  """
+  def usable() do
+    from(o in __MODULE__,
+      where: is_nil(o.spending_transaction_id) and o.state == "confirmed"
+    )
+  end
+
   # Extract the position from the output id and store it on the table.
   # Used by the Transaction to find outputs quickly.
   defp extract_position(changeset, %{output_id: id}) do
@@ -72,14 +81,5 @@ defmodule Engine.DB.Output do
         output = struct(%ExPlasma.Output{}, params)
         put_change(changeset, :output_id, ExPlasma.Output.encode(output, as: :input))
     end
-  end
-
-  @doc """
-  Query to return all usable outputs.
-  """
-  def usable() do
-    from(o in __MODULE__,
-      where: is_nil(o.spending_transaction_id) and o.state == "confirmed"
-    )
   end
 end

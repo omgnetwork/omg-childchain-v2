@@ -23,7 +23,7 @@ defmodule Engine.DB.BlockTest do
 
       transactions = Engine.Repo.all(from(t in Transaction, where: t.block_id == ^block.id))
 
-      assert 1 = length(transactions)
+      assert length(transactions) == 1
     end
   end
 end

@@ -62,10 +62,6 @@ defmodule Engine.DB.Transaction do
     changeset(%__MODULE__{}, params)
   end
 
-  defp decode_params(%{inputs: inputs, outputs: outputs} = txn) do
-    %{txn | inputs: Enum.map(inputs, &Map.from_struct/1), outputs: Enum.map(outputs, &Map.from_struct/1)}
-  end
-
   def changeset(struct, %ExPlasma.Transaction{} = txn) do
     changeset(struct, Map.from_struct(txn))
   end
@@ -85,6 +81,10 @@ defmodule Engine.DB.Transaction do
   defp build_tx_hash(changeset) do
     tx_hash = changeset |> get_field(:tx_bytes) |> ExPlasma.hash()
     put_change(changeset, :tx_hash, tx_hash)
+  end
+
+  defp decode_params(%{inputs: inputs, outputs: outputs} = txn) do
+    %{txn | inputs: Enum.map(inputs, &Map.from_struct/1), outputs: Enum.map(outputs, &Map.from_struct/1)}
   end
 
   # Validate the transaction bytes with the generic transaction format protocol.
@@ -127,8 +127,6 @@ defmodule Engine.DB.Transaction do
   defp get_input_positions(changeset) do
     changeset |> get_field(:inputs) |> Enum.map(&Map.get(&1, :position))
   end
-
-  defp get_input_position(%{position: position}), do: position
 
   # Return all confirmed outputs that have the given positions.
   defp usable_outputs_for(positions) do
