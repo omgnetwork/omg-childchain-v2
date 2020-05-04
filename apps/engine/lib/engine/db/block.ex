@@ -4,7 +4,7 @@ defmodule Engine.DB.Block do
   """
 
   use Ecto.Schema
-
+  import Ecto.Changeset
   alias Engine.DB.Transaction
 
   schema "blocks" do
@@ -15,6 +15,13 @@ defmodule Engine.DB.Block do
     has_many(:transactions, Transaction)
 
     timestamps(type: :utc_datetime)
+  end
+
+  def changeset(struct, params) do
+    struct
+    |> cast(params, [:hash, :number, :state])
+    |> cast_assoc(:transactions)
+    |> unique_constraint(:number)
   end
 
   @doc """

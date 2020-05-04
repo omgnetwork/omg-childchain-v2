@@ -18,6 +18,7 @@ defmodule Engine.Callbacks.Deposit do
 
   alias Engine.DB.Block
   alias Engine.DB.Transaction
+  alias ExPlasma.Builder
 
   @type address_binary :: <<_::160>>
 
@@ -43,24 +44,31 @@ defmodule Engine.Callbacks.Deposit do
   defp do_callback(multi, []), do: Engine.Repo.transaction(multi)
 
   defp build_deposit(multi, %{} = event) do
-    data = %{output_guard: event.owner, token: event.currency, amount: event.amount}
-    id = %{blknum: event.blknum, txindex: 0, oindex: 0}
-    output = %ExPlasma.Output{output_id: id, output_type: 1, output_data: data}
-    transaction = %ExPlasma.Transaction{tx_type: 1, outputs: [output]}
-    txbytes = ExPlasma.encode(transaction)
+    txbytes =
+      [tx_type: 1]
+      |> Builder.new()
+      |> Builder.add_output(output_guard: event.owner, token: event.currency, amount: event.amount)
+      |> ExPlasma.encode()
 
-    confirming_output =
+    confirmed_output =
       txbytes
       |> Transaction.decode()
       |> get_field(:outputs)
       |> hd()
 
-    insertion =
+    transaction =
       txbytes
       |> Transaction.decode()
-      |> put_change(:outputs, [%{confirming_output | state: "confirmed"}])
-      |> put_change(:block, %Block{number: event.blknum, state: "confirmed"})
+      |> put_change(:outputs, [%{confirmed_output | state: "confirmed"}])
 
-    Ecto.Multi.insert(multi, "deposit-blknum-#{event.blknum}", insertion)
+    insertion =
+      %Block{}
+      |> Block.changeset(%{number: event.blknum, state: "confirmed"})
+      |> put_change(:transactions, [transaction])
+
+    Ecto.Multi.insert(multi, "deposit-blknum-#{event.blknum}", insertion,
+      on_conflict: :nothing,
+      conflict_target: :number
+    )
   end
 end
