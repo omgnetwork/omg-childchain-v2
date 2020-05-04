@@ -16,10 +16,10 @@ defmodule Engine.Callbacks.Deposit do
 
   import Ecto.Changeset
 
-  alias Engine.Ethereum.RootChain.Event
-  alias Engine.SyncedHeight
   alias Engine.DB.Block
   alias Engine.DB.Transaction
+  alias Engine.Ethereum.RootChain.Event
+  alias Engine.SyncedHeight
   alias ExPlasma.Builder
 
   @type address_binary :: <<_::160>>
@@ -50,7 +50,11 @@ defmodule Engine.Callbacks.Deposit do
     tx_bytes =
       [tx_type: 1]
       |> Builder.new()
-      |> Builder.add_output(output_guard: event.data["depositor"], token: event.data["token"], amount: event.data["amount"])
+      |> Builder.add_output(
+        output_guard: event.data["depositor"],
+        token: event.data["token"],
+        amount: event.data["amount"]
+      )
       |> ExPlasma.encode()
 
     confirmed_output =

@@ -3,10 +3,10 @@ defmodule Engine.Repo.Migrations.CreateTransactions do
 
   def change do
     create table(:transactions) do
-      add :tx_bytes, :binary
-      add :tx_hash, :binary
+      add(:tx_bytes, :binary)
+      add(:tx_hash, :binary)
 
-      add :block_id, references(:blocks)
+      add(:block_id, references(:blocks))
       timestamps(type: :utc_datetime)
     end
 

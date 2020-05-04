@@ -73,7 +73,9 @@ defmodule Engine.Callbacks.DepositTest do
       }
     ]
 
-    assert {:ok, %{"deposit-blknum-6" => block6, "deposit-blknum-5" => block5}} = Deposit.callback(deposit_events, :depositor)
+    assert {:ok, %{"deposit-blknum-6" => block6, "deposit-blknum-5" => block5}} =
+             Deposit.callback(deposit_events, :depositor)
+
     assert %Block{number: 6, state: "confirmed"} = block6
     assert %Block{number: 5, state: "confirmed"} = block5
   end
@@ -148,8 +150,8 @@ defmodule Engine.Callbacks.DepositTest do
         event_signature: "DepositCreated(address,uint256,address,uint256)",
         log_index: 1,
         root_chain_tx_hash:
-          <<84, 133, 148, 16, 138, 47, 89, 9, 12, 99, 34, 212, 19, 11, 55, 155, 143, 238, 249, 66, 56, 169, 15, 72,
-            105, 33, 184, 110, 48, 23, 144, 38>>
+          <<84, 133, 148, 16, 138, 47, 89, 9, 12, 99, 34, 212, 19, 11, 55, 155, 143, 238, 249, 66, 56, 169, 15, 72, 105,
+            33, 184, 110, 48, 23, 144, 38>>
       },
       %{
         data: %{
@@ -162,8 +164,8 @@ defmodule Engine.Callbacks.DepositTest do
         event_signature: "DepositCreated(address,uint256,address,uint256)",
         log_index: 1,
         root_chain_tx_hash:
-          <<84, 133, 148, 16, 138, 47, 89, 9, 12, 99, 34, 212, 19, 11, 55, 155, 143, 238, 249, 66, 56, 169, 15, 72,
-            105, 33, 184, 110, 48, 23, 144, 38>>
+          <<84, 133, 148, 16, 138, 47, 89, 9, 12, 99, 34, 212, 19, 11, 55, 155, 143, 238, 249, 66, 56, 169, 15, 72, 105,
+            33, 184, 110, 48, 23, 144, 38>>
       }
     ]
 
@@ -179,8 +181,8 @@ defmodule Engine.Callbacks.DepositTest do
         event_signature: "DepositCreated(address,uint256,address,uint256)",
         log_index: 1,
         root_chain_tx_hash:
-          <<84, 133, 148, 16, 138, 47, 89, 9, 12, 99, 34, 212, 19, 11, 55, 155, 143, 238, 249, 66, 56, 169, 15, 72,
-            105, 33, 184, 110, 48, 23, 144, 38>>
+          <<84, 133, 148, 16, 138, 47, 89, 9, 12, 99, 34, 212, 19, 11, 55, 155, 143, 238, 249, 66, 56, 169, 15, 72, 105,
+            33, 184, 110, 48, 23, 144, 38>>
       },
       %{
         data: %{
@@ -193,8 +195,8 @@ defmodule Engine.Callbacks.DepositTest do
         event_signature: "DepositCreated(address,uint256,address,uint256)",
         log_index: 1,
         root_chain_tx_hash:
-          <<84, 133, 148, 16, 138, 47, 89, 9, 12, 99, 34, 212, 19, 11, 55, 155, 143, 238, 249, 66, 56, 169, 15, 72,
-            105, 33, 184, 110, 48, 23, 144, 38>>
+          <<84, 133, 148, 16, 138, 47, 89, 9, 12, 99, 34, 212, 19, 11, 55, 155, 143, 238, 249, 66, 56, 169, 15, 72, 105,
+            33, 184, 110, 48, 23, 144, 38>>
       },
       %{
         data: %{
@@ -207,8 +209,8 @@ defmodule Engine.Callbacks.DepositTest do
         event_signature: "DepositCreated(address,uint256,address,uint256)",
         log_index: 1,
         root_chain_tx_hash:
-          <<84, 133, 148, 16, 138, 47, 89, 9, 12, 99, 34, 212, 19, 11, 55, 155, 143, 238, 249, 66, 56, 169, 15, 72,
-            105, 33, 184, 110, 48, 23, 144, 38>>
+          <<84, 133, 148, 16, 138, 47, 89, 9, 12, 99, 34, 212, 19, 11, 55, 155, 143, 238, 249, 66, 56, 169, 15, 72, 105,
+            33, 184, 110, 48, 23, 144, 38>>
       }
     ]
 
@@ -224,8 +226,8 @@ defmodule Engine.Callbacks.DepositTest do
         event_signature: "DepositCreated(address,uint256,address,uint256)",
         log_index: 1,
         root_chain_tx_hash:
-          <<84, 133, 148, 16, 138, 47, 89, 9, 12, 99, 34, 212, 19, 11, 55, 155, 143, 238, 249, 66, 56, 169, 15, 72,
-            105, 33, 184, 110, 48, 23, 144, 38>>
+          <<84, 133, 148, 16, 138, 47, 89, 9, 12, 99, 34, 212, 19, 11, 55, 155, 143, 238, 249, 66, 56, 169, 15, 72, 105,
+            33, 184, 110, 48, 23, 144, 38>>
       },
       %{
         data: %{
@@ -238,12 +240,13 @@ defmodule Engine.Callbacks.DepositTest do
         event_signature: "DepositCreated(address,uint256,address,uint256)",
         log_index: 1,
         root_chain_tx_hash:
-          <<84, 133, 148, 16, 138, 47, 89, 9, 12, 99, 34, 212, 19, 11, 55, 155, 143, 238, 249, 66, 56, 169, 15, 72,
-            105, 33, 184, 110, 48, 23, 144, 38>>
+          <<84, 133, 148, 16, 138, 47, 89, 9, 12, 99, 34, 212, 19, 11, 55, 155, 143, 238, 249, 66, 56, 169, 15, 72, 105,
+            33, 184, 110, 48, 23, 144, 38>>
       }
     ]
 
-    assert {:ok, %{"deposit-blknum-3" => _, "deposit-blknum-4" => _}} = Deposit.callback(deposit_events_listener1, :depositor)
+    assert {:ok, %{"deposit-blknum-3" => _, "deposit-blknum-4" => _}} =
+             Deposit.callback(deposit_events_listener1, :depositor)
 
     assert %Engine.SyncedHeight{height: 405, listener: "depositor"} =
              Engine.Repo.get(Engine.SyncedHeight, "#{:depositor}")
