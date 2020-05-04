@@ -125,7 +125,7 @@ defmodule Engine.DB.Transaction do
   end
 
   defp get_input_positions(changeset) do
-    changeset |> get_field(:inputs) |> Enum.map(&get_input_position/1)
+    changeset |> get_field(:inputs) |> Enum.map(&Map.get(&1, :position))
   end
 
   defp get_input_position(%{position: position}), do: position
