@@ -13,7 +13,7 @@ defmodule Engine.Ethereum.Event.Aggregator do
   @timeout 55_000
   @type result() :: {:ok, list(map())} | {:error, :check_range}
   @type t() :: %__MODULE__{
-          delete_events_threshold_height_blknum: pos_integer(),
+          number_of_events_kept_in_ets: pos_integer(),
           ets: atom(),
           event_signatures: list(binary()),
           keccak_event_signatures: list(binary()),
@@ -25,7 +25,7 @@ defmodule Engine.Ethereum.Event.Aggregator do
         }
 
   defstruct [
-    :delete_events_threshold_height_blknum,
+    :number_of_events_kept_in_ets,
     :ets,
     :event_signatures,
     :keccak_event_signatures,
@@ -63,6 +63,10 @@ defmodule Engine.Ethereum.Event.Aggregator do
 
   def init(opts) do
     contracts = opts |> Keyword.fetch!(:contracts) |> Enum.map(&Encoding.to_binary(&1))
+    ets = Keyword.fetch!(opts, :ets)
+    event_interface = Keyword.get(opts, :event_interface, Event)
+    opts = Keyword.fetch!(opts, :opts)
+
     # events = [[signature: "ExitStarted(address,uint160)", name: :exit_started, enrich: true],..]
     events =
       opts
@@ -85,14 +89,10 @@ defmodule Engine.Ethereum.Event.Aggregator do
         Map.put(acc, Event.event_topic_for_signature(event_signature), event_signature)
       end)
 
-    ets = Keyword.fetch!(opts, :ets)
-    event_interface = Keyword.get(opts, :event_interface, Event)
-    opts = Keyword.fetch!(opts, :opts)
-
     {:ok,
      %__MODULE__{
        # 200 blocks of events will be kept in memory
-       delete_events_threshold_height_blknum: 200,
+       number_of_events_kept_in_ets: 200,
        ets: ets,
        event_signatures: events_signatures,
        keccak_event_signatures: keccak_event_signatures,

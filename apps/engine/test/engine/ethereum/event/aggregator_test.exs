@@ -97,7 +97,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
   describe "delete_old_logs/2" do
     # we start the test with a completely empty ETS table, meaning to events were retrieved yet
     # so the first call from a ETH event listener would actually retrieve values from Infura
-    test "that :delete_events_threshold_height_blknum is respected and that events get deleted from ETS", %{
+    test "that :number_of_events_kept_in_ets is respected and that events get deleted from ETS", %{
       event_fetcher_name: event_fetcher_name,
       table: table,
       test: test_name
@@ -123,7 +123,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       from_block = 1
       to_block = 3
       :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :event_interface, test_name) end)
-      :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :delete_events_threshold_height_blknum, 1) end)
+      :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :number_of_events_kept_in_ets, 1) end)
       events = event_fetcher_name |> :sys.get_state() |> Map.get(:events)
 
       # create data that we need

@@ -2,9 +2,13 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage.Write do
   @moduledoc """
     Storage commit for Ethereum aggregator
   """
+  alias Engine.Ethereum.Event.Aggregator
+  alias Engine.Ethereum.RootChain.Event
+
+  @spec logs(list(Event.t()), non_neg_integer(), non_neg_integer(), Aggregator.t()) :: :ok
   def logs(decoded_logs, from_block, to_block, state) do
     event_signatures = state.event_signatures
-
+    ets = state.ets
     # all logs come in a list of maps
     # we want to group them by blknum and signature:
     # [{286, "InFlightExitChallengeResponded(address,bytes32,uint256)", [event]},
@@ -46,7 +50,7 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage.Write do
         {blknum, signature}
       end)
 
-    true = :ets.insert(state.ets, data)
+    true = :ets.insert(ets, data)
     :ok
   end
 end

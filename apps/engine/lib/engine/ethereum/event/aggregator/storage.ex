@@ -11,21 +11,31 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
 
   require Logger
 
+  @events_bucket :events_bucket
+
+  @spec events_bucket(atom()) :: atom()
+  def events_bucket(name \\ @events_bucket) do
+    _ = if :undefined == :ets.info(name), do: :ets.new(name, [:bag, :public, :named_table])
+    name
+  end
+
   # delete everything older then (current block - delete_events_threshold)
   def delete_old_logs(new_height_blknum, state) do
+    ets = state.ets
+    number_of_events_kept_in_ets = state.number_of_events_kept_in_ets
     # :ets.fun2ms(fn {block_number, _event_signature, _event} when
     # block_number <= new_height - delete_events_threshold -> true end)
     match_spec = [
       {{:"$1", :"$2", :"$3"},
-       [{:"=<", :"$1", {:-, {:const, new_height_blknum}, {:const, state.delete_events_threshold_height_blknum}}}],
-       [true]}
+       [{:"=<", :"$1", {:-, {:const, new_height_blknum}, {:const, number_of_events_kept_in_ets}}}], [true]}
     ]
 
-    :ets.select_delete(state.ets, match_spec)
+    :ets.select_delete(ets, match_spec)
   end
 
   # allow ethereum event listeners to retrieve logs from ETS in bulk
   def retrieve_log(signature, from_block, to_block, state) do
+    ets = state.ets
     # :ets.fun2ms(fn {block_number, event_signature, event} when
     # block_number >= from_block and block_number <= to_block
     # and event_signature == signature -> event
@@ -46,8 +56,8 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
        ], [:"$1"]}
     ]
 
-    events = state.ets |> :ets.select(event_match_spec) |> List.flatten()
-    blknum_list = :ets.select(state.ets, block_range)
+    events = ets |> :ets.select(event_match_spec) |> List.flatten()
+    blknum_list = :ets.select(ets, block_range)
 
     # we may not have all the block information the ethereum event listener wants
     # so we check for that and find all logs for missing blocks
