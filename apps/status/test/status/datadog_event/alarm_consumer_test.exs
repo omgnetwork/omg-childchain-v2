@@ -15,7 +15,7 @@ defmodule Status.DatadogEvent.AlarmConsumerTest do
       AlarmConsumer.prepare_child(
         alarm_handler: __MODULE__.DatadogAlarmMock,
         dd_alarm_handler: __MODULE__.DatadogAlarmHandlerMock,
-        release: "child_chain_or_watcher",
+        release: "childchain_or_watcher",
         current_version: "test-123",
         publisher: __MODULE__.DatadogEventMock
       )
