@@ -1,14 +1,14 @@
-defmodule Engine.Ethereum.Event.RootChainCoordinator.Measure do
+defmodule Engine.Ethereum.Event.Coordinator.Measure do
   @moduledoc """
   Counting business metrics sent to Datadog
   """
 
   import Status.Metric.Event, only: [name: 2]
 
-  alias Engine.Ethereum.Event.RootChainCoordinator
+  alias Engine.Ethereum.Event.Coordinator
   alias Status.Metric.Datadog
 
-  def handle_event([:process, RootChainCoordinator], _, state, _config) do
+  def handle_event([:process, Coordinator], _, state, _config) do
     value =
       self()
       |> Process.info(:message_queue_len)

@@ -2,34 +2,31 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
   use ExUnit.Case, async: true
 
   alias Engine.Ethereum.Event.Aggregator
+  alias Engine.Ethereum.Event.Aggregator.Storage, as: AggregatorStorage
   alias Engine.Ethereum.RootChain.Abi
   alias ExPlasma.Encoding
 
-  setup do
-    # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
-    table = :ets.new(String.to_atom("test-#{:rand.uniform(1000)}"), [:bag, :public, :named_table])
-    # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
-    event_fetcher_name = String.to_atom("test-#{:rand.uniform(1000)}")
+  setup %{test: name} do
+    {:ok, _} =
+      start_supervised(
+        {Aggregator,
+         name: name,
+         opts: [url: "yolo"],
+         contracts: [],
+         ets: AggregatorStorage.events_bucket(name),
+         events: [
+           [name: :deposit_created, enrich: false],
+           [name: :exit_started, enrich: true],
+           [name: :in_flight_exit_input_piggybacked, enrich: false],
+           [name: :in_flight_exit_output_piggybacked, enrich: false],
+           [name: :in_flight_exit_started, enrich: true]
+         ]}
+      )
 
-    start_supervised(
-      {Aggregator,
-       opts: [url: "yolo"],
-       name: event_fetcher_name,
-       contracts: [],
-       ets: table,
-       events: [
-         [name: :deposit_created, enrich: false],
-         [name: :exit_started, enrich: true],
-         [name: :in_flight_exit_input_piggybacked, enrich: false],
-         [name: :in_flight_exit_output_piggybacked, enrich: false],
-         [name: :in_flight_exit_started, enrich: true]
-       ]}
-    )
-
-    {:ok, %{event_fetcher_name: event_fetcher_name, table: table}}
+    {:ok, %{aggregator: name, table: name}}
   end
 
-  test "the performance of event retrieving", %{table: table, event_fetcher_name: event_fetcher_name, test: test_name} do
+  test "the performance of event retrieving", %{table: table, aggregator: aggregator, test: test_name} do
     defmodule test_name do
       alias Engine.Ethereum.Event.AggregatorTest
 
@@ -45,15 +42,15 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
     from_block = 1
     to_block = 80_000
-    :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :event_interface, test_name) end)
-    events = event_fetcher_name |> :sys.get_state() |> Map.get(:events)
-    Aggregator.deposit_created(event_fetcher_name, from_block, to_block)
+    :sys.replace_state(aggregator, fn state -> Map.put(state, :event_interface, test_name) end)
+    events = aggregator |> :sys.get_state() |> Map.get(:events)
+    Aggregator.deposit_created(aggregator, from_block, to_block)
     assert Enum.count(:ets.tab2list(table)) == Enum.count(events) * 80_000
   end
 
   describe "start_link/1 and init/1" do
-    test "that events are correctly initialized ", %{event_fetcher_name: event_fetcher_name} do
-      assert event_fetcher_name |> :sys.get_state() |> Map.get(:events) == [
+    test "that events are correctly initialized ", %{aggregator: aggregator} do
+      assert aggregator |> :sys.get_state() |> Map.get(:events) == [
                [
                  signature: "InFlightExitStarted(address,bytes32)",
                  name: :in_flight_exit_started,
@@ -82,8 +79,8 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
              ]
     end
 
-    test "that signatures are correctly initialized ", %{event_fetcher_name: event_fetcher_name} do
-      assert event_fetcher_name |> :sys.get_state() |> Map.get(:event_signatures) |> Enum.sort() ==
+    test "that signatures are correctly initialized ", %{aggregator: aggregator} do
+      assert aggregator |> :sys.get_state() |> Map.get(:event_signatures) |> Enum.sort() ==
                Enum.sort([
                  "InFlightExitStarted(address,bytes32)",
                  "InFlightExitOutputPiggybacked(address,bytes32,uint16)",
@@ -97,8 +94,8 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
   describe "delete_old_logs/2" do
     # we start the test with a completely empty ETS table, meaning to events were retrieved yet
     # so the first call from a ETH event listener would actually retrieve values from Infura
-    test "that :delete_events_threshold_height_blknum is respected and that events get deleted from ETS", %{
-      event_fetcher_name: event_fetcher_name,
+    test "that :total_events is respected and that events get deleted from ETS", %{
+      aggregator: aggregator,
       table: table,
       test: test_name
     } do
@@ -122,9 +119,9 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
       from_block = 1
       to_block = 3
-      :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :event_interface, test_name) end)
-      :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :delete_events_threshold_height_blknum, 1) end)
-      events = event_fetcher_name |> :sys.get_state() |> Map.get(:events)
+      :sys.replace_state(aggregator, fn state -> Map.put(state, :event_interface, test_name) end)
+      :sys.replace_state(aggregator, fn state -> Map.put(state, :total_events, 1) end)
+      events = aggregator |> :sys.get_state() |> Map.get(:events)
 
       # create data that we need
       deposit_created = deposit_created_log_decoded(from_block)
@@ -167,7 +164,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       from_block_2 = 2
       to_block_2 = 3
       # this should induce a ETS delete call
-      assert Aggregator.deposit_created(event_fetcher_name, from_block_2, to_block_2) ==
+      assert Aggregator.deposit_created(aggregator, from_block_2, to_block_2) ==
                {:ok, [deposit_created_2]}
 
       what_should_be_left_in_db = [
@@ -194,7 +191,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
     # We also assert if blocks that did NOT have any events get commited to ETS as empty.
     # This is important because we do not want to re-scan blocks for which we know contain nothing.
     test "if we get response for range and all events are commited to ETS", %{
-      event_fetcher_name: event_fetcher_name,
+      aggregator: aggregator,
       table: table,
       test: test_name
     } do
@@ -218,10 +215,10 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       end
 
       # we need to set the RPC module with our mocked implementation
-      :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :event_interface, test_name) end)
+      :sys.replace_state(aggregator, fn state -> Map.put(state, :event_interface, test_name) end)
       # we read the events from the aggregators state so that we're able to build the
       # event data later
-      events = event_fetcher_name |> :sys.get_state() |> Map.get(:events)
+      events = aggregator |> :sys.get_state() |> Map.get(:events)
 
       from_block = 1
       to_block = 3
@@ -242,12 +239,12 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
       in_flight_exit_input_piggybacked_log = in_flight_exit_input_piggybacked_log_decoded(to_block)
 
-      assert Aggregator.deposit_created(event_fetcher_name, from_block, to_block) ==
+      assert Aggregator.deposit_created(aggregator, from_block, to_block) ==
                {:ok, [deposit_created, deposit_created_2]}
 
-      assert Aggregator.exit_started(event_fetcher_name, from_block, to_block) == {:ok, [exit_started_log]}
+      assert Aggregator.exit_started(aggregator, from_block, to_block) == {:ok, [exit_started_log]}
 
-      assert Aggregator.in_flight_exit_piggybacked(event_fetcher_name, from_block, to_block) ==
+      assert Aggregator.in_flight_exit_piggybacked(aggregator, from_block, to_block) ==
                {:ok, [in_flight_exit_input_piggybacked_log, in_flight_exit_output_piggybacked_log]}
 
       # and now we're asserting that the API calls actually stored the events above
@@ -275,7 +272,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
     end
 
     test "if we get response for range where from equals to and that all events are commited to ETS", %{
-      event_fetcher_name: event_fetcher_name,
+      aggregator: aggregator,
       table: table,
       test: test_name
     } do
@@ -297,12 +294,12 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
         end
       end
 
-      :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :event_interface, test_name) end)
+      :sys.replace_state(aggregator, fn state -> Map.put(state, :event_interface, test_name) end)
       from_block = 1
       to_block = 1
       deposit_created = deposit_created_log_decoded(from_block)
 
-      assert Aggregator.deposit_created(event_fetcher_name, from_block, to_block) ==
+      assert Aggregator.deposit_created(aggregator, from_block, to_block) ==
                {:ok, [deposit_created]}
 
       exit_started_log =
@@ -310,16 +307,16 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
         |> exit_started_log_decoded()
         |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary() |> Abi.decode_function())
 
-      assert Aggregator.exit_started(event_fetcher_name, from_block, to_block) == {:ok, [exit_started_log]}
+      assert Aggregator.exit_started(aggregator, from_block, to_block) == {:ok, [exit_started_log]}
 
       in_flight_exit_output_piggybacked_log = in_flight_exit_output_piggybacked_log_decoded(from_block)
 
       in_flight_exit_input_piggybacked_log = in_flight_exit_input_piggybacked_log_decoded(to_block)
 
-      assert Aggregator.in_flight_exit_piggybacked(event_fetcher_name, from_block, to_block) ==
+      assert Aggregator.in_flight_exit_piggybacked(aggregator, from_block, to_block) ==
                {:ok, [in_flight_exit_input_piggybacked_log, in_flight_exit_output_piggybacked_log]}
 
-      events = event_fetcher_name |> :sys.get_state() |> Map.get(:events)
+      events = aggregator |> :sys.get_state() |> Map.get(:events)
 
       assert Enum.sort(:ets.tab2list(table)) ==
                Enum.sort([
@@ -336,7 +333,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
   describe "get_logs/3" do
     test "that data and order (blknum) is preserved in returned data when we fetch deposits", %{
-      event_fetcher_name: event_fetcher_name,
+      aggregator: aggregator,
       table: table,
       test: test_name
     } do
@@ -360,7 +357,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       to_block = 3
       # we get these events so that we're able to extract signatures
       # where we construct custom data
-      events = event_fetcher_name |> :sys.get_state() |> Map.get(:events)
+      events = aggregator |> :sys.get_state() |> Map.get(:events)
 
       # create data that we need
       # two deposits, one exit started and one in flight exit output piggybacked
@@ -407,11 +404,11 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       # data gets inserted into the ETS table that the event aggregator us using
       true = :ets.insert(table, event_data)
       # we want the event aggregator to use our mocked RPC module
-      :sys.replace_state(event_fetcher_name, fn state -> Map.put(state, :event_interface, test_name) end)
+      :sys.replace_state(aggregator, fn state -> Map.put(state, :event_interface, test_name) end)
       # we assert that if we pull deposits in the from_block and to_block range
       # the deposits that we created above are returned in the correct order
       # and that there's no more non *empty* deposits, only those that we defined
-      {:ok, data} = Aggregator.deposit_created(event_fetcher_name, from_block, to_block)
+      {:ok, data} = Aggregator.deposit_created(aggregator, from_block, to_block)
       assert Enum.at(data, 0) == deposit_created
       assert Enum.at(data, 1) == deposit_created_2
       # we defined two, so there shouldn't be any more!
@@ -421,20 +418,20 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
   describe "handle_call/3, forward_call/5" do
     test "that APIs dont allow weird range (where from_block is bigger then to_block)", %{
-      event_fetcher_name: event_fetcher_name
+      aggregator: aggregator
     } do
       from = 3
       to = 1
 
-      assert Aggregator.deposit_created(event_fetcher_name, from, to) == {:error, :check_range}
+      assert Aggregator.deposit_created(aggregator, from, to) == {:error, :check_range}
 
-      assert Aggregator.in_flight_exit_started(event_fetcher_name, from, to) ==
+      assert Aggregator.in_flight_exit_started(aggregator, from, to) ==
                {:error, :check_range}
 
-      assert Aggregator.in_flight_exit_piggybacked(event_fetcher_name, from, to) ==
+      assert Aggregator.in_flight_exit_piggybacked(aggregator, from, to) ==
                {:error, :check_range}
 
-      assert Aggregator.exit_started(event_fetcher_name, from, to) == {:error, :check_range}
+      assert Aggregator.exit_started(aggregator, from, to) == {:error, :check_range}
     end
   end
 

@@ -14,7 +14,7 @@ defmodule Tasks.MixProject do
       elixir: "~> 1.10",
       elixirc_paths: ["lib"],
       start_permanent: false,
-      deps: []
+      deps: [{:engine, in_umbrella: true}]
     ]
   end
 

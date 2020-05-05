@@ -103,6 +103,25 @@ jobs:
               echo "Have you been naughty or nice? Find out if Santa knows."
               exit 1
             fi 
+      - run:
+          name: "Consistent naming of CHILDCHAIN - it's childchain not child_chain or child-chain"
+          command: |
+            export SHELL=/bin/bash
+            set +eo pipefail
+            _counter=$(grep -ri "child_chain" . | grep -c "child_chain")
+            echo "Current occurrences of child_chain:"
+            echo $_counter
+            if [ $_counter -gt 3 ]; then
+              echo "Have you been naughty or nice? Find out if Santa knows."
+              exit 1
+            fi
+            _counter=$(grep -ri "child-chain" . | grep -c "child-chain")
+            echo "Current occurrences of child-chain:"
+            echo $_counter
+            if [ $_counter -gt 3 ]; then
+              echo "Have you been naughty or nice? Find out if Santa knows."
+              exit 1
+            fi
 
   dialyzer:
     working_directory: ~/childchain
@@ -140,6 +159,16 @@ jobs:
           paths:
             - "plts"
 
+  publish_childchain:
+    machine:
+      image: ubuntu-1604:201903-01
+    environment:
+      CHILDCHAIN_IMAGE_NAME: "omisego/childchain"
+    steps:
+      - checkout
+      - run: make docker-childchain CHILDCHAIN_IMAGE_NAME=$CHILDCHAIN_IMAGE_NAME
+      - run: IMAGE_NAME=$CHILDCHAIN_IMAGE_NAME sh .circleci/ci_publish.sh
+
 workflows:
   version: 2
   build-test-lint:
@@ -160,3 +189,22 @@ workflows:
       - dialyzer:
           requires:
             - build
+
+      - publish_childchain:
+          requires:
+            [
+              dialyzer,
+              credo,
+              integration,
+              test,
+              build
+            ]
+          filters: &master_and_version_branches_and_all_tags
+            branches:
+              only:
+                - master
+                # vMAJOR.MINOR (e.g. v0.1, v0.2, v1.0, v2.1, etc.)
+                - /^v[0-9]+\.[0-9]+/
+            tags:
+              only:
+                - /.+/
