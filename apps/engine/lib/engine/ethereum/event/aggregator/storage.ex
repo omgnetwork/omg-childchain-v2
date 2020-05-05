@@ -19,21 +19,22 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
     name
   end
 
-  # delete everything older then (current block - delete_events_threshold)
+  @doc "delete everything older then (current block - delete_events_threshold)"
+  @spec delete_old_logs(non_neg_integer(), Aggregator.t()) :: non_neg_integer()
   def delete_old_logs(new_height_blknum, state) do
     ets = state.ets
-    number_of_events_kept_in_ets = state.number_of_events_kept_in_ets
+    total_events = state.total_events
     # :ets.fun2ms(fn {block_number, _event_signature, _event} when
     # block_number <= new_height - delete_events_threshold -> true end)
     match_spec = [
-      {{:"$1", :"$2", :"$3"},
-       [{:"=<", :"$1", {:-, {:const, new_height_blknum}, {:const, number_of_events_kept_in_ets}}}], [true]}
+      {{:"$1", :"$2", :"$3"}, [{:"=<", :"$1", {:-, {:const, new_height_blknum}, {:const, total_events}}}], [true]}
     ]
 
     :ets.select_delete(ets, match_spec)
   end
 
-  # allow ethereum event listeners to retrieve logs from ETS in bulk
+  @doc "allow ethereum event listeners to retrieve logs from ETS in bulk"
+  @spec retrieve_log(list(String.t()), non_neg_integer(), non_neg_integer(), Aggregator.t()) :: list(Event.t())
   def retrieve_log(signature, from_block, to_block, state) do
     ets = state.ets
     # :ets.fun2ms(fn {block_number, event_signature, event} when
@@ -82,6 +83,7 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
   end
 
   # raw data is logs which gets transformed into events
+  @spec retrieve_and_store_logs(pos_integer(), pos_integer(), Aggregator.t()) :: :ok
   defp retrieve_and_store_logs(from_block, to_block, state) do
     from_block
     |> get_events(to_block, state)

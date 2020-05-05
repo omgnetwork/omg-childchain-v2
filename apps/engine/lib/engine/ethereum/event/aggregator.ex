@@ -13,7 +13,7 @@ defmodule Engine.Ethereum.Event.Aggregator do
   @timeout 55_000
   @type result() :: {:ok, list(map())} | {:error, :check_range}
   @type t() :: %__MODULE__{
-          number_of_events_kept_in_ets: pos_integer(),
+          total_events: pos_integer(),
           ets: atom(),
           event_signatures: list(binary()),
           keccak_event_signatures: list(binary()),
@@ -25,7 +25,7 @@ defmodule Engine.Ethereum.Event.Aggregator do
         }
 
   defstruct [
-    :number_of_events_kept_in_ets,
+    :total_events,
     :ets,
     :event_signatures,
     :keccak_event_signatures,
@@ -91,7 +91,7 @@ defmodule Engine.Ethereum.Event.Aggregator do
     {:ok,
      %__MODULE__{
        # 200 blocks of events will be kept in memory
-       number_of_events_kept_in_ets: 200,
+       total_events: 200,
        ets: ets,
        event_signatures: events_signatures,
        keccak_event_signatures: keccak_event_signatures,
