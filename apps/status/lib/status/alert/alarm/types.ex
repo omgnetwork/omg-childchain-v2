@@ -16,6 +16,7 @@ defmodule Status.Alert.Alarm.Types do
            | :ethereum_stalled_sync
            | :invalid_fee_source
            | :main_supervisor_halted, alarm_detail}
+
   @spec db_connection_lost(module()) :: {:db_connection_lost, alarm_detail}
   def db_connection_lost(reporter) do
     {:db_connection_lost, %{node: Node.self(), reporter: reporter}}

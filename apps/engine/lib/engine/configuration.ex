@@ -67,4 +67,24 @@ defmodule Engine.Configuration do
   def tx_hash_contract() do
     Application.get_env(@app, :tx_hash_contract)
   end
+
+  @doc """
+  Prepares options Keyword for the FeeServer process
+  """
+  @spec fee_server_opts() :: no_return | Keyword.t()
+  def fee_server_opts() do
+    fee_server_opts = [
+      fee_adapter_check_interval_ms: Application.fetch_env!(@app, :fee_adapter_check_interval_ms),
+      fee_buffer_duration_ms: Application.fetch_env!(@app, :fee_buffer_duration_ms)
+    ]
+
+    {adapter, opts: adapter_opts} = fee_adapter_opts()
+
+    Keyword.merge(fee_server_opts, fee_adapter: adapter, fee_adapter_opts: adapter_opts)
+  end
+
+  @spec fee_adapter_opts() :: no_return | tuple()
+  defp fee_adapter_opts() do
+    Application.fetch_env!(@app, :fee_adapter)
+  end
 end
