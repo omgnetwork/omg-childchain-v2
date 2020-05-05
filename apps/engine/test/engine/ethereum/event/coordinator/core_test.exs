@@ -1,7 +1,7 @@
-defmodule Engine.Ethereum.Event.RootChainCoordinator.CoreTest do
+defmodule Engine.Ethereum.Event.Coordinator.CoreTest do
   use ExUnit.Case, async: true
 
-  alias Engine.Ethereum.Event.RootChainCoordinator.Core
+  alias Engine.Ethereum.Event.Coordinator.Core
 
   @pid %{
     depositor: :c.pid(0, 1, 0),

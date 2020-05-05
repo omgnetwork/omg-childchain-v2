@@ -6,8 +6,8 @@ defmodule Engine.Ethereum.Event.Listener do
   from the root chain contract and feeds them to a callback.
 
   It is **not** responsible for figuring out which ranges of Ethereum blocks are eligible to scan and when, see
-  `RootChainCoordinator` for that.
-  The `RootChainCoordinator` provides the `SyncGuide` that indicates what's eligible to scan, taking into account:
+  `Coordinator` for that.
+  The `Coordinator` provides the `SyncGuide` that indicates what's eligible to scan, taking into account:
    - finality margin
    - mutual ordering and dependencies of various types of Ethereum events to be respected.
 
@@ -26,9 +26,9 @@ defmodule Engine.Ethereum.Event.Listener do
   """
   use GenServer
 
+  alias Engine.Ethereum.Event.Coordinator
   alias Engine.Ethereum.Event.Listener.Core
   alias Engine.Ethereum.Event.Listener.Storage
-  alias Engine.Ethereum.Event.RootChainCoordinator
   alias Engine.Ethereum.RootChain.Event
   alias Engine.SyncedHeight
 
@@ -63,7 +63,7 @@ defmodule Engine.Ethereum.Event.Listener do
 
   @doc """
   Reads the status of listening (till which Ethereum height were the events processed) from the `OMG.DB` and initializes
-  the logic `Listener.Core` with it. Does an initial `RootChainCoordinator.check_in` with the
+  the logic `Listener.Core` with it. Does an initial `Coordinator.check_in` with the
   Ethereum height it last stopped on. Next, it continues to monitor and fetch the events as usual.
   """
   def handle_continue(:setup, opts) do
@@ -99,7 +99,7 @@ defmodule Engine.Ethereum.Event.Listener do
     }
 
     :ok = Bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
-    :ok = RootChainCoordinator.check_in(state.synced_height, service_name)
+    :ok = Coordinator.check_in(state.synced_height, service_name)
     {:ok, _} = :timer.send_interval(metrics_collection_interval, self(), :send_metrics)
 
     _ = Logger.info("Started #{inspect(__MODULE__)} for #{service_name}, synced_height: #{state.synced_height}")
@@ -117,18 +117,18 @@ defmodule Engine.Ethereum.Event.Listener do
   The cadence is every change of ethereum height, notified via Bus.
 
   Does the following:
-   - asks `RootChainCoordinator` about how to sync, with respect to other services listening to Ethereum
+   - asks `Coordinator` about how to sync, with respect to other services listening to Ethereum
    - (`sync_height/2`) figures out what is the suitable range of Ethereum blocks to download events for
    - (`sync_height/2`) if necessary fetches those events to the in-memory cache in `Listener.Core`
    - (`sync_height/2`) executes the related event-consuming callback with events as arguments
    - (`sync_height/2`) does `OMG.DB` updates that persist the processes Ethereum height as well as whatever the
       callbacks returned to persist
-   - (`sync_height/2`) `RootChainCoordinator.check_in` to tell the rest what Ethereum height was processed.
+   - (`sync_height/2`) `Coordinator.check_in` to tell the rest what Ethereum height was processed.
   """
   def handle_info({:internal_event_bus, :ethereum_new_height, _new_height}, {state, callbacks}) do
-    case RootChainCoordinator.get_sync_info() do
+    case Coordinator.get_sync_info() do
       :nosync ->
-        :ok = RootChainCoordinator.check_in(state.synced_height, state.service_name)
+        :ok = Coordinator.check_in(state.synced_height, state.service_name)
         {:noreply, {state, callbacks}}
 
       sync_info ->
@@ -138,9 +138,9 @@ defmodule Engine.Ethereum.Event.Listener do
   end
 
   def handle_cast(:sync, {state, callbacks}) do
-    case RootChainCoordinator.get_sync_info() do
+    case Coordinator.get_sync_info() do
       :nosync ->
-        :ok = RootChainCoordinator.check_in(state.synced_height, state.service_name)
+        :ok = Coordinator.check_in(state.synced_height, state.service_name)
         {:noreply, {state, callbacks}}
 
       sync_info ->
@@ -161,7 +161,7 @@ defmodule Engine.Ethereum.Event.Listener do
     :ok = :telemetry.execute([:process, __MODULE__], %{events: events}, new_state)
     :ok = publish_events(events)
     :ok = Storage.update_synced_height(new_state.service_name, height_to_check_in, new_state.ets)
-    :ok = RootChainCoordinator.check_in(height_to_check_in, state.service_name)
+    :ok = Coordinator.check_in(height_to_check_in, state.service_name)
 
     new_state
   end

@@ -5,18 +5,18 @@ defmodule Engine.Ethereum.Event.Listener.Core do
   Responsible for:
     - deciding what ranges of Ethereum events should be fetched from the Ethereum node
     - deciding the right size of event batches to read (too little means many RPC requests, too big can timeout)
-    - deciding what to check in into the `OMG.RootChainCoordinator`
+    - deciding what to check in into the `OMG.Coordinator`
     - deciding what to put into the `OMG.DB` in terms of Ethereum height till which the events are already processed
 
   Leverages a rudimentary in-memory cache for events, to be able to ask for right-sized batches of events
   """
-  alias Engine.Ethereum.Event.RootChainCoordinator.SyncGuide
+  alias Engine.Ethereum.Event.Coordinator.SyncGuide
   alias Engine.Ethereum.RootChain.Event
 
   # use Spandex.Decorators
 
   defstruct service_name: nil,
-            # what's being exchanged with `RootChainCoordinator` - the point in root chain until where it processed
+            # what's being exchanged with `Coordinator` - the point in root chain until where it processed
             synced_height: 0,
             cached: %{
               data: [],

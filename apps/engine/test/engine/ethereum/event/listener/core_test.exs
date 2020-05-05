@@ -1,8 +1,8 @@
 defmodule Engine.Ethereum.Event.Listener.CoreTest do
   use ExUnit.Case, async: true
 
+  alias Engine.Ethereum.Event.Coordinator.SyncGuide
   alias Engine.Ethereum.Event.Listener.Core
-  alias Engine.Ethereum.Event.RootChainCoordinator.SyncGuide
 
   @service_name :name
   @request_max_size 5

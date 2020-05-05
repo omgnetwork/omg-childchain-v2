@@ -65,7 +65,6 @@ defmodule Engine.Ethereum.Event.Aggregator do
     contracts = opts |> Keyword.fetch!(:contracts) |> Enum.map(&Encoding.to_binary(&1))
     ets = Keyword.fetch!(opts, :ets)
     event_interface = Keyword.get(opts, :event_interface, Event)
-    opts = Keyword.fetch!(opts, :opts)
 
     # events = [[signature: "ExitStarted(address,uint160)", name: :exit_started, enrich: true],..]
     events =
@@ -100,7 +99,7 @@ defmodule Engine.Ethereum.Event.Aggregator do
        events: events,
        contracts: contracts,
        event_interface: event_interface,
-       opts: opts
+       opts: Keyword.fetch!(opts, :opts)
      }}
   end
 

@@ -9,10 +9,10 @@ defmodule Engine.Ethereum.SyncSupervisor do
   alias Engine.Ethereum.ChildObserver
   alias Engine.Ethereum.Event.Aggregator
   alias Engine.Ethereum.Event.Aggregator.Storage, as: AggregatorStorage
+  alias Engine.Ethereum.Event.Coordinator
+  alias Engine.Ethereum.Event.Coordinator.Setup
   alias Engine.Ethereum.Event.Listener
   alias Engine.Ethereum.Event.Listener.Storage, as: ListenerStorage
-  alias Engine.Ethereum.Event.RootChainCoordinator
-  alias Engine.Ethereum.Event.RootChainCoordinator.Setup
 
   require Logger
 
@@ -39,7 +39,7 @@ defmodule Engine.Ethereum.SyncSupervisor do
     url = Configuration.url()
 
     [
-      {RootChainCoordinator,
+      {Coordinator,
        Setup.coordinator_setup(
          metrics_collection_interval,
          coordinator_eth_height_check_interval_ms,
