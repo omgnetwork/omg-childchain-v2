@@ -7,7 +7,7 @@ defmodule Engine.Repo.Migrations.CreateBlocks do
       add(:number, :integer)
       add(:state, :string)
 
-      timestamps(type: :utc_datetime)
+      timestamps(type: :timestamptz)
     end
 
     create(unique_index(:blocks, [:number]))

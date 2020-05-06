@@ -1,17 +1,9 @@
 defmodule Engine.Callbacks.ExitTest do
   @moduledoc false
-  use ExUnit.Case, async: true
-  import Engine.DB.Factory
-  import Ecto.Query
+  use Engine.DB.DataCase, async: true
 
-  alias Ecto.Adapters.SQL.Sandbox
   alias Engine.Callbacks.Exit
   alias Engine.DB.Output
-  alias Engine.Repo
-
-  setup do
-    :ok = Sandbox.checkout(Repo)
-  end
 
   describe "callback/1" do
     test "marks utxos that are exiting" do

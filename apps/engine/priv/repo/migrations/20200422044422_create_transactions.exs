@@ -7,7 +7,7 @@ defmodule Engine.Repo.Migrations.CreateTransactions do
       add(:tx_hash, :binary)
 
       add(:block_id, references(:blocks))
-      timestamps(type: :utc_datetime)
+      timestamps(type: :timestamptz)
     end
 
     create(index(:transactions, [:block_id]))

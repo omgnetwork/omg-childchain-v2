@@ -1,19 +1,10 @@
 defmodule Engine.DB.TransactionTest do
-  use ExUnit.Case, async: true
+  use Engine.DB.DataCase, async: true
   doctest Engine.DB.Transaction, import: true
 
-  import Engine.DB.Factory
-  import Ecto.Changeset, only: [get_field: 2]
-
-  alias Ecto.Adapters.SQL.Sandbox
   alias Engine.DB.Block
   alias Engine.DB.Output
   alias Engine.DB.Transaction
-  alias Engine.Repo
-
-  setup do
-    :ok = Sandbox.checkout(Repo)
-  end
 
   describe "decode/1" do
     test "decodes tx_bytes and validates" do
