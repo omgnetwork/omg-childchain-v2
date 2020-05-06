@@ -5,7 +5,9 @@ defmodule Engine.DB.ListenerState do
   """
 
   use Ecto.Schema
+
   import Ecto.Changeset
+  import Ecto.Query
 
   @primary_key {:listener, :string, []}
   schema "listener_states" do
@@ -15,6 +17,10 @@ defmodule Engine.DB.ListenerState do
   end
 
   @fields [:listener, :height]
+
+  def update_height(listener, height) do
+    changeset(%__MODULE__{}, %{listener: "#{listener}", height: height})
+  end
 
   def changeset(struct, params) do
     struct
@@ -32,5 +38,17 @@ defmodule Engine.DB.ListenerState do
       nil -> 0
       state -> state.height
     end
+  end
+
+  @doc """
+  Query to check if the listener state height is less
+  than the given height.
+  """
+  def stale_height(listener, height) do
+    name = "#{listener}"
+    from(ls in __MODULE__,
+      where: ls.listener == ^name,
+      where: ls.height < ^height,
+    )
   end
 end
