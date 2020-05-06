@@ -6,6 +6,7 @@ defmodule Engine.Callbacks.ExitTest do
 
   alias Ecto.Adapters.SQL.Sandbox
   alias Engine.Callbacks.Exit
+  alias Engine.DB.ListenerState
   alias Engine.DB.Output
   alias Engine.Repo
 
@@ -34,7 +35,11 @@ defmodule Engine.Callbacks.ExitTest do
         }
       ]
 
-      assert {1, nil} = Exit.callback(exit_events)
+      assert {:ok, %{exiting_outputs: {1, nil}}} = Exit.callback(exit_events, :exit_started)
+
+      assert %ListenerState{height: 1676, listener: "exit_started"} =
+               Engine.Repo.get(ListenerState, "exit_started")
+
       query = from(o in Output, where: o.position == ^position, select: o.state)
       assert "exited" = Repo.one(query)
     end
@@ -63,7 +68,7 @@ defmodule Engine.Callbacks.ExitTest do
             output_tx: <<0>>,
             utxo_pos: pos2
           },
-          eth_height: 1676,
+          eth_height: 1678,
           event_signature: "ExitStarted(address,uint160)",
           exit_id: 2_812_721_707_145_513_089_028_719_506_236_303_203_225_368,
           log_index: 1,
@@ -74,7 +79,11 @@ defmodule Engine.Callbacks.ExitTest do
         }
       ]
 
-      assert {2, nil} = Exit.callback(exit_events)
+      assert {:ok, %{exiting_outputs: {2, nil}}} = Exit.callback(exit_events, :exit_started)
+
+      assert %ListenerState{height: 1678, listener: "exit_started"} =
+               Engine.Repo.get(ListenerState, "exit_started")
+
       query = from(o in Output, where: o.position in [^pos1, ^pos2], select: o.state)
       assert ["exited", "exited"] = Repo.all(query)
     end
