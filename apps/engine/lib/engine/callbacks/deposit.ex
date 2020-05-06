@@ -17,9 +17,9 @@ defmodule Engine.Callbacks.Deposit do
   import Ecto.Changeset
 
   alias Engine.DB.Block
+  alias Engine.DB.ListenerState
   alias Engine.DB.Transaction
   alias Engine.Ethereum.RootChain.Event
-  alias Engine.SyncedHeight
   alias ExPlasma.Builder
 
   @type address_binary :: <<_::160>>
@@ -40,7 +40,7 @@ defmodule Engine.Callbacks.Deposit do
   defp do_callback(multi, [], new_synced_height) do
     multi
     |> Ecto.Multi.run(:synced_height, fn repo, _changes ->
-      {:ok, repo.get(SyncedHeight, "#{new_synced_height.listener}") || %SyncedHeight{}}
+      {:ok, repo.get(ListenerState, "#{new_synced_height.listener}") || %ListenerState{}}
     end)
     |> Ecto.Multi.insert_or_update(:update, &synced_height(&1, new_synced_height))
     |> Engine.Repo.transaction()

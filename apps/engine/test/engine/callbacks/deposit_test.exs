@@ -7,6 +7,7 @@ defmodule Engine.Callbacks.DepositTest do
   alias Ecto.Adapters.SQL.Sandbox
   alias Engine.Callbacks.Deposit
   alias Engine.DB.Block
+  alias Engine.DB.ListenerState
   alias Engine.DB.Output
   alias Engine.DB.Transaction
   alias Engine.Repo
@@ -133,8 +134,8 @@ defmodule Engine.Callbacks.DepositTest do
     assert {:ok, %{"deposit-blknum-13" => _}} = Deposit.callback(deposit_events ++ new_deposit_events, :depositor)
     assert 3 == Repo.one(from(b in Engine.DB.Block, select: count(b.id)))
 
-    assert %Engine.SyncedHeight{height: 405, listener: "depositor"} =
-             Engine.Repo.get(Engine.SyncedHeight, "#{:depositor}")
+    assert %ListenerState{height: 405, listener: "depositor"} =
+             Engine.Repo.get(ListenerState, "#{:depositor}")
   end
 
   test "three listeners try to commit deposits from different starting heights" do
@@ -248,28 +249,28 @@ defmodule Engine.Callbacks.DepositTest do
     assert {:ok, %{"deposit-blknum-3" => _, "deposit-blknum-4" => _}} =
              Deposit.callback(deposit_events_listener1, :depositor)
 
-    assert %Engine.SyncedHeight{height: 405, listener: "depositor"} =
-             Engine.Repo.get(Engine.SyncedHeight, "#{:depositor}")
+    assert %ListenerState{height: 405, listener: "depositor"} =
+             Engine.Repo.get(ListenerState, "#{:depositor}")
 
     assert 2 == Repo.one(from(b in Engine.DB.Block, select: count(b.id)))
 
     assert {:ok, %{"deposit-blknum-5" => _}} = Deposit.callback(deposit_events_listener2, :depositor)
 
-    assert %Engine.SyncedHeight{height: 406, listener: "depositor"} =
-             Engine.Repo.get(Engine.SyncedHeight, "#{:depositor}")
+    assert %ListenerState{height: 406, listener: "depositor"} =
+             Engine.Repo.get(ListenerState, "#{:depositor}")
 
     assert 3 == Repo.one(from(b in Engine.DB.Block, select: count(b.id)))
 
     assert {:ok, _} = Deposit.callback(deposit_events_listener3, :depositor)
 
-    assert %Engine.SyncedHeight{height: 406, listener: "depositor"} =
-             Engine.Repo.get(Engine.SyncedHeight, "#{:depositor}")
+    assert %ListenerState{height: 406, listener: "depositor"} =
+             Engine.Repo.get(ListenerState, "#{:depositor}")
 
     assert 3 == Repo.one(from(b in Engine.DB.Block, select: count(b.id)))
 
     assert {:ok, _} = Deposit.callback(deposit_events_listener3, :depositor)
 
-    assert %Engine.SyncedHeight{height: 406, listener: "depositor"} =
-             Engine.Repo.get(Engine.SyncedHeight, "#{:depositor}")
+    assert %ListenerState{height: 406, listener: "depositor"} =
+             Engine.Repo.get(ListenerState, "#{:depositor}")
   end
 end

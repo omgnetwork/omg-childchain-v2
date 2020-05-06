@@ -30,7 +30,7 @@ defmodule Engine.Ethereum.Event.Listener do
   alias Engine.Ethereum.Event.Listener.Storage
   alias Engine.Ethereum.Event.RootChainCoordinator
   alias Engine.Ethereum.RootChain.Event
-  alias Engine.SyncedHeight
+  alias Engine.DB.ListenerState
 
   require Logger
 
@@ -80,7 +80,7 @@ defmodule Engine.Ethereum.Event.Listener do
       max_of_three(
         Storage.get_local_synced_height(service_name, ets),
         contract_deployment_height,
-        SyncedHeight.get_height(service_name)
+        ListenerState.get_height(service_name)
       )
 
     request_max_size = 1000
