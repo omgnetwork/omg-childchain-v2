@@ -38,8 +38,6 @@ defmodule Engine.DB.FeeRules do
     |> set_id()
   end
 
-  ## Client APIs
-  ##
 
   @doc """
   Fetch latest rules from the database.
@@ -65,8 +63,6 @@ defmodule Engine.DB.FeeRules do
     |> Repo.insert()
   end
 
-  ## Private
-  ##
 
   defp set_id(changeset) do
     case get_field(changeset, :uuid) do

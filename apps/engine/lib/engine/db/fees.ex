@@ -73,14 +73,11 @@ defmodule Engine.DB.Fees do
     |> Repo.insert()
   end
 
-  ## Private
-  ##
 
   defp set_id(changeset) do
     case get_field(changeset, :uuid) do
       nil ->
-        uuid = UUID.generate()
-        put_change(changeset, :uuid, uuid)
+        put_change(changeset, :uuid, UUID.generate())
 
       _ ->
         changeset

@@ -62,9 +62,7 @@ defmodule Engine.Feefeed.Rules.Parser do
 
   """
   @spec decode(String.t()) :: {:ok, map()} | {:error, %DecodeError{}}
-  def decode(string) do
-    Jason.decode(string)
-  end
+  def decode(string), do: Jason.decode(string)
 
   @doc ~S"""
   Decode the given `string` JSON into a map and validate it against rule schema.
@@ -206,7 +204,5 @@ defmodule Engine.Feefeed.Rules.Parser do
 
   """
   @spec validate(map()) :: :ok | {:error, list()}
-  def validate(map) do
-    Validator.validate(@schema, map)
-  end
+  def validate(map), do: Validator.validate(@schema, map)
 end
