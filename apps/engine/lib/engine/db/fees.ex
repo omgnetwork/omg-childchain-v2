@@ -26,7 +26,7 @@ defmodule Engine.DB.Fees do
         }
 
   @primary_key {:uuid, UUID, autogenerate: true}
-  
+
   schema "fees" do
     field(:data, :map, default: %{})
 
@@ -71,7 +71,6 @@ defmodule Engine.DB.Fees do
     |> changeset(%{data: fees, fee_rules_uuid: fee_rules_uuid})
     |> Repo.insert()
   end
-
 
   defp set_id(changeset) do
     case get_field(changeset, :uuid) do

@@ -25,7 +25,7 @@ defmodule Engine.DB.FeeRules do
         }
 
   @primary_key {:uuid, Ecto.UUID, autogenerate: true}
-  
+
   schema "fee_rules" do
     field(:data, :map, default: %{})
     timestamps(type: :utc_datetime)
@@ -36,7 +36,6 @@ defmodule Engine.DB.FeeRules do
     |> cast(params, [:uuid, :data])
     |> set_id()
   end
-
 
   @doc """
   Fetch latest rules from the database.
@@ -61,7 +60,6 @@ defmodule Engine.DB.FeeRules do
     |> changeset(%{data: rules})
     |> Repo.insert()
   end
-
 
   defp set_id(changeset) do
     case get_field(changeset, :uuid) do
