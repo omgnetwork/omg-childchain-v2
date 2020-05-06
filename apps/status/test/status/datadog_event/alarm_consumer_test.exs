@@ -24,12 +24,12 @@ defmodule Status.DatadogEvent.AlarmConsumerTest do
     :ok
   end
 
-  test "if a event message put on omg bus is consumed by the event consumer and published on the publisher interface" do
+  test "if a event message put on bus is consumed by the event consumer and published on the publisher interface" do
     %{test_pid: test_pid_name} = @alarm_details
     true = Process.register(self(), test_pid_name)
     alarm = {:ethereum_connection_error, @alarm_details}
     __MODULE__.DatadogAlarmMock.set_alarm(alarm)
-    assert_receive :event
+    assert_receive :event, 200
   end
 
   defmodule DatadogEventMock do

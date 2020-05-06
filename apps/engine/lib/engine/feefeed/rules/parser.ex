@@ -48,7 +48,7 @@ defmodule Engine.Feefeed.Rules.Parser do
 
   ## Examples
 
-      iex> Feefeed.Rules.Parser.decode(~s|
+      iex> Engine.Feefeed.Rules.Parser.decode(~s|
       ...> {
       ...>   "hello": "world"
       ...> }
@@ -57,7 +57,7 @@ defmodule Engine.Feefeed.Rules.Parser do
 
   If an invalid JSON is given as `string`:
 
-      iex> Feefeed.Rules.Parser.decode(~s|invalid|)
+      iex> Engine.Feefeed.Rules.Parser.decode(~s|invalid|)
       {:error, %Jason.DecodeError{data: "invalid", position: 0, token: nil}}
 
   """
@@ -73,7 +73,7 @@ defmodule Engine.Feefeed.Rules.Parser do
 
   ## Examples
 
-      iex> Feefeed.Rules.Parser.decode_and_validate(~s|
+      iex> Engine.Feefeed.Rules.Parser.decode_and_validate(~s|
       ...> {
       ...>   "1": {
       ...>     "0x86367c0e517622DAcdab379f2de389c3C9524345": {
@@ -99,12 +99,12 @@ defmodule Engine.Feefeed.Rules.Parser do
 
   The provided string must be a valid JSON:
 
-      iex> Feefeed.Rules.Parser.decode_and_validate(~s|invalid|)
+      iex> Engine.Feefeed.Rules.Parser.decode_and_validate(~s|invalid|)
       {:error, %Jason.DecodeError{data: "invalid", position: 0, token: nil}}
 
   The provided JSON should have payment version as its root key:
 
-      iex> Feefeed.Rules.Parser.decode_and_validate(~s|
+      iex> Engine.Feefeed.Rules.Parser.decode_and_validate(~s|
       ...> {
       ...>   "invalidVer": {}
       ...> }
@@ -113,7 +113,7 @@ defmodule Engine.Feefeed.Rules.Parser do
 
   The provided JSON should have uppercase token symbol as its secondary key:
 
-      iex> Feefeed.Rules.Parser.decode_and_validate(~s|
+      iex> Engine.Feefeed.Rules.Parser.decode_and_validate(~s|
       ...> {
       ...>   "1": {
       ...>     "invalidToken": {}
@@ -124,7 +124,7 @@ defmodule Engine.Feefeed.Rules.Parser do
 
   The provided JSON should have object as a value to secondary key:
 
-      iex> Feefeed.Rules.Parser.decode_and_validate(~s|
+      iex> Engine.Feefeed.Rules.Parser.decode_and_validate(~s|
       ...> {
       ...>   "1": {
       ...>     "0x86367c0e": "invalidVal"
@@ -167,7 +167,7 @@ defmodule Engine.Feefeed.Rules.Parser do
 
   ## Examples
 
-      iex> Feefeed.Rules.Parser.validate(%{
+      iex> Engine.Feefeed.Rules.Parser.validate(%{
       ...>   "1" => %{
       ...>     "0x86367c0e517622DAcdab379f2de389c3C9524345" => %{
       ...>       "symbol" => "UPUSD",
@@ -181,14 +181,14 @@ defmodule Engine.Feefeed.Rules.Parser do
 
   The provided map should have payment version as its root key:
 
-      iex> Feefeed.Rules.Parser.validate(%{
+      iex> Engine.Feefeed.Rules.Parser.validate(%{
       ...>   "invalidVer" => %{}
       ...> })
       {:error, [{"Schema does not allow additional properties.", "#/invalidVer"}]}
 
   The provided map should have uppercase token symbol as its secondary key:
 
-      iex> Feefeed.Rules.Parser.validate(%{
+      iex> Engine.Feefeed.Rules.Parser.validate(%{
       ...>   "1" => %{
       ...>     "invalidToken" => %{}
       ...>   }
@@ -197,7 +197,7 @@ defmodule Engine.Feefeed.Rules.Parser do
 
   The provided map should have object as a value to secondary key:
 
-      iex> Feefeed.Rules.Parser.validate(%{
+      iex> Engine.Feefeed.Rules.Parser.validate(%{
       ...>   "1" => %{
       ...>     "0x86367c0e" => "invalidVal"
       ...>   }
