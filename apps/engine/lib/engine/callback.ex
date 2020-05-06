@@ -23,11 +23,12 @@ defmodule Engine.Callback do
     changeset = ListenerState.update_height(listener, height)
 
     Ecto.Multi.run(multi, :update_listener_height, fn repo, _changes ->
-      _ = repo.insert(changeset, 
-        on_conflict: on_conflict(listener, height), 
-        conflict_target: :listener,
-        stale_error_field: :listener
-      )
+      _ =
+        repo.insert(changeset,
+          on_conflict: on_conflict(listener, height),
+          conflict_target: :listener,
+          stale_error_field: :listener
+        )
 
       # This is a hack to get around the `on_conflict` stale entry in the event
       # that a listener DOES exist AND is more up to date than our

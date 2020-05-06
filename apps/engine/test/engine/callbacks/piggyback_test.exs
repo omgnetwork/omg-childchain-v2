@@ -35,8 +35,7 @@ defmodule Engine.Callbacks.PiggybackTest do
     assert {:ok, %{^key => output}} = Piggyback.callback([event], :piggybacker)
     assert output.state == "piggybacked"
 
-    assert %ListenerState{height: 404, listener: "piggybacker"} =
-             Repo.get(ListenerState, "piggybacker")
+    assert %ListenerState{height: 404, listener: "piggybacker"} = Repo.get(ListenerState, "piggybacker")
   end
 
   test "marks an input as piggybacked" do
@@ -62,8 +61,7 @@ defmodule Engine.Callbacks.PiggybackTest do
     assert {:ok, %{^key => input}} = Piggyback.callback([event], :piggybacker)
     assert input.state == "piggybacked"
 
-    assert %ListenerState{height: 404, listener: "piggybacker"} =
-             Repo.get(ListenerState, "piggybacker")
+    assert %ListenerState{height: 404, listener: "piggybacker"} = Repo.get(ListenerState, "piggybacker")
   end
 
   test "doesn't mark input as piggyback if its unusable" do
@@ -89,8 +87,7 @@ defmodule Engine.Callbacks.PiggybackTest do
 
     assert {:ok, %{}} = Piggyback.callback([event], :piggybacker)
 
-    assert %ListenerState{height: 404, listener: "piggybacker"} =
-             Engine.Repo.get(ListenerState, "piggybacker")
+    assert %ListenerState{height: 404, listener: "piggybacker"} = Engine.Repo.get(ListenerState, "piggybacker")
   end
 
   test "doesn't mark output as piggyback if its unusable" do
@@ -116,7 +113,6 @@ defmodule Engine.Callbacks.PiggybackTest do
 
     assert {:ok, %{}} = Piggyback.callback([event], :piggybacker)
 
-    assert %ListenerState{height: 404, listener: "piggybacker"} =
-             Engine.Repo.get(ListenerState, "piggybacker")
+    assert %ListenerState{height: 404, listener: "piggybacker"} = Engine.Repo.get(ListenerState, "piggybacker")
   end
 end

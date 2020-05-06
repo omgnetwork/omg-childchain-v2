@@ -11,6 +11,8 @@ defmodule Engine.Callbacks.Exit do
   alias Engine.Callback
   alias Engine.DB.Output
 
+  @behaviour Callback
+
   @doc """
   Gather all the Output positions in the list of exit events.
   """

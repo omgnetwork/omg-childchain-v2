@@ -12,6 +12,8 @@ defmodule Engine.Callbacks.Piggyback do
   alias Engine.DB.Output
   alias Engine.DB.Transaction
 
+  @behaviour Callback
+
   @doc """
   Gather all the Output positions in the list of exit events.
   """

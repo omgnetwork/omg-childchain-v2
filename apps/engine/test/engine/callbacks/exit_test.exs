@@ -37,8 +37,7 @@ defmodule Engine.Callbacks.ExitTest do
 
       assert {:ok, %{exiting_outputs: {1, nil}}} = Exit.callback(exit_events, :exit_started)
 
-      assert %ListenerState{height: 1676, listener: "exit_started"} =
-               Engine.Repo.get(ListenerState, "exit_started")
+      assert %ListenerState{height: 1676, listener: "exit_started"} = Engine.Repo.get(ListenerState, "exit_started")
 
       query = from(o in Output, where: o.position == ^position, select: o.state)
       assert "exited" = Repo.one(query)
@@ -81,8 +80,7 @@ defmodule Engine.Callbacks.ExitTest do
 
       assert {:ok, %{exiting_outputs: {2, nil}}} = Exit.callback(exit_events, :exit_started)
 
-      assert %ListenerState{height: 1678, listener: "exit_started"} =
-               Engine.Repo.get(ListenerState, "exit_started")
+      assert %ListenerState{height: 1678, listener: "exit_started"} = Engine.Repo.get(ListenerState, "exit_started")
 
       query = from(o in Output, where: o.position in [^pos1, ^pos2], select: o.state)
       assert ["exited", "exited"] = Repo.all(query)

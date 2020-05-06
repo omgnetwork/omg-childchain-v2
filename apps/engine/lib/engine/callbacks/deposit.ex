@@ -19,14 +19,10 @@ defmodule Engine.Callbacks.Deposit do
   alias Ecto.Multi
   alias Engine.Callback
   alias Engine.DB.Block
-  alias Engine.DB.ListenerState
   alias Engine.DB.Transaction
-  alias Engine.Ethereum.RootChain.Event
   alias ExPlasma.Builder
 
-  @type address_binary :: <<_::160>>
-
-  @type tx_hash() :: <<_::256>>
+  @behaviour Callback
 
   @doc """
   Inserts deposit events, recreating the transaction and forming the associated block,

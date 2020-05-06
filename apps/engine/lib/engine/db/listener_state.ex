@@ -46,9 +46,7 @@ defmodule Engine.DB.ListenerState do
   """
   def stale_height(listener, height) do
     name = "#{listener}"
-    from(ls in __MODULE__,
-      where: ls.listener == ^name,
-      where: ls.height < ^height,
-    )
+
+    from(ls in __MODULE__, where: ls.listener == ^name, where: ls.height < ^height)
   end
 end
