@@ -5,11 +5,12 @@ defmodule Engine.DB.Fees do
   """
 
   use Ecto.Schema
-  import Ecto.{Changeset, Query}
-  alias Engine.DB.Fees
-  alias Engine.DB.FeeRules
-  alias Engine.Repo
+  import Ecto.Changeset
+  import Ecto.Query
   alias Ecto.UUID
+  alias Engine.DB.FeeRules
+  alias Engine.DB.Fees
+  alias Engine.Repo
 
   @type fee_data_t() :: %{binary() => fee_data_type_t()}
   @type fee_data_type_t() :: %{binary() => fee_data_currency_t()}

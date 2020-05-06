@@ -16,8 +16,8 @@ defmodule Engine.DB.DataCase do
 
   use ExUnit.CaseTemplate
 
-  alias Ecto.Changeset
   alias Ecto.Adapters.SQL.Sandbox
+  alias Ecto.Changeset
 
   using do
     quote do
