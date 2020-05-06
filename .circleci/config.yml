@@ -166,6 +166,7 @@ jobs:
       CHILDCHAIN_IMAGE_NAME: "omisego/childchain"
     steps:
       - checkout
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run: make docker-childchain CHILDCHAIN_IMAGE_NAME=$CHILDCHAIN_IMAGE_NAME
       - run: IMAGE_NAME=$CHILDCHAIN_IMAGE_NAME sh .circleci/ci_publish.sh
 
