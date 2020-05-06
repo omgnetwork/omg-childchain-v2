@@ -38,6 +38,7 @@ defmodule Engine.MixProject do
       {:ex_plasma, git: "https://github.com/omisego/ex_plasma.git"},
       {:postgrex, "~> 0.14"},
       {:telemetry, "~> 0.4"},
+      {:ex_json_schema, "~> 0.7.3"},
       # TEST
       {:ex_machina, "~> 2.4", only: [:test]},
       {:briefly, git: "https://github.com/CargoSense/briefly.git", only: [:test]},

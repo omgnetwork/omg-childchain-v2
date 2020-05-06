@@ -1,7 +1,6 @@
 defmodule Engine.DB.OutputTest do
-  use ExUnit.Case, async: true
+  use Engine.DB.DataCase, async: true
   doctest Engine.DB.Output, import: true
-  import Engine.DB.Factory
 
   alias ExPlasma.Output.Position
 

@@ -1,16 +1,7 @@
 defmodule Engine.Callbacks.PiggybackTest do
   @moduledoc false
-  use ExUnit.Case, async: true
-  import Engine.DB.Factory
-  import Ecto.Changeset
-
-  alias Ecto.Adapters.SQL.Sandbox
+  use Engine.DB.DataCase, async: true
   alias Engine.Callbacks.Piggyback
-  alias Engine.Repo
-
-  setup do
-    :ok = Sandbox.checkout(Repo)
-  end
 
   describe "callback/1" do
     test "marks an output as piggybacked" do
