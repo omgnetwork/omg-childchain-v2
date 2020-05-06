@@ -15,7 +15,6 @@ defmodule Engine.Callbacks.Exit do
   Gather all the Output positions in the list of exit events.
   """
   @impl Callback
-  #@spec callback(Callback.events(), Callback.listener()) :: Callback.response()
   def callback(events, listener) do
     Multi.new()
     |> Callback.update_listener_height(events, listener)

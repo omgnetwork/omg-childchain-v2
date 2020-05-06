@@ -33,7 +33,6 @@ defmodule Engine.Callbacks.Deposit do
   transaction, and UTXOs. This will wrap all the build deposits into one DB transaction.
   """
   @impl Callback
-  #@spec callback(Callback.events(), Callback.listener()) :: Callback.response()
   def callback(events, listener) do
     Multi.new()
     |> Callback.update_listener_height(events, listener)
