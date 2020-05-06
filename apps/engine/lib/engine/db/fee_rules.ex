@@ -25,11 +25,10 @@ defmodule Engine.DB.FeeRules do
         }
 
   @primary_key {:uuid, Ecto.UUID, autogenerate: true}
-  @timestamps_opts [type: :utc_datetime_usec]
-
+  
   schema "fee_rules" do
     field(:data, :map, default: %{})
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def changeset(rate, params \\ %{}) do

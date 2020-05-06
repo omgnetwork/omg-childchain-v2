@@ -26,8 +26,7 @@ defmodule Engine.DB.Fees do
         }
 
   @primary_key {:uuid, UUID, autogenerate: true}
-  @timestamps_opts [type: :utc_datetime_usec]
-
+  
   schema "fees" do
     field(:data, :map, default: %{})
 
@@ -39,7 +38,7 @@ defmodule Engine.DB.Fees do
       type: UUID
     )
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def changeset(fees, params \\ %{}) do

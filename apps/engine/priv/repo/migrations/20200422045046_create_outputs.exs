@@ -14,7 +14,7 @@ defmodule Engine.Repo.Migrations.CreateOutputs do
       add(:creating_transaction_id, references(:transactions))
       add(:spending_transaction_id, references(:transactions))
 
-      timestamps(type: :utc_datetime)
+      timestamps(type: :timestamptz)
     end
 
     create(unique_index(:outputs, [:position]))
