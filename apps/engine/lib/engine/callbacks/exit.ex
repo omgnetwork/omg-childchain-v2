@@ -5,13 +5,13 @@ defmodule Engine.Callbacks.Exit do
   correct and mark them as `exiting` to prevent them from being used.
   """
 
+  @behaviour Engine.Callback
+
   import Ecto.Query
 
   alias Ecto.Multi
   alias Engine.Callback
   alias Engine.DB.Output
-
-  @behaviour Callback
 
   @doc """
   Gather all the Output positions in the list of exit events.

@@ -5,14 +5,14 @@ defmodule Engine.Callbacks.Piggyback do
   correct and mark them as `exiting` to prevent them from being used.
   """
 
+  @behaviour Engine.Callback
+
   import Ecto.Changeset, only: [change: 2, get_field: 2]
 
   alias Ecto.Multi
   alias Engine.Callback
   alias Engine.DB.Output
   alias Engine.DB.Transaction
-
-  @behaviour Callback
 
   @doc """
   Gather all the Output positions in the list of exit events.

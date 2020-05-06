@@ -26,11 +26,11 @@ defmodule Engine.Ethereum.Event.Listener do
   """
   use GenServer
 
+  alias Engine.DB.ListenerState
   alias Engine.Ethereum.Event.Listener.Core
   alias Engine.Ethereum.Event.Listener.Storage
   alias Engine.Ethereum.Event.RootChainCoordinator
   alias Engine.Ethereum.RootChain.Event
-  alias Engine.DB.ListenerState
 
   require Logger
 

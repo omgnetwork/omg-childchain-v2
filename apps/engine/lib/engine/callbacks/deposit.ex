@@ -14,6 +14,8 @@ defmodule Engine.Callbacks.Deposit do
     - blknum 2000, this is the next submitted childchain block, containing non-deposit transactions
   """
 
+  @behaviour Engine.Callback
+
   import Ecto.Changeset
 
   alias Ecto.Multi
@@ -21,8 +23,6 @@ defmodule Engine.Callbacks.Deposit do
   alias Engine.DB.Block
   alias Engine.DB.Transaction
   alias ExPlasma.Builder
-
-  @behaviour Callback
 
   @doc """
   Inserts deposit events, recreating the transaction and forming the associated block,
