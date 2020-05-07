@@ -35,7 +35,7 @@ defmodule Engine.Feefeed.Rules.Worker do
   end
 
   @impl true
-  @spec init(name: atom(), config: Source.source_config()) :: {:ok, t()}
+  @spec init(config: Source.source_config()) :: {:ok, t()}
   def init(opts) do
     config = Keyword.fetch!(opts, :config)
     _ = Logger.info("Starting #{__MODULE__}")
