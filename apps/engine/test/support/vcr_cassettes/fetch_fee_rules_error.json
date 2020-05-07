@@ -17,7 +17,7 @@
         "max_redirect": 5
       },
       "request_body": "",
-      "url": "ni;"
+      "url": "https://raw.githubusercontent.com/nomisego/fee-rules/test/fee_rules.json"
     },
     "response": {
       "binary": false,

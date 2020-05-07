@@ -5,7 +5,7 @@ defmodule Engine.Feefeed.Rules.Worker.SourceTest do
   alias Engine.Feefeed.Rules.Worker.Source
   alias ExVCR.Config
 
-  setup_all do
+  setup do
     Config.cassette_library_dir("test/support/vcr_cassettes")
     :ok
   end
@@ -21,9 +21,8 @@ defmodule Engine.Feefeed.Rules.Worker.SourceTest do
 
     test "returns an error when the hackney returns an error" do
       use_cassette "fetch_fee_rules_error" do
-        assert {:error, _, code, error} = Source.fetch(source("nomisego"))
-        assert code == 404
-        assert error =~ "404: Not Found"
+        assert {:error, :fatal, e} = Source.fetch(source("nomisego"))
+        assert e == "nxdomain"
       end
     end
 
@@ -41,7 +40,7 @@ defmodule Engine.Feefeed.Rules.Worker.SourceTest do
       repo: "fee-rules",
       branch: "test",
       filename: "fee_rules",
-      config: '0.1.0'
+      vsn: '0.1.0'
     }
   end
 end
