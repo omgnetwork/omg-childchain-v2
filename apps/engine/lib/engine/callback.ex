@@ -27,7 +27,7 @@ defmodule Engine.Callback do
         repo.insert(changeset,
           on_conflict: on_conflict(listener, height),
           conflict_target: :listener,
-          stale_error_field: :listener
+          stale_error_field: :height
         )
 
       # This is a hack to get around the `on_conflict` stale entry in the event
