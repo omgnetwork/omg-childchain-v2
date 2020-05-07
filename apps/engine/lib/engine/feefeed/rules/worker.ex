@@ -31,7 +31,7 @@ defmodule Engine.Feefeed.Rules.Worker do
   Starts the server with the given options.
   """
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, Keyword.get(opts, :name, __MODULE__))
+    GenServer.start_link(__MODULE__, Keyword.fetch!(opts, :config), name: Keyword.get(opts, :name, __MODULE__))
   end
 
   @impl true

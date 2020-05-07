@@ -5,7 +5,6 @@ defmodule Feefeed.FeesSupervisor do
   alias Engine.Configuration
 
   alias Engine.Feefeed.Rules.Scheduler
-
   alias Engine.Feefeed.Rules.Worker
 
   def start_link(opts) do
