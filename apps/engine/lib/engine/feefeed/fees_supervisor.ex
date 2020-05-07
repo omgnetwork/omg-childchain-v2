@@ -15,9 +15,9 @@ defmodule Feefeed.FeesSupervisor do
   def init(:ok) do
     scheduler_interval = Configuration.scheduler_interval()
     source_config = Configuration.source_config()
-
+    db_fetch_retry_interval = Configuration.db_fetch_retry_interval()
     children = [
-      {Orchestrator, []},
+      {Orchestrator, [db_fetch_retry_interval: db_fetch_retry_interval]},
       {Worker, [name: Worker, source_pid: Source, orchestrator_pid: Orchestrator]},
       {Source, [name: Source, config: source_config]},
       {Scheduler, [name: Scheduler, interval: scheduler_interval, worker_pid: Worker]}

@@ -17,7 +17,10 @@ defmodule Engine.Feefeed.Fees.Orchestrator do
   alias Engine.Feefeed.Fees.Calculator
 
   require Logger
-  @db_fetch_retry_interval Configuration.db_fetch_retry_interval()
+
+  @type t() :: %__MODULE__{db_fetch_retry_interval: pos_integer()}
+
+  defstruct [:db_fetch_retry_interval]
 
   @doc """
   Starts the server with the given options.
@@ -30,9 +33,10 @@ defmodule Engine.Feefeed.Fees.Orchestrator do
 
   @impl true
   @spec init(keyword()) :: {:ok, %{}}
-  def init(_opts) do
-    _ = Logger.info("Starting #{__MODULE__}")
-    {:ok, %{}}
+  def init(opts) do
+    db_fetch_retry_interval = Keyword.fetch!(opts, :db_fetch_retry_interval)
+    _ = Logger.info("Starting #{__MODULE__} with db_fetch_retry_interval: #{db_fetch_retry_interval}")
+    {:ok, %__MODULE__{db_fetch_retry_interval: db_fetch_retry_interval}}
   end
 
   ## Client APIs
@@ -55,7 +59,7 @@ defmodule Engine.Feefeed.Fees.Orchestrator do
   @impl true
   @spec handle_cast({:compute_fees, UUID.t()}, %{}) :: {:noreply, %{}}
   def handle_cast({:compute_fees, fee_rules_uuid}, state) do
-    {:ok, %{data: fee_rules}} = fetch_latest_fee_rules_with_uuid(fee_rules_uuid, 0)
+    {:ok, %{data: fee_rules}} = fetch_latest_fee_rules_with_uuid(fee_rules_uuid, 0, state.db_fetch_retry_interval)
     {:ok, fees} = Calculator.calculate(fee_rules)
 
     _ =
@@ -89,7 +93,7 @@ defmodule Engine.Feefeed.Fees.Orchestrator do
     {:ok, fees}
   end
 
-  defp fetch_latest_fee_rules_with_uuid(uuid, retry_count) do
+  defp fetch_latest_fee_rules_with_uuid(uuid, retry_count, db_fetch_retry_interval) do
     case {FeeRules.fetch_latest(), retry_count} do
       {{:ok, %{uuid: ^uuid}} = fee_rules, _} ->
         fee_rules
@@ -100,13 +104,13 @@ defmodule Engine.Feefeed.Fees.Orchestrator do
       {_, retry_count} ->
         _ =
           Logger.warn(
-            "Warning: Fee rule with uuid: #{uuid} not found in DB, retrying in #{@db_fetch_retry_interval} ms. Current rety count: #{
+            "Warning: Fee rule with uuid: #{uuid} not found in DB, retrying in #{db_fetch_retry_interval} ms. Current rety count: #{
               retry_count
             }"
           )
 
-        Process.sleep(@db_fetch_retry_interval)
-        fetch_latest_fee_rules_with_uuid(uuid, retry_count + 1)
+        Process.sleep(db_fetch_retry_interval)
+        fetch_latest_fee_rules_with_uuid(uuid, retry_count + 1, db_fetch_retry_interval)
     end
   end
 end

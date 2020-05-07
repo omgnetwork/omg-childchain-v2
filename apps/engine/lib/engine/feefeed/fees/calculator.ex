@@ -6,10 +6,10 @@ defmodule Engine.Feefeed.Fees.Calculator do
 
   alias Engine.DB.FeeRules
   alias Engine.DB.Fees
-  alias Engine.Feefeed.Fees.FlatFeeCalculator
+  alias Engine.Feefeed.Fees.Calculator.FlatFee
 
   @calculator_map %{
-    "fixed" => FlatFeeCalculator
+    "fixed" => FlatFee
   }
 
   @doc """

@@ -1,7 +1,7 @@
-defmodule Engine.Feefeed.Fees.FlatFeeCalculatorTest do
+defmodule Engine.Feefeed.Fees.Calculator.FlatFeeTest do
   use ExUnit.Case, async: true
 
-  alias Engine.Feefeed.Fees.FlatFeeCalculator
+  alias Engine.Feefeed.Fees.Calculator.FlatFee
 
   describe "calculate/2" do
     test "calculates fees of fixed type correctly" do
@@ -16,7 +16,7 @@ defmodule Engine.Feefeed.Fees.FlatFeeCalculatorTest do
       }
 
       # For fixed type fees, the fees are the same as the rules
-      assert FlatFeeCalculator.calculate(currency_rules, []) == {:ok, currency_rules}
+      assert FlatFee.calculate(currency_rules, []) == {:ok, currency_rules}
     end
   end
 end

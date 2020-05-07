@@ -1,4 +1,4 @@
-defmodule Engine.Feefeed.Fees.FlatFeeCalculator do
+defmodule Engine.Feefeed.Fees.Calculator.FlatFee do
   @moduledoc """
   A simple calculator for flat typed fees.
   For a "fixed" type, the amount returned in the fee rule is the amount
