@@ -1,11 +1,11 @@
-defmodule Engine.Ethereum.Event.RootChainCoordinator.Setup do
+defmodule Engine.Ethereum.Event.Coordinator.Setup do
   @moduledoc """
-   The setup of `RootChainCoordinator` for the child chain server - configures the relations between different
+   The setup of `Coordinator` for the child chain server - configures the relations between different
    event listeners
   """
 
   @doc """
-  The `RootChainCoordinator` setup for the Childchain app. Summary of the configuration:
+  The `Coordinator` setup for the Childchain app. Summary of the configuration:
 
     - deposits are recognized after `deposit_finality_margin`
     - exit-related events don't have any finality margin, but wait for deposits

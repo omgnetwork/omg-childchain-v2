@@ -1,11 +1,11 @@
-defmodule Engine.Ethereum.Event.RootChainCoordinator do
+defmodule Engine.Ethereum.Event.Coordinator do
   @moduledoc """
-  Synchronizes services on root chain height, see `RootChainCoordinator.Core`
+  Synchronizes services on root chain height, see `Coordinator.Core`
   """
   use GenServer
 
-  alias Engine.Ethereum.Event.RootChainCoordinator.Core
-  alias Engine.Ethereum.Event.RootChainCoordinator.SyncGuide
+  alias Engine.Ethereum.Event.Coordinator.Core
+  alias Engine.Ethereum.Event.Coordinator.SyncGuide
   alias Engine.Ethereum.Height
 
   require Logger

@@ -6,7 +6,7 @@ defmodule Engine.Repo.Migrations.CreateListenerStates do
       add(:listener, :string, primary_key: true)
       add(:height, :integer)
 
-      timestamps(type: :utc_datetime)
+      timestamps(type: :timestamptz)
     end
   end
 end

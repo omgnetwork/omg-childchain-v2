@@ -1,17 +1,8 @@
 defmodule Engine.Callbacks.PiggybackTest do
   @moduledoc false
-  use ExUnit.Case, async: true
-  import Engine.DB.Factory
-  import Ecto.Changeset
-
-  alias Ecto.Adapters.SQL.Sandbox
+  use Engine.DB.DataCase, async: true
   alias Engine.Callbacks.Piggyback
   alias Engine.DB.ListenerState
-  alias Engine.Repo
-
-  setup do
-    :ok = Sandbox.checkout(Repo)
-  end
 
   test "marks an output as piggybacked" do
     owner = <<180, 121, 214, 88, 10, 185, 115, 237, 127, 113, 101, 78, 28, 82, 108, 57, 64, 154, 219, 241>>

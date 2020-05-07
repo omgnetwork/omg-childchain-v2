@@ -11,21 +11,32 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
 
   require Logger
 
-  # delete everything older then (current block - delete_events_threshold)
+  @events_bucket :events_bucket
+
+  @spec events_bucket(atom()) :: atom()
+  def events_bucket(name \\ @events_bucket) do
+    _ = if :undefined == :ets.info(name), do: :ets.new(name, [:bag, :public, :named_table])
+    name
+  end
+
+  @doc "delete everything older then (current block - delete_events_threshold)"
+  @spec delete_old_logs(non_neg_integer(), Aggregator.t()) :: non_neg_integer()
   def delete_old_logs(new_height_blknum, state) do
+    ets = state.ets
+    total_events = state.total_events
     # :ets.fun2ms(fn {block_number, _event_signature, _event} when
     # block_number <= new_height - delete_events_threshold -> true end)
     match_spec = [
-      {{:"$1", :"$2", :"$3"},
-       [{:"=<", :"$1", {:-, {:const, new_height_blknum}, {:const, state.delete_events_threshold_height_blknum}}}],
-       [true]}
+      {{:"$1", :"$2", :"$3"}, [{:"=<", :"$1", {:-, {:const, new_height_blknum}, {:const, total_events}}}], [true]}
     ]
 
-    :ets.select_delete(state.ets, match_spec)
+    :ets.select_delete(ets, match_spec)
   end
 
-  # allow ethereum event listeners to retrieve logs from ETS in bulk
+  @doc "allow ethereum event listeners to retrieve logs from ETS in bulk"
+  @spec retrieve_log(list(String.t()), non_neg_integer(), non_neg_integer(), Aggregator.t()) :: list(Event.t())
   def retrieve_log(signature, from_block, to_block, state) do
+    ets = state.ets
     # :ets.fun2ms(fn {block_number, event_signature, event} when
     # block_number >= from_block and block_number <= to_block
     # and event_signature == signature -> event
@@ -46,8 +57,8 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
        ], [:"$1"]}
     ]
 
-    events = state.ets |> :ets.select(event_match_spec) |> List.flatten()
-    blknum_list = :ets.select(state.ets, block_range)
+    events = ets |> :ets.select(event_match_spec) |> List.flatten()
+    blknum_list = :ets.select(ets, block_range)
 
     # we may not have all the block information the ethereum event listener wants
     # so we check for that and find all logs for missing blocks
@@ -72,6 +83,7 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
   end
 
   # raw data is logs which gets transformed into events
+  @spec retrieve_and_store_logs(pos_integer(), pos_integer(), Aggregator.t()) :: :ok
   defp retrieve_and_store_logs(from_block, to_block, state) do
     from_block
     |> get_events(to_block, state)

@@ -9,8 +9,11 @@ defmodule Engine.DB.Factory do
   import Ecto.Query
 
   alias Engine.DB.Block
+  alias Engine.DB.FeeRules
+  alias Engine.DB.Fees
   alias Engine.DB.Output
   alias Engine.DB.Transaction
+  alias Engine.Feefeed.Rules.Parser
   alias ExPlasma.Builder
   alias ExPlasma.Output.Position
 
@@ -70,4 +73,25 @@ defmodule Engine.DB.Factory do
 
   def set_state(%Transaction{outputs: [output]}, state), do: %{output | state: state}
   def set_state(%Output{} = output, state), do: %{output | state: state}
+
+  def fees_factory() do
+    %Fees{
+      fee_rules_uuid: insert(:fee_rules).uuid,
+      data: read_rules_file()
+    }
+  end
+
+  def fee_rules_factory() do
+    %FeeRules{
+      data: read_rules_file()
+    }
+  end
+
+  @spec read_rules_file() :: map()
+  def read_rules_file() do
+    {:ok, rules} = File.read("test/support/fee_rules.json")
+    {:ok, file_rules} = Parser.decode_and_validate(rules)
+
+    file_rules
+  end
 end

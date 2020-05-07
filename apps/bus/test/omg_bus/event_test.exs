@@ -19,7 +19,7 @@ defmodule Bus.EventTest do
     event = :deposit
     payload = ["payload"]
 
-    assert %Event{topic: "child_chain:" <> topic, event: event, payload: payload} ==
-             Event.new({:child_chain, topic}, event, payload)
+    assert %Event{topic: "childchain:" <> topic, event: event, payload: payload} ==
+             Event.new({:childchain, topic}, event, payload)
   end
 end

@@ -1,10 +1,10 @@
-defmodule Engine.Ethereum.Event.RootChainCoordinator.Core do
+defmodule Engine.Ethereum.Event.Coordinator.Core do
   @moduledoc """
   Synchronizes multiple log-reading services on root chain height.
   Each synchronized service must have a unique name.
   Service reports its height by calling 'check_in'.
   After all the services are checked in, coordinator returns currently synchronizable height,
-  for every service which asks by calling `RootChainCoordinator.get_height()`
+  for every service which asks by calling `Coordinator.get_height()`
 
   In case a service fails, it is checked out and coordinator does not resume until the missing service checks_in again.
   Coordinator periodically updates root chain height, looks after finality margins and ensures geth-queries aren't huge.
@@ -16,8 +16,8 @@ defmodule Engine.Ethereum.Event.RootChainCoordinator.Core do
       cause them to process any events twice! All services must ensure they process everything!
   """
 
-  alias Engine.Ethereum.Event.RootChainCoordinator.Service
-  alias Engine.Ethereum.Event.RootChainCoordinator.SyncGuide
+  alias Engine.Ethereum.Event.Coordinator.Service
+  alias Engine.Ethereum.Event.Coordinator.SyncGuide
 
   require Logger
 
@@ -36,7 +36,7 @@ defmodule Engine.Ethereum.Event.RootChainCoordinator.Core do
 
   @type ethereum_heights_result_t() :: %{atom() => non_neg_integer()}
 
-  # RootChainCoordinator is also checking if queries to Ethereum client don't get huge
+  # Coordinator is also checking if queries to Ethereum client don't get huge
   @maximum_leap_forward 2_500
 
   @doc """
@@ -48,7 +48,7 @@ defmodule Engine.Ethereum.Event.RootChainCoordinator.Core do
          being the name of the service, or a `{service_name, :no_margin}` pair, if the waiting should bypass the
          finality margin of the awaited process.
 
-     An example config can be seen in `RootChainCoordinator.Setup`
+     An example config can be seen in `Coordinator.Setup`
    - `root_chain_height` - current root chain height
   """
   @spec init(map(), non_neg_integer()) :: t()

@@ -1,20 +1,13 @@
 defmodule Engine.Callbacks.DepositTest do
   @moduledoc false
 
-  use ExUnit.Case, async: true
-  import Ecto.Query
+  use Engine.DB.DataCase, async: true
 
-  alias Ecto.Adapters.SQL.Sandbox
   alias Engine.Callbacks.Deposit
   alias Engine.DB.Block
   alias Engine.DB.ListenerState
   alias Engine.DB.Output
   alias Engine.DB.Transaction
-  alias Engine.Repo
-
-  setup do
-    :ok = Sandbox.checkout(Repo)
-  end
 
   test "generates a confirmed transaction, block and utxo for the deposit" do
     deposit_event = %{

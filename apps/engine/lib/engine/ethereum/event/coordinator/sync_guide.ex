@@ -1,4 +1,4 @@
-defmodule Engine.Ethereum.Event.RootChainCoordinator.SyncGuide do
+defmodule Engine.Ethereum.Event.Coordinator.SyncGuide do
   @moduledoc """
   A guiding message to a coordinated service. Tells until which root chain height it is safe to advance syncing to.
 
