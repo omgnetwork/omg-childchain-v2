@@ -10,8 +10,9 @@ defmodule Engine.Feefeed.Rules.Worker do
 
   alias Engine.DB.FeeRules
   alias Engine.Feefeed.Rules.Parser
-  alias Engine.Feefeed.Rules.Source
+  alias Engine.Feefeed.Rules.Worker.Source
   alias Engine.Feefeed.Rules.Worker.Update
+
   require Logger
   @type t() :: %__MODULE__{config: Keyword.t()}
   defstruct [:config]
