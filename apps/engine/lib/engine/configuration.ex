@@ -73,7 +73,7 @@ defmodule Engine.Configuration do
   end
 
   def source_config() do
-    Application.get_env(@app, Engine.Feefeed.Rules.Source)
+    Map.merge(Application.get_env(@app, Engine.Feefeed.Rules.Source), %{vsn: Application.spec(:engine, :vsn)})
   end
 
   def db_fetch_retry_interval() do

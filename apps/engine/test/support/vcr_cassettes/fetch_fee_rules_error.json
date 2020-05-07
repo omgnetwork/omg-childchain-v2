@@ -1,0 +1,30 @@
+[
+  {
+    "request": {
+      "body": "",
+      "headers": {
+        "Accept": "application/json",
+        "Cache-Control": "no-cache",
+        "User-Agent": "Feefeed/0.1.0"
+      },
+      "method": "get",
+      "options": {
+        "basic_auth": [
+          "",
+          "abc"
+        ],
+        "follow_redirect": "true",
+        "max_redirect": 5
+      },
+      "request_body": "",
+      "url": "ni;"
+    },
+    "response": {
+      "binary": false,
+      "body": "nxdomain",
+      "headers": [],
+      "status_code": null,
+      "type": "error"
+    }
+  }
+]
