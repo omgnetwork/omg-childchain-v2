@@ -5,7 +5,7 @@ defmodule Engine.Feefeed.Rules.Worker.SourceTest do
   alias Engine.Feefeed.Rules.Worker.Source
   alias ExVCR.Config
 
-  setup do
+  setup_all do
     Config.cassette_library_dir("test/support/vcr_cassettes")
     :ok
   end
