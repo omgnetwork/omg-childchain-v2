@@ -34,7 +34,8 @@ defmodule Engine.DB.ListenerState do
   """
   @spec get_height(atom()) :: non_neg_integer()
   def get_height(listener) do
-    case Engine.Repo.get(__MODULE__, "#{listener}") do
+    name =  "#{listener}"
+    case Engine.Repo.get(__MODULE__, name) do
       nil -> 0
       state -> state.height
     end
