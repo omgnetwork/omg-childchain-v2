@@ -78,4 +78,9 @@ config :os_mon,
 
 config :engine, Engine.Feefeed.Rules.Scheduler, interval: 180
 
+config :engine, Engine.Feefeed.Rules.Source,
+  org: "omisego",
+  branch: "master",
+  filename: "fee_rules"
+
 import_config "#{Mix.env()}.exs"

@@ -31,7 +31,8 @@ defmodule Engine.Feefeed.Rules.Worker do
   Starts the server with the given options.
   """
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, Keyword.fetch!(opts, :config), name: Keyword.get(opts, :name, __MODULE__))
+    config = [config: Keyword.fetch!(opts, :config)]
+    GenServer.start_link(__MODULE__, config, name: Keyword.get(opts, :name, __MODULE__))
   end
 
   @impl true
@@ -46,7 +47,6 @@ defmodule Engine.Feefeed.Rules.Worker do
   ## Callbacks
   ##
   @impl true
-  @spec handle_cast(:update, t()) :: {:noreply, t()}
   def handle_cast(:update, state) do
     {:ok, body} = Source.fetch(state.config)
     {:ok, rules} = Parser.decode_and_validate(body)

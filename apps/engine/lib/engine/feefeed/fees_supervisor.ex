@@ -1,4 +1,4 @@
-defmodule Feefeed.FeesSupervisor do
+defmodule Engine.Feefeed.FeesSupervisor do
   @moduledoc false
 
   use Supervisor
