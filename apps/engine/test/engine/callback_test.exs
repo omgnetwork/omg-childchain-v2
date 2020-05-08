@@ -19,7 +19,7 @@ defmodule Engine.CallbackTest do
       events = [
         build(:deposit_event, height: 100),
         build(:deposit_event, height: 101),
-        build(:deposit_event, height: 103),
+        build(:deposit_event, height: 103)
       ]
 
       Multi.new()

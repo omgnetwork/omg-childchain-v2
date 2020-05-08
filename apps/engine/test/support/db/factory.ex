@@ -65,10 +65,10 @@ defmodule Engine.DB.Factory do
       attr
       |> Map.put(:signature, "DepositCreated(address,uint256,address,uint256)")
       |> Map.put(:data, %{
-          "amount" => Map.get(attr, :amount, 1),
-          "blknum" => Map.get(attr, :blknum, 1),
-          "token" => Map.get(attr, :token, <<0::160>>),
-          "depositor" => Map.get(attr, :depositor, <<1::160>>)
+        "amount" => Map.get(attr, :amount, 1),
+        "blknum" => Map.get(attr, :blknum, 1),
+        "token" => Map.get(attr, :token, <<0::160>>),
+        "depositor" => Map.get(attr, :depositor, <<1::160>>)
       })
 
     build(:event, params)

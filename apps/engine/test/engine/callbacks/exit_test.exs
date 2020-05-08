@@ -25,7 +25,7 @@ defmodule Engine.Callbacks.ExitTest do
 
       events = [
         build(:exit_started_event, position: pos1, height: 101),
-        build(:exit_started_event, position: pos2, height: 102),
+        build(:exit_started_event, position: pos2, height: 102)
       ]
 
       assert {:ok, %{exiting_outputs: {2, nil}}} = Exit.callback(events, :exit_started)

@@ -27,8 +27,7 @@ defmodule Engine.Callbacks.DepositTest do
       build(:deposit_event, blknum: 5)
     ]
 
-    assert {:ok, %{"deposit-blknum-6" => block6, "deposit-blknum-5" => block5}} =
-             Deposit.callback(events, :depositor)
+    assert {:ok, %{"deposit-blknum-6" => block6, "deposit-blknum-5" => block5}} = Deposit.callback(events, :depositor)
 
     assert %Block{number: 6, state: "confirmed"} = block6
     assert %Block{number: 5, state: "confirmed"} = block5

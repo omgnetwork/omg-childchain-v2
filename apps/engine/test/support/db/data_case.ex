@@ -65,6 +65,6 @@ defmodule Engine.DB.DataCase do
   """
   def listener_for(listener, height: height) do
     name = "#{listener}"
-    %ListenerState{height: height, listener: name} = Engine.Repo.get(ListenerState, name)
+    %ListenerState{height: ^height, listener: ^name} = Engine.Repo.get(ListenerState, name)
   end
 end
