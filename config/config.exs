@@ -76,4 +76,11 @@ config :os_mon,
   disk_almost_full_threshold: 1,
   system_memory_high_watermark: 1
 
+config :engine, Engine.Feefeed.Rules.Scheduler, interval: 180
+
+config :engine, Engine.Feefeed.Rules.Source,
+  org: "omisego",
+  branch: "master",
+  filename: "fee_rules"
+
 import_config "#{Mix.env()}.exs"

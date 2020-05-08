@@ -67,4 +67,19 @@ defmodule Engine.Configuration do
   def tx_hash_contract() do
     Application.get_env(@app, :tx_hash_contract)
   end
+
+  def scheduler_interval() do
+    Application.get_env(@app, Engine.Feefeed.Rules.Scheduler)[:interval]
+  end
+
+  def source_config() do
+    @app
+    |> Application.get_env(Engine.Feefeed.Rules.Source)
+    |> Enum.into(%{})
+    |> Map.merge(%{vsn: Application.spec(:engine, :vsn)})
+  end
+
+  def db_fetch_retry_interval() do
+    Application.get_env(@app, :db_fetch_retry_interval)
+  end
 end

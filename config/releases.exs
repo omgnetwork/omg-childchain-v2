@@ -62,3 +62,13 @@ config :status, Status.Metric.Tracer,
   disabled?: to_boolean.(System.get_env("DD_DISABLED") || "true"),
   type: :web,
   env: System.get_env("APP_ENV") || ""
+
+config :engine, Engine.Feefeed.Rules.Scheduler,
+  interval: String.to_integer(System.get_env("RULES_FETCH_INTERVAL") || "180")
+
+config :engine, Engine.Feefeed.Rules.Source,
+  token: System.get_env("GITHUB_TOKEN"),
+  org: System.get_env("GITHUB_ORGANISATION") || "omisego",
+  repo: System.get_env("GITHUB_REPO"),
+  branch: System.get_env("GITHUB_BRANCH") || "master",
+  filename: System.get_env("GITHUB_FILENAME") || "fee_rules"
