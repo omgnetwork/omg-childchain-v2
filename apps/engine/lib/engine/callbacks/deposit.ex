@@ -14,36 +14,33 @@ defmodule Engine.Callbacks.Deposit do
     - blknum 2000, this is the next submitted childchain block, containing non-deposit transactions
   """
 
+  @behaviour Engine.Callback
+
   import Ecto.Changeset
 
+  alias Ecto.Multi
+  alias Engine.Callback
   alias Engine.DB.Block
   alias Engine.DB.Transaction
-  alias Engine.Ethereum.RootChain.Event
-  alias Engine.SyncedHeight
   alias ExPlasma.Builder
-
-  @type address_binary :: <<_::160>>
-
-  @type tx_hash() :: <<_::256>>
 
   @doc """
   Inserts deposit events, recreating the transaction and forming the associated block,
   transaction, and UTXOs. This will wrap all the build deposits into one DB transaction.
   """
-  @spec callback(list(Event.t()), atom()) :: {:ok, map()} | {:error, :atom, any(), any()}
-  def callback(events, listener),
-    do: do_callback(Ecto.Multi.new(), events, %{listener: "#{listener}", height: find_tip_eth_height(events)})
+  @impl Callback
+  def callback(events, listener) do
+    Multi.new()
+    |> Callback.update_listener_height(events, listener)
+    |> do_callback(events)
+  end
 
-  defp do_callback(multi, [event | tail], synced_height),
-    do: multi |> build_deposit(event) |> do_callback(tail, synced_height)
+  defp do_callback(multi, [event | tail]) do
+    multi |> build_deposit(event) |> do_callback(tail)
+  end
 
-  defp do_callback(multi, [], new_synced_height) do
-    multi
-    |> Ecto.Multi.run(:synced_height, fn repo, _changes ->
-      {:ok, repo.get(SyncedHeight, "#{new_synced_height.listener}") || %SyncedHeight{}}
-    end)
-    |> Ecto.Multi.insert_or_update(:update, &synced_height(&1, new_synced_height))
-    |> Engine.Repo.transaction()
+  defp do_callback(multi, []) do
+    Engine.Repo.transaction(multi)
   end
 
   defp build_deposit(multi, %{} = event) do
@@ -77,23 +74,5 @@ defmodule Engine.Callbacks.Deposit do
       on_conflict: :nothing,
       conflict_target: :number
     )
-  end
-
-  defp find_tip_eth_height(events) do
-    Enum.max_by(events, fn event -> event.eth_height end, fn -> 0 end).eth_height
-  end
-
-  defp synced_height(%{synced_height: %{height: nil} = synced_height}, new_synced_height) do
-    Ecto.Changeset.change(synced_height, new_synced_height)
-  end
-
-  defp synced_height(%{synced_height: synced_height}, new_synced_height) do
-    case new_synced_height.height > synced_height.height do
-      true ->
-        Ecto.Changeset.change(synced_height, new_synced_height)
-
-      _ ->
-        Ecto.Changeset.change(synced_height, %{})
-    end
   end
 end

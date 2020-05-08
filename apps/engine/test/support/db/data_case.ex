@@ -18,6 +18,7 @@ defmodule Engine.DB.DataCase do
 
   alias Ecto.Adapters.SQL.Sandbox
   alias Ecto.Changeset
+  alias Engine.DB.ListenerState
 
   using do
     quote do
@@ -55,5 +56,15 @@ defmodule Engine.DB.DataCase do
         opts |> Keyword.get(String.to_existing_atom(key), key) |> to_string()
       end)
     end)
+  end
+
+  @doc """
+  Check to see if the listener has a given state, like height.
+
+    assert listener_for(:depositor, height: 100)
+  """
+  def listener_for(listener, height: height) do
+    name = "#{listener}"
+    %ListenerState{height: ^height, listener: ^name} = Engine.Repo.get(ListenerState, name)
   end
 end

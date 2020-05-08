@@ -5,48 +5,34 @@ defmodule Engine.Callbacks.Exit do
   correct and mark them as `exiting` to prevent them from being used.
   """
 
+  @behaviour Engine.Callback
+
   import Ecto.Query
 
+  alias Ecto.Multi
+  alias Engine.Callback
   alias Engine.DB.Output
-
-  @type event() :: %{
-          call_data: %{
-            output_tx: binary(),
-            utxo_pos: non_neg_integer()
-          },
-          eth_height: non_neg_integer(),
-          event_signature: String.t(),
-          exit_id: non_neg_integer(),
-          log_index: non_neg_integer(),
-          owner: binary(),
-          root_chain_tx_hash: binary()
-        }
 
   @doc """
   Gather all the Output positions in the list of exit events.
   """
-  @spec callback(list()) :: tuple()
-  def callback(events), do: do_callback([], events)
-
-  defp do_callback(positions, [event | tail]),
-    do: positions |> mark_exiting_utxo(event) |> do_callback(tail)
-
-  defp do_callback(positions, []), do: update_positions_as_exiting(positions)
-
-  # Grab's all the Output positions.
-  defp mark_exiting_utxo(positions, %{} = event) do
-    %{call_data: %{utxo_pos: position}} = event
-    positions ++ [position]
+  @impl Callback
+  def callback(events, listener) do
+    Multi.new()
+    |> Callback.update_listener_height(events, listener)
+    |> do_callback([], events)
   end
 
-  defp update_positions_as_exiting(positions) do
+  defp do_callback(multi, positions, [event | tail]) do
+    %{call_data: %{"utxoPos" => position}} = event
+    do_callback(multi, positions ++ [position], tail)
+  end
+
+  defp do_callback(multi, positions, []) do
     query = where(Output.usable(), [output], output.position in ^positions)
 
-    Engine.Repo.update_all(query,
-      set: [
-        state: "exited",
-        updated_at: NaiveDateTime.utc_now()
-      ]
-    )
+    multi
+    |> Multi.update_all(:exiting_outputs, query, set: [state: "exited", updated_at: NaiveDateTime.utc_now()])
+    |> Engine.Repo.transaction()
   end
 end
