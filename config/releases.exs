@@ -15,7 +15,9 @@ config :engine,
   plasma_framework: System.get_env("CONTRACT_ADDRESS_PLASMA_FRAMEWORK"),
   erc20_vault: nil,
   eth_vault: nil,
-  payment_exit_game: nil
+  payment_exit_game: nil,
+  ethereum_events_check_interval_ms: String.to_integer(System.get_env("ETHEREUM_EVENTS_CHECK_INTERVAL_MS") || "8000"),
+  ethereum_stalled_sync_threshold_ms: String.to_integer(System.get_env("ETHEREUM_STALLED_SYNC_THRESHOLD_MS") || "20000")
 
 config :engine, Engine.Repo,
   database: "engine_repo",

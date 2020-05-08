@@ -26,7 +26,7 @@ defmodule Engine.Configuration do
   end
 
   def ethereum_events_check_interval_ms() do
-    Application.get_env(@app, :ethereum_events_check_interval_ms)
+    Application.fetch_env!(@app, :ethereum_events_check_interval_ms)
   end
 
   def ethereum_stalled_sync_threshold_ms() do
@@ -36,50 +36,50 @@ defmodule Engine.Configuration do
   @spec contracts() :: list(String.t())
   def contracts() do
     [
-      Application.get_env(@app, :plasma_framework),
-      Application.get_env(@app, :erc20_vault),
-      Application.get_env(@app, :eth_vault),
-      Application.get_env(@app, :payment_exit_game)
+      Application.fetch_env!(@app, :plasma_framework),
+      Application.fetch_env!(@app, :erc20_vault),
+      Application.fetch_env!(@app, :eth_vault),
+      Application.fetch_env!(@app, :payment_exit_game)
     ]
   end
 
   @spec eth_vault() :: String.t()
   def eth_vault() do
-    Application.get_env(@app, :eth_vault)
+    Application.fetch_env!(@app, :eth_vault)
   end
 
   @spec url() :: String.t()
   def url() do
-    Application.get_env(@app, :url)
+    Application.fetch_env!(@app, :url)
   end
 
   @spec plasma_framework() :: String.t()
   def plasma_framework() do
-    Application.get_env(@app, :plasma_framework)
+    Application.fetch_env!(@app, :plasma_framework)
   end
 
   @spec authority_address() :: String.t()
   def authority_address() do
-    Application.get_env(@app, :authority_address)
+    Application.fetch_env!(@app, :authority_address)
   end
 
   @spec tx_hash_contract() :: String.t()
   def tx_hash_contract() do
-    Application.get_env(@app, :tx_hash_contract)
+    Application.fetch_env!(@app, :tx_hash_contract)
   end
 
   def scheduler_interval() do
-    Application.get_env(@app, Engine.Feefeed.Rules.Scheduler)[:interval]
+    Application.fetch_env!(@app, Engine.Feefeed.Rules.Scheduler)[:interval]
   end
 
   def source_config() do
     @app
-    |> Application.get_env(Engine.Feefeed.Rules.Source)
+    |> Application.fetch_env!(Engine.Feefeed.Rules.Source)
     |> Enum.into(%{})
     |> Map.merge(%{vsn: Application.spec(:engine, :vsn)})
   end
 
   def db_fetch_retry_interval() do
-    Application.get_env(@app, :db_fetch_retry_interval)
+    Application.fetch_env!(@app, :db_fetch_retry_interval)
   end
 end
