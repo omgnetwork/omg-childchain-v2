@@ -17,6 +17,81 @@ defmodule Engine.DB.Factory do
   alias ExPlasma.Builder
   alias ExPlasma.Output.Position
 
+  def input_piggyback_event_factory(attr \\ %{}) do
+    tx_hash = Map.get(attr, :tx_hash, <<1::256>>)
+    index = Map.get(attr, :input_index, 0)
+
+    params =
+      attr
+      |> Map.put(:signature, "InFlightExitInputPiggybacked(address,bytes32,uint16)")
+      |> Map.put(:data, %{
+        "tx_hash" => tx_hash,
+        "input_index" => index
+      })
+
+    build(:event, params)
+  end
+
+  def output_piggyback_event_factory(attr \\ %{}) do
+    tx_hash = Map.get(attr, :tx_hash, <<1::256>>)
+    index = Map.get(attr, :output_index, 0)
+
+    params =
+      attr
+      |> Map.put(:signature, "InFlightExitOutputPiggybacked(address,bytes32,uint16)")
+      |> Map.put(:data, %{
+        "tx_hash" => tx_hash,
+        "output_index" => index
+      })
+
+    build(:event, params)
+  end
+
+  def exit_started_event_factory(attr \\ %{}) do
+    position = Map.get(attr, :position, 1_000_000_000)
+
+    params =
+      attr
+      |> Map.put(:signature, "ExitStarted(address,uint160)")
+      |> Map.put(:call_data, %{
+        "utxoPos" => position
+      })
+
+    build(:event, params)
+  end
+
+  def deposit_event_factory(attr \\ %{}) do
+    params =
+      attr
+      |> Map.put(:signature, "DepositCreated(address,uint256,address,uint256)")
+      |> Map.put(:data, %{
+          "amount" => Map.get(attr, :amount, 1),
+          "blknum" => Map.get(attr, :blknum, 1),
+          "token" => Map.get(attr, :token, <<0::160>>),
+          "depositor" => Map.get(attr, :depositor, <<1::160>>)
+      })
+
+    build(:event, params)
+  end
+
+  def event_factory(attr \\ %{}) do
+    signature = Map.get(attr, :signature, "FooCalled()")
+    data = Map.get(attr, :data, attr)
+    call_data = Map.get(attr, :call_data, attr)
+    height = Map.get(attr, :height, 100)
+    log_index = Map.get(attr, :log_index, 1)
+    root_chain_tx_hash = Map.get(attr, :log_index, <<1::160>>)
+
+    %{
+      data: data,
+      call_data: call_data,
+      eth_height: height,
+      event_signature: signature,
+      log_index: log_index,
+      root_chain_tx_hash: root_chain_tx_hash
+    }
+  end
+
   def deposit_transaction_factory(attr \\ %{}) do
     # Pick an available block number.
     blknum = (Engine.Repo.one(from(b in Block, select: b.number)) || 0) + 1
