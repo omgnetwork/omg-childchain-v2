@@ -1,14 +1,8 @@
 defmodule Engine.DB.ListenerStateTest do
-  use ExUnit.Case, async: true
+  use Engine.DB.DataCase, async: true
   doctest Engine.DB.ListenerState, import: true
 
-  alias Ecto.Adapters.SQL.Sandbox
   alias Engine.DB.ListenerState
-  alias Engine.Repo
-
-  setup do
-    :ok = Sandbox.checkout(Repo)
-  end
 
   describe "changeset/2" do
     test "validates that height is greater than or equal to 0" do

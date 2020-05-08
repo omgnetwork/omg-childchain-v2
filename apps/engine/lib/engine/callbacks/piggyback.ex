@@ -33,15 +33,15 @@ defmodule Engine.Callbacks.Piggyback do
   # For us, we keep track of the history to some degree(e.g state change).
   #
   # See: https://github.com/omisego/elixir-omg/blob/8189b812b4b3cf9256111bd812235fb342a6fd50/apps/omg/lib/omg/state/utxo_set.ex#L81
-  defp piggyback(multi, %{data: %{"input_index" => index}} = event) do
-    do_piggyback(multi, :inputs, index: index, tx_hash: event.data["tx_hash"])
+  defp piggyback(multi, %{data: %{"input_index" => index, "tx_hash" => tx_hash}}) do
+    do_piggyback(multi, :inputs, index, tx_hash)
   end
 
-  defp piggyback(multi, %{data: %{"output_index" => index}} = event) do
-    do_piggyback(multi, :outputs, index: index, tx_hash: event.data["tx_hash"])
+  defp piggyback(multi, %{data: %{"output_index" => index, "tx_hash" => tx_hash}}) do
+    do_piggyback(multi, :outputs, index, tx_hash)
   end
 
-  defp do_piggyback(multi, type, index: index, tx_hash: tx_hash) do
+  defp do_piggyback(multi, type, index, tx_hash) do
     transaction =
       tx_hash
       |> Transaction.find_by_tx_hash()

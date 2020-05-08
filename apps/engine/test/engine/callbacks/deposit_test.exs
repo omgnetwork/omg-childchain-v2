@@ -125,7 +125,7 @@ defmodule Engine.Callbacks.DepositTest do
 
     assert {:ok, %{"deposit-blknum-11" => _, "deposit-blknum-12" => _}} = Deposit.callback(deposit_events, :depositor)
     assert {:ok, %{"deposit-blknum-13" => _}} = Deposit.callback(deposit_events ++ new_deposit_events, :depositor)
-    assert 3 == Repo.one(from(b in Engine.DB.Block, select: count(b.id)))
+    assert Repo.one(from(b in Engine.DB.Block, select: count(b.id))) == 3
 
     assert %ListenerState{height: 405, listener: "depositor"} = Engine.Repo.get(ListenerState, "#{:depositor}")
   end
@@ -243,19 +243,19 @@ defmodule Engine.Callbacks.DepositTest do
 
     assert %ListenerState{height: 405, listener: "depositor"} = Engine.Repo.get(ListenerState, "#{:depositor}")
 
-    assert 2 == Repo.one(from(b in Engine.DB.Block, select: count(b.id)))
+    assert Repo.one(from(b in Engine.DB.Block, select: count(b.id))) == 2
 
     assert {:ok, %{"deposit-blknum-5" => _}} = Deposit.callback(deposit_events_listener2, :depositor)
 
     assert %ListenerState{height: 406, listener: "depositor"} = Engine.Repo.get(ListenerState, "#{:depositor}")
 
-    assert 3 == Repo.one(from(b in Engine.DB.Block, select: count(b.id)))
+    assert Repo.one(from(b in Engine.DB.Block, select: count(b.id))) == 3
 
     assert {:ok, _} = Deposit.callback(deposit_events_listener3, :depositor)
 
     assert %ListenerState{height: 406, listener: "depositor"} = Engine.Repo.get(ListenerState, "#{:depositor}")
 
-    assert 3 == Repo.one(from(b in Engine.DB.Block, select: count(b.id)))
+    assert Repo.one(from(b in Engine.DB.Block, select: count(b.id))) == 3
 
     assert {:ok, _} = Deposit.callback(deposit_events_listener3, :depositor)
 

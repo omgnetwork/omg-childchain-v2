@@ -24,7 +24,7 @@ defmodule Engine.Callbacks.Exit do
   end
 
   defp do_callback(multi, positions, [event | tail]) do
-    %{call_data: %{utxo_pos: position}} = event
+    %{call_data: %{"utxoPos" => position}} = event
     do_callback(multi, positions ++ [position], tail)
   end
 

@@ -13,8 +13,8 @@ defmodule Engine.Callbacks.ExitTest do
       exit_events = [
         %{
           call_data: %{
-            output_tx: <<0>>,
-            utxo_pos: position
+            "rlpOutputTx" => <<0>>,
+            "utxoPos" => position
           },
           eth_height: 1676,
           event_signature: "ExitStarted(address,uint160)",
@@ -42,8 +42,8 @@ defmodule Engine.Callbacks.ExitTest do
       exit_events = [
         %{
           call_data: %{
-            output_tx: <<0>>,
-            utxo_pos: pos1
+           "rlpOutputTx" => <<0>>,
+            "utxoPos" => pos1
           },
           eth_height: 1676,
           event_signature: "ExitStarted(address,uint160)",
@@ -56,8 +56,8 @@ defmodule Engine.Callbacks.ExitTest do
         },
         %{
           call_data: %{
-            output_tx: <<0>>,
-            utxo_pos: pos2
+            "rlpOutputTx" => <<0>>,
+            "utxoPos" => pos2
           },
           eth_height: 1678,
           event_signature: "ExitStarted(address,uint160)",
