@@ -33,6 +33,7 @@ defmodule Engine.DB.Block do
     Ecto.Multi.new()
     |> Ecto.Multi.insert("new-block", %__MODULE__{})
     |> Ecto.Multi.run("form-block", &attach_block_to_transactions/2)
+    |> Ecto.Multi.run("hash-block", &generate_block_hash/2)
     |> Engine.Repo.transaction()
   end
 
@@ -41,5 +42,12 @@ defmodule Engine.DB.Block do
     {total, _} = repo.update_all(Transaction.pending(), set: updates)
 
     {:ok, total}
+  end
+
+  defp generate_block_hash(repo, %{"new-block" => block}) do
+    txns = Engine.Repo.preload(block, :transactions).transactions
+    hash = txns |> Enum.map(& &1.tx_bytes) |> ExPlasma.Encoding.merkle_root_hash()
+    changeset = Ecto.Changeset.change(block, hash: hash)
+    repo.update(changeset)
   end
 end
