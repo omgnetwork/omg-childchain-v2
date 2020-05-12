@@ -29,4 +29,14 @@ defmodule Engine.DB.BlockTest do
       assert block.hash == hash
     end
   end
+
+  describe "get_by_hash/1" do
+    test "returns the block" do
+      _ = insert(:deposit_transaction)
+      _ = insert(:payment_v1_transaction)
+      {:ok, %{"hash-block" => block}} = Block.form()
+
+      assert Block.get_by_hash(block.hash).hash == block.hash
+    end
+  end
 end

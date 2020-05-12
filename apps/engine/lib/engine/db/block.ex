@@ -5,7 +5,9 @@ defmodule Engine.DB.Block do
 
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
   alias Engine.DB.Transaction
+  alias Engine.Repo
 
   schema "blocks" do
     field(:hash, :binary)
@@ -22,6 +24,7 @@ defmodule Engine.DB.Block do
     |> cast(params, [:hash, :number, :state])
     |> cast_assoc(:transactions)
     |> unique_constraint(:number)
+    |> generate_block_hash()
   end
 
   @doc """
@@ -33,8 +36,16 @@ defmodule Engine.DB.Block do
     Ecto.Multi.new()
     |> Ecto.Multi.insert("new-block", %__MODULE__{})
     |> Ecto.Multi.run("form-block", &attach_block_to_transactions/2)
-    |> Ecto.Multi.run("hash-block", &generate_block_hash/2)
-    |> Engine.Repo.transaction()
+    |> Ecto.Multi.run("hash-block", &attach_hash/2)
+    |> Repo.transaction()
+  end
+
+  @doc """
+  Grab the most recent block by it's hash, which is not necessarily unique.
+  """
+  def get_by_hash(hash) do
+    query = from b in __MODULE__, where: b.hash == ^hash, order_by: b.inserted_at, limit: 1
+    query |> Repo.all() |> hd()
   end
 
   defp attach_block_to_transactions(repo, %{"new-block" => block}) do
@@ -44,10 +55,20 @@ defmodule Engine.DB.Block do
     {:ok, total}
   end
 
-  defp generate_block_hash(repo, %{"new-block" => block}) do
-    txns = Engine.Repo.preload(block, :transactions).transactions
-    hash = txns |> Enum.map(& &1.tx_bytes) |> ExPlasma.Encoding.merkle_root_hash()
-    changeset = Ecto.Changeset.change(block, hash: hash)
-    repo.update(changeset)
+  defp attach_hash(repo, %{"new-block" => block}) do
+    block
+    |> Repo.preload(:transactions)
+    |> changeset(%{})
+    |> repo.update()
+  end
+
+  defp generate_block_hash(changeset) do
+    hash =
+      changeset
+      |> get_field(:transactions)
+      |> Enum.map(&(&1.tx_bytes))
+      |> ExPlasma.Encoding.merkle_root_hash()
+
+    put_change(changeset, :hash, hash)
   end
 end
