@@ -18,5 +18,15 @@ defmodule Engine.DB.BlockTest do
 
       assert length(transactions) == 1
     end
+
+    test "generates the block hash" do
+      _ = insert(:deposit_transaction)
+      txn1 = insert(:payment_v1_transaction)
+
+      hash = ExPlasma.Encoding.merkle_root_hash([txn1.tx_bytes])
+
+      assert {:ok, %{"hash-block" => block}} = Block.form()
+      assert block.hash == hash
+    end
   end
 end
