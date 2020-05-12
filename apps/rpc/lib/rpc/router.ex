@@ -6,6 +6,7 @@ defmodule RPC.Router do
   use Plug.Router
 
   alias Engine.DB.Block
+  alias Engine.DB.Transaction
   alias Engine.Repo
   alias ExPlasma.Encoding
 
@@ -17,13 +18,14 @@ defmodule RPC.Router do
     case Map.get(conn.params, "hash") do
       nil ->
         send_error(conn, 400)
-      hash ->
 
+      hash ->
         block = hash |> Encoding.to_binary() |> Block.get_by_hash() |> Repo.preload(:transactions)
 
         case block do
           nil ->
             send_payload(conn, 204, %{})
+
           block ->
             send_payload(conn, 200, %{
               blknum: block.number,
@@ -34,8 +36,21 @@ defmodule RPC.Router do
     end
   end
 
-  # post "/transaction.submit" do
-  # end
+  post "/transaction.submit" do
+    case Map.get(conn.params, "transaction") do
+      nil ->
+        send_error(conn, 400)
+
+      hex ->
+        {:ok, transaction} =
+          hex
+          |> Encoding.to_binary()
+          |> Transaction.decode()
+          |> Repo.insert()
+
+        send_payload(conn, 200, %{tx_hash: Encoding.to_hex(transaction.tx_hash)})
+    end
+  end
 
   # get "/alarm.get" do
   # end

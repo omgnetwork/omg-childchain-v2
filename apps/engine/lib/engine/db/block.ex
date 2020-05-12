@@ -44,7 +44,7 @@ defmodule Engine.DB.Block do
   Grab the most recent block by it's hash, which is not necessarily unique.
   """
   def get_by_hash(hash) do
-    query = from b in __MODULE__, where: b.hash == ^hash, order_by: b.inserted_at, limit: 1
+    query = from(b in __MODULE__, where: b.hash == ^hash, order_by: b.inserted_at, limit: 1)
     query |> Repo.all() |> hd()
   end
 
@@ -66,7 +66,7 @@ defmodule Engine.DB.Block do
     hash =
       changeset
       |> get_field(:transactions)
-      |> Enum.map(&(&1.tx_bytes))
+      |> Enum.map(& &1.tx_bytes)
       |> ExPlasma.Encoding.merkle_root_hash()
 
     put_change(changeset, :hash, hash)

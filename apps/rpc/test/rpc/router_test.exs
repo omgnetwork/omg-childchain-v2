@@ -21,14 +21,37 @@ defmodule RPC.RouterTest do
 
       assert payload["service_name"] == "childchain"
       assert payload["version"] == "1.0"
-      assert payload["data"] == %{ 
-        "blknum" => nil,
-        "hash" => "0x39662d06a769f21f750ee5a2bdc3cdad2dfffc182c77ce9d194215f4b8f3455b",
-        "transactions" => ["0xf87401e1a0000000000000000000000000000000000000000000000000000000003b9aca00eeed01eb9400000000000000000000000000000000000000019400000000000000000000000000000000000000000180a00000000000000000000000000000000000000000000000000000000000000000"]
-      }
+
+      assert payload["data"] == %{
+               "blknum" => nil,
+               "hash" => "0x39662d06a769f21f750ee5a2bdc3cdad2dfffc182c77ce9d194215f4b8f3455b",
+               "transactions" => [
+                 "0xf87401e1a0000000000000000000000000000000000000000000000000000000003b9aca00eeed01eb9400000000000000000000000000000000000000019400000000000000000000000000000000000000000180a00000000000000000000000000000000000000000000000000000000000000000"
+               ]
+             }
     end
   end
 
   describe "/transaction.submit" do
+    test "decodes a transaction and inserts it" do
+      _ = insert(:deposit_transaction)
+      txn = build(:payment_v1_transaction)
+      tx_bytes = ExPlasma.Encoding.to_hex(txn.tx_bytes)
+
+      req =
+        :post
+        |> conn("/transaction.submit", Jason.encode!(%{transaction: tx_bytes}))
+        |> put_req_header("content-type", "application/json")
+        |> RPC.Router.call(RPC.Router.init([]))
+
+      {:ok, payload} = Jason.decode(req.resp_body)
+
+      assert payload["service_name"] == "childchain"
+      assert payload["version"] == "1.0"
+
+      assert payload["data"] == %{
+               "tx_hash" => "0xead85979109fb81530392a4cca36cb7b112fb49739c7844e0bafbe9e247ce773"
+             }
+    end
   end
 end
