@@ -9,8 +9,8 @@ defmodule Engine.Configuration do
     Application.fetch_env!(:ethereumex, :url)
   end
 
-  def deposit_finality_margin() do
-    10
+  def finality_margin() do
+    Application.fetch_env!(:engine, :finality_margin)
   end
 
   def contract_deployment_height() do

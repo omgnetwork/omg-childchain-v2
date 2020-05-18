@@ -7,12 +7,12 @@ defmodule Engine.Ethereum.Event.Coordinator.Setup do
   @doc """
   The `Coordinator` setup for the Childchain app. Summary of the configuration:
 
-    - deposits are recognized after `deposit_finality_margin`
+    - deposits are recognized after `finality_margin`
     - exit-related events don't have any finality margin, but wait for deposits
     - piggyback-related events must wait for IFE start events
   """
 
-  def coordinator_setup(metrics_collection_interval, coordinator_eth_height_check_interval_ms, deposit_finality_margin) do
+  def coordinator_setup(metrics_collection_interval, coordinator_eth_height_check_interval_ms, finality_margin) do
     {[
        metrics_collection_interval: metrics_collection_interval,
        coordinator_eth_height_check_interval_ms: coordinator_eth_height_check_interval_ms

@@ -8,6 +8,7 @@ to_boolean = fn
 end
 
 config :engine,
+  finality_margin: String.to_integer(System.get_env("FINALITY_MARGIN") || "10"),
   url: rpc_url,
   network: System.get_env("ETHEREUM_NETWORK"),
   tx_hash_contract: System.get_env("TX_HASH_CONTRACT"),
