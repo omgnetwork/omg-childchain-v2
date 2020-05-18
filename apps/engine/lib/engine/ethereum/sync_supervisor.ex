@@ -32,7 +32,7 @@ defmodule Engine.Ethereum.SyncSupervisor do
   defp children(args) do
     monitor = Keyword.fetch!(args, :monitor)
     contract_deployment_height = Keyword.fetch!(args, :contract_deployment_height)
-    deposit_finality_margin = Configuration.deposit_finality_margin()
+    finality_margin = Configuration.finality_margin()
     metrics_collection_interval = Configuration.metrics_collection_interval()
     coordinator_eth_height_check_interval_ms = Configuration.coordinator_eth_height_check_interval_ms()
     contracts = Configuration.contracts()
@@ -43,7 +43,7 @@ defmodule Engine.Ethereum.SyncSupervisor do
        Setup.coordinator_setup(
          metrics_collection_interval,
          coordinator_eth_height_check_interval_ms,
-         deposit_finality_margin
+         finality_margin
        )},
       {Aggregator,
        opts: [url: url],

@@ -51,6 +51,7 @@ services:
       - ./docker/geth/geth-blank-password:/data/geth-blank-password
     networks: 
       - default
+  
 networks:
   default:
     name: childchain_default

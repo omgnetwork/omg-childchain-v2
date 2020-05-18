@@ -41,6 +41,7 @@ defmodule Engine.MixProject do
       {:ex_json_schema, "0.7.4"},
       {:httpoison, "~> 1.7"},
       {:decorator, "~> 1.2"},
+      {:ex_rlp, "~> 0.5.3"},
       # TEST
       {:exvcr, "~> 0.10", only: :test},
       {:ex_machina, "~> 2.4", only: [:test]},

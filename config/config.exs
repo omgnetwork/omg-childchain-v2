@@ -26,6 +26,7 @@ end
 contracts = parse_contracts.()
 
 config :engine,
+  finality_margin: 10,
   network: "TEST",
   tx_hash_contract: contracts["TX_HASH_CONTRACT"],
   authority_address: contracts["AUTHORITY_ADDRESS"],
