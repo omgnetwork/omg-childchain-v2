@@ -1,6 +1,7 @@
 defmodule Engine.Ethereum.Authority.Submitter.Core do
   @moduledoc false
-#  alias Engine.DB.Block
+
+  #  alias Engine.DB.Block
 
   def adjust_gas_and_submit(blocks) do
     :ok =

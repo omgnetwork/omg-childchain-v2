@@ -4,7 +4,8 @@ defmodule Engine.Ethereum.Authority.Submitter do
   """
 
   alias Engine.DB.Block
-  #alias Engine.Ethereum.Authority.Submitter.External
+
+  # alias Engine.Ethereum.Authority.Submitter.External
 
   require Logger
 
