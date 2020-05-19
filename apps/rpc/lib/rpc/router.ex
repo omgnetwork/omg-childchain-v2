@@ -5,11 +5,6 @@ defmodule RPC.Router do
 
   use Plug.Router
 
-  alias Engine.DB.Block
-  alias Engine.DB.Transaction
-  alias Engine.Repo
-  alias ExPlasma.Encoding
-
   plug(:match)
   plug(Plug.Parsers, parsers: [:json], json_decoder: Jason)
   plug(:dispatch)

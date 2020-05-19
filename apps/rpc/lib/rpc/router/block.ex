@@ -4,7 +4,6 @@ defmodule RPC.Router.Block do
   """
 
   alias Engine.DB.Block
-  alias Engine.DB.Transaction
   alias Engine.Repo
   alias ExPlasma.Encoding
 
