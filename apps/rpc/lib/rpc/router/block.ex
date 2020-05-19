@@ -15,10 +15,10 @@ defmodule RPC.Router.Block do
     block = hash |> Encoding.to_binary() |> Block.get_by_hash()
 
     case block do
-      nil ->
+      [] ->
         %{}
 
-      block ->
+      [block | _] ->
         block = Repo.preload(block, :transactions)
 
         %{

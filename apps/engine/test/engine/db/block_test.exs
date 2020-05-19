@@ -36,11 +36,11 @@ defmodule Engine.DB.BlockTest do
       _ = insert(:payment_v1_transaction)
       {:ok, %{"hash-block" => block}} = Block.form()
 
-      assert Block.get_by_hash(block.hash).hash == block.hash
+      assert hd(Block.get_by_hash(block.hash)).hash == block.hash
     end
 
     test "returns nil if no block" do
-      assert Block.get_by_hash(<<0::160>>).hash == nil
+      assert Block.get_by_hash(<<0::160>>) == []
     end
   end
 end

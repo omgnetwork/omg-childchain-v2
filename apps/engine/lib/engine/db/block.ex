@@ -45,7 +45,7 @@ defmodule Engine.DB.Block do
   """
   def get_by_hash(hash) do
     query = from(b in __MODULE__, where: b.hash == ^hash, order_by: b.inserted_at, limit: 1)
-    query |> Repo.all() |> hd()
+    Repo.all(query)
   end
 
   defp attach_block_to_transactions(repo, %{"new-block" => block}) do
