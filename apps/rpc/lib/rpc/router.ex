@@ -5,17 +5,20 @@ defmodule RPC.Router do
 
   use Plug.Router
 
+  alias RPC.Router.Block
+  alias RPC.Router.Transaction
+
   plug(:match)
   plug(Plug.Parsers, parsers: [:json], json_decoder: Jason)
   plug(:dispatch)
 
   post "/block.get" do
-    data = RPC.Router.Block.get_by_hash(conn.params)
+    data = Block.get_by_hash(conn.params)
     render_json(conn, data)
   end
 
   post "/transaction.submit" do
-    data = RPC.Router.Transaction.submit(conn.params)
+    data = Transaction.submit(conn.params)
     render_json(conn, data)
   end
 
@@ -29,6 +32,6 @@ defmodule RPC.Router do
         data: data
       })
 
-    send_resp(conn, (status || 200), payload)
+    send_resp(conn, status || 200, payload)
   end
 end

@@ -25,5 +25,4 @@ defmodule RPC.Router.Transaction do
       messages: %{error_key: "invalid_param"}
     }
   end
-
 end

@@ -17,8 +17,10 @@ defmodule RPC.Router.Block do
     case block do
       nil ->
         %{}
+
       block ->
         block = Repo.preload(block, :transactions)
+
         %{
           blknum: block.number,
           hash: Encoding.to_hex(block.hash),
