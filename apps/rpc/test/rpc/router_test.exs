@@ -4,6 +4,8 @@ defmodule RPC.RouterTest do
 
   alias Engine.DB.Block
 
+  @moduletag :focus
+
   describe "/block.get" do
     test "that it returns a block" do
       _ = insert(:deposit_transaction)

@@ -15,55 +15,18 @@ defmodule RPC.Router do
   plug(:dispatch)
 
   post "/block.get" do
-    case Map.get(conn.params, "hash") do
-      nil ->
-        send_error(conn, 400)
-
-      hash ->
-        block = hash |> Encoding.to_binary() |> Block.get_by_hash() |> Repo.preload(:transactions)
-
-        case block do
-          nil ->
-            send_payload(conn, 204, %{})
-
-          block ->
-            send_payload(conn, 200, %{
-              blknum: block.number,
-              hash: Encoding.to_hex(block.hash),
-              transactions: Enum.map(block.transactions, fn txn -> Encoding.to_hex(txn.tx_bytes) end)
-            })
-        end
-    end
+    data = RPC.Router.Block.get_by_hash(conn.params)
+    render_json(conn, data)
   end
 
   post "/transaction.submit" do
-    case Map.get(conn.params, "transaction") do
-      nil ->
-        send_error(conn, 400)
-
-      hex ->
-        {:ok, transaction} =
-          hex
-          |> Encoding.to_binary()
-          |> Transaction.decode()
-          |> Repo.insert()
-
-        send_payload(conn, 200, %{tx_hash: Encoding.to_hex(transaction.tx_hash)})
-    end
+    data = RPC.Router.Transaction.submit(conn.params)
+    render_json(conn, data)
   end
-
-  # get "/alarm.get" do
-  # end
-
-  # get "/configuration.get" do
-  # end
-
-  # post "/fees.all" do
-  # end
 
   # match _, do: send_resp(conn, 404, "not found")
 
-  defp send_payload(conn, http_code, data) do
+  defp render_json(%{status: status} = conn, data) do
     payload =
       Jason.encode!(%{
         service_name: "childchain",
@@ -71,17 +34,6 @@ defmodule RPC.Router do
         data: data
       })
 
-    send_resp(conn, http_code, payload)
-  end
-
-  defp send_error(conn, http_code) do
-    payload = %{
-      object: "error",
-      code: "",
-      description: "",
-      messages: %{error_key: "not_found"}
-    }
-
-    send_payload(conn, http_code, payload)
+    send_resp(conn, (status || 200), payload)
   end
 end

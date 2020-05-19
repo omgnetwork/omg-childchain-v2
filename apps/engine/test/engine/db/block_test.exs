@@ -38,5 +38,9 @@ defmodule Engine.DB.BlockTest do
 
       assert Block.get_by_hash(block.hash).hash == block.hash
     end
+
+    test "returns nil if no block" do
+      assert Block.get_by_hash(<<0::160>>).hash == nil
+    end
   end
 end
