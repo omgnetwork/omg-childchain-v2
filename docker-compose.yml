@@ -51,8 +51,50 @@ services:
       - ./docker/geth/geth-blank-password:/data/geth-blank-password
     networks: 
       - default
-  
+  gencerts:
+    image: alpine:3.10
+    volumes:
+      - "./docker/immutability/ca:/home/root/ca:rw"
+      - "./docker/immutability/config:/home/root/:rw"
+    entrypoint: >
+      /bin/sh -c "
+        apk add bash openssl
+        chown -R nobody:nobody /home/root/ca && chmod -R 777 /home/root/ca
+        # only gen if they aren't there
+        if [ -f /home/root/ca/certs/my-service.crt ];then
+          exit 0
+        else
+          /home/root/gencerts.sh
+        fi
+      "
+  vault_server:
+    image: omisego/immutability-vault-ethereum:latest
+    networks:
+      - testnet
+    ports:
+      - "8200:8200"
+    depends_on:
+      - "gencerts"
+      - "geth"
+    links:
+      - "geth"
+    volumes:
+      - "./docker/immutability/ca:/home/vault/ca:rw"
+      - "./docker/immutability/config:/home/vault/config:ro"
+    entrypoint: >
+      /bin/sh -c "
+        sleep 2
+        while [ ! -f /home/vault/ca/certs/my-service.crt ];do
+          echo Waiting on gencerts...
+          sleep 1
+        done;
+        /home/vault/config/entrypoint.sh
+      "
+    networks: 
+      - default
 networks:
   default:
     name: childchain_default
 
+
+#curl -k -X PUT -H "X-Vault-Request: true" -H "X-Vault-Token: totally-secure" -d '{"rpc_url":"http://geth:8545","chain_id":"1337"}' https://127.0.0.1:8200/v1/immutability-eth-plugin/config
