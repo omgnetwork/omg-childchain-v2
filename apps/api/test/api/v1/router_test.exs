@@ -33,14 +33,14 @@ defmodule API.V1.RouterTest do
       assert payload["version"] == "1.0"
 
       assert payload["data"] == %{
-        "object" => "error",
-        "code" => "operation:bad_request",
-        "messages" => %{
-          "validation_error" => %{
-            "parameter" => "hash"
-          }
-        }
-      }
+               "object" => "error",
+               "code" => "operation:bad_request",
+               "messages" => %{
+                 "validation_error" => %{
+                   "parameter" => "hash"
+                 }
+               }
+             }
     end
   end
 
@@ -57,6 +57,23 @@ defmodule API.V1.RouterTest do
 
       assert payload["data"] == %{
                "tx_hash" => "0xead85979109fb81530392a4cca36cb7b112fb49739c7844e0bafbe9e247ce773"
+             }
+    end
+
+    test "that it returns an error if missing params" do
+      {:ok, payload} = post("/transaction.submit", %{})
+
+      assert payload["service_name"] == "childchain"
+      assert payload["version"] == "1.0"
+
+      assert payload["data"] == %{
+               "object" => "error",
+               "code" => "operation:bad_request",
+               "messages" => %{
+                 "validation_error" => %{
+                   "parameter" => "transaction"
+                 }
+               }
              }
     end
   end

@@ -22,10 +22,11 @@ defmodule API.V1.TransactionSubmit do
 
   def submit(_) do
     %{
-      object: "error",
-      code: "",
-      description: "",
-      messages: %{error_key: "invalid_param"}
+      object: :error,
+      code: "operation:bad_request",
+      messages: %{
+        validation_error: %{parameter: :transaction}
+      }
     }
   end
 end
