@@ -139,7 +139,8 @@ defmodule Engine.DB.Factory do
     |> Output.changeset(%{
       output_type: Map.get(attr, :output_type, 1),
       output_id: Map.get(attr, :output_id),
-      output_data: Map.get(attr, :output_data)
+      output_data: Map.get(attr, :output_data),
+      state: Map.get(attr, :state, "pending")
     })
     |> apply_changes()
   end
