@@ -1,12 +1,15 @@
-defmodule RPC.Router.Transaction do
+defmodule API.V1.TransactionSubmit do
   @moduledoc """
-  Produces responses for /transaction.submit
+  Accepts a tx_bytes param and validates and inserts the transaction into the network.
   """
 
   alias Engine.DB.Transaction
   alias Engine.Repo
   alias ExPlasma.Encoding
 
+  @doc """
+  Validate and insert the tx_bytes.
+  """
   def submit(%{"transaction" => hex_tx_bytes}) do
     {:ok, transaction} =
       hex_tx_bytes

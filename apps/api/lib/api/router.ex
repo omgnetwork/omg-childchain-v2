@@ -9,5 +9,5 @@ defmodule API.Router do
   plug(:match)
   plug(:dispatch)
 
-  forward "/v1", to: API.V1.Router
+  forward("/v1", to: API.V1.Router)
 end

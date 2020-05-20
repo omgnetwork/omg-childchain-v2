@@ -1,4 +1,4 @@
-defmodule RPC.RouterTest do
+defmodule API.V1.RouterTest do
   use Engine.DB.DataCase, async: true
   use Plug.Test
 
