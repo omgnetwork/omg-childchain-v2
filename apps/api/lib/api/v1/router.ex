@@ -8,7 +8,9 @@ defmodule API.V1.Router do
   alias API.V1.BlockGet
   alias API.V1.TransactionSubmit
 
+  plug(:match)
   plug(Plug.Parsers, parsers: [:json], json_decoder: Jason)
+  plug(:dispatch)
 
   post "/block.get" do
     data = BlockGet.by_hash(conn.params)

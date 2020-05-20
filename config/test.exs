@@ -1,11 +1,13 @@
 import Config
 
 config :engine, Engine.Repo,
+  queue_target: 100, # NOTE: should probably investigate why we need to bump this.
   database: "engine_repo_test",
   username: "omisego_dev",
   password: "omisego_dev",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
+
 
 config :engine, ecto_repos: [Engine.Repo]
 

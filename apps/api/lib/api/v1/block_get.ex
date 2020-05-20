@@ -28,7 +28,14 @@ defmodule API.V1.BlockGet do
     end
   end
 
+  # elixir-omg really just returns 1 type of error for this...
   def by_hash(_) do
-    %{}
+    %{
+      object: :error,
+      code: "operation:bad_request",
+      messages: %{
+        validation_error: %{parameter: :hash}
+      }
+    }
   end
 end
