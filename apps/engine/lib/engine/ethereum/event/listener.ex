@@ -175,13 +175,13 @@ defmodule Engine.Ethereum.Event.Listener do
     state
   end
 
-  @spec publish_events(list(Event.t())) :: :ok | {:error, term()}
+  @spec publish_events(list(Event.t())) :: :ok
   defp publish_events([%{event_signature: event_signature} | _] = data) do
     [event_signature, _] = String.split(event_signature, "(")
 
     {:root_chain, event_signature}
     |> Bus.Event.new(:data, data)
-    |> Bus.direct_local_broadcast()
+    |> Bus.local_broadcast()
   end
 
   defp publish_events([]), do: :ok
