@@ -55,6 +55,6 @@ defmodule Engine.Ethereum.HeightMonitor.Core do
   # it needs to re-write logs, for example
   def broadcast_on_new_height(event_bus_module, height) do
     event = Bus.Event.new({:root_chain, "ethereum_new_height"}, :ethereum_new_height, height)
-    apply(event_bus_module, :broadcast, [event])
+    apply(event_bus_module, :local_broadcast, [event])
   end
 end

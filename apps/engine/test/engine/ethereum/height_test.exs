@@ -33,7 +33,7 @@ defmodule Engine.Ethereum.HeightTest do
       assert Height.get() == {:error, :ethereum_height}
       :erlang.trace(pid, true, [:receive])
       event = Bus.Event.new({:root_chain, "ethereum_new_height"}, :ethereum_new_height, 1)
-      Bus.broadcast(event)
+      Bus.local_broadcast(event)
       assert_receive {:trace, ^pid, :receive, {:internal_event_bus, :ethereum_new_height, 1}}
       assert Height.get() == {:ok, 1}
     end

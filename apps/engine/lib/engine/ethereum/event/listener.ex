@@ -181,7 +181,7 @@ defmodule Engine.Ethereum.Event.Listener do
 
     {:root_chain, event_signature}
     |> Bus.Event.new(:data, data)
-    |> Bus.direct_local_broadcast()
+    |> Bus.local_broadcast()
   end
 
   defp publish_events([]), do: :ok
