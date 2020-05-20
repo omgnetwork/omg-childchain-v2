@@ -175,7 +175,7 @@ defmodule Engine.Ethereum.Event.Listener do
     state
   end
 
-  @spec publish_events(list(Event.t())) :: :ok | {:error, term()}
+  @spec publish_events(list(Event.t())) :: :ok
   defp publish_events([%{event_signature: event_signature} | _] = data) do
     [event_signature, _] = String.split(event_signature, "(")
 
