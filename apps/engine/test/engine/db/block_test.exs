@@ -15,7 +15,7 @@ defmodule Engine.DB.BlockTest do
       assert {:ok, %{"new-block" => block}} = Block.form()
 
       block_changeset = Block.submit_attempt(block, %{gas: 1, height: 1})
-      submission_changeset = hd(changeset.changes[:submissions])
+      submission_changeset = hd(block_changeset.changes[:submissions])
 
       assert submission_changeset.changes[:gas] == 1
       assert submission_changeset.changes[:height] == 1
