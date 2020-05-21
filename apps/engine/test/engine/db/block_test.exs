@@ -7,6 +7,42 @@ defmodule Engine.DB.BlockTest do
   alias Engine.DB.Block
   alias Engine.DB.Transaction
 
+  describe "submit_attempt/2" do
+    test "builds a changeset with a new submission attempt" do
+      _ = insert(:deposit_transaction)
+      _ = insert(:payment_v1_transaction)
+
+      assert {:ok, %{"new-block" => block}} = Block.form()
+
+      block_changeset = Block.submit_attempt(block, %{gas: 1, height: 1})
+      submission_changeset = hd(changeset.changes[:submissions])
+
+      assert submission_changeset.changes[:gas] == 1
+      assert submission_changeset.changes[:height] == 1
+    end
+
+    test "can add additional submissions" do
+      _ = insert(:deposit_transaction)
+      _ = insert(:payment_v1_transaction)
+
+      assert {:ok, %{"new-block" => block}} = Block.form()
+
+      {:ok, block1} =
+        block
+        |> Engine.Repo.preload(:transactions)
+        |> Block.submit_attempt(%{gas: 1, height: 1})
+        |> Engine.Repo.update()
+
+      {:ok, block2} =
+        block1
+        |> Engine.Repo.preload(:transactions)
+        |> Block.submit_attempt(%{gas: 2, height: 2})
+        |> Engine.Repo.update()
+
+      assert length(block2.submissions) == 2
+    end
+  end
+
   describe "form/0" do
     test "forms a block from the existing pending transactions" do
       _ = insert(:deposit_transaction)

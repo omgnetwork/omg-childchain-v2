@@ -7,6 +7,12 @@ defmodule Engine.Repo.Migrations.CreateBlocks do
       add(:number, :integer)
       add(:state, :string)
 
+      add(:nonce, :integer)
+      add(:gas, :bigint)
+      add(:height, :integer)
+
+      add(:submissions, {:array, :map}, default: [])
+
       timestamps(type: :timestamptz)
     end
 
