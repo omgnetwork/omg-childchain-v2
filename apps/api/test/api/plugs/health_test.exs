@@ -19,6 +19,8 @@ defmodule API.Plugs.HealthTest do
   end
 
   test "accepts requests if no alarm is raised" do
+    Alarm.clear_all()
+    resp = Health.call(conn(:get, "/"), %{})
     assert :ok = call_plug(10)
   end
 
