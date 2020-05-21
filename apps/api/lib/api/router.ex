@@ -6,6 +6,7 @@ defmodule API.Router do
 
   use Plug.Router
 
+  plug(API.Plugs.Health)
   plug(:match)
   plug(:dispatch)
 
