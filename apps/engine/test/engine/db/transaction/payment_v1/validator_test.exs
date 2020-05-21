@@ -1,5 +1,6 @@
 defmodule Engine.DB.Transaction.PaymentV1.ValidatorTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
+
   alias Engine.DB.Transaction.PaymentV1.Validator
 
   doctest Validator

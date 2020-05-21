@@ -37,15 +37,16 @@ defmodule Engine.DB.Transaction.Validator do
   """
   @spec validate_inputs(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   def validate_inputs(changeset) do
-    input_positions = get_input_positions(changeset)
-    inputs = input_positions |> usable_outputs_for() |> Repo.all()
+    given_input_positions = get_input_positions(changeset)
+    usable_inputs = given_input_positions |> usable_outputs_for() |> Repo.all()
+    usable_input_positions = Enum.map(usable_inputs, & &1.position)
 
-    case input_positions -- Enum.map(inputs, & &1.position) do
-      [missing_inputs] ->
-        add_error(changeset, :inputs, "input #{missing_inputs} are missing or spent")
-
+    case given_input_positions -- usable_input_positions do
       [] ->
-        put_change(changeset, :inputs, inputs)
+        put_change(changeset, :inputs, usable_inputs)
+
+      missing_inputs ->
+        add_error(changeset, :inputs, "inputs #{inspect(missing_inputs)} are missing, spent, or not yet available")
     end
   end
 
@@ -94,14 +95,11 @@ defmodule Engine.DB.Transaction.Validator do
     where(Output.usable(), [output], output.position in ^positions)
   end
 
-  defp process_validation_results(results, changeset) do
-    case results do
-      {:ok, _} ->
-        changeset
+  defp process_validation_results({:ok, _}, changeset), do: changeset
+  defp process_validation_results(:ok, changeset), do: changeset
 
-      {:error, {field, message}} ->
-        add_error(changeset, field, @error_messages[message])
-    end
+  defp process_validation_results({:error, {field, message}}, changeset) do
+    add_error(changeset, field, @error_messages[message])
   end
 
   defp get_decoded_output_data(changeset, type) do

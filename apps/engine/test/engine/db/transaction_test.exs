@@ -25,36 +25,6 @@ defmodule Engine.DB.TransactionTest do
       assert %Output{} = hd(transaction.inputs)
     end
 
-    test "validates inputs exist" do
-      transaction = build(:payment_v1_transaction)
-      changeset = Transaction.decode(transaction.tx_bytes)
-
-      refute changeset.valid?
-      assert {"input 1000000000 are missing or spent", _} = changeset.errors[:inputs]
-    end
-
-    test "validates inputs are not spent" do
-      %Transaction{block: %Block{number: number}} =
-        :deposit_transaction
-        |> build()
-        |> spent()
-        |> insert()
-
-      transaction = build(:payment_v1_transaction, blknum: number)
-      changeset = Transaction.decode(transaction.tx_bytes)
-
-      refute changeset.valid?
-      assert {"input 1000000000 are missing or spent", _} = changeset.errors[:inputs]
-    end
-
-    test "validates inputs are usable" do
-      _ = insert(:deposit_transaction)
-      transaction = build(:payment_v1_transaction)
-      changeset = Transaction.decode(transaction.tx_bytes)
-
-      assert changeset.valid?
-    end
-
     # TODO: move to specific type test
     test "validates amounts" do
       output_guard_1 = <<1::160>>

@@ -97,7 +97,8 @@ defmodule Engine.DB.Factory do
     blknum = (Engine.Repo.one(from(b in Block, select: b.number)) || 0) + 1
     output_guard = Map.get(attr, :output_guard) || <<1::160>>
     amount = Map.get(attr, :amount, 1)
-    data = %{output_guard: output_guard, token: <<0::160>>, amount: amount}
+    token = Map.get(attr, :token, <<0::160>>)
+    data = %{output_guard: output_guard, token: token, amount: amount}
 
     id =
       %{blknum: blknum, txindex: 0, oindex: 0}
@@ -107,7 +108,7 @@ defmodule Engine.DB.Factory do
     tx_bytes =
       [tx_type: 1]
       |> Builder.new()
-      |> Builder.add_output(output_guard: output_guard, token: <<0::160>>, amount: amount)
+      |> Builder.add_output(Enum.to_list(data))
       |> ExPlasma.encode()
 
     output =

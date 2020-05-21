@@ -32,14 +32,14 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
   ...> %{output_guard: <<1::160>>, token: <<2::160>>, amount: 2}], [
   ...> %{output_guard: <<2::160>>, token: <<2::160>>, amount: 2}],
   ...> %{<<1::160>> => [1, 3]})
-  {:ok, nil}
+  :ok
   """
   @spec validate(
           list(ExPlasma.Output.Type.PaymentV1.t()),
           list(ExPlasma.Output.Type.PaymentV1.t()),
           %{required(<<_::160>>) => list(pos_integer())} | :no_fees_required
         ) ::
-          {:ok, nil}
+          :ok
           | {:error, {:inputs, :amounts_do_not_add_up}}
           | {:error, {:inputs, :fees_not_covered}}
           | {:error, {:inputs, :fee_token_not_accepted}}
@@ -54,9 +54,10 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
       |> substract_outputs_from_inputs(output_amounts)
       |> filter_zero_amounts()
 
-    with :ok <- validate_positive_amounts(filtered_amounts),
-         :ok <- validate_fees(filtered_amounts, fees) do
-      {:ok, nil}
+    with :ok <- positive_amounts(filtered_amounts),
+         :ok <- no_fees_required(filtered_amounts, fees),
+         :ok <- fees_covered(filtered_amounts, fees) do
+      :ok
     end
   end
 
@@ -71,9 +72,13 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
     Map.merge(input_amounts, output_amounts, fn _token, input_amount, output_amount -> input_amount - output_amount end)
   end
 
-  defp filter_zero_amounts(map), do: :maps.filter(fn _, v -> v != 0 end, map)
+  defp filter_zero_amounts(amounts) do
+    amounts
+    |> Enum.filter(fn {_token, amount} -> amount != 0 end)
+    |> Map.new()
+  end
 
-  defp validate_positive_amounts(amounts) do
+  defp positive_amounts(amounts) do
     case Enum.all?(amounts, &(elem(&1, 1) > 0)) do
       true -> :ok
       false -> {:error, {:inputs, :amounts_do_not_add_up}}
@@ -81,29 +86,29 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
   end
 
   # No fees required for merge transactions
-  defp validate_fees(amounts, :no_fees_required) when map_size(amounts) == 0, do: :ok
-
-  defp validate_fees(_, :no_fees_required), do: {:error, {:inputs, :overpaying_fees}}
+  defp no_fees_required(amounts, :no_fees_required) when map_size(amounts) == 0, do: :ok
+  defp no_fees_required(_, :no_fees_required), do: {:error, {:inputs, :overpaying_fees}}
+  defp no_fees_required(_, _), do: :ok
 
   # If it's not a merge transaction, we should have at least one token to cover the fees
-  defp validate_fees(amounts, _fees) when map_size(amounts) == 0 do
+  defp fees_covered(amounts, _fees) when map_size(amounts) == 0 do
     {:error, {:inputs, :fees_not_covered}}
   end
 
   # We can't have more than 1 token paying for the fees
-  defp validate_fees(amounts, _fees) when map_size(amounts) > 1 do
+  defp fees_covered(amounts, _fees) when map_size(amounts) > 1 do
     {:error, {:inputs, :amounts_do_not_add_up}}
   end
 
   # In this case, we know that we have only one %{token => amount}
-  defp validate_fees(amounts, fees) do
+  defp fees_covered(amounts, fees) do
     fee_token = amounts |> Map.keys() |> hd()
     fee_paid = amounts[fee_token]
 
     case Map.get(fees, fee_token) do
       # Paying fees with an unsupported token
       nil -> {:error, {:inputs, :fee_token_not_accepted}}
-      accepted_fee_amounts -> validate_exact_fee_amount(fee_paid, accepted_fee_amounts)
+      accepted_fee_amounts -> exact_fee_amount(fee_paid, accepted_fee_amounts)
     end
   end
 
@@ -112,7 +117,7 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
   # of transactions that was created right before a fee update.
   # If the fee_paid is in the list of supported fee we are good, if not we return an error
   # based on the latest supported amount.
-  defp validate_exact_fee_amount(fee_paid, [current_amount | _] = accepted_fee_amounts) do
+  defp exact_fee_amount(fee_paid, [current_amount | _] = accepted_fee_amounts) do
     cond do
       fee_paid in accepted_fee_amounts ->
         :ok
