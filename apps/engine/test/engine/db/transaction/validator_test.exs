@@ -82,7 +82,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
         |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
         |> ExPlasma.encode()
 
-      changeset = cast(%Transaction{}, %{tx_bytes: stateless_valid_tx_bytes}, [:tx_bytes])
+      changeset = change(%Transaction{}, %{tx_bytes: stateless_valid_tx_bytes})
       validated_changeset = Validator.validate_protocol(changeset)
 
       assert validated_changeset.valid?
@@ -90,7 +90,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
     end
 
     test "returns the changeset with an error if when invalid" do
-      stateless_valid_tx_bytes =
+      stateless_invalid_tx_bytes =
         [tx_type: 1]
         |> Builder.new()
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
@@ -99,7 +99,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
 
       validated_changeset =
         %Transaction{}
-        |> cast(%{tx_bytes: stateless_valid_tx_bytes}, [:tx_bytes])
+        |> change(%{tx_bytes: stateless_invalid_tx_bytes})
         |> Validator.validate_protocol()
 
       refute validated_changeset.valid?
@@ -108,34 +108,46 @@ defmodule Engine.DB.Transaction.ValidatorTest do
   end
 
   describe "validate_statefully/1" do
+    test "returns the changeset unchanged when already invalid" do
+      changeset =
+        %Transaction{}
+        |> change()
+        |> Ecto.Changeset.add_error(:some_key, "some message")
+
+      validated_changeset = Validator.validate_statefully(changeset, 1, Transaction.kind_transfer(), %{})
+      assert validated_changeset == changeset
+    end
+
     test "returns the changeset unchanged when valid" do
       token = <<0::160>>
+      alice = <<1::160>>
+      bob = <<2::160>>
       fees = %{token => [1, 10]}
 
       inputs = [
         build(:output, %{
-          output_data: %{output_guard: <<1::160>>, token: token, amount: 2},
-          output_id: %{blknum: 1, oindex: 0, txindex: 0},
+          output_data: %{output_guard: alice, token: token, amount: 2},
+          output_id: %{blknum: 1, oindex: 0, txindex: 0}
         }),
         build(:output, %{
-          output_data: %{output_guard: <<1::160>>, token: token, amount: 3},
-          output_id: %{blknum: 2, oindex: 0, txindex: 0},
+          output_data: %{output_guard: alice, token: token, amount: 3},
+          output_id: %{blknum: 2, oindex: 0, txindex: 0}
         })
       ]
 
       outputs = [
         build(:output, %{
-          output_data: %{output_guard: <<2::160>>, token: token, amount: 4},
-         })
+          output_data: %{output_guard: bob, token: token, amount: 4}
+        })
       ]
 
       changeset =
         %Transaction{}
-        |> cast(%{}, [])
+        |> change()
         |> put_assoc(:inputs, inputs)
         |> put_assoc(:outputs, outputs)
 
-      validated_changeset = Validator.validate_statefully(changeset, 1, fees)
+      validated_changeset = Validator.validate_statefully(changeset, 1, Transaction.kind_transfer(), fees)
 
       assert validated_changeset.valid?
       assert validated_changeset == changeset
@@ -148,23 +160,23 @@ defmodule Engine.DB.Transaction.ValidatorTest do
       inputs = [
         build(:output, %{
           output_data: %{output_guard: <<1::160>>, token: token, amount: 2},
-          output_id: %{blknum: 1, oindex: 0, txindex: 0},
+          output_id: %{blknum: 1, oindex: 0, txindex: 0}
         })
       ]
 
       outputs = [
         build(:output, %{
-          output_data: %{output_guard: <<2::160>>, token: token, amount: 2},
-         })
+          output_data: %{output_guard: <<2::160>>, token: token, amount: 2}
+        })
       ]
 
       changeset =
         %Transaction{}
-        |> cast(%{}, [])
+        |> change()
         |> put_assoc(:inputs, inputs)
         |> put_assoc(:outputs, outputs)
 
-      validated_changeset = Validator.validate_statefully(changeset, 1, fees)
+      validated_changeset = Validator.validate_statefully(changeset, 1, Transaction.kind_transfer(), fees)
 
       refute validated_changeset.valid?
       assert {"fees are not covered by inputs", _} = validated_changeset.errors[:inputs]

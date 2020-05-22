@@ -5,6 +5,7 @@ defmodule Engine.Repo.Migrations.CreateTransactions do
     create table(:transactions) do
       add(:tx_bytes, :binary)
       add(:tx_hash, :binary)
+      add(:kind, :string)
 
       add(:block_id, references(:blocks))
       timestamps(type: :timestamptz)

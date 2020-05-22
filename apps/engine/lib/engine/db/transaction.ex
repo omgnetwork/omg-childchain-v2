@@ -22,9 +22,18 @@ defmodule Engine.DB.Transaction do
 
   @type tx_bytes :: binary
 
+  @deposit "deposit"
+  @transfer "transfer"
+
+  @kind [@deposit, @transfer]
+
+  def kind_transfer, do: @transfer
+  def kind_deposit, do: @deposit
+
   schema "transactions" do
     field(:tx_bytes, :binary)
     field(:tx_hash, :binary)
+    field(:kind, :string)
 
     belongs_to(:block, Block)
     has_many(:inputs, Output, foreign_key: :spending_transaction_id)
@@ -47,15 +56,16 @@ defmodule Engine.DB.Transaction do
   The main action of the system. Takes tx_bytes and forms the appropriate
   associations for the transaction and outputs and runs the changeset.
   """
-  @spec decode(tx_bytes) :: Ecto.Changeset.t()
-  def decode(tx_bytes) when is_binary(tx_bytes) do
+  @spec decode(tx_bytes, kind: String.t()) :: Ecto.Changeset.t()
+  def decode(tx_bytes, kind: kind) when is_binary(tx_bytes) and kind in @kind do
     params =
       tx_bytes
       |> ExPlasma.decode()
       |> decode_params()
       |> Map.put(:tx_bytes, tx_bytes)
-      # TODO: GET CURRENT FEES
-      |> Map.put(:fees, %{})
+      # TODO: Handle fees, load from DB? Buffer period, format?
+      |> Map.put(:fees, :no_fees_required)
+      |> Map.put(:kind, kind)
 
     changeset(%__MODULE__{}, params)
   end
@@ -68,13 +78,13 @@ defmodule Engine.DB.Transaction do
     struct
     |> Repo.preload(:inputs)
     |> Repo.preload(:outputs)
-    |> cast(params, [:tx_bytes])
+    |> cast(params, [:tx_bytes, :kind])
     |> cast_assoc(:inputs)
     |> cast_assoc(:outputs)
     |> build_tx_hash()
     |> Validator.validate_protocol()
     |> Validator.validate_inputs()
-    |> Validator.validate_statefully(params.tx_type, params.fees)
+    |> Validator.validate_statefully(params.tx_type, params.kind, params.fees)
   end
 
   defp build_tx_hash(changeset) do

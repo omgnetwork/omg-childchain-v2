@@ -7,6 +7,7 @@ defmodule Engine.DB.Transaction.Validator do
 
   alias Engine.DB.Output
   alias Engine.Repo
+  alias Engine.DB.Transaction.PaymentV1
 
   @error_messages [
     # Stateless ex_plasma errors
@@ -20,7 +21,7 @@ defmodule Engine.DB.Transaction.Validator do
   ]
 
   @transaction_validators %{
-    1 => Engine.DB.Transaction.PaymentV1.Validator
+    1 => %{"transfer" => PaymentV1.TransferValidator, "deposit" => PaymentV1.DepositValidator}
   }
 
   @callback validate(list(map()), list(map()), %{required(<<_::160>>) => list(pos_integer())} | :no_fees_required) ::
@@ -70,19 +71,28 @@ defmodule Engine.DB.Transaction.Validator do
   This will dispatch the validation depending on the transaction type.
   Refer to @transaction_validators for the list of validator per transaction type.
 
+  Note: Will return the changeset unchanged and NOT perform validation if
+  there is already an error in the changeset.
+
   Returns the changeset unchanged or with an error
   """
   @spec validate_statefully(
           Ecto.Changeset.t(),
           pos_integer(),
+          String.t(),
           %{required(<<_::160>>) => list(pos_integer())} | :no_fees_required
         ) :: Ecto.Changeset.t()
-  def validate_statefully(changeset, tx_type, fees) do
+  # We can't perform statefull validation if there are errors in the changeset
+  def validate_statefully(%Ecto.Changeset{valid?: false} = changeset, _, _, _) do
+    changeset
+  end
+
+  def validate_statefully(changeset, tx_type, kind, fees) do
     input_data = get_decoded_output_data(changeset, :inputs)
     output_data = get_decoded_output_data(changeset, :outputs)
 
     input_data
-    |> get_validator(tx_type).validate(output_data, fees)
+    |> get_validator(tx_type, kind).validate(output_data, fees)
     |> process_validation_results(changeset)
   end
 
@@ -112,10 +122,16 @@ defmodule Engine.DB.Transaction.Validator do
     end)
   end
 
-  defp get_validator(type) do
+  defp get_validator(type, kind) do
+    type
+    |> get_validator_for_type()
+    |> Map.fetch!(kind)
+  end
+
+  defp get_validator_for_type(type) do
     case Map.fetch(@transaction_validators, type) do
-      {:ok, type} ->
-        type
+      {:ok, type_validators} ->
+        type_validators
 
       :error ->
         raise ArgumentError, "transaction type #{type} does not exist."

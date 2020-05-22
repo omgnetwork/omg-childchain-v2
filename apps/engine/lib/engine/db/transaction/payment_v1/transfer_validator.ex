@@ -1,6 +1,6 @@
-defmodule Engine.DB.Transaction.PaymentV1.Validator do
+defmodule Engine.DB.Transaction.PaymentV1.TransferValidator do
   @moduledoc """
-  Handles statefull validation for transaction type "PaymentV1" (1).
+  Handles statefull validation for transaction type "PaymentV1" (1) and kind "transfer".
 
   See validate/3 for more details.
   """
@@ -23,11 +23,11 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
   - If no token/amount left then it must be a merge or an error
   - We finally match the amount with the given fees
 
-  Returns `{:ok, nil}` if the transaction is valid, or `{:error, {field, error}}` otherwise.
+  Returns `:ok` if the transaction is valid, or `{:error, {field, error}}` otherwise.
 
   ## Example:
 
-  iex> Engine.DB.Transaction.PaymentV1.Validator.validate([
+  iex> Engine.DB.Transaction.PaymentV1.TransferValidator.validate([
   ...> %{output_guard: <<1::160>>, token: <<1::160>>, amount: 1 },
   ...> %{output_guard: <<1::160>>, token: <<2::160>>, amount: 2}], [
   ...> %{output_guard: <<2::160>>, token: <<2::160>>, amount: 2}],
@@ -58,6 +58,9 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
          :ok <- no_fees_required(filtered_amounts, fees),
          :ok <- fees_covered(filtered_amounts, fees) do
       :ok
+    else
+      :no_fees_required -> :ok
+      error -> error
     end
   end
 
@@ -86,7 +89,7 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
   end
 
   # No fees required for merge transactions
-  defp no_fees_required(amounts, :no_fees_required) when map_size(amounts) == 0, do: :ok
+  defp no_fees_required(amounts, :no_fees_required) when map_size(amounts) == 0, do: :no_fees_required
   defp no_fees_required(_, :no_fees_required), do: {:error, {:inputs, :overpaying_fees}}
   defp no_fees_required(_, _), do: :ok
 

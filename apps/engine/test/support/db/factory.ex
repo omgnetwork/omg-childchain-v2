@@ -111,10 +111,7 @@ defmodule Engine.DB.Factory do
       |> Builder.add_output(Enum.to_list(data))
       |> ExPlasma.encode()
 
-    output =
-      :output
-      |> build(output_id: id, output_data: data, output_type: 1)
-      |> set_state("confirmed")
+    output = build(:output, output_id: id, output_data: data, output_type: 1, state: "confirmed")
 
     %Transaction{
       tx_bytes: tx_bytes,
@@ -130,17 +127,20 @@ defmodule Engine.DB.Factory do
     |> Builder.add_input(blknum: Map.get(attr, :blknum, 1), txindex: 0, oindex: 0)
     |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
     |> ExPlasma.encode()
-    |> Transaction.decode()
+    |> Transaction.decode(kind: Transaction.kind_transfer())
     |> apply_changes()
   end
 
   # The "lowest" unit in the hierarchy. This is made to form into transactions
   def output_factory(attr \\ %{}) do
+    default_data = %{output_guard: <<1::160>>, token: <<0::160>>, amount: 10}
+    default_id = %{blknum: Map.get(attr, :blknum, 1), txindex: 0, oindex: 0} |> Position.pos() |> Position.to_map()
+
     %Output{}
     |> Output.changeset(%{
       output_type: Map.get(attr, :output_type, 1),
-      output_id: Map.get(attr, :output_id),
-      output_data: Map.get(attr, :output_data),
+      output_id: Map.get(attr, :output_id, default_id),
+      output_data: Map.get(attr, :output_data, default_data),
       state: Map.get(attr, :state, "pending")
     })
     |> apply_changes()
