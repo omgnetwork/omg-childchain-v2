@@ -23,7 +23,6 @@ defmodule Engine.DB.DataCase do
   using do
     quote do
       alias Engine.Repo
-      alias Ecto.Changeset
 
       import Ecto
       import Ecto.Changeset

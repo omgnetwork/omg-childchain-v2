@@ -185,7 +185,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
 
   defp build_input(blknum, oindex, txindex) do
     map = %{blknum: blknum, oindex: oindex, txindex: txindex}
-    output_id = Map.put(map, :position, ExPlasma.Output.Position.pos(map))
+    output_id = Map.put(map, :position, Output.Position.pos(map))
 
     Map.from_struct(%Output{output_id: output_id})
   end

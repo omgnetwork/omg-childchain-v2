@@ -1,13 +1,16 @@
 defmodule Engine.DB.Transaction.Validator do
   @moduledoc """
+  Contains all kind of validation for transactions.
+  This module should be used to validate transactions before
+  their insertion in the DB.
   """
 
   import Ecto.Changeset, only: [get_field: 2, add_error: 3, put_change: 3]
   import Ecto.Query, only: [where: 3]
 
   alias Engine.DB.Output
-  alias Engine.Repo
   alias Engine.DB.Transaction.PaymentV1
+  alias Engine.Repo
 
   @error_messages [
     # Stateless ex_plasma errors
@@ -20,12 +23,12 @@ defmodule Engine.DB.Transaction.Validator do
     overpaying_fees: "overpaying fees"
   ]
 
-  @transaction_validators %{
+  @type_validators %{
     1 => %{"transfer" => PaymentV1.TransferValidator, "deposit" => PaymentV1.DepositValidator}
   }
 
   @callback validate(list(map()), list(map()), %{required(<<_::160>>) => list(pos_integer())} | :no_fees_required) ::
-              {:ok, map() | nil} | {:error, {atom(), atom()}}
+              {:ok, map() | nil} | :ok | {:error, {atom(), atom()}}
 
   @doc """
   Validates that the given changesets inputs are correct. To create a transaction with inputs:
@@ -69,7 +72,7 @@ defmodule Engine.DB.Transaction.Validator do
   @doc """
   Validates the transaction taking into account its state and output/input data.
   This will dispatch the validation depending on the transaction type.
-  Refer to @transaction_validators for the list of validator per transaction type.
+  Refer to @type_validators for the list of validator per transaction type.
 
   Note: Will return the changeset unchanged and NOT perform validation if
   there is already an error in the changeset.
@@ -81,7 +84,7 @@ defmodule Engine.DB.Transaction.Validator do
           pos_integer(),
           String.t(),
           %{required(<<_::160>>) => list(pos_integer())} | :no_fees_required
-        ) :: Ecto.Changeset.t()
+        ) :: Ecto.Changeset.t() | no_return()
   # We can't perform statefull validation if there are errors in the changeset
   def validate_statefully(%Ecto.Changeset{valid?: false} = changeset, _, _, _) do
     changeset
@@ -129,7 +132,7 @@ defmodule Engine.DB.Transaction.Validator do
   end
 
   defp get_validator_for_type(type) do
-    case Map.fetch(@transaction_validators, type) do
+    case Map.fetch(@type_validators, type) do
       {:ok, type_validators} ->
         type_validators
 

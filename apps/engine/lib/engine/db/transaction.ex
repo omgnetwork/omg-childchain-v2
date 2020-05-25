@@ -27,8 +27,8 @@ defmodule Engine.DB.Transaction do
 
   @kind [@deposit, @transfer]
 
-  def kind_transfer, do: @transfer
-  def kind_deposit, do: @deposit
+  def kind_transfer(), do: @transfer
+  def kind_deposit(), do: @deposit
 
   schema "transactions" do
     field(:tx_bytes, :binary)
