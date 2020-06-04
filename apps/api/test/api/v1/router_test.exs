@@ -6,8 +6,6 @@ defmodule API.V1.RouterTest do
   alias API.V1.Router
   alias Engine.DB.Block
 
-  @moduletag :focus
-
   describe "/block.get" do
     test "that it returns a block" do
       _ = insert(:deposit_transaction)
