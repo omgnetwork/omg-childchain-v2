@@ -7,9 +7,16 @@ defmodule API.V1.BlockGet do
   alias Engine.Repo
   alias ExPlasma.Encoding
 
+  @type block_response() :: %{
+    required(:blknum) => pos_integer(),
+    required(:hash) => String.t(),
+    required(:transactions) => [String.t()]
+  }
+
   @doc """
   Fetches a block by the given hash from the params.
   """
+  @spec by_hash(String.t()) :: block_response()
   def by_hash("0x" <> _rest = hash) do
     block = hash |> Encoding.to_binary() |> Block.get_by_hash()
 
@@ -27,4 +34,6 @@ defmodule API.V1.BlockGet do
         }
     end
   end
+
+  def by_hash(_), do: raise ArgumentError, "hash"
 end

@@ -22,7 +22,7 @@ defmodule API.V1.Router do
   end
 
   post "/transaction.submit" do
-    data = TransactionSubmit.submit(conn.params)
+    data = TransactionSubmit.submit(conn.params["transaction"])
     render_json(conn, data)
   end
 
