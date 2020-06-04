@@ -10,7 +10,7 @@ defmodule API.V1.BlockGet do
   @doc """
   Fetches a block by the given hash from the params.
   """
-  def by_hash(%{"hash" => hash}) do
+  def by_hash("0x" <> _rest = hash) do
     block = hash |> Encoding.to_binary() |> Block.get_by_hash()
 
     case block do

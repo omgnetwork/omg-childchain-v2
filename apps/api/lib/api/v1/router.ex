@@ -17,7 +17,7 @@ defmodule API.V1.Router do
   plug(:dispatch)
 
   post "/block.get" do
-    data = BlockGet.by_hash(conn.params)
+    data = BlockGet.by_hash(conn.params["hash"])
     render_json(conn, data)
   end
 
@@ -26,13 +26,13 @@ defmodule API.V1.Router do
     render_json(conn, data)
   end
 
-  defp handle_errors(conn, %{kind: _kind, reason: reason, stack: _stack}) do
+  defp handle_errors(conn, %{reason: error}) do
     render_json(conn, %{
       object: :error,
       code: "operation:missing_params",
       messages: %{
         validation_error: %{
-          parameter: reason.key
+          parameter: error.key
         }
       }
     })
