@@ -38,7 +38,7 @@ defmodule API.V1.Router do
     })
   end
 
-  defp render_json(%{status: status} = conn, data) do
+  defp render_json(conn, data) do
     payload =
       Jason.encode!(%{
         service_name: "childchain",
