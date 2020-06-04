@@ -33,7 +33,7 @@ defmodule API.Plugs.ExpectParams do
   end
 
   defp scrub_param(%{} = param) do
-    Enum.reduce(param, %{}, fn({k, v}, acc) ->
+    Enum.reduce(param, %{}, fn {k, v}, acc ->
       Map.put(acc, k, scrub_param(v))
     end)
   end
