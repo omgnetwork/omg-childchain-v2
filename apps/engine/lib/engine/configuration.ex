@@ -21,10 +21,6 @@ defmodule Engine.Configuration do
     60_000
   end
 
-  def coordinator_eth_height_check_interval_ms() do
-    8000
-  end
-
   def ethereum_events_check_interval_ms() do
     Application.fetch_env!(@app, :ethereum_events_check_interval_ms)
   end

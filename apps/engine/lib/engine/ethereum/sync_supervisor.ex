@@ -34,7 +34,6 @@ defmodule Engine.Ethereum.SyncSupervisor do
     contract_deployment_height = Keyword.fetch!(args, :contract_deployment_height)
     finality_margin = Configuration.finality_margin()
     metrics_collection_interval = Configuration.metrics_collection_interval()
-    coordinator_eth_height_check_interval_ms = Configuration.coordinator_eth_height_check_interval_ms()
     contracts = Configuration.contracts()
     url = Configuration.url()
 
@@ -42,7 +41,6 @@ defmodule Engine.Ethereum.SyncSupervisor do
       {Coordinator,
        Setup.coordinator_setup(
          metrics_collection_interval,
-         coordinator_eth_height_check_interval_ms,
          finality_margin
        )},
       {Aggregator,
@@ -67,7 +65,7 @@ defmodule Engine.Ethereum.SyncSupervisor do
       # EthereumEventListener.prepare_child(
       #   ets: ListenerStorage.listener_checkin(),
       #   metrics_collection_interval: metrics_collection_interval,
-      #   ethereum_events_check_interval_ms: ethereum_events_check_interval_ms,
+
       #   contract_deployment_height: contract_deployment_height,
       #   service_name: :in_flight_exit,
       #   get_events_callback: &Aggregator.in_flight_exit_started/2,
@@ -76,7 +74,7 @@ defmodule Engine.Ethereum.SyncSupervisor do
       # EthereumEventListener.prepare_child(
       #   ets: ListenerStorage.listener_checkin(),
       #   metrics_collection_interval: metrics_collection_interval,
-      #   ethereum_events_check_interval_ms: ethereum_events_check_interval_ms,
+
       #   contract_deployment_height: contract_deployment_height,
       #   service_name: :piggyback,
       #   get_events_callback: &Aggregator.in_flight_exit_piggybacked/2,
@@ -85,7 +83,7 @@ defmodule Engine.Ethereum.SyncSupervisor do
       # EthereumEventListener.prepare_child(
       #   ets: ListenerStorage.listener_checkin(),
       #   metrics_collection_interval: metrics_collection_interval,
-      #   ethereum_events_check_interval_ms: ethereum_events_check_interval_ms,
+
       #   contract_deployment_height: contract_deployment_height,
       #   service_name: :exiter,
       #   get_events_callback: &Aggregator.exit_started/2,
