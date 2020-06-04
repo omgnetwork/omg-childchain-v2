@@ -1,5 +1,5 @@
 defmodule API.Plugs.HealthTest do
-  use Engine.DB.DataCase, async: false
+  use ExUnit.Case, async: false
   use Plug.Test
 
   alias API.Plugs.Health
