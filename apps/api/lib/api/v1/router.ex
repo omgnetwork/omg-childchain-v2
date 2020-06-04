@@ -4,12 +4,16 @@ defmodule API.V1.Router do
   """
 
   use Plug.Router
+  use Plug.ErrorHandler
 
+  alias API.Plugs.ExpectParams
   alias API.V1.BlockGet
   alias API.V1.TransactionSubmit
 
-  plug(:match)
   plug(Plug.Parsers, parsers: [:json], json_decoder: Jason)
+  plug(ExpectParams, key: "hash", path: "/block.get")
+  plug(ExpectParams, key: "transaction", path: "/transaction.submit")
+  plug(:match)
   plug(:dispatch)
 
   post "/block.get" do
@@ -22,6 +26,18 @@ defmodule API.V1.Router do
     render_json(conn, data)
   end
 
+  defp handle_errors(conn, %{kind: _kind, reason: reason, stack: _stack}) do
+    render_json(conn, %{
+      object: :error,
+      code: "operation:missing_params",
+      messages: %{
+        validation_error: %{
+          parameter: reason.key
+        }
+      }
+    })
+  end
+
   defp render_json(%{status: status} = conn, data) do
     payload =
       Jason.encode!(%{
@@ -30,6 +46,6 @@ defmodule API.V1.Router do
         data: data
       })
 
-    send_resp(conn, status || 200, payload)
+    send_resp(conn, conn.status || 200, payload)
   end
 end

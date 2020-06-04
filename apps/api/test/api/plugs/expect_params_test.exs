@@ -5,8 +5,6 @@ defmodule API.Plugs.ExpectParamsTest do
   alias API.Plugs.ExpectParams
   alias API.Plugs.ExpectParams.MissingParamsError
 
-  @moduletag :focus
-
   test "raises an error if a param is missing" do
     assert_raise(MissingParamsError, "Expected param key \"foo\" but was not found", fn ->
       call_plug("/", %{})
@@ -20,7 +18,7 @@ defmodule API.Plugs.ExpectParamsTest do
 
   test "raises error for a given path" do
     assert_raise(MissingParamsError, "Expected param key \"foo\" but was not found", fn ->
-      call_plug("/dog", %{})
+      call_plug("/", %{})
     end)
   end
 
@@ -31,13 +29,13 @@ defmodule API.Plugs.ExpectParamsTest do
 
   test "raises for an empty string" do
     assert_raise(MissingParamsError, "Expected param key \"foo\" but was not found", fn ->
-      call_plug("/dog", %{foo: ""})
+      call_plug("/", %{foo: ""})
     end)
   end
 
   test "raises for an blank string" do
     assert_raise(MissingParamsError, "Expected param key \"foo\" but was not found", fn ->
-      call_plug("/dog", %{foo: "  "})
+      call_plug("/", %{foo: "  "})
     end)
   end
 

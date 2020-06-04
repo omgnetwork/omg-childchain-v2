@@ -2,8 +2,11 @@ defmodule API.V1.RouterTest do
   use Engine.DB.DataCase, async: true
   use Plug.Test
 
+  alias API.Plugs.ExpectParams.MissingParamsError
   alias API.V1.Router
   alias Engine.DB.Block
+
+  @moduletag :focus
 
   describe "/block.get" do
     test "that it returns a block" do
@@ -27,14 +30,22 @@ defmodule API.V1.RouterTest do
     end
 
     test "that it returns an error if missing hash params" do
-      {:ok, payload} = post("/block.get", %{})
+      req = conn(:post, "/block.get", Jason.encode!(%{}))
+
+      assert_raise(MissingParamsError, fn ->
+        Router.call(req, Router.init([]))
+      end)
+
+      assert {400, _header, body} = sent_resp(req)
+
+      payload = Jason.decode!(body)
 
       assert payload["service_name"] == "childchain"
       assert payload["version"] == "1.0"
 
       assert payload["data"] == %{
                "object" => "error",
-               "code" => "operation:bad_request",
+               "code" => "operation:missing_params",
                "messages" => %{
                  "validation_error" => %{
                    "parameter" => "hash"
@@ -61,14 +72,22 @@ defmodule API.V1.RouterTest do
     end
 
     test "that it returns an error if missing params" do
-      {:ok, payload} = post("/transaction.submit", %{})
+      req = conn(:post, "/transaction.submit", Jason.encode!(%{}))
+
+      assert_raise(MissingParamsError, fn ->
+        Router.call(req, Router.init([]))
+      end)
+
+      assert {400, _header, body} = sent_resp(req)
+
+      payload = Jason.decode!(body)
 
       assert payload["service_name"] == "childchain"
       assert payload["version"] == "1.0"
 
       assert payload["data"] == %{
                "object" => "error",
-               "code" => "operation:bad_request",
+               "code" => "operation:missing_params",
                "messages" => %{
                  "validation_error" => %{
                    "parameter" => "transaction"

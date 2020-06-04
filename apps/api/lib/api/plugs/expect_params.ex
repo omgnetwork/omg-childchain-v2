@@ -52,11 +52,11 @@ defmodule API.Plugs.ExpectParams do
 end
 
 defmodule API.Plugs.ExpectParams.MissingParamsError do
-  defexception [:message]
+  defexception [:message, :key, :plug_status]
 
   @impl true
   def exception(key: key) do
     msg = "Expected param key #{inspect(key)} but was not found"
-    %__MODULE__{message: msg}
+    %__MODULE__{message: msg, key: key, plug_status: 400}
   end
 end
