@@ -25,13 +25,14 @@ defmodule Engine.Ethereum.Authority.Submitter do
     event_bus = Keyword.get(init_arg, :event_bus, Bus)
     :ok = event_bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
 
-    {:ok,
-     %__MODULE__{
-       block_provider: block_provider,
-       plasma_framework: plasma_framework,
-       child_block_interval: child_block_interval,
-       opts: opts
-     }}
+    state = %__MODULE__{
+      block_provider: block_provider,
+      plasma_framework: plasma_framework,
+      child_block_interval: child_block_interval,
+      opts: opts
+    }
+
+    {:ok, state}
   end
 
   def handle_info({:internal_event_bus, :ethereum_new_height, _new_height}, state) do
