@@ -19,14 +19,4 @@ defmodule API.V1.TransactionSubmit do
 
     %{tx_hash: Encoding.to_hex(transaction.tx_hash)}
   end
-
-  def submit(_) do
-    %{
-      object: :error,
-      code: "operation:bad_request",
-      messages: %{
-        validation_error: %{parameter: :transaction}
-      }
-    }
-  end
 end
