@@ -12,10 +12,9 @@ defmodule Engine.Ethereum.Event.Coordinator.Setup do
     - piggyback-related events must wait for IFE start events
   """
 
-  def coordinator_setup(metrics_collection_interval, coordinator_eth_height_check_interval_ms, finality_margin) do
+  def coordinator_setup(metrics_collection_interval, finality_margin) do
     {[
-       metrics_collection_interval: metrics_collection_interval,
-       coordinator_eth_height_check_interval_ms: coordinator_eth_height_check_interval_ms
+       metrics_collection_interval: metrics_collection_interval
      ],
      %{
        depositor: [finality_margin: deposit_finality_margin],

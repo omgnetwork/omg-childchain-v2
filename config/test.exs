@@ -30,3 +30,4 @@ config :ex_plasma,
 
 config :plug, :validate_header_keys_during_test, true
 config :logger, level: :warn
+  ethereum_events_check_interval_ms: 10
