@@ -74,7 +74,7 @@ defmodule Engine.Configuration do
 
   def source_config() do
     @app
-    |> Application.fetch_env!(Engine.Feefeed.Rules.Source)
+    |> Application.fetch_env!(Engine.Feefeed.Rules.Worker.Source)
     |> Enum.into(%{})
     |> Map.merge(%{vsn: Application.spec(:engine, :vsn)})
   end
