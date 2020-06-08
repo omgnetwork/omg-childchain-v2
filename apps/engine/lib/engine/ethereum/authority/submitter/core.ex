@@ -1,15 +1,14 @@
 defmodule Engine.Ethereum.Authority.Submitter.Core do
-  @moduledoc false
+  @moduledoc """
+    All the difficulties here.
+  """
+  @spec mined(non_neg_integer(), pos_integer()) :: non_neg_integer()
+  def mined(next_child_block, child_block_interval) do
+    next_child_block - child_block_interval
+  end
 
-  #  alias Engine.DB.Block
-
-  def adjust_gas_and_submit(blocks) do
-    :ok =
-      Enum.each(
-        blocks,
-        fn block ->
-          spawn(External, :submit_block, [block])
-        end
-      )
+  # the height is here so that we can compare 
+  # 
+  def get_all_and_submit(new_height, mined_child_block) do
   end
 end
