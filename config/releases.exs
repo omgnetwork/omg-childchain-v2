@@ -7,6 +7,13 @@ to_boolean = fn
   _ -> nil
 end
 
+mandatory = fn env, exception ->
+  case System.get_env(env) do
+    nil -> throw(exception)
+    data -> data
+  end
+end
+
 config :engine,
   finality_margin: String.to_integer(System.get_env("FINALITY_MARGIN") || "10"),
   url: rpc_url,
@@ -66,10 +73,10 @@ config :status, Status.Metric.Tracer,
 config :engine, Engine.Feefeed.Rules.Scheduler,
   interval: String.to_integer(System.get_env("RULES_FETCH_INTERVAL") || "180")
 
-config :engine, Engine.Feefeed.Rules.Source,
-  token: System.get_env("GITHUB_TOKEN"),
-  org: System.get_env("GITHUB_ORGANISATION") || "omisego",
-  repo: System.get_env("GITHUB_REPO"),
+config :engine, Engine.Feefeed.Rules.Worker.Source,
+  token: mandatory.("GITHUB_TOKEN", "GITHUB_TOKEN for Feefeed is mandatory."),
+  org: System.get_env("GITHUB_ORGANISATION") || "omgnetwork",
+  repo: mandatory.("GITHUB_REPO", "GITHUB_REPO for Feefeed is mandatory."),
   branch: System.get_env("GITHUB_BRANCH") || "master",
   filename: System.get_env("GITHUB_FILENAME") || "fee_rules"
 

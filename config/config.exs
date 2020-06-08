@@ -100,8 +100,9 @@ config :os_mon,
 
 config :engine, Engine.Feefeed.Rules.Scheduler, interval: 180
 
-config :engine, Engine.Feefeed.Rules.Source,
-  org: "omisego",
+config :engine, Engine.Feefeed.Rules.Worker.Source,
+  org: "omgnetwork",
+  repo: "fee-rules",
   branch: "master",
   filename: "fee_rules"
 
