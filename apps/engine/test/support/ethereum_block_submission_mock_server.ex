@@ -17,19 +17,24 @@ defmodule EthereumBlockSubmissionMockServer do
     GenServer.start_link(__MODULE__, init_arg, name: name)
   end
 
-  @type t :: %__MODULE__{sock: :gen_tcp.socket(), port: non_neg_integer(), height: non_neg_integer()}
-  defstruct [:sock, :port, height: 1]
+  @type t :: %__MODULE__{
+          sock: :gen_tcp.socket(),
+          port: non_neg_integer(),
+          interval: non_neg_integer(),
+          height: non_neg_integer()
+        }
+  defstruct [:sock, :port, :interval, height: 1]
 
   def init(init_arg) do
     port = Keyword.fetch!(init_arg, :port)
     interval = Keyword.get(init_arg, :interval, 15_000)
     {:ok, sock} = :gen_tcp.listen(port, [:binary, {:active, false}])
     _ = :timer.send_after(interval, self(), :inc)
-    {:ok, %__MODULE__{port: port, sock: sock}, {:continue, :start}}
+    {:ok, %__MODULE__{sock: sock, port: port, interval: interval}, {:continue, :start}}
   end
 
   def handle_info(:inc, state) do
-    _ = :timer.send_after(interval, self(), :inc)
+    _ = :timer.send_after(state.interval, self(), :inc)
     {:noreply, %{state | height: state.height + 1}}
   end
 
@@ -79,6 +84,22 @@ defmodule EthereumBlockSubmissionMockServer do
       "id" => 83,
       "jsonrpc" => "2.0",
       "result" => __MODULE__.get_height(parent)
+    }
+  end
+
+  # this isn't a GETH JSON RPC mock, because VAULT
+  defp method("send_transaction", %{"hash" => hash, "nonce" => nonce, "gas" => gas}, parent) do
+    %{"result" => "OK"}
+  end
+
+  # "nextChildBlock()"
+  defp method("eth_call", [%{"data" => "0x4ca8714f", "to" => _}, []], parent) do
+    "0x" <> other = Encoding.to_hex(1000)
+
+    %{
+      "id" => 83,
+      "jsonrpc" => "2.0",
+      "result" => "0x0000000000000000000000000000000000000000000000000000000000000" <> other
     }
   end
 end
