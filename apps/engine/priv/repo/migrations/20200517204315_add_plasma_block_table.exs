@@ -4,21 +4,21 @@ defmodule Engine.Repo.Migrations.AddPlasmaBlockTable do
   def change do
     create table(:plasma_blocks) do
       # keccak hash of transactions
-      add(:hash, :binary)
+      add(:hash, :binary, null: false)
       # transaction order!
-      add(:nonce, :integer)
+      add(:nonce, :integer, null: false)
       # plasma block number
-      add(:blknum, :integer)
+      add(:blknum, :integer, null: false)
       # submitted transaction hash (gets updated with submitted_at_ethereum_height)
-      add(:tx_hash, :binary)
+      add(:tx_hash, :binary, null: false)
       # at which height did we form the block
-      add(:formed_at_ethereum_height, :integer)
+      add(:formed_at_ethereum_height, :integer, null: false)
       # doesn't mean mined! gets updated every time hash is submitted
-      add(:submitted_at_ethereum_height, :integer)
+      add(:submitted_at_ethereum_height, :integer, null: false)
       # gas in wei
-      add(:gas, :integer)
+      add(:gas, :integer, null: false)
       # mining is async and it might fail (like submitted with not enough gas, client error)
-      add(:attempts_counter, :integer)
+      add(:attempts_counter, :integer, default: 1, null: false)
       timestamps(type: :timestamptz)
     end
   end

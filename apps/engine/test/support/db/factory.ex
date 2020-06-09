@@ -8,10 +8,12 @@ defmodule Engine.DB.Factory do
   import Ecto.Changeset
   import Ecto.Query
 
+  alias Engine.Configuration
   alias Engine.DB.Block
   alias Engine.DB.FeeRules
   alias Engine.DB.Fees
   alias Engine.DB.Output
+  alias Engine.DB.PlasmaBlock
   alias Engine.DB.Transaction
   alias Engine.Feefeed.Rules.Parser
   alias ExPlasma.Builder
@@ -170,8 +172,23 @@ defmodule Engine.DB.Factory do
     }
   end
 
-  @spec read_rules_file() :: map()
-  def read_rules_file() do
+  def plasma_block_factory(attr \\ %{}) do
+    blknum = Map.get(attr, :blknum, 1000)
+    child_block_interval = 1000
+    nonce = round(blknum / 1000)
+
+    %PlasmaBlock{
+      hash: :crypto.strong_rand_bytes(32),
+      nonce: nonce,
+      blknum: blknum,
+      tx_hash: :crypto.strong_rand_bytes(64),
+      formed_at_ethereum_height: 1,
+      submitted_at_ethereum_height: 1,
+      gas: 827
+    }
+  end
+
+  defp read_rules_file() do
     {:ok, rules} = File.read("test/support/fee_rules.json")
     {:ok, file_rules} = Parser.decode_and_validate(rules)
 

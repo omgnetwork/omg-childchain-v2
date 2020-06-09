@@ -22,6 +22,7 @@ defmodule Mix.Tasks.Childchain.Start do
   https://github.com/elixir-lang/elixir/blob/v1.10.3/lib/mix/lib/mix/tasks/app.start.ex
   """
   def run(args) do
+    IO.inspect("yolo")
     config = Contract.load([ethereumex: [url: Configuration.url()]], system_adapter: Mix.Tasks.Childchain.Start)
     :ok = Application.put_all_env(config)
     Start.run(args)
