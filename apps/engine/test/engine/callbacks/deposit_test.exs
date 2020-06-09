@@ -82,4 +82,14 @@ defmodule Engine.Callbacks.DepositTest do
 
     assert listener_for(:depositor, height: 406)
   end
+
+  @doc """
+  Check to see if the listener has a given state, like height.
+
+    assert listener_for(:depositor, height: 100)
+  """
+  defp listener_for(listener, height: height) do
+    name = "#{listener}"
+    %ListenerState{height: ^height, listener: ^name} = Engine.Repo.get(ListenerState, name)
+  end
 end

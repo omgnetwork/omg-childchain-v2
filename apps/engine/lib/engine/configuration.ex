@@ -9,12 +9,16 @@ defmodule Engine.Configuration do
     Application.fetch_env!(:ethereumex, :url)
   end
 
+  def child_block_interval() do
+    Application.fetch_env!(@app, :child_block_interval)
+  end
+
   def finality_margin() do
-    Application.fetch_env!(:engine, :finality_margin)
+    Application.fetch_env!(@app, :finality_margin)
   end
 
   def contract_deployment_height() do
-    Application.fetch_env!(:engine, :contract_deployment_height)
+    Application.fetch_env!(@app, :contract_deployment_height)
   end
 
   def metrics_collection_interval() do

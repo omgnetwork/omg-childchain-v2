@@ -8,8 +8,10 @@ defmodule Engine.DB.Factory do
   import Ecto.Changeset
   import Ecto.Query
 
+  alias Engine.Configuration
   alias Engine.DB.Block
   alias Engine.DB.Output
+  alias Engine.DB.PlasmaBlock
   alias Engine.DB.Transaction
   alias Engine.Support.TestEntity
   alias ExPlasma.Builder
