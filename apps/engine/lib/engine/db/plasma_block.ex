@@ -42,8 +42,6 @@ defmodule Engine.DB.PlasmaBlock do
     {:ok,
      Enum.map(plasma_blocks, fn plasma_block ->
        Ecto.Changeset.change(plasma_block,
-         # we're not changing it, we just want it in the changeset.
-         # if you change hash I'll hunt you down.
          gas: plasma_block.gas + 1,
          attempts_counter: plasma_block.attempts_counter + 1,
          submitted_at_ethereum_height: new_height
