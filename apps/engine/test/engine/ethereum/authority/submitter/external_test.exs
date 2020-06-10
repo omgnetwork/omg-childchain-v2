@@ -2,16 +2,6 @@ defmodule Engine.Ethereum.Authority.Submitter.ExternalTest do
   use ExUnit.Case, async: true
   alias Engine.Ethereum.Authority.Submitter.External
 
-  setup_all do
-    {:ok, apps} = Application.ensure_all_started(:ethereumex)
-
-    on_exit(fn ->
-      apps |> Enum.reverse() |> Enum.each(&Application.stop/1)
-    end)
-
-    :ok
-  end
-
   test "external call to get next child block " do
     parent = self()
     pid = spawn(fn -> __MODULE__.EthereumClient.start(8885, parent) end)
