@@ -48,7 +48,7 @@ defmodule Engine.DB.PlasmaBlock do
     {:ok, repo.all(query)}
   end
 
-  def compute_gas_and_submit(repo, %{get_all: plasma_blocks}, new_height, mined_child_block, submit) do
+  defp compute_gas_and_submit(repo, %{get_all: plasma_blocks}, new_height, mined_child_block, submit) do
     :ok = process_submission(repo, plasma_blocks, new_height, mined_child_block, submit)
     {:ok, []}
   end
@@ -58,9 +58,10 @@ defmodule Engine.DB.PlasmaBlock do
   end
 
   defp process_submission(repo, [plasma_block | plasma_blocks], new_height, mined_child_block, submit) do
+    # get appropriate gas here
     gas = plasma_block.gas + 1
 
-    case submit.(%{"hash" => plasma_block.hash, "nonce" => plasma_block.nonce, "gas" => gas}) do
+    case submit.(plasma_block.hash, plasma_block.nonce, gas) do
       :ok ->
         plasma_block
         |> Ecto.Changeset.change(
