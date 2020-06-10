@@ -25,8 +25,10 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
     block_number
   end
 
-  @spec submit_block(String.t(), String.t()) ::
-          {:ok, HTTPoison.Response.t() | HTTPoison.AsyncResponse.t()} | {:error, HTTPoison.Error.t()}
+  @spec submit_block(String.t(), String.t()) :: function()
+  @doc """
+  {:ok, HTTPoison.Response.t() | HTTPoison.AsyncResponse.t()} | {:error, HTTPoison.Error.t()}
+  """
   def submit_block(plasma_framework, vault) do
     fn block_root, nonce, gas ->
       url = vault <> "/" <> plasma_framework
