@@ -8,7 +8,6 @@ defmodule Engine.DB.Factory do
   import Ecto.Changeset
   import Ecto.Query
 
-  alias Engine.Configuration
   alias Engine.DB.Block
   alias Engine.DB.FeeRules
   alias Engine.DB.Fees
@@ -174,7 +173,7 @@ defmodule Engine.DB.Factory do
 
   def plasma_block_factory(attr \\ %{}) do
     blknum = Map.get(attr, :blknum, 1000)
-    child_block_interval = 1000
+    _child_block_interval = 1000
     nonce = round(blknum / 1000)
 
     %PlasmaBlock{

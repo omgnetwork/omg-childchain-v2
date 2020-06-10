@@ -53,7 +53,7 @@ defmodule Engine.DB.PlasmaBlock do
     {:ok, []}
   end
 
-  defp process_submission(repo, [], new_height, mined_child_block, submit) do
+  defp process_submission(_repo, [], _new_height, _mined_child_block, _submit) do
     :ok
   end
 
