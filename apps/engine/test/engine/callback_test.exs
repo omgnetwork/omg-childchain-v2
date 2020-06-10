@@ -3,6 +3,7 @@ defmodule Engine.CallbackTest do
 
   alias Ecto.Multi
   alias Engine.Callback
+  alias Engine.DB.ListenerState
 
   describe "update_listener_height/3" do
     test "it stores the listeners new height" do
@@ -45,11 +46,8 @@ defmodule Engine.CallbackTest do
     end
   end
 
-  @doc """
-  Check to see if the listener has a given state, like height.
-
-    assert listener_for(:depositor, height: 100)
-  """
+  # Check to see if the listener has a given state, like height.
+  #   assert listener_for(:depositor, height: 100)
   defp listener_for(listener, height: height) do
     name = "#{listener}"
     %ListenerState{height: ^height, listener: ^name} = Engine.Repo.get(ListenerState, name)

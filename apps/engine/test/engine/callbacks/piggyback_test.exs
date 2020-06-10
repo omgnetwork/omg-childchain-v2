@@ -2,6 +2,7 @@ defmodule Engine.Callbacks.PiggybackTest do
   @moduledoc false
   use Engine.DB.DataCase, async: true
   alias Engine.Callbacks.Piggyback
+  alias Engine.DB.ListenerState
 
   test "marks an output as piggybacked" do
     deposit = insert(:deposit_transaction)
@@ -52,11 +53,8 @@ defmodule Engine.Callbacks.PiggybackTest do
     assert listener_for(:piggybacker, height: 404)
   end
 
-  @doc """
-  Check to see if the listener has a given state, like height.
-
-    assert listener_for(:depositor, height: 100)
-  """
+  # Check to see if the listener has a given state, like height.
+  #   assert listener_for(:depositor, height: 100)
   defp listener_for(listener, height: height) do
     name = "#{listener}"
     %ListenerState{height: ^height, listener: ^name} = Engine.Repo.get(ListenerState, name)

@@ -59,14 +59,12 @@ defmodule Feefeed.FeesTest do
     end
   end
 
-  @doc """
-  A helper that transforms changeset errors into a map of messages.
+  # A helper that transforms changeset errors into a map of messages.
 
-      assert {:error, changeset} = Accounts.create_user(%{password: "short"})
-      assert "password is too short" in errors_on(changeset).password
-      assert %{password: ["password is too short"]} = errors_on(changeset)
+  #     assert {:error, changeset} = Accounts.create_user(%{password: "short"})
+  #     assert "password is too short" in errors_on(changeset).password
+  #     assert %{password: ["password is too short"]} = errors_on(changeset)
 
-  """
   defp errors_on(changeset) do
     Changeset.traverse_errors(changeset, fn {message, opts} ->
       Regex.replace(~r"%{(\w+)}", message, fn _, key ->

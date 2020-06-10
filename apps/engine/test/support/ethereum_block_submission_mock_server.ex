@@ -2,9 +2,9 @@ defmodule EthereumBlockSubmissionMockServer do
   @moduledoc """
     mocks Ethereum and Plasma contracts behavior 
   """
-  alias ExPlasma.Encoding
-
   use GenServer
+
+  alias ExPlasma.Encoding
 
   def get_height(server) do
     GenServer.call(server, :get_height)
