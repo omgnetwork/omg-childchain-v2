@@ -27,32 +27,61 @@ defmodule Engine.DB.PlasmaBlock do
           | {:error, Ecto.Multi.name(), any(), %{required(Ecto.Multi.name()) => any()}}
   def get_all_and_submit(new_height, mined_child_block, submit) do
     Ecto.Multi.new()
-    |> Ecto.Multi.run(:get_all, __MODULE__, :get_all, [new_height, mined_child_block])
-    |> Ecto.Multi.run(:compute_gas, __MODULE__, :compute_gas, [new_height, mined_child_block])
-    |> Ecto.Multi.run(:update, __MODULE__, :submit, [new_height, submit])
+    |> Ecto.Multi.run(:get_all, fn repo, changeset ->
+      get_all(repo, changeset, new_height, mined_child_block)
+    end)
+    |> Ecto.Multi.run(:compute_gas_and_submit, fn repo, changeset ->
+      compute_gas_and_submit(repo, changeset, new_height, mined_child_block, submit)
+    end)
     |> Engine.Repo.transaction()
   end
 
-  def get_all(repo, %{}, new_height, mined_child_block) do
+  defp get_all(repo, _changeset, new_height, mined_child_block) do
     query = from(p in __MODULE__, where: p.submitted_at_ethereum_height < ^new_height and p.blknum < ^mined_child_block)
     {:ok, repo.all(query)}
   end
 
-  def compute_gas(repo, %{get_all: plasma_blocks}, new_height, mined_child_block) do
-    {:ok,
-     Enum.map(plasma_blocks, fn plasma_block ->
-       Ecto.Changeset.change(plasma_block,
-         gas: plasma_block.gas + 1,
+  def compute_gas_and_submit(repo, %{get_all: []}, _, _, _) do
+    {:ok, []}
+  end
+  def compute_gas_and_submit(repo, %{get_all: [plasma_block | plasma_blocks]}, new_height, mined_child_block, submit) do
+    gas = plasma_block.gas + 1
+    case submit.(%{"hash" => plasma_block.hash, "nonce" => plasma_block.nonce, "gas" => gas}) do
+      :ok ->
+           plasma_block
+       |> Ecto.Changeset.change(
+         gas: gas,
          attempts_counter: plasma_block.attempts_counter + 1,
          submitted_at_ethereum_height: new_height
        )
-     end)}
+       |> repo.update!([])
+compute_gas_and_submit(repo, %{get_all: plasma_blocks}, new_height, mined_child_block, submit)
+      _ ->
+compute_gas_and_submit(repo, %{get_all: []}, new_height, mined_child_block, submit)
+    end
+    # {:ok,
+    #  Enum.map(plasma_blocks, fn plasma_block ->
+    #    plasma_block
+    #    |> Ecto.Changeset.change(
+    #      gas: plasma_block.gas + 1,
+    #      attempts_counter: plasma_block.attempts_counter + 1,
+    #      submitted_at_ethereum_height: new_height
+    #    )
+    #    |> repo.update!([])
+    #  end)}
   end
 
-  def submit(repo, %{compute_gas: plasma_blocks}, new_height, submit) do
-    {:ok,
-     Enum.map(plasma_blocks, fn plasma_block ->
-       submit.(%{"hash" => plasma_block.hash, "nonce" => plasma_block.nonce, "gas" => plasma_block.gas})
-     end)}
+
+
+  defp submit_to_vault(_repo, plasma_blocks, submit) do
+    # processed_plasma_blocks =
+    #   Enum.reduce_while(plasma_blocks, [], fn plasma_block, acc ->
+    #     case submit.(%{"hash" => plasma_block.hash, "nonce" => plasma_block.nonce, "gas" => plasma_block.gas}) do
+    #       :ok -> {:cont, [plasma_block | acc]}
+    #       _ -> {:halt, acc}
+    #     end
+    #   end)
+
+    # {:error, processed_plasma_blocks}
   end
 end
