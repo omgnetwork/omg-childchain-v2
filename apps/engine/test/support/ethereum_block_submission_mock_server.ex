@@ -90,12 +90,12 @@ defmodule EthereumBlockSubmissionMockServer do
   end
 
   # this isn't a GETH JSON RPC mock, because VAULT
-  defp method("send_transaction", %{"hash" => hash, "nonce" => nonce, "gas" => gas}, parent) do
+  defp method("send_transaction", %{"hash" => _hash, "nonce" => _nonce, "gas" => _gas}, _parent) do
     %{"result" => "OK"}
   end
 
   # "nextChildBlock()"
-  defp method("eth_call", [%{"data" => "0x4ca8714f", "to" => _}, []], parent) do
+  defp method("eth_call", [%{"data" => "0x4ca8714f", "to" => _}, []], _parent) do
     "0x" <> other = Encoding.to_hex(1000)
 
     %{

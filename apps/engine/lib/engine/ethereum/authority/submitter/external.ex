@@ -25,11 +25,14 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
     block_number
   end
 
-  @spec submit_block(String.t(), String.t(), binary(), pos_integer(), pos_integer()) :: :ok
-  def submit_block(plasma_framework, url, block_root, nonce, gas) do
-    body = %{"block_root" => block_root, "gas" => gas, "nonce" => nonce}
-    {:ok, %HTTPoison.Response{status_code: 200}} = HTTPoison.post(url, body)
-    :ok
+  @spec submit_block(String.t(), String.t()) ::
+          {:ok, HTTPoison.Response.t() | HTTPoison.AsyncResponse.t()} | {:error, HTTPoison.Error.t()}
+  def submit_block(plasma_framework, vault) do
+    fn block_root, nonce, gas ->
+      url = vault <> "/" <> plasma_framework
+      body = %{"block_root" => block_root, "gas" => gas, "nonce" => nonce}
+      HTTPoison.post(url, body)
+    end
   end
 
   defp call(plasma_framework, signature, args, opts) do

@@ -3,14 +3,14 @@ defmodule Engine.Ethereum.Authority.Submitter do
   Periodic block submitter 
   """
 
-  alias Engine.DB.Block
+  alias Engine.DB.PlasmaBlock
   alias Engine.Ethereum.Authority.Submitter.Core
   alias Engine.Ethereum.Authority.Submitter.External
   alias Engine.Ethereum.Height
 
   require Logger
 
-  defstruct [:block_provider, :plasma_framework, :child_block_interval, :height, :opts]
+  defstruct [:vault, :plasma_framework, :child_block_interval, :height, :opts]
 
   def push(server \\ __MODULE__) do
     GenServer.cast(server, :submit)
@@ -22,17 +22,16 @@ defmodule Engine.Ethereum.Authority.Submitter do
   end
 
   def init(init_arg) do
+    vault = Keyword.fetch!(init_arg, :vault)
     plasma_framework = Keyword.fetch!(init_arg, :plasma_framework)
     child_block_interval = Keyword.fetch!(init_arg, :child_block_interval)
     opts = Keyword.fetch!(init_arg, :opts)
-    # stubbing this while I don't have a DB ready
-    block_provider = Keyword.get(init_arg, :block_provider, Block)
     event_bus = Keyword.get(init_arg, :event_bus, Bus)
     :ok = event_bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
     height = Height.get()
 
     state = %__MODULE__{
-      block_provider: block_provider,
+      vault: vault,
       plasma_framework: plasma_framework,
       child_block_interval: child_block_interval,
       height: height,
@@ -63,7 +62,8 @@ defmodule Engine.Ethereum.Authority.Submitter do
   defp submit(height, state) do
     next_child_block = External.next_child_block(state.plasma_framework, state.opts)
     mined_child_block = Core.mined(next_child_block, state.child_block_interval)
-    blocks = Core.get_all_and_submit(height, mined_child_block)
+    integration_fun = External.submit_block(state.vault, state.plasma_framework)
+    {:ok, _} = PlasmaBlock.get_all_and_submit(height, mined_child_block, integration_fun)
     :ok
   end
 end
