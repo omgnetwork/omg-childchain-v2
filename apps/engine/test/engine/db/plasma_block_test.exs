@@ -6,15 +6,14 @@ defmodule Engine.DB.PlasmaBlockTest do
   test "does factory work or what" do
     insert(:plasma_block)
 
-    submission = fn data ->
-      IO.inspect(data, label: "vault call")
-      :ol
+    submission = fn _data ->
+      :ok
     end
 
     PlasmaBlock.get_all_and_submit(3, 2000, submission)
 
     Process.sleep(1000)
     query = from(p in PlasmaBlock, where: p.submitted_at_ethereum_height < 4 and p.blknum < 3000)
-    IO.inspect({:ok, Engine.Repo.all(query)}, label: "koncno jebote pas ketno mater")
+    assert query |> Engine.Repo.all() |> hd |> Map.get(:gas) == 828
   end
 end

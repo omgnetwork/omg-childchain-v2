@@ -1,4 +1,7 @@
 defmodule EthereumBlockSubmissionMockServer do
+  @moduledoc """
+    mocks Ethereum and Plasma contracts behavior 
+  """
   alias ExPlasma.Encoding
 
   use GenServer
@@ -72,9 +75,8 @@ defmodule EthereumBlockSubmissionMockServer do
 
     exchanger_body = method(method, params, parent)
 
-    body = Jason.encode!(exchanger_body)
-
-    :ok = :gen_tcp.send(conn, ["HTTP/1.0 ", Integer.to_charlist(200), "\r\n", [], "\r\n", body])
+    :ok =
+      :gen_tcp.send(conn, ["HTTP/1.0 ", Integer.to_charlist(200), "\r\n", [], "\r\n", Jason.encode!(exchanger_body)])
 
     :gen_tcp.close(conn)
   end
