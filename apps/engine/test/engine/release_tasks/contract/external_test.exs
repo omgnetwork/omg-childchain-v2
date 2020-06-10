@@ -7,6 +7,7 @@ defmodule Engine.ReleaseTasks.Contract.ExternalTest do
 
   setup_all do
     {:ok, apps} = Application.ensure_all_started(:ethereumex)
+    IO.inspect(apps, label: "apps")
 
     on_exit(fn ->
       apps |> Enum.reverse() |> Enum.each(&Application.stop/1)
