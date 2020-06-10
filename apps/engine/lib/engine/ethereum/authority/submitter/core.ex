@@ -12,6 +12,6 @@ defmodule Engine.Ethereum.Authority.Submitter.Core do
   # the height is here so that we can compare 
   @spec get_all_and_submit(non_neg_integer(), pos_integer()) :: :ok
   def get_all_and_submit(new_height, mined_child_block) do
-    PlasmaBlock.get_all_and_submit(new_height, mined_child_block)
+    PlasmaBlock.get_all_and_submit(new_height, mined_child_block, fn _ -> :ok end)
   end
 end
