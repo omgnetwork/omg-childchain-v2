@@ -6,7 +6,7 @@ defmodule Engine.DB.PlasmaBlockTest do
   test "does factory work or what" do
     insert(:plasma_block)
 
-    submission = fn _data ->
+    submission = fn _block_root, _nonce, _gas ->
       :ok
     end
 
