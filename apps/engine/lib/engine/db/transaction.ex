@@ -57,7 +57,7 @@ defmodule Engine.DB.Transaction do
   associations for the transaction and outputs and runs the changeset.
   """
   @spec decode(tx_bytes, kind: String.t()) :: Ecto.Changeset.t()
-  def decode(tx_bytes, kind: kind) when is_binary(tx_bytes) and kind in @kind do
+  def decode(tx_bytes, kind: kind) do
     params =
       tx_bytes
       |> ExPlasma.decode()

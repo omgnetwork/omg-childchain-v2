@@ -15,7 +15,7 @@ defmodule Engine.DB.Transaction.Validator do
   @error_messages [
     # Stateless ex_plasma errors
     cannot_be_zero: "can not be zero",
-    exceeds_maximum: "can't exceed maximum value",
+    exceeds_maximum: "can not exceed maximum value",
     # Statefull local errors
     amounts_do_not_add_up: "output amounts are greater than input amounts",
     fees_not_covered: "fees are not covered by inputs",
@@ -131,13 +131,5 @@ defmodule Engine.DB.Transaction.Validator do
     |> Map.fetch!(kind)
   end
 
-  defp get_validator_for_type(type) do
-    case Map.fetch(@type_validators, type) do
-      {:ok, type_validators} ->
-        type_validators
-
-      :error ->
-        raise ArgumentError, "transaction type #{type} does not exist."
-    end
-  end
+  defp get_validator_for_type(type), do: Map.fetch!(@type_validators, type)
 end

@@ -7,6 +7,11 @@ defmodule Engine.DB.Transaction.PaymentV1.TransferValidator do
 
   @behaviour Engine.DB.Transaction.Validator
 
+  @type amounts_do_not_add_up_t() :: {:error, {:inputs, :amounts_do_not_add_up}}
+  @type fees_not_covered_t() :: {:error, {:inputs, :fees_not_covered}}
+  @type fee_token_not_accepted_t() :: {:error, {:inputs, :fee_token_not_accepted}}
+  @type overpaying_fees_t() :: {:error, {:inputs, :overpaying_fees}}
+
   @doc """
   Validates that the amount per token given in the inputs and outputs is correct.
   The following (per token) should be true: input_amount - output_amount - fees = 0
@@ -40,10 +45,10 @@ defmodule Engine.DB.Transaction.PaymentV1.TransferValidator do
           %{required(<<_::160>>) => list(pos_integer())} | :no_fees_required
         ) ::
           :ok
-          | {:error, {:inputs, :amounts_do_not_add_up}}
-          | {:error, {:inputs, :fees_not_covered}}
-          | {:error, {:inputs, :fee_token_not_accepted}}
-          | {:error, {:inputs, :overpaying_fees}}
+          | amounts_do_not_add_up_t()
+          | fees_not_covered_t()
+          | fee_token_not_accepted_t()
+          | overpaying_fees_t()
   @impl Engine.DB.Transaction.Validator
   def validate(input_data, output_data, fees) do
     input_amounts = reduce_amounts(input_data)
