@@ -4,16 +4,6 @@ defmodule Engine.ReleaseTasks.ContractTest do
   alias __MODULE__.EthereumClient
   alias Engine.ReleaseTasks.Contract
 
-  setup_all do
-    {:ok, apps} = Application.ensure_all_started(:ethereumex)
-
-    on_exit(fn ->
-      apps |> Enum.reverse() |> Enum.each(&Application.stop/1)
-    end)
-
-    :ok
-  end
-
   describe "on_load/2" do
     test "plasma_framework, tx_hash and authority_address can be set", %{test: test_name} do
       port = :crypto.rand_uniform(9500, 10_000)

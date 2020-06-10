@@ -4,11 +4,6 @@ defmodule Engine.Configuration do
   """
   @app :engine
 
-  @spec ethereumex_url() :: String.t()
-  def ethereumex_url() do
-    Application.fetch_env!(:ethereumex, :url)
-  end
-
   def child_block_interval() do
     Application.fetch_env!(@app, :child_block_interval)
   end
