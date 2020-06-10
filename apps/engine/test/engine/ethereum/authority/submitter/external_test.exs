@@ -2,7 +2,7 @@ defmodule Engine.Ethereum.Authority.Submitter.ExternalTest do
   use ExUnit.Case, async: true
   alias Engine.Ethereum.Authority.Submitter.External
 
-  setup do
+  setup_all do
     {:ok, apps} = Application.ensure_all_started(:ethereumex)
 
     on_exit(fn ->
