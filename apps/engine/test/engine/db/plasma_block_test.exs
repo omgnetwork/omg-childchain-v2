@@ -1,7 +1,7 @@
 defmodule Engine.DB.PlasmaBlockTest do
   use Engine.DB.DataCase, async: true
-  alias Engine.DB.PlasmaBlock
   import Ecto.Query, only: [from: 2]
+  alias Engine.DB.PlasmaBlock
 
   test "does factory work or what" do
     insert(:plasma_block)
