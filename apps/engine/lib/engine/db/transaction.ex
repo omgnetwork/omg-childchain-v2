@@ -12,7 +12,7 @@ defmodule Engine.DB.Transaction do
   """
 
   use Ecto.Schema
-  import Ecto.Changeset, only: [put_change: 3, cast: 3, cast_assoc: 2, get_field: 2]
+  import Ecto.Changeset, only: [put_change: 3, cast: 3, cast_assoc: 2, get_field: 2, validate_required: 2]
   import Ecto.Query, only: [from: 2]
 
   alias Engine.DB.Block
@@ -25,14 +25,13 @@ defmodule Engine.DB.Transaction do
   @deposit "deposit"
   @transfer "transfer"
 
-  @kind [@deposit, @transfer]
-
   def kind_transfer(), do: @transfer
   def kind_deposit(), do: @deposit
 
   schema "transactions" do
     field(:tx_bytes, :binary)
     field(:tx_hash, :binary)
+    field(:tx_type, :integer)
     field(:kind, :string)
 
     belongs_to(:block, Block)
@@ -78,7 +77,8 @@ defmodule Engine.DB.Transaction do
     struct
     |> Repo.preload(:inputs)
     |> Repo.preload(:outputs)
-    |> cast(params, [:tx_bytes, :kind])
+    |> cast(params, [:tx_bytes, :tx_type, :kind])
+    |> validate_required([:tx_bytes, :tx_type, :kind])
     |> cast_assoc(:inputs)
     |> cast_assoc(:outputs)
     |> build_tx_hash()

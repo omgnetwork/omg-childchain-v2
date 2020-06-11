@@ -30,6 +30,21 @@ defmodule Engine.DB.TransactionTest do
       assert changeset.errors[:inputs] == {"inputs [1000000000] are missing, spent, or not yet available", []}
     end
 
+    test "casts and validate required fields" do
+      tx_bytes =
+        [tx_type: 1]
+        |> Builder.new()
+        |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
+        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+        |> ExPlasma.encode()
+
+      changeset = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
+
+      assert get_field(changeset, :tx_type) == 1
+      assert get_field(changeset, :kind) == Transaction.kind_transfer()
+      assert get_field(changeset, :tx_bytes) == tx_bytes
+    end
+
     test "builds the outputs" do
       input_blknum = 1
       insert(:output, %{blknum: input_blknum, state: "confirmed"})
@@ -65,6 +80,7 @@ defmodule Engine.DB.TransactionTest do
 
       changeset = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
 
+      assert changeset.valid?
       assert get_field(changeset, :inputs) == [input]
     end
 
