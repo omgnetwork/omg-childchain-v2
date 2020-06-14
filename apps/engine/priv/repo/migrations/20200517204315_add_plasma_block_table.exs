@@ -14,11 +14,11 @@ defmodule Engine.Repo.Migrations.AddPlasmaBlockTable do
       # at which height did we form the block
       add(:formed_at_ethereum_height, :integer, null: false)
       # doesn't mean mined! gets updated every time hash is submitted
-      add(:submitted_at_ethereum_height, :integer, null: false)
+      add(:submitted_at_ethereum_height, :integer)
       # gas in wei
       add(:gas, :integer, null: false)
       # mining is async and it might fail (like submitted with not enough gas, client error)
-      add(:attempts_counter, :integer, default: 1, null: false)
+      add(:attempts_counter, :integer, default: 0, null: false)
       timestamps(type: :timestamptz)
     end
   end

@@ -178,18 +178,20 @@ defmodule Engine.DB.Factory do
   def set_state(%Output{} = output, state), do: %{output | state: state}
 
   def plasma_block_factory(attr \\ %{}) do
-  blknum = Map.get(attr, :blknum, 1000)
-  _child_block_interval = 1000
-  nonce = round(blknum / 1000)
+    blknum = Map.get(attr, :blknum, 1000)
+    _child_block_interval = 1000
+    nonce = round(blknum / 1000)
 
-  %PlasmaBlock{
-    hash: :crypto.strong_rand_bytes(32),
-    nonce: nonce,
-    blknum: blknum,
-    tx_hash: :crypto.strong_rand_bytes(64),
-    formed_at_ethereum_height: 1,
-    submitted_at_ethereum_height: 1,
-    gas: 827
-  }
-end
+    %PlasmaBlock{
+      hash: :crypto.strong_rand_bytes(32),
+      nonce: nonce,
+      blknum: blknum,
+      tx_hash: :crypto.strong_rand_bytes(64),
+      formed_at_ethereum_height: 1,
+      submitted_at_ethereum_height: Map.get(attr, :submitted_at_ethereum_height, 1),
+      attempts_counter: Map.get(attr, :attempts_counter),
+      gas: 827
+    }
+  end
+
 end

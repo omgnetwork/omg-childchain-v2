@@ -16,6 +16,21 @@ defmodule Engine.Ethereum.Authority.Submitter.ExternalTest do
     Kernel.send(pid, :stop)
   end
 
+  test "external call to submit block (whatever that is we don't really know)" do
+    parent = self()
+    pid = spawn(fn -> __MODULE__.EthereumClient.start(8886, parent) end)
+
+    receive do
+      :done -> :ok
+    after
+      500 -> raise("we ded")
+    end
+
+    call = External.submit_block("plasma_framework_address", "block")
+    call.(1, 2, 3)
+    Kernel.send(pid, :stop)
+  end
+
   defmodule EthereumClient do
     # a very simple http client implementation that we can twist into responses that we need
     def start(port, parent) do
