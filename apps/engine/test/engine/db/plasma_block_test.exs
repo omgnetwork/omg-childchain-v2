@@ -1,6 +1,8 @@
 defmodule Engine.DB.PlasmaBlockTest do
   use Engine.DB.DataCase, async: true
   import Ecto.Query, only: [from: 2]
+
+  alias Ecto.Adapters.SQL.Sandbox
   alias Engine.DB.PlasmaBlock
 
   test "integration point is not called when there are no blocks to submit" do
@@ -239,7 +241,7 @@ defmodule Engine.DB.PlasmaBlockTest do
       1..number_of_childchains
       |> Task.async_stream(
         fn _ ->
-          Ecto.Adapters.SQL.Sandbox.allow(Engine.Repo, parent, self())
+          Sandbox.allow(Engine.Repo, parent, self())
           PlasmaBlock.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
         end,
         timeout: 5000,
