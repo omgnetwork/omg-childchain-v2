@@ -52,9 +52,12 @@ defmodule Engine.DB.PlasmaBlockTest do
       # assert that our integration point was called with these blocks
       [8, 9, 10] = receive_all_blocks()
 
-      from(plasma_block in PlasmaBlock,
-        where: plasma_block.nonce == 8 or plasma_block.nonce == 9 or plasma_block.nonce == 10
-      )
+      sql =
+        from(plasma_block in PlasmaBlock,
+          where: plasma_block.nonce == 8 or plasma_block.nonce == 9 or plasma_block.nonce == 10
+        )
+
+      sql
       |> Engine.Repo.all()
       |> Enum.each(fn block ->
         assert block.submitted_at_ethereum_height == my_current_eth_height
@@ -93,7 +96,7 @@ defmodule Engine.DB.PlasmaBlockTest do
       # I notice  that blocks with blknum from 1000 to 7000 were mined but above that it needs a resubmission
       insert(:plasma_block, %{
         nonce: 11,
-        blknum: 11000,
+        blknum: 11_000,
         formed_at_ethereum_height: 11
       })
 
@@ -107,10 +110,13 @@ defmodule Engine.DB.PlasmaBlockTest do
       # assert that our integration point was called with these blocks
       [8, 9, 10, 11] = receive_all_blocks()
 
-      from(plasma_block in PlasmaBlock,
-        where:
-          plasma_block.nonce == 8 or plasma_block.nonce == 9 or plasma_block.nonce == 10 or plasma_block.nonce == 11
-      )
+      sql =
+        from(plasma_block in PlasmaBlock,
+          where:
+            plasma_block.nonce == 8 or plasma_block.nonce == 9 or plasma_block.nonce == 10 or plasma_block.nonce == 11
+        )
+
+      sql
       |> Engine.Repo.all()
       |> Enum.each(fn block ->
         case block.nonce do
