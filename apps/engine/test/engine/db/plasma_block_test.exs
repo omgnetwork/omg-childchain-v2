@@ -94,11 +94,7 @@ defmodule Engine.DB.PlasmaBlockTest do
 
       # at this height, I'm looking at what was submitted and what wasn't
       # I notice  that blocks with blknum from 1000 to 7000 were mined but above that it needs a resubmission
-      insert(:plasma_block, %{
-        nonce: 11,
-        blknum: 11_000,
-        formed_at_ethereum_height: 11
-      })
+      insert(:plasma_block, %{nonce: 11, blknum: 11_000, formed_at_ethereum_height: 11})
 
       my_current_eth_height = 11
       mined_child_block = 7000
@@ -202,6 +198,58 @@ defmodule Engine.DB.PlasmaBlockTest do
       assert [] = blocks
       # assert that our integration point was called with these blocks
       [] = receive_all_blocks()
+    end
+  end
+
+  describe "a simulation of multiple childchains accesing block submission" do
+    test "processes try to re-submit blocks" do
+      nonce = 1
+      blknum = 1000
+
+      # just insert 10 blocks that were created over 10 eth blocks
+      _ =
+        Enum.reduce(1..10, {nonce, blknum}, fn index, {nonce, blknum} ->
+          insert(:plasma_block, %{
+            nonce: nonce,
+            blknum: blknum,
+            submitted_at_ethereum_height: index,
+            formed_at_ethereum_height: index,
+            attempts_counter: 1
+          })
+
+          {nonce + 1, blknum + 1000}
+        end)
+
+      parent = self()
+      # this would be our vault
+      integration_point = fn hash, nonce, gas ->
+        Kernel.send(parent, {hash, nonce, gas})
+        :ok
+      end
+
+      # at this height, I'm looking at what was submitted and what wasn't
+      # I notice  that blocks with blknum from 1000 to 7000 were mined but above that it needs a resubmission
+      insert(:plasma_block, %{nonce: 11, blknum: 11_000, formed_at_ethereum_height: 11})
+
+      my_current_eth_height = 11
+      mined_child_block = 7000
+
+      number_of_childchains = 10
+
+      1..number_of_childchains
+      |> Task.async_stream(
+        fn _ ->
+          Ecto.Adapters.SQL.Sandbox.allow(Engine.Repo, parent, self())
+
+          IO.inspect(PlasmaBlock.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point))
+        end,
+        timeout: 5000,
+        on_timeout: :kill_task,
+        max_concurrency: System.schedulers_online()
+      )
+      |> Enum.map(fn {:ok, result} -> result end)
+
+      [8, 9, 10, 11] = receive_all_blocks()
     end
   end
 
