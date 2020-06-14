@@ -240,8 +240,7 @@ defmodule Engine.DB.PlasmaBlockTest do
       |> Task.async_stream(
         fn _ ->
           Ecto.Adapters.SQL.Sandbox.allow(Engine.Repo, parent, self())
-
-          IO.inspect(PlasmaBlock.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point))
+          PlasmaBlock.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
         end,
         timeout: 5000,
         on_timeout: :kill_task,
@@ -249,6 +248,8 @@ defmodule Engine.DB.PlasmaBlockTest do
       )
       |> Enum.map(fn {:ok, result} -> result end)
 
+      # if submission was executed once, it was executed by one of the childchains
+      # that WON the race, hence, we should receive nonces as messages only once
       [8, 9, 10, 11] = receive_all_blocks()
     end
   end
