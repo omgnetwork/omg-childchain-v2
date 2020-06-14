@@ -41,7 +41,9 @@ defmodule Engine.DB.PlasmaBlock do
   defp get_all(repo, _changeset, new_height, mined_child_block) do
     query =
       from(p in __MODULE__,
-        where: p.submitted_at_ethereum_height < ^new_height and p.blknum < ^mined_child_block,
+        where:
+          (p.submitted_at_ethereum_height < ^new_height or is_nil(p.submitted_at_ethereum_height)) and
+            p.blknum > ^mined_child_block,
         order_by: [asc: :nonce]
       )
 
@@ -76,7 +78,7 @@ defmodule Engine.DB.PlasmaBlock do
       error ->
         # we encountered an error with one of the block submissions
         # we'll stop here and continue later
-        _ = Logger.error("Block submission stopped at block with nonce #{plasma_block.nonce}. Error: #{error}")
+        _ = Logger.error("Block submission stopped at block with nonce #{plasma_block.nonce}. Error: #{inspect(error)}")
         process_submission(repo, [], new_height, mined_child_block, submit)
     end
   end

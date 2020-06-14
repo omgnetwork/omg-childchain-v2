@@ -182,7 +182,8 @@ defmodule Engine.DB.Factory do
       blknum: blknum,
       tx_hash: :crypto.strong_rand_bytes(64),
       formed_at_ethereum_height: 1,
-      submitted_at_ethereum_height: 1,
+      submitted_at_ethereum_height: Map.get(attr, :submitted_at_ethereum_height, 1),
+      attempts_counter: Map.get(attr, :attempts_counter),
       gas: 827
     }
   end
