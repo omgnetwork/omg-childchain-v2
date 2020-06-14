@@ -173,6 +173,7 @@ defmodule Engine.DB.PlasmaBlockTest do
       nonce = 2
       blknum = 2000
       my_current_eth_height = 6
+
       # just insert 10 blocks that were created over 10 eth blocks
 
       insert(:plasma_block, %{
