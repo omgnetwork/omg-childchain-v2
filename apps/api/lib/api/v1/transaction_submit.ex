@@ -16,13 +16,18 @@ defmodule API.V1.TransactionSubmit do
   """
   @spec submit(String.t()) :: submit_response()
   def submit("0x" <> _rest = hex_tx_bytes) do
-    {:ok, transaction} =
+    result =
       hex_tx_bytes
       |> Encoding.to_binary()
       |> Transaction.decode()
       |> Repo.insert()
 
-    %{tx_hash: Encoding.to_hex(transaction.tx_hash)}
+    case result do
+      {:ok, transaction} ->
+        %{tx_hash: Encoding.to_hex(transaction.tx_hash)}
+      {:error, changeset} ->
+        raise ArgumentError, "invalid tx_bytes"
+    end
   end
 
   def submit(_), do: raise ArgumentError, "transaction"
