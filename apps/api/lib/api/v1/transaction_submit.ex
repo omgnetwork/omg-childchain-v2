@@ -25,7 +25,7 @@ defmodule API.V1.TransactionSubmit do
     case result do
       {:ok, transaction} ->
         %{tx_hash: Encoding.to_hex(transaction.tx_hash)}
-      {:error, changeset} ->
+      {:error, _changeset} ->
         raise ArgumentError, "invalid tx_bytes"
     end
   end
