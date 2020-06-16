@@ -62,7 +62,7 @@ config :logger, Ink,
 config :status, Status.Metric.Tracer,
   service: :backend,
   adapter: SpandexDatadog.Adapter,
-  disabled?: false,
+  disabled?: true,
   type: :backend,
   env: "local-development-childchain-v2"
 

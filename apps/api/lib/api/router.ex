@@ -1,4 +1,4 @@
-defmodule RPC.Router do
+defmodule Api.Router do
   use Plug.Router
   use Plug.ErrorHandler
   use SpandexPhoenix
