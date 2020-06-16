@@ -30,7 +30,7 @@ defmodule Rpc.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:spandex, "~> 2.3"},
       {:spandex_datadog, "~> 0.3"},
-      {:spandex_phoenix, "~> 0.2"}
+      {:spandex_phoenix, "~> 0.4"}
     ]
   end
 end
