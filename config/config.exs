@@ -67,6 +67,7 @@ config :status, Status.Metric.Tracer,
   env: "local-development-childchain-v2"
 
 config :spandex, :decorators, tracer: Status.Metric.Tracer
+config :spandex_phoenix, tracer: Status.Metric.Tracer
 
 # APMs are sent via HTTP requests
 config :spandex_datadog,
