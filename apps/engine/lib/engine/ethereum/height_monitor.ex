@@ -15,6 +15,7 @@ defmodule Engine.Ethereum.HeightMonitor do
   The alarm is cleared once the block height starts increasing again.
   """
   use GenServer
+  use Spandex.Decorators
 
   alias Engine.Ethereum.HeightMonitor.AlarmManagement
   alias Engine.Ethereum.HeightMonitor.Core
@@ -110,6 +111,7 @@ defmodule Engine.Ethereum.HeightMonitor do
     {:noreply, %{state | stall_alarm_raised: false}}
   end
 
+  @decorate trace(service: __MODULE__, type: :backend)
   defp check_new_height(state) do
     height = Core.fetch_height(state.eth_module, state.opts)
     stalled? = Core.stalled?(height, state.ethereum_height, state.synced_at, state.stall_threshold_ms)
