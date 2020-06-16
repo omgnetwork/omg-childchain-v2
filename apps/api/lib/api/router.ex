@@ -1,29 +1,19 @@
-defmodule Api.Router do
+defmodule API.Router do
+  @moduledoc """
+  The Top-level router. This is where we specify versions and other paths we
+  want to forward down to lower level routers.
+  """
+
   use Plug.Router
-  use Plug.ErrorHandler
   use SpandexPhoenix
 
-  require Logger
-
+  plug(API.Plugs.Health)
   plug(:match)
-
-  plug(Plug.Parsers,
-    parsers: [:urlencoded, :json],
-    pass: ["*/*"],
-    json_decoder: Jason
-  )
-
   plug(:dispatch)
 
   get "/" do
-    send_resp(conn, 200, "Hello World")
+    send_resp(conn, 200, "hello")
   end
 
-  get "/flakey" do
-    if rem(System.system_time(:second), 2) == 0 do
-      send_resp(conn, 200, "Success!")
-    else
-      send_resp(conn, 500, "Fail!")
-    end
-  end
+  #forward("/v1", to: API.V1.Router)
 end
