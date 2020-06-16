@@ -29,6 +29,7 @@ defmodule API.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.0"},
       {:spandex, "~> 2.3"},
+      {:spandex_datadog, "~> 0.4"},
       {:status, in_umbrella: true}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},

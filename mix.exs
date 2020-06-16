@@ -16,7 +16,7 @@ defmodule Childchain.MixProject do
         childchain: [
           steps: steps(),
           version: version(),
-          applications: tools() ++ [engine: :permanent, rpc: :permanent, status: :permanent],
+          applications: tools() ++ [engine: :permanent, api: :permanent, status: :permanent],
           config_providers: [
             {Engine.ReleaseTasks.Contract, []},
             {Status.ReleaseTasks.Logger, [sentry_logger: Sentry.LoggerBackend, default_logger: Ink]},

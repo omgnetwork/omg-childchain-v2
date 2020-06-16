@@ -25,6 +25,13 @@ end
 
 contracts = parse_contracts.()
 
+config :api, API.Tracer,
+ service: :api,
+ adapter: SpandexDatadog.Adapter,
+ disabled?: false,
+ type: :web,
+ env: "local_development_childchain_v2"
+
 config :engine,
   network: "TEST",
   tx_hash_contract: contracts["TX_HASH_CONTRACT"],
@@ -61,7 +68,7 @@ config :logger, Ink,
 config :status, Status.Metric.Tracer,
   service: :web,
   adapter: SpandexDatadog.Adapter,
-  disabled?: true,
+  disabled?: false,
   type: :web,
   env: ""
 

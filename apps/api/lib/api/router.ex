@@ -10,7 +10,10 @@ defmodule API.Router do
   plug(API.Plugs.Health)
   plug(:match)
   plug(:dispatch)
+  forward("/v1", to: API.V1.Router)
   plug(Spandex.Plug.EndTrace, tracer: API.Tracer)
 
-  forward("/v1", to: API.V1.Router)
+  get "/" do
+    send_resp(conn, 200, "hello")
+  end
 end

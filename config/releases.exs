@@ -7,6 +7,13 @@ to_boolean = fn
   _ -> nil
 end
 
+config :api, API.Tracer,
+  service: :web,
+  adapter: SpandexDatadog.Adapter,
+  disabled?: to_boolean.(System.get_env("DD_DISABLED") || "true"),
+  type: :web,
+  env: System.get_env("APP_ENV") || ""
+
 config :engine,
   url: rpc_url,
   network: System.get_env("ETHEREUM_NETWORK"),
