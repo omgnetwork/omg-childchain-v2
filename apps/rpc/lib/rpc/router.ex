@@ -1,27 +1,29 @@
 defmodule RPC.Router do
-  @moduledoc """
-  JSON-RPC API for the Childchain.
-  """
+  use Plug.Router
+  use Plug.ErrorHandler
+  use SpandexPhoenix
 
-  # use Plug.Router
+  require Logger
 
-  # plug :match
-  # plug Plug.Parsers, parsers: [:json], json_decoder: Jason
+  plug(:match)
 
-  # post "/block.get" do
-  # end
+  plug(Plug.Parsers,
+    parsers: [:urlencoded, :json],
+    pass: ["*/*"],
+    json_decoder: Jason
+  )
 
-  # post "/transaction.submit" do
-  # end
+  plug(:dispatch)
 
-  # get "/alarm.get" do
-  # end
+  get "/" do
+    send_resp(conn, 200, "Hello World")
+  end
 
-  # get "/configuration.get" do
-  # end
-
-  # post "/fees.all" do
-  # end
-
-  # match _, do: send_resp(conn, 404, "not found")
+  get "/flakey" do
+    if rem(System.system_time(:second), 2) == 0 do
+      send_resp(conn, 200, "Success!")
+    else
+      send_resp(conn, 500, "Fail!")
+    end
+  end
 end

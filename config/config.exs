@@ -62,11 +62,12 @@ config :logger, Ink,
 config :status, Status.Metric.Tracer,
   service: :backend,
   adapter: SpandexDatadog.Adapter,
-  disabled?: true,
+  disabled?: false,
   type: :backend,
   env: "local-development-childchain-v2"
 
 config :spandex, :decorators, tracer: Status.Metric.Tracer
+config :spandex_phoenix, tracer: Status.Metric.Tracer
 
 # APMs are sent via HTTP requests
 config :spandex_datadog,
