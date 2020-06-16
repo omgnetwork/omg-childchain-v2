@@ -17,10 +17,10 @@ jobs:
       - checkout
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
-          key: v2-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v3-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run: mix do deps.get, compile --warnings-as-errors --force
       - save_cache:
-          key: v2-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v3-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
           paths:
             - "deps"
             - "_build"
@@ -41,7 +41,7 @@ jobs:
       - checkout
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
-          key: v2-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v3-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run: mix test
 
   integration:
@@ -54,7 +54,7 @@ jobs:
       - checkout
       - run: docker-compose up -d postgres
       - restore_cache:
-          key: v2-asdf-install
+          key: v3-asdf-install
       - run:
           name: Install Erlang and Elixir
           command: |
@@ -69,14 +69,14 @@ jobs:
             asdf global erlang 22.3
           no_output_timeout: 2400
       - save_cache:
-          key: v2-asdf-install
+          key: v3-asdf-install
           paths:
             - ~/.asdf
             - ~/.asdf-vm
       - run: make init-contracts
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
-          key: v2-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v3-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run: mix test.integration
 
   credo:
@@ -89,7 +89,7 @@ jobs:
       - checkout
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
-          key: v2-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v3-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run: mix do credo --strict, format --check-formatted --dry-run
       - run:
           name: "Consistent naming of TX_HASH - it's tx_hash not txhash"
@@ -133,7 +133,7 @@ jobs:
       - checkout
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
-          key: v2-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v3-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - restore_cache:
           key: v1-dialyzer-plts-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run:
