@@ -5,6 +5,7 @@ defmodule Engine.DB.Block do
 
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
   alias Engine.DB.Transaction
 
   schema "blocks" do
@@ -22,6 +23,13 @@ defmodule Engine.DB.Block do
     |> cast(params, [:hash, :number, :state])
     |> cast_assoc(:transactions)
     |> unique_constraint(:number)
+  end
+
+  @doc """
+  Query the most recent block by it's hash, which is not necessarily unique.
+  """
+  def query_by_hash(hash) do
+    from(b in __MODULE__, where: b.hash == ^hash, order_by: b.inserted_at)
   end
 
   @doc """
