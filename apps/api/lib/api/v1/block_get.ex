@@ -34,6 +34,4 @@ defmodule API.V1.BlockGet do
         }
     end
   end
-
-  def by_hash(_), do: raise(ArgumentError, "hash value must be prefixed with \"0x\"")
 end

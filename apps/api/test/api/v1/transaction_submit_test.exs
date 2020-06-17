@@ -15,14 +15,8 @@ defmodule API.V1.TransactionSubmitTest do
       assert %{tx_hash: ^tx_hash} = TransactionSubmit.submit(tx_bytes)
     end
 
-    test "it raises an error if the transaction hash is invalid with no 0x prefix" do
-      assert_raise ArgumentError, "transaction value must be prefixed with \"0x\"", fn ->
-        TransactionSubmit.submit("0000")
-      end
-    end
-
     test "it raises an error if the tranasaction is invalid" do
-      assert_raise ArgumentError, "[amount: {\"can not be zero\", []}]", fn ->
+      assert_raise ArgumentError, "amount can not be zero", fn ->
         invalid_hex_tx_bytes =
           [tx_type: 1]
           |> Builder.new()

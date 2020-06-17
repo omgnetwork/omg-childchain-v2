@@ -11,9 +11,5 @@ defmodule API.Router do
   plug(:match)
   plug(:dispatch)
 
-  get "/" do
-    send_resp(conn, 200, "hello")
-  end
-
   forward("/v1", to: API.V1.Router)
 end

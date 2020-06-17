@@ -27,9 +27,8 @@ defmodule API.V1.TransactionSubmit do
         %{tx_hash: Encoding.to_hex(transaction.tx_hash)}
 
       {:error, changeset} ->
-        raise ArgumentError, inspect(changeset.errors)
+        {key, {message, _}} = hd(changeset.errors)
+        raise ArgumentError, "#{key} #{message}"
     end
   end
-
-  def submit(_), do: raise(ArgumentError, "transaction value must be prefixed with \"0x\"")
 end

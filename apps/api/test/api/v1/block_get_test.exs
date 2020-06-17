@@ -12,11 +12,5 @@ defmodule API.V1.BlockGetTest do
 
       assert %{blknum: _, hash: ^hash, transactions: ^hex_tx_bytes} = BlockGet.by_hash(hash)
     end
-
-    test "it raises an error if the hash is invalid with no 0x prefix" do
-      assert_raise ArgumentError, "hash value must be prefixed with \"0x\"", fn ->
-        BlockGet.by_hash("0000")
-      end
-    end
   end
 end

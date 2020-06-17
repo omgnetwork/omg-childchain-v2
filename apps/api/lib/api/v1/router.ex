@@ -11,12 +11,13 @@ defmodule API.V1.Router do
   use Plug.ErrorHandler
 
   alias API.Plugs.ExpectParams
+  alias API.Plugs.ExpectParams.InvalidParams
   alias API.V1.BlockGet
   alias API.V1.TransactionSubmit
 
   plug(Plug.Parsers, parsers: [:json], json_decoder: Jason)
-  plug(ExpectParams, key: "hash", path: "/block.get")
-  plug(ExpectParams, key: "transaction", path: "/transaction.submit")
+  plug(ExpectParams, key: "hash", path: "/block.get", hex: true)
+  plug(ExpectParams, key: "transaction", path: "/transaction.submit", hex: true)
   plug(:match)
   plug(:dispatch)
 
@@ -35,8 +36,8 @@ defmodule API.V1.Router do
   end
 
   # The "input validations" are being raised up through the plug pipeline's as errors. We
-  # catch ArgumentError here as we are using this with ExpectParams to raise the error message here.
-  defp handle_errors(conn, %{reason: %ArgumentError{message: message}}) do
+  # catch InvalidParams here as we are using this with ExpectParams to raise the error message here.
+  defp handle_errors(conn, %{reason: %InvalidParams{message: message}}) do
     render_json(conn, 400, %{error: message})
   end
 
