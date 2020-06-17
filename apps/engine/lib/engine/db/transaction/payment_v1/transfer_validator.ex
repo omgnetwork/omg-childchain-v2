@@ -7,10 +7,15 @@ defmodule Engine.DB.Transaction.PaymentV1.TransferValidator do
 
   @behaviour Engine.DB.Transaction.Validator
 
-  @type amounts_do_not_add_up_t() :: {:error, {:inputs, :amounts_do_not_add_up}}
-  @type fees_not_covered_t() :: {:error, {:inputs, :fees_not_covered}}
-  @type fee_token_not_accepted_t() :: {:error, {:inputs, :fee_token_not_accepted}}
-  @type overpaying_fees_t() :: {:error, {:inputs, :overpaying_fees}}
+  @type output_list_t() :: list(ExPlasma.Output.Type.PaymentV1.t())
+  @type accepted_fees_t() :: %{required(<<_::160>>) => list(pos_integer())} | :no_fees_required
+
+  @type validation_result_t() ::
+          :ok
+          | {:error, {:inputs, :amounts_do_not_add_up}}
+          | {:error, {:inputs, :fees_not_covered}}
+          | {:error, {:inputs, :fee_token_not_accepted}}
+          | {:error, {:inputs, :overpaying_fees}}
 
   @doc """
   Validates that the amount per token given in the inputs and outputs is correct.
@@ -39,16 +44,7 @@ defmodule Engine.DB.Transaction.PaymentV1.TransferValidator do
   ...> %{<<1::160>> => [1, 3]})
   :ok
   """
-  @spec validate(
-          list(ExPlasma.Output.Type.PaymentV1.t()),
-          list(ExPlasma.Output.Type.PaymentV1.t()),
-          %{required(<<_::160>>) => list(pos_integer())} | :no_fees_required
-        ) ::
-          :ok
-          | amounts_do_not_add_up_t()
-          | fees_not_covered_t()
-          | fee_token_not_accepted_t()
-          | overpaying_fees_t()
+  @spec validate(output_list_t(), output_list_t(), accepted_fees_t()) :: validation_result_t()
   @impl Engine.DB.Transaction.Validator
   def validate(input_data, output_data, fees) do
     input_amounts = reduce_amounts(input_data)

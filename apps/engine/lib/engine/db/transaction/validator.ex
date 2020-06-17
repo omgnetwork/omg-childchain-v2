@@ -24,7 +24,7 @@ defmodule Engine.DB.Transaction.Validator do
   ]
 
   @type_validators %{
-    1 => %{"transfer" => PaymentV1.TransferValidator, "deposit" => PaymentV1.DepositValidator}
+    1 => PaymentV1.TransferValidator
   }
 
   @callback validate(list(map()), list(map()), %{required(<<_::160>>) => list(pos_integer())} | :no_fees_required) ::
@@ -90,12 +90,15 @@ defmodule Engine.DB.Transaction.Validator do
     changeset
   end
 
-  def validate_statefully(changeset, tx_type, kind, fees) do
+  # Deposit don't need to be validated as we're building them internally from contract events
+  def validate_statefully(changeset, _tx_type, "deposit", _fees), do: changeset
+
+  def validate_statefully(changeset, tx_type, _kind, fees) do
     input_data = get_decoded_output_data(changeset, :inputs)
     output_data = get_decoded_output_data(changeset, :outputs)
 
     input_data
-    |> get_validator(tx_type, kind).validate(output_data, fees)
+    |> get_validator(tx_type).validate(output_data, fees)
     |> process_validation_results(changeset)
   end
 
@@ -125,11 +128,5 @@ defmodule Engine.DB.Transaction.Validator do
     end)
   end
 
-  defp get_validator(type, kind) do
-    type
-    |> get_validator_for_type()
-    |> Map.fetch!(kind)
-  end
-
-  defp get_validator_for_type(type), do: Map.fetch!(@type_validators, type)
+  defp get_validator(type), do: Map.fetch!(@type_validators, type)
 end

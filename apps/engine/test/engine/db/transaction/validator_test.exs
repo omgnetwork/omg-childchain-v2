@@ -118,6 +118,13 @@ defmodule Engine.DB.Transaction.ValidatorTest do
       assert validated_changeset == changeset
     end
 
+    test "returns the changeset unchanged when it's a deposit" do
+      changeset = change(%Transaction{})
+
+      validated_changeset = Validator.validate_statefully(changeset, 1, Transaction.kind_deposit(), %{})
+      assert validated_changeset == changeset
+    end
+
     test "returns the changeset unchanged when valid" do
       token = <<0::160>>
       alice = <<1::160>>
