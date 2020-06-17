@@ -5,6 +5,8 @@ config :engine, Engine.Repo,
   username: "omisego_dev",
   password: "omisego_dev",
   hostname: "localhost",
+  queue_target: 5000,
+  queue_interval: 5000,
   pool: Ecto.Adapters.SQL.Sandbox
 
 config :engine, ecto_repos: [Engine.Repo]
