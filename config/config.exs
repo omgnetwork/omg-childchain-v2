@@ -58,19 +58,30 @@ config :logger, Ink,
   name: "childchain",
   exclude_hostname: true
 
+# THIS IS FOR APM - function traces
 config :status, Status.Metric.Tracer,
-  service: :web,
+  service: :backend,
   adapter: SpandexDatadog.Adapter,
   disabled?: true,
-  type: :web,
-  env: ""
+  type: :backend,
+  env: "local-development-childchain-v2"
 
+config :spandex, :decorators, tracer: Status.Metric.Tracer
+config :spandex_phoenix, tracer: Status.Metric.Tracer
+
+# APMs are sent via HTTP requests
 config :spandex_datadog,
-  host: "datadog",
+  host: "localhost",
   port: 8126,
   batch_size: 10,
   sync_threshold: 100,
   http: HTTPoison
+
+# Metrics are sent via UDP
+config :statix,
+  host: "localhost",
+  port: 8125,
+  tags: ["application:childchain-v2", "app_env:local-development"]
 
 config :os_mon,
   disk_almost_full_threshold: 1,

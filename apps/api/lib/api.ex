@@ -1,3 +1,3 @@
-defmodule Rpc do
+defmodule Api do
   @moduledoc false
 end

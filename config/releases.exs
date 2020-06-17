@@ -44,7 +44,7 @@ config :sentry,
     application: "childchain"
   }
 
-statix_tags = [application: "childchain", app_env: System.get_env("APP_ENV"), hostname: System.get_env("HOSTNAME")]
+statix_tags = [application: "childchain-v2", app_env: System.get_env("APP_ENV"), hostname: System.get_env("HOSTNAME")]
 
 config :statix,
   host: System.get_env("DD_HOSTNAME") || "datadog",

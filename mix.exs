@@ -16,7 +16,7 @@ defmodule Childchain.MixProject do
         childchain: [
           steps: steps(),
           version: version(),
-          applications: tools() ++ [engine: :permanent, rpc: :permanent, status: :permanent],
+          applications: tools() ++ [engine: :permanent, api: :permanent, status: :permanent],
           config_providers: [
             {Engine.ReleaseTasks.Contract, []},
             {Status.ReleaseTasks.Logger, [sentry_logger: Sentry.LoggerBackend, default_logger: Ink]},
@@ -42,7 +42,6 @@ defmodule Childchain.MixProject do
 
   defp deps do
     [
-      {:ex_abi, "~> 0.2.1"},
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
