@@ -1,9 +1,8 @@
 defmodule API.V1.RouterTest do
   use Engine.DB.DataCase, async: true
   use Plug.Test
-  alias API.V1.Router
-
   import ExPlasma.Encoding, only: [to_hex: 1]
+  alias API.V1.Router
 
   defp assert_payload_data(payload, data) do
     assert payload["service_name"] == "childchain"
@@ -19,7 +18,7 @@ defmodule API.V1.RouterTest do
       number = transaction.block.number
       {:ok, payload} = post("/block.get", %{hash: hash})
 
-      assert_payload_data(payload, %{"blknum" => number, "hash" => hash, "transactions" => [tx_bytes]}) 
+      assert_payload_data(payload, %{"blknum" => number, "hash" => hash, "transactions" => [tx_bytes]})
     end
 
     test "that it returns an error if missing hash params" do

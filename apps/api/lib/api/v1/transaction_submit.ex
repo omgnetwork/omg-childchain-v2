@@ -8,8 +8,8 @@ defmodule API.V1.TransactionSubmit do
   alias ExPlasma.Encoding
 
   @type submit_response() :: %{
-    required(:tx_hash) => String.t()
-  }
+          required(:tx_hash) => String.t()
+        }
 
   @doc """
   Validate and insert the tx_bytes.
@@ -25,10 +25,11 @@ defmodule API.V1.TransactionSubmit do
     case result do
       {:ok, transaction} ->
         %{tx_hash: Encoding.to_hex(transaction.tx_hash)}
+
       {:error, changeset} ->
         raise ArgumentError, inspect(changeset.errors)
     end
   end
 
-  def submit(_), do: raise ArgumentError, "transaction value must be prefixed with \"0x\""
+  def submit(_), do: raise(ArgumentError, "transaction value must be prefixed with \"0x\"")
 end

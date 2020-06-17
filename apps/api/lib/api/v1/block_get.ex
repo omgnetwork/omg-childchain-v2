@@ -8,10 +8,10 @@ defmodule API.V1.BlockGet do
   alias ExPlasma.Encoding
 
   @type block_response() :: %{
-    required(:blknum) => pos_integer(),
-    required(:hash) => String.t(),
-    required(:transactions) => [String.t()]
-  }
+          required(:blknum) => pos_integer(),
+          required(:hash) => String.t(),
+          required(:transactions) => [String.t()]
+        }
 
   @doc """
   Fetches a block by the given hash from the params.
@@ -35,5 +35,5 @@ defmodule API.V1.BlockGet do
     end
   end
 
-  def by_hash(_), do: raise ArgumentError, "hash value must be prefixed with \"0x\""
+  def by_hash(_), do: raise(ArgumentError, "hash value must be prefixed with \"0x\"")
 end
