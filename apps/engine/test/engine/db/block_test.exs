@@ -32,14 +32,14 @@ defmodule Engine.DB.BlockTest do
       _ = insert(:deposit_transaction)
       _ = insert(:payment_v1_transaction)
       {:ok, %{"hash-block" => block}} = Block.form()
-      result = block.hash |> Block.query_by_hash() |> Engine.Repo.all() |> hd()
+      result = block.hash |> Block.query_by_hash() |> Engine.Repo.one()
 
       assert result.hash == block.hash
     end
 
     test "returns nil if no block" do
-      result = <<0::160>> |> Block.query_by_hash() |> Engine.Repo.all()
-      assert result == []
+      result = <<0::160>> |> Block.query_by_hash() |> Engine.Repo.one()
+      assert result == nil
     end
   end
 end

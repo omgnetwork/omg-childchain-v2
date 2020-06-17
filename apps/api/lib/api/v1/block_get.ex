@@ -18,13 +18,13 @@ defmodule API.V1.BlockGet do
   """
   @spec by_hash(String.t()) :: block_response()
   def by_hash("0x" <> _rest = hash) do
-    block = hash |> Encoding.to_binary() |> Block.query_by_hash() |> Repo.all()
+    block = hash |> Encoding.to_binary() |> Block.query_by_hash() |> Repo.one()
 
     case block do
-      [] ->
+      nil ->
         %{}
 
-      [block | _] ->
+      block ->
         block = Repo.preload(block, :transactions)
 
         %{
