@@ -7,7 +7,7 @@ defmodule API.Router do
   use Plug.Router
   use SpandexPhoenix
 
-  plug(API.Plugs.Health)
+  # plug(API.Plugs.Health)
   plug(:match)
   plug(:dispatch)
 
