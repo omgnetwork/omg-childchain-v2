@@ -6,6 +6,8 @@ defmodule API.Plugs.HealthTest do
   alias Status.Alert.Alarm
   alias Status.Alert.Alarm.Types
 
+  @moduletag :flakey
+
   setup do
     _ = Application.ensure_all_started(:status)
     Alarm.clear_all()
@@ -21,7 +23,7 @@ defmodule API.Plugs.HealthTest do
   test "accepts requests if no alarm is raised" do
     Alarm.clear_all()
     _ = Health.call(conn(:get, "/"), %{})
-    assert :ok = call_plug(300)
+    assert :ok = call_plug(1000)
   end
 
   defp call_plug(0), do: :error
