@@ -1,4 +1,4 @@
-defmodule Engine.DB.Transaction.PaymentV1.TransferValidator do
+defmodule Engine.DB.Transaction.PaymentV1.Validator do
   @moduledoc """
   Handles statefull validation for transaction type "PaymentV1" (1) and kind "transfer".
 
@@ -37,7 +37,7 @@ defmodule Engine.DB.Transaction.PaymentV1.TransferValidator do
 
   ## Example:
 
-  iex> Engine.DB.Transaction.PaymentV1.TransferValidator.validate([
+  iex> Engine.DB.Transaction.PaymentV1.Validator.validate([
   ...> %{output_guard: <<1::160>>, token: <<1::160>>, amount: 1 },
   ...> %{output_guard: <<1::160>>, token: <<2::160>>, amount: 2}], [
   ...> %{output_guard: <<2::160>>, token: <<2::160>>, amount: 2}],

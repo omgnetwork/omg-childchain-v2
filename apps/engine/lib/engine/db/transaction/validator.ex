@@ -24,7 +24,7 @@ defmodule Engine.DB.Transaction.Validator do
   ]
 
   @type_validators %{
-    1 => PaymentV1.TransferValidator
+    1 => PaymentV1.Validator
   }
 
   @callback validate(list(map()), list(map()), %{required(<<_::160>>) => list(pos_integer())} | :no_fees_required) ::
