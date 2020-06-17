@@ -15,5 +15,5 @@ defmodule API.Router do
     send_resp(conn, 200, "hello")
   end
 
-  #forward("/v1", to: API.V1.Router)
+  forward("/v1", to: API.V1.Router)
 end
