@@ -25,11 +25,11 @@ defmodule Engine.DB.Transaction.PaymentV1.AmountValidator do
 
   ## Example:
 
-  iex> Engine.DB.Transaction.PaymentV1.Validator.validate(
-  ...> %{<<1::160>> => [1, 3]}),[
-  ...> %{output_guard: <<1::160>>, token: <<1::160>>, amount: 1 },
+  iex> Engine.DB.Transaction.PaymentV1.AmountValidator.validate(
+  ...> %{<<1::160>> => [1, 3]},[
+  ...> %{output_guard: <<1::160>>, token: <<1::160>>, amount: 1},
   ...> %{output_guard: <<1::160>>, token: <<2::160>>, amount: 2}], [
-  ...> %{output_guard: <<2::160>>, token: <<2::160>>, amount: 2}],
+  ...> %{output_guard: <<2::160>>, token: <<2::160>>, amount: 2}])
   :ok
   """
   @spec validate(Type.optional_accepted_fees_t(), Type.output_list_t(), Type.output_list_t()) ::
