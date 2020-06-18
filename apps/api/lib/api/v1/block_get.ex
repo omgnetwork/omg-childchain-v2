@@ -17,7 +17,7 @@ defmodule API.V1.BlockGet do
   Fetches a block by the given hash from the params.
   """
   @spec by_hash(String.t()) :: block_response()
-  def by_hash("0x" <> _rest = hash) do
+  def by_hash(hash) do
     block = hash |> Encoding.to_binary() |> Block.query_by_hash() |> Repo.one()
 
     case block do

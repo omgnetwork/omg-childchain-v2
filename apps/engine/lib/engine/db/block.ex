@@ -29,7 +29,7 @@ defmodule Engine.DB.Block do
   Query the most recent block by it's hash, which is not necessarily unique.
   """
   def query_by_hash(hash) do
-    from(b in __MODULE__, where: b.hash == ^hash, order_by: b.inserted_at, limit: 1)
+    from(b in __MODULE__, where: b.hash == ^hash, order_by: b.inserted_at)
   end
 
   @doc """

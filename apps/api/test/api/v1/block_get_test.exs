@@ -10,7 +10,11 @@ defmodule API.V1.BlockGetTest do
       hash = Encoding.to_hex(transaction.block.hash)
       hex_tx_bytes = [Encoding.to_hex(transaction.tx_bytes)]
 
-      assert %{blknum: _, hash: ^hash, transactions: ^hex_tx_bytes} = BlockGet.by_hash(hash)
+      assert BlockGet.by_hash(hash) == %{blknum: transaction.block.number, hash: hash, transactions: hex_tx_bytes}
+    end
+
+    test "it returns an empty hash for missing blocks" do
+      assert BlockGet.by_hash("0x123456") == %{}
     end
   end
 end
