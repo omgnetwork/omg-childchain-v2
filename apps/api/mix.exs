@@ -1,4 +1,4 @@
-defmodule Api.MixProject do
+defmodule API.MixProject do
   use Mix.Project
 
   def project do
@@ -19,7 +19,7 @@ defmodule Api.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Api.Application, []}
+      mod: {API.Application, []}
     ]
   end
 
