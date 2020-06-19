@@ -1,3 +1,3 @@
-defmodule Api do
+defmodule API do
   @moduledoc false
 end

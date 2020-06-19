@@ -5,6 +5,8 @@ config :engine, Engine.Repo,
   username: "omisego_dev",
   password: "omisego_dev",
   hostname: "localhost",
+  queue_target: 5000,
+  queue_interval: 5000,
   pool: Ecto.Adapters.SQL.Sandbox
 
 config :engine, ecto_repos: [Engine.Repo]
@@ -16,3 +18,6 @@ config :engine,
   deposit_finality_margin: 1,
   ethereum_events_check_interval_ms: 10,
   coordinator_eth_height_check_interval_ms: 10
+
+config :plug, :validate_header_keys_during_test, true
+config :logger, level: :warn
