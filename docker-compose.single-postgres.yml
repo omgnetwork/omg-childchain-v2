@@ -1,0 +1,13 @@
+version: "3.7"
+services:
+  postgres:
+    image: postgres:12.2-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: omisego_dev
+      POSTGRES_PASSWORD: omisego_dev
+      POSTGRES_DB: engine_repo
+    networks: 
+      - default
