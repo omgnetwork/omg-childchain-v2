@@ -117,7 +117,15 @@ defmodule Engine.DB.Factory do
       tx_bytes: tx_bytes,
       tx_hash: ExPlasma.hash(tx_bytes),
       outputs: [output],
-      block: %Block{state: "confirmed", number: blknum}
+      block: build(:block, number: blknum)
+    }
+  end
+
+  def block_factory(attr \\ %{}) do
+    %Block{
+      state: attr[:state] || "confirmed",
+      hash: attr[:hash] || <<0::256>>,
+      number: attr[:number] || 1
     }
   end
 

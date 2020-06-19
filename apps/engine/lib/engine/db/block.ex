@@ -5,6 +5,7 @@ defmodule Engine.DB.Block do
 
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
   alias Engine.DB.Transaction
 
   schema "blocks" do
@@ -25,6 +26,13 @@ defmodule Engine.DB.Block do
   end
 
   @doc """
+  Query the most recent block by it's hash, which is not necessarily unique.
+  """
+  def query_by_hash(hash) do
+    from(b in __MODULE__, where: b.hash == ^hash, order_by: b.inserted_at)
+  end
+
+  @doc """
   Forms a pending block record based on the existing pending transactions. This
   attaches free transactions into a new block, awaiting for submission to the contract
   later on.
@@ -33,6 +41,7 @@ defmodule Engine.DB.Block do
     Ecto.Multi.new()
     |> Ecto.Multi.insert("new-block", %__MODULE__{})
     |> Ecto.Multi.run("form-block", &attach_block_to_transactions/2)
+    |> Ecto.Multi.run("hash-block", &generate_block_hash/2)
     |> Engine.Repo.transaction()
   end
 
@@ -41,5 +50,12 @@ defmodule Engine.DB.Block do
     {total, _} = repo.update_all(Transaction.pending(), set: updates)
 
     {:ok, total}
+  end
+
+  defp generate_block_hash(repo, %{"new-block" => block}) do
+    txns = Engine.Repo.preload(block, :transactions).transactions
+    hash = txns |> Enum.map(& &1.tx_bytes) |> ExPlasma.Encoding.merkle_root_hash()
+    changeset = Ecto.Changeset.change(block, hash: hash)
+    repo.update(changeset)
   end
 end
