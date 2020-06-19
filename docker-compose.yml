@@ -80,6 +80,7 @@ services:
       - "geth"
     volumes:
       - "./docker/immutability/ca:/home/vault/ca:rw"
+      - "./docker/immutability/ca/certs/:/etc/ssl/certs/"
       - "./docker/immutability/config:/home/vault/config:ro"
     entrypoint: >
       /bin/sh -c "
