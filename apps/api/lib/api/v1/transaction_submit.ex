@@ -19,7 +19,7 @@ defmodule API.V1.TransactionSubmit do
     result =
       hex_tx_bytes
       |> Encoding.to_binary()
-      |> Transaction.decode()
+      |> Transaction.decode(kind: Transaction.kind_transfer())
       |> Repo.insert()
 
     case result do
