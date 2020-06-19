@@ -18,6 +18,10 @@ defmodule Engine.Application do
 
   def start(_type, _args) do
     attach_telemetry()
+
+    :ok =
+      :telemetry.attach("spandex-query-tracer", [:childchain, :repo], &SpandexEcto.TelemetryAdapter.handle_event/4, nil)
+
     contract_deployment_height = Configuration.contract_deployment_height()
     child_args = [monitor: SyncMonitor, contract_deployment_height: contract_deployment_height]
 
