@@ -19,7 +19,6 @@ defmodule Engine.Application do
 
   def start(_type, _args) do
     attach_telemetry()
-
     contract_deployment_height = Configuration.contract_deployment_height()
     child_args = [monitor: SyncMonitor, contract_deployment_height: contract_deployment_height]
 
@@ -78,10 +77,10 @@ defmodule Engine.Application do
   end
 
   defp submit_trace(arg1, arg2, arg3, arg4) do
-    Tracer.start_trace("query")
+    _ = Tracer.start_trace("query")
 
     SpandexEcto.TelemetryAdapter.handle_event(arg1, arg2, arg3, arg4)
 
-    Tracer.finish_trace()
+    _ = Tracer.finish_trace()
   end
 end
