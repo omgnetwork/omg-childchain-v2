@@ -19,9 +19,6 @@ defmodule Engine.Application do
   def start(_type, _args) do
     attach_telemetry()
 
-    :ok =
-      :telemetry.attach("spandex-query-tracer", [:childchain, :repo], &SpandexEcto.TelemetryAdapter.handle_event/4, nil)
-
     contract_deployment_height = Configuration.contract_deployment_height()
     child_args = [monitor: SyncMonitor, contract_deployment_height: contract_deployment_height]
 
@@ -63,11 +60,27 @@ defmodule Engine.Application do
   end
 
   defp attach_telemetry() do
+    :ok =
+      :telemetry.attach(
+        "spandex-query-tracer",
+        [:engine, :repo, :query],
+        &submit_trace/4,
+        nil
+      )
+
     _ = Logger.info("Attaching telemetry handlers #{inspect(Handler.supported_events())}")
 
     case :telemetry.attach_many("alarm-handlers", Handler.supported_events(), &Handler.handle_event/4, nil) do
       :ok -> :ok
       {:error, :already_exists} -> :ok
     end
+  end
+
+  defp submit_trace(arg1, arg2, arg3, arg4) do
+    Status.Metric.Tracer.start_trace("query")
+
+    SpandexEcto.TelemetryAdapter.handle_event(arg1, arg2, arg3, arg4)
+
+    Status.Metric.Tracer.finish_trace()
   end
 end
