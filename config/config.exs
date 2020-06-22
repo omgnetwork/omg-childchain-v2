@@ -71,6 +71,10 @@ config :engine, Engine.Repo, telemetry_prefix: [:childchain, :repo]
 config :spandex, :decorators, tracer: Status.Metric.Tracer
 config :spandex_phoenix, tracer: Status.Metric.Tracer
 
+config :spandex_ecto, SpandexEcto.EctoLogger, tracer: Status.Metric.Tracer
+
+config :engine, Engine.Repo, telemetry_prefix: [:engine, :repo]
+
 # APMs are sent via HTTP requests
 config :spandex_datadog,
   host: "localhost",
