@@ -13,6 +13,7 @@ defmodule Engine.Application do
   alias Engine.Feefeed.FeesSupervisor
   alias Engine.Repo.Monitor, as: RepoMonitor
   alias Engine.Telemetry.Handler
+  alias Status.Metric.Tracer
 
   require Logger
 
@@ -77,10 +78,10 @@ defmodule Engine.Application do
   end
 
   defp submit_trace(arg1, arg2, arg3, arg4) do
-    Status.Metric.Tracer.start_trace("query")
+    Tracer.start_trace("query")
 
     SpandexEcto.TelemetryAdapter.handle_event(arg1, arg2, arg3, arg4)
 
-    Status.Metric.Tracer.finish_trace()
+    Tracer.finish_trace()
   end
 end
