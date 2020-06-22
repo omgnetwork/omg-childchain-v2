@@ -77,10 +77,14 @@ defmodule Engine.Application do
   end
 
   defp submit_trace(arg1, arg2, arg3, arg4) do
-    _ = Tracer.start_trace("query")
+    if Tracer.current_trace_id() do
+      SpandexEcto.TelemetryAdapter.handle_event(arg1, arg2, arg3, arg4)
+    else
+      _ = Tracer.start_trace("query")
 
-    SpandexEcto.TelemetryAdapter.handle_event(arg1, arg2, arg3, arg4)
+      SpandexEcto.TelemetryAdapter.handle_event(arg1, arg2, arg3, arg4)
 
-    _ = Tracer.finish_trace()
+      _ = Tracer.finish_trace()
+    end
   end
 end
