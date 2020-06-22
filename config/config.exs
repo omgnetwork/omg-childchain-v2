@@ -66,8 +66,6 @@ config :status, Status.Metric.Tracer,
   type: :backend,
   env: "local-development-childchain-v2"
 
-config :engine, Engine.Repo, telemetry_prefix: [:childchain, :repo]
-
 config :spandex, :decorators, tracer: Status.Metric.Tracer
 config :spandex_phoenix, tracer: Status.Metric.Tracer
 
