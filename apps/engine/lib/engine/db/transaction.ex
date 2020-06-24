@@ -55,7 +55,7 @@ defmodule Engine.DB.Transaction do
   The main action of the system. Takes tx_bytes and forms the appropriate
   associations for the transaction and outputs and runs the changeset.
   """
-  @spec decode(tx_bytes, kind: String.t()) :: Ecto.Changeset.t()
+  @spec decode(tx_bytes, kind: atom()) :: Ecto.Changeset.t()
   def decode(tx_bytes, kind: kind) do
     params =
       tx_bytes
