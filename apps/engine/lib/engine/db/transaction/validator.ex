@@ -27,7 +27,9 @@ defmodule Engine.DB.Transaction.Validator do
     1 => PaymentV1.Validator
   }
 
-  @callback validate(list(map()), list(map()), %{required(<<_::160>>) => list(pos_integer())} | :no_fees_required) ::
+  @type accepted_fee_t() :: %{required(<<_::160>>) => list(pos_integer())}
+
+  @callback validate(list(map()), list(map()), accepted_fee_t()) ::
               {:ok, map() | nil} | :ok | {:error, {atom(), atom()}}
 
   @doc """
