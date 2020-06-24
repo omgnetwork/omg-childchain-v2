@@ -75,14 +75,13 @@ defmodule Engine.DB.Transaction.ValidatorTest do
 
   describe "validate_protocol/1" do
     test "returns the changeset unchanged when valid" do
-      stateless_valid_tx_bytes =
+      tx =
         [tx_type: 1]
         |> Builder.new()
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
-        |> ExPlasma.encode()
 
-      changeset = change(%Transaction{}, %{tx_bytes: stateless_valid_tx_bytes})
+      changeset = change(%Transaction{}, %{tx_bytes: ExPlasma.encode(tx), raw_tx: tx})
       validated_changeset = Validator.validate_protocol(changeset)
 
       assert validated_changeset.valid?
@@ -90,16 +89,15 @@ defmodule Engine.DB.Transaction.ValidatorTest do
     end
 
     test "returns the changeset with an error if when invalid" do
-      stateless_invalid_tx_bytes =
+      tx =
         [tx_type: 1]
         |> Builder.new()
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 0)
-        |> ExPlasma.encode()
 
       validated_changeset =
         %Transaction{}
-        |> change(%{tx_bytes: stateless_invalid_tx_bytes})
+        |> change(%{tx_bytes: ExPlasma.encode(tx), raw_tx: tx})
         |> Validator.validate_protocol()
 
       refute validated_changeset.valid?
@@ -114,14 +112,16 @@ defmodule Engine.DB.Transaction.ValidatorTest do
         |> change()
         |> Ecto.Changeset.add_error(:some_key, "some message")
 
-      validated_changeset = Validator.validate_statefully(changeset, 1, Transaction.kind_transfer(), %{})
+      params = %{tx_type: 1, kind: Transaction.kind_transfer()}
+      validated_changeset = Validator.validate_statefully(changeset, params)
       assert validated_changeset == changeset
     end
 
     test "returns the changeset unchanged when it's a deposit" do
       changeset = change(%Transaction{})
 
-      validated_changeset = Validator.validate_statefully(changeset, 1, Transaction.kind_deposit(), %{})
+      params = %{tx_type: 1, kind: Transaction.kind_deposit()}
+      validated_changeset = Validator.validate_statefully(changeset, params)
       assert validated_changeset == changeset
     end
 
@@ -150,11 +150,12 @@ defmodule Engine.DB.Transaction.ValidatorTest do
 
       changeset =
         %Transaction{}
-        |> change()
+        |> change(%{witnesses: [alice, alice]})
         |> put_assoc(:inputs, inputs)
         |> put_assoc(:outputs, outputs)
 
-      validated_changeset = Validator.validate_statefully(changeset, 1, Transaction.kind_transfer(), fees)
+      params = %{tx_type: 1, kind: Transaction.kind_transfer(), fees: fees}
+      validated_changeset = Validator.validate_statefully(changeset, params)
 
       assert validated_changeset.valid?
       assert validated_changeset == changeset
@@ -162,11 +163,12 @@ defmodule Engine.DB.Transaction.ValidatorTest do
 
     test "returns the changeset with an error when invalid" do
       token = <<0::160>>
+      alice = <<1::160>>
       fees = %{token => [10]}
 
       inputs = [
         build(:output, %{
-          output_data: %{output_guard: <<1::160>>, token: token, amount: 2},
+          output_data: %{output_guard: alice, token: token, amount: 2},
           output_id: %{blknum: 1, oindex: 0, txindex: 0}
         })
       ]
@@ -179,11 +181,12 @@ defmodule Engine.DB.Transaction.ValidatorTest do
 
       changeset =
         %Transaction{}
-        |> change()
+        |> change(%{witnesses: [alice]})
         |> put_assoc(:inputs, inputs)
         |> put_assoc(:outputs, outputs)
 
-      validated_changeset = Validator.validate_statefully(changeset, 1, Transaction.kind_transfer(), fees)
+      params = %{tx_type: 1, kind: Transaction.kind_transfer(), fees: fees}
+      validated_changeset = Validator.validate_statefully(changeset, params)
 
       refute validated_changeset.valid?
       assert {"fees are not covered by inputs", _} = validated_changeset.errors[:inputs]

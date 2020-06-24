@@ -31,3 +31,4 @@ erl_crash.dump
 # geth storage
 data/
 
+.history

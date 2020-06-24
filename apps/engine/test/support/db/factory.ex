@@ -14,6 +14,7 @@ defmodule Engine.DB.Factory do
   alias Engine.DB.Output
   alias Engine.DB.Transaction
   alias Engine.Feefeed.Rules.Parser
+  alias Engine.Support.TestEntity
   alias ExPlasma.Builder
   alias ExPlasma.Output.Position
 
@@ -130,10 +131,19 @@ defmodule Engine.DB.Factory do
   end
 
   def payment_v1_transaction_factory(attr) do
+    entity = TestEntity.generate()
+
+    priv_encoded = Map.get(attr, :priv_encoded, entity.priv_encoded)
+    addr = Map.get(attr, :addr, entity.addr)
+
+    data = %{output_guard: addr, token: <<0::160>>, amount: 1}
+    insert(:output, %{output_data: data, blknum: Map.get(attr, :blknum, 1000), state: "confirmed"})
+
     [tx_type: 1]
     |> Builder.new()
-    |> Builder.add_input(blknum: Map.get(attr, :blknum, 1), txindex: 0, oindex: 0)
+    |> Builder.add_input(blknum: Map.get(attr, :blknum, 1000), txindex: 0, oindex: 0)
     |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+    |> Builder.sign([priv_encoded])
     |> ExPlasma.encode()
     |> Transaction.decode(kind: Transaction.kind_transfer())
     |> apply_changes()

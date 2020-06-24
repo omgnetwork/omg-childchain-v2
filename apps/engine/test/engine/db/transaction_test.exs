@@ -4,6 +4,7 @@ defmodule Engine.DB.TransactionTest do
 
   alias Engine.DB.Output
   alias Engine.DB.Transaction
+  alias Engine.Support.TestEntity
   alias ExPlasma.Builder
 
   describe "decode/2" do
@@ -80,8 +81,28 @@ defmodule Engine.DB.TransactionTest do
 
       changeset = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
 
-      assert changeset.valid?
       assert get_field(changeset, :inputs) == [input]
+    end
+
+    test "is valid when inputs are signed correctly" do
+      %{priv_encoded: priv_encoded, addr: addr} = TestEntity.generate()
+
+      data = %{output_guard: addr, token: <<0::160>>, amount: 10}
+      insert(:output, %{output_data: data, blknum: 1, state: "confirmed"})
+      insert(:output, %{output_data: data, blknum: 2, state: "confirmed"})
+
+      tx_bytes =
+        [tx_type: 1]
+        |> Builder.new()
+        |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
+        |> Builder.add_input(blknum: 2, txindex: 0, oindex: 0)
+        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 20)
+        |> Builder.sign([priv_encoded, priv_encoded])
+        |> ExPlasma.encode()
+
+      changeset = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
+
+      assert changeset.valid?
     end
 
     test "builds the tx_hash" do
@@ -98,7 +119,6 @@ defmodule Engine.DB.TransactionTest do
       changeset = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
       tx_hash = ExPlasma.hash(tx_bytes)
 
-      assert changeset.valid?
       assert get_field(changeset, :tx_hash) == tx_hash
     end
   end

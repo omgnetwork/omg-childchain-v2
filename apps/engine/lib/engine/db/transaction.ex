@@ -34,6 +34,12 @@ defmodule Engine.DB.Transaction do
     field(:tx_type, :integer)
     field(:kind, Ecto.Atom)
 
+    # Virtual fields used for convenience and validation
+    # Avoid decoding/parsing signatures mutiple times along validation process
+    field(:witnesses, {:array, :string}, virtual: true)
+    # Avoid calling ExPlasma.decode(tx_bytes) multiple times along the validation process
+    field(:raw_tx, :map, virtual: true)
+
     belongs_to(:block, Block)
     has_many(:inputs, Output, foreign_key: :spending_transaction_id)
     has_many(:outputs, Output, foreign_key: :creating_transaction_id)
@@ -58,8 +64,7 @@ defmodule Engine.DB.Transaction do
   @spec decode(tx_bytes, kind: atom()) :: Ecto.Changeset.t()
   def decode(tx_bytes, kind: kind) do
     params =
-      tx_bytes
-      |> ExPlasma.decode()
+      %{raw_tx: ExPlasma.decode(tx_bytes)}
       |> decode_params()
       |> Map.put(:tx_bytes, tx_bytes)
       # TODO: Handle fees, load from DB? Buffer period, format?
@@ -77,14 +82,15 @@ defmodule Engine.DB.Transaction do
     struct
     |> Repo.preload(:inputs)
     |> Repo.preload(:outputs)
-    |> cast(params, [:tx_bytes, :tx_type, :kind])
-    |> validate_required([:tx_bytes, :tx_type, :kind])
+    |> cast(params, [:raw_tx, :tx_bytes, :tx_type, :kind])
+    |> validate_required([:raw_tx, :tx_bytes, :tx_type, :kind])
     |> cast_assoc(:inputs)
     |> cast_assoc(:outputs)
     |> build_tx_hash()
+    |> Validator.validate_signatures()
     |> Validator.validate_protocol()
     |> Validator.validate_inputs()
-    |> Validator.validate_statefully(params.tx_type, params.kind, params.fees)
+    |> Validator.validate_statefully(params)
   end
 
   defp build_tx_hash(changeset) do
@@ -92,7 +98,10 @@ defmodule Engine.DB.Transaction do
     put_change(changeset, :tx_hash, tx_hash)
   end
 
-  defp decode_params(%{inputs: inputs, outputs: outputs} = txn) do
-    %{txn | inputs: Enum.map(inputs, &Map.from_struct/1), outputs: Enum.map(outputs, &Map.from_struct/1)}
+  defp decode_params(%{raw_tx: %{inputs: inputs, outputs: outputs, tx_type: tx_type}} = params) do
+    params
+    |> Map.put(:inputs, Enum.map(inputs, &Map.from_struct/1))
+    |> Map.put(:outputs, Enum.map(outputs, &Map.from_struct/1))
+    |> Map.put(:tx_type, tx_type)
   end
 end
