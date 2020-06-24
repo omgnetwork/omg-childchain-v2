@@ -5,7 +5,7 @@ defmodule Ecto.Atom do
   """
   use Ecto.Type
 
-  def type, do: :string
+  def type(), do: :string
 
   def cast(value) when is_atom(value), do: {:ok, value}
   def cast(_), do: :error
