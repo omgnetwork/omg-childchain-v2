@@ -12,23 +12,27 @@ defmodule Engine.DB.Transaction do
   """
 
   use Ecto.Schema
-  import Ecto.Changeset
-  import Ecto.Query
+  import Ecto.Changeset, only: [put_change: 3, cast: 3, cast_assoc: 2, get_field: 2, validate_required: 2]
+  import Ecto.Query, only: [from: 2]
 
   alias Engine.DB.Block
   alias Engine.DB.Output
+  alias Engine.DB.Transaction.Validator
   alias Engine.Repo
 
   @type tx_bytes :: binary
 
-  @error_messages [
-    cannot_be_zero: "can not be zero",
-    exceeds_maximum: "can't exceed maximum value"
-  ]
+  @deposit :deposit
+  @transfer :transfer
+
+  def kind_transfer(), do: @transfer
+  def kind_deposit(), do: @deposit
 
   schema "transactions" do
     field(:tx_bytes, :binary)
     field(:tx_hash, :binary)
+    field(:tx_type, :integer)
+    field(:kind, Ecto.Atom)
 
     belongs_to(:block, Block)
     has_many(:inputs, Output, foreign_key: :spending_transaction_id)
@@ -51,13 +55,16 @@ defmodule Engine.DB.Transaction do
   The main action of the system. Takes tx_bytes and forms the appropriate
   associations for the transaction and outputs and runs the changeset.
   """
-  @spec decode(tx_bytes) :: Ecto.Changeset.t()
-  def decode(tx_bytes) when is_binary(tx_bytes) do
+  @spec decode(tx_bytes, kind: atom()) :: Ecto.Changeset.t()
+  def decode(tx_bytes, kind: kind) do
     params =
       tx_bytes
       |> ExPlasma.decode()
       |> decode_params()
       |> Map.put(:tx_bytes, tx_bytes)
+      # TODO: Handle fees, load from DB? Buffer period, format?
+      |> Map.put(:fees, :no_fees_required)
+      |> Map.put(:kind, kind)
 
     changeset(%__MODULE__{}, params)
   end
@@ -70,12 +77,14 @@ defmodule Engine.DB.Transaction do
     struct
     |> Repo.preload(:inputs)
     |> Repo.preload(:outputs)
-    |> cast(params, [:tx_bytes])
+    |> cast(params, [:tx_bytes, :tx_type, :kind])
+    |> validate_required([:tx_bytes, :tx_type, :kind])
     |> cast_assoc(:inputs)
     |> cast_assoc(:outputs)
     |> build_tx_hash()
-    |> validate_protocol()
-    |> associate_usable_inputs()
+    |> Validator.validate_protocol()
+    |> Validator.validate_inputs()
+    |> Validator.validate_statefully(params.tx_type, params.kind, params.fees)
   end
 
   defp build_tx_hash(changeset) do
@@ -85,51 +94,5 @@ defmodule Engine.DB.Transaction do
 
   defp decode_params(%{inputs: inputs, outputs: outputs} = txn) do
     %{txn | inputs: Enum.map(inputs, &Map.from_struct/1), outputs: Enum.map(outputs, &Map.from_struct/1)}
-  end
-
-  # Validate the transaction bytes with the generic transaction format protocol.
-  #
-  # see ExPlasma.Transaction.validate/1
-  defp validate_protocol(changeset) do
-    results =
-      changeset
-      |> get_field(:tx_bytes)
-      |> ExPlasma.decode()
-      |> ExPlasma.Transaction.validate()
-
-    case results do
-      {:ok, _} ->
-        changeset
-
-      {:error, {field, message}} ->
-        add_error(changeset, field, @error_messages[message])
-    end
-  end
-
-  # Validates that the given changesets inputs are correct. To create a transaction with inputs:
-  #   * The position for the input must exist.
-  #   * The position for the input must not have been spent.
-  #
-  # If so, associate the records to this transaction.
-  defp associate_usable_inputs(changeset) do
-    input_positions = get_input_positions(changeset)
-    inputs = input_positions |> usable_outputs_for() |> Repo.all()
-
-    case input_positions -- Enum.map(inputs, & &1.position) do
-      [missing_inputs] ->
-        add_error(changeset, :inputs, "input #{missing_inputs} are missing or spent")
-
-      [] ->
-        put_change(changeset, :inputs, inputs)
-    end
-  end
-
-  defp get_input_positions(changeset) do
-    changeset |> get_field(:inputs) |> Enum.map(&Map.get(&1, :position))
-  end
-
-  # Return all confirmed outputs that have the given positions.
-  defp usable_outputs_for(positions) do
-    where(Output.usable(), [output], output.position in ^positions)
   end
 end

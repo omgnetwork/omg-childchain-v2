@@ -54,16 +54,11 @@ defmodule Engine.Callbacks.Deposit do
       )
       |> ExPlasma.encode()
 
-    confirmed_output =
-      tx_bytes
-      |> Transaction.decode()
-      |> get_field(:outputs)
-      |> hd()
+    changeset = Transaction.decode(tx_bytes, kind: Transaction.kind_deposit())
 
-    transaction =
-      tx_bytes
-      |> Transaction.decode()
-      |> put_change(:outputs, [%{confirmed_output | state: "confirmed"}])
+    confirmed_output = changeset |> get_field(:outputs) |> hd()
+
+    transaction = put_change(changeset, :outputs, [%{confirmed_output | state: "confirmed"}])
 
     insertion =
       %Block{}
