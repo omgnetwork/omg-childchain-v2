@@ -11,7 +11,7 @@ defmodule Engine.DB.Transaction.PaymentV1.MergeValidatorTest do
   @token_2 <<2::160>>
 
   describe "is_merge?/2" do
-    test "returns true when has less outputs than inputs, has single currency, and has same account" do
+    test "returns true when has less outputs than inputs, has single token, and has same account" do
       i_1 = build_output(@token_1, 1, @alice)
       i_2 = build_output(@token_1, 3, @alice)
 
@@ -39,7 +39,7 @@ defmodule Engine.DB.Transaction.PaymentV1.MergeValidatorTest do
       refute MergeValidator.is_merge?([i_1], [o_1, o_2])
     end
 
-    test "returns false when has more than 1 currency" do
+    test "returns false when has more than 1 token" do
       i_1 = build_output(@token_1, 1, @alice)
       i_2 = build_output(@token_1, 3, @alice)
       i_3 = build_output(@token_2, 4, @alice)

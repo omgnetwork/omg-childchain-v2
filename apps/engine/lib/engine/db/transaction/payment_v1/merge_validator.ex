@@ -1,6 +1,6 @@
 defmodule Engine.DB.Transaction.PaymentV1.MergeValidator do
   @moduledoc """
-  Decides whether transactions qualify as "merge" transactions that use a single currency,
+  Decides whether transactions qualify as "merge" transactions that use a single token,
   single recipient address and have fewer outputs than inputs. This decision is necessary
   to know by the child chain to not require the transaction fees.
   """
