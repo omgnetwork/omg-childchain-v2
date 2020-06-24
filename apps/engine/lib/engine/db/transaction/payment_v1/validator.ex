@@ -1,6 +1,6 @@
 defmodule Engine.DB.Transaction.PaymentV1.Validator do
   @moduledoc """
-  Handles statefull validation for transaction type "PaymentV1" (1) and kind "transfer".
+  Handles statefull validation for transaction type "PaymentV1" (1) and kind :transfer.
 
   See validate/3 for more details.
   """

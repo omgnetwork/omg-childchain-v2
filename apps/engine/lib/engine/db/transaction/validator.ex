@@ -93,7 +93,7 @@ defmodule Engine.DB.Transaction.Validator do
   end
 
   # Deposit don't need to be validated as we're building them internally from contract events
-  def validate_statefully(changeset, _tx_type, "deposit", _fees), do: changeset
+  def validate_statefully(changeset, _tx_type, :deposit, _fees), do: changeset
 
   def validate_statefully(changeset, tx_type, _kind, fees) do
     input_data = get_decoded_output_data(changeset, :inputs)

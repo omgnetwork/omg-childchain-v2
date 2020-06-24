@@ -22,8 +22,8 @@ defmodule Engine.DB.Transaction do
 
   @type tx_bytes :: binary
 
-  @deposit "deposit"
-  @transfer "transfer"
+  @deposit :deposit
+  @transfer :transfer
 
   def kind_transfer(), do: @transfer
   def kind_deposit(), do: @deposit
@@ -32,7 +32,7 @@ defmodule Engine.DB.Transaction do
     field(:tx_bytes, :binary)
     field(:tx_hash, :binary)
     field(:tx_type, :integer)
-    field(:kind, :string)
+    field(:kind, Ecto.Atom)
 
     belongs_to(:block, Block)
     has_many(:inputs, Output, foreign_key: :spending_transaction_id)
@@ -55,7 +55,7 @@ defmodule Engine.DB.Transaction do
   The main action of the system. Takes tx_bytes and forms the appropriate
   associations for the transaction and outputs and runs the changeset.
   """
-  @spec decode(tx_bytes, kind: String.t()) :: Ecto.Changeset.t()
+  @spec decode(tx_bytes, kind: atom()) :: Ecto.Changeset.t()
   def decode(tx_bytes, kind: kind) do
     params =
       tx_bytes
