@@ -95,7 +95,8 @@ defmodule Engine.DB.Factory do
 
   def deposit_transaction_factory(attr \\ %{}) do
     # Pick an available block number.
-    blknum = (Engine.Repo.one(from(b in Block, select: b.number)) || 0) + 1
+    default_blknum = sequence(:blknum, fn seq -> seq + 1 end)
+    blknum = (Engine.Repo.one(from(b in Block, select: b.number)) || default_blknum) + 1
     output_guard = Map.get(attr, :output_guard) || <<1::160>>
     amount = Map.get(attr, :amount, 1)
     token = Map.get(attr, :token, <<0::160>>)
@@ -137,11 +138,12 @@ defmodule Engine.DB.Factory do
     addr = Map.get(attr, :addr, entity.addr)
 
     data = %{output_guard: addr, token: <<0::160>>, amount: 1}
-    insert(:output, %{output_data: data, blknum: Map.get(attr, :blknum, 1000), state: "confirmed"})
+    default_blknum = sequence(:blknum, fn seq -> (seq + 1) * 1000 end)
+    insert(:output, %{output_data: data, blknum: Map.get(attr, :blknum, default_blknum), state: "confirmed"})
 
     [tx_type: 1]
     |> Builder.new()
-    |> Builder.add_input(blknum: Map.get(attr, :blknum, 1000), txindex: 0, oindex: 0)
+    |> Builder.add_input(blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0)
     |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
     |> Builder.sign([priv_encoded])
     |> ExPlasma.encode()
@@ -152,7 +154,12 @@ defmodule Engine.DB.Factory do
   # The "lowest" unit in the hierarchy. This is made to form into transactions
   def output_factory(attr \\ %{}) do
     default_data = %{output_guard: <<1::160>>, token: <<0::160>>, amount: 10}
-    default_id = %{blknum: Map.get(attr, :blknum, 1), txindex: 0, oindex: 0} |> Position.pos() |> Position.to_map()
+    default_blknum = sequence(:blknum, fn seq -> (seq + 1) * 1000 end)
+
+    default_id =
+      %{blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0}
+      |> Position.pos()
+      |> Position.to_map()
 
     %Output{}
     |> Output.changeset(%{
