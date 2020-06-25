@@ -1,4 +1,8 @@
 defmodule Engine.Support.TestEntity do
+  @moduledoc """
+  Can be used in tests to generate a private key/address pair.
+  """
+
   def generate() do
     {:ok, priv} = generate_private_key()
     {:ok, pub} = generate_public_key(priv)

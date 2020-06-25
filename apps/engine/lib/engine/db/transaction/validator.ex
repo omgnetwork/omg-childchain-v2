@@ -13,17 +13,8 @@ defmodule Engine.DB.Transaction.Validator do
   alias Engine.Repo
 
   @error_messages [
-    # Stateless ex_plasma errors
     cannot_be_zero: "can not be zero",
-    exceeds_maximum: "can not exceed maximum value",
-    # Statefull local errors
-    amounts_do_not_add_up: "output amounts are greater than input amounts",
-    fees_not_covered: "fees are not covered by inputs",
-    fee_token_not_accepted: "fee token is not accepted",
-    overpaying_fees: "overpaying fees",
-    unauthorized_spend: "given signatures do not match the inputs owners",
-    missing_signature: "not enough signatures for the number of inputs",
-    superfluous_signature: "too many signatures for the number of inputs"
+    exceeds_maximum: "can not exceed maximum value"
   ]
 
   @type_validators %{
@@ -32,8 +23,7 @@ defmodule Engine.DB.Transaction.Validator do
 
   @type accepted_fee_t() :: %{required(<<_::160>>) => list(pos_integer())}
 
-  @callback validate(list(map()), list(map()), list(binary()), accepted_fee_t()) ::
-              {:ok, map() | nil} | :ok | {:error, {atom(), atom()}}
+  @callback validate(Ecto.Changeset.t(), accepted_fee_t()) :: Ecto.Changeset.t()
 
   @doc """
   Validates that the given changesets inputs are correct. To create a transaction with inputs:
@@ -59,61 +49,6 @@ defmodule Engine.DB.Transaction.Validator do
     end
   end
 
-  # TODO: spec & doc
-  def validate_signatures(changeset) do
-    changeset
-    |> get_field(:raw_tx)
-    |> ExPlasma.Transaction.recover_signatures()
-    |> case do
-      {:ok, addresses} ->
-        put_change(changeset, :witnesses, addresses)
-
-      {:error, error} ->
-        add_error(changeset, :witnesses, "invalid signature: #{inspect(error)}")
-    end
-  end
-
-  @doc """
-  Validate the transaction bytes with the generic transaction format protocol.
-  See ExPlasma.Transaction.validate/1.
-
-  Returns the changeset unchanged or with an error.
-  """
-  @spec validate_protocol(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  def validate_protocol(changeset) do
-    changeset
-    |> get_field(:raw_tx)
-    |> ExPlasma.Transaction.validate()
-    |> process_validation_results(changeset)
-  end
-
-  @doc """
-  Validates the transaction taking into account its state and output/input data.
-  This will dispatch the validation depending on the transaction type.
-  Refer to @type_validators for the list of validator per transaction type.
-
-  Note: Will return the changeset unchanged and NOT perform validation if
-  there is already an error in the changeset.
-
-  Returns the changeset unchanged or with an error
-  """
-  @spec validate_statefully(Ecto.Changeset.t(), map()) :: Ecto.Changeset.t() | no_return()
-  # We can't perform statefull validation if there are errors in the changeset
-  def validate_statefully(%Ecto.Changeset{valid?: false} = changeset, _params), do: changeset
-
-  # Deposit don't need to be validated as we're building them internally from contract events
-  def validate_statefully(changeset, %{kind: :deposit}), do: changeset
-
-  def validate_statefully(changeset, %{tx_type: tx_type, fees: fees}) do
-    input_data = get_decoded_output_data(changeset, :inputs)
-    output_data = get_decoded_output_data(changeset, :outputs)
-    witnesses = get_field(changeset, :witnesses)
-
-    input_data
-    |> get_validator(tx_type).validate(output_data, witnesses, fees)
-    |> process_validation_results(changeset)
-  end
-
   defp get_input_positions(changeset) do
     changeset |> get_field(:inputs) |> Enum.map(&Map.get(&1, :position))
   end
@@ -123,21 +58,66 @@ defmodule Engine.DB.Transaction.Validator do
     where(Output.usable(), [output], output.position in ^positions)
   end
 
-  defp process_validation_results({:ok, _}, changeset), do: changeset
-  defp process_validation_results(:ok, changeset), do: changeset
+  @doc """
+  Attempts to recover witnesses (addresses) from the given signatures.
+  Maps the list of witnesses to the `:witnesses` key in the changeset if valid,
+  or adds an error to changeset otherwise.
+  """
+  @spec validate_signatures(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  def validate_signatures(changeset) do
+    changeset
+    |> get_field(:raw_tx)
+    |> ExPlasma.Transaction.recover_signatures()
+    |> process_signatures_validation_results(changeset)
+  end
 
-  defp process_validation_results({:error, {field, message}}, changeset) do
+  defp process_signatures_validation_results({:ok, addresses}, changeset) do
+    put_change(changeset, :witnesses, addresses)
+  end
+
+  defp process_signatures_validation_results({:error, error}, changeset) do
+    add_error(changeset, :witnesses, "invalid signature: #{inspect(error)}")
+  end
+
+  @doc """
+  Validate the transaction bytes with the generic transaction format protocol.
+  See ExPlasma.Transaction.validate/1.
+
+  Returns the changeset unchanged if valid or with an error otherwise.
+  """
+  @spec validate_protocol(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  def validate_protocol(changeset) do
+    changeset
+    |> get_field(:raw_tx)
+    |> ExPlasma.Transaction.validate()
+    |> process_protocol_validation_results(changeset)
+  end
+
+  defp process_protocol_validation_results({:ok, _}, changeset), do: changeset
+
+  defp process_protocol_validation_results({:error, {field, message}}, changeset) do
     add_error(changeset, field, @error_messages[message])
   end
 
-  defp get_decoded_output_data(changeset, type) do
-    changeset
-    |> get_field(type)
-    |> Enum.map(fn output ->
-      output.output_data
-      |> ExPlasma.Output.decode()
-      |> Map.get(:output_data)
-    end)
+  @doc """
+  Validates the transaction taking into account its state and output/input data.
+  This will dispatch the validation depending on the transaction type.
+  Refer to @type_validators for the list of validators per transaction type.
+
+  Note: Will return the changeset unchanged and NOT perform validation if
+  there is already an error in the changeset.
+
+  Returns the changeset unchanged if valid or with an error otherwise.
+  """
+  @spec validate_statefully(Ecto.Changeset.t(), map()) :: Ecto.Changeset.t() | no_return()
+  # We can't perform statefull validation if there are errors in the changeset
+  def validate_statefully(%Ecto.Changeset{valid?: false} = changeset, _params), do: changeset
+
+  # Deposit don't need to be validated as we're building them internally from contract events
+  def validate_statefully(changeset, %{kind: :deposit}), do: changeset
+
+  def validate_statefully(changeset, %{tx_type: tx_type, fees: fees}) do
+    get_validator(tx_type).validate(changeset, fees)
   end
 
   defp get_validator(type), do: Map.fetch!(@type_validators, type)

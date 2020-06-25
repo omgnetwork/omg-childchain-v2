@@ -1,7 +1,7 @@
-defmodule Engine.DB.Transaction.PaymentV1.MergeValidatorTest do
+defmodule Engine.DB.Transaction.PaymentV1.Validator.MergeTest do
   use ExUnit.Case, async: true
 
-  alias Engine.DB.Transaction.PaymentV1.MergeValidator
+  alias Engine.DB.Transaction.PaymentV1.Validator.Merge, as: MergeValidator
 
   doctest MergeValidator
 

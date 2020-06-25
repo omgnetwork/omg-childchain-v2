@@ -1,7 +1,7 @@
-defmodule Engine.DB.Transaction.PaymentV1.AmountValidatorTest do
+defmodule Engine.DB.Transaction.PaymentV1.Validator.AmountTest do
   use ExUnit.Case, async: true
 
-  alias Engine.DB.Transaction.PaymentV1.AmountValidator
+  alias Engine.DB.Transaction.PaymentV1.Validator.Amount, as: AmountValidator
 
   doctest AmountValidator
 
