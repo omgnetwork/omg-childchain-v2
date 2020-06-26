@@ -42,7 +42,12 @@ defmodule Engine.DB.Transaction.Validator do
 
     case given_input_positions -- usable_input_positions do
       [] ->
-        put_change(changeset, :inputs, usable_inputs)
+        sorted_usable_inputs =
+          Enum.map(given_input_positions, fn given_input_position ->
+            Enum.find(usable_inputs, &(&1.position == given_input_position))
+          end)
+
+        put_change(changeset, :inputs, sorted_usable_inputs)
 
       missing_inputs ->
         add_error(changeset, :inputs, "inputs #{inspect(missing_inputs)} are missing, spent, or not yet available")
