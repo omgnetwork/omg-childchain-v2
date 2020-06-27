@@ -4,7 +4,7 @@ jobs:
   build:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.2
+      - image: circleci/elixir:1.10.3
       - image: circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: omisego_dev
@@ -28,7 +28,7 @@ jobs:
   test:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.2
+      - image: circleci/elixir:1.10.3
       - image: circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: omisego_dev
@@ -64,8 +64,8 @@ jobs:
             asdf plugin-add erlang || asdf plugin-update erlang
             asdf plugin-add elixir || asdf plugin-update elixir
             asdf install erlang 22.3
-            asdf install elixir 1.10.2
-            asdf global elixir 1.10.2
+            asdf install elixir 1.10.3
+            asdf global elixir 1.10.3
             asdf global erlang 22.3
           no_output_timeout: 2400
       - save_cache:
@@ -82,7 +82,7 @@ jobs:
   credo:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.2
+      - image: circleci/elixir:1.10.3
     environment:
       MIX_ENV=test
     steps:
@@ -126,7 +126,7 @@ jobs:
   dialyzer:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.2
+      - image: circleci/elixir:1.10.3
     environment:
       MIX_ENV=dev
     steps:
