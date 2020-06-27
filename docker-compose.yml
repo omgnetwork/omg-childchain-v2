@@ -80,7 +80,7 @@ services:
       - "geth"
     volumes:
       - "./docker/immutability/ca:/home/vault/ca:rw"
-      - "./docker/immutability/ca/certs/:/etc/ssl/certs/"
+      #- "./docker/immutability/ca/certs/:/etc/ssl/certs/"
       - "./docker/immutability/config:/home/vault/config:ro"
     entrypoint: >
       /bin/sh -c "
@@ -93,6 +93,18 @@ services:
       "
     networks: 
       - default
+  vault_setup:
+    image: alpine:3.10
+    entrypoint: >
+      /bin/sh -c "
+        sleep 2
+        apk add curl bash jq
+        sh /home/vault/config/config.sh
+      "
+    volumes:
+      - "./docker/immutability/config:/home/vault/config:ro"
+    depends_on:
+      - "vault_server"
 networks:
   default:
     name: childchain_default
