@@ -14,7 +14,7 @@ defmodule Status.Alert.AlarmHandlerTest do
     handlers = :gen_event.which_handlers(:alarm_handler)
     Enum.each(handlers -- [AlarmHandler], fn handler -> :gen_event.delete_handler(:alarm_handler, handler, []) end)
     [AlarmHandler] = :gen_event.which_handlers(:alarm_handler)
-    _ = AlarmHandler.install([])
+    _ = AlarmHandler.install([], AlarmHandler.table_name())
     [AlarmHandler] = :gen_event.which_handlers(:alarm_handler)
     :ok
   end
