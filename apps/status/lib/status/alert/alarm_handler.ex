@@ -49,17 +49,19 @@ defmodule Status.Alert.AlarmHandler do
       false ->
         # the alarm has not been raised before and we're subscribed
         _ = Table.write_raise(state.table_name, elem(new_alarm, 0))
+        IO.inspect new_alarm, label: "new_alarm"
         {:ok, %{state | alarms: [new_alarm | state.alarms]}}
     end
   end
 
   def handle_event({:clear_alarm, alarm_id}, state) do
+    IO.inspect alarm_id, label: "clear"
     new_alarms =
       state.alarms
       |> Enum.filter(&(elem(&1, 0) != alarm_id))
       |> Enum.filter(&(&1 != alarm_id))
-
-    _ = Table.write_clear(state.table_name, alarm_id)
+      IO.inspect new_alarms, label: "new_alarms"
+    _ = Table.write_clear(state.table_name, elem(alarm_id, 0))
     {:ok, %{state | alarms: new_alarms}}
   end
 end

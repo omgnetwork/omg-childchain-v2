@@ -147,3 +147,7 @@ init-contracts: clean-contracts
 
 clean-contracts:
 	rm -rf data/*
+
+get-alarm:
+	echo "Childchain alarms" ; \
+	curl -s -X GET http://localhost:9656/alarm.get 

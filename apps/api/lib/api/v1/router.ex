@@ -12,6 +12,7 @@ defmodule API.V1.Router do
 
   alias API.Plugs.ExpectParams
   alias API.Plugs.ExpectParams.InvalidParams
+  alias API.Plugs.Health
   alias API.V1.BlockGet
   alias API.V1.TransactionSubmit
 
@@ -20,6 +21,11 @@ defmodule API.V1.Router do
   plug(ExpectParams, key: "transaction", path: "/transaction.submit", hex: true)
   plug(:match)
   plug(:dispatch)
+
+  get "/status.get" do
+    conn = Health.call(conn, %{})
+    send_resp(conn, conn.status, "")
+  end
 
   post "/block.get" do
     data = BlockGet.by_hash(conn.params["hash"])

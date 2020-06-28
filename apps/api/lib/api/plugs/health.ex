@@ -9,7 +9,7 @@ defmodule API.Plugs.Health do
 
   def call(conn, _params) do
     if Status.is_healthy() do
-      conn
+      put_status(conn, 200)
     else
       conn
       |> put_status(503)

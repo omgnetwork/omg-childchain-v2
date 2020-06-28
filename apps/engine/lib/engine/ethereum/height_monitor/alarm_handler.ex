@@ -18,13 +18,13 @@ defmodule Engine.Ethereum.HeightMonitor.AlarmHandler do
 
   def handle_call(_request, state), do: {:ok, :ok, state}
 
-  def handle_event({:set_alarm, {:ethereum_connection_error, %{reporter: @reporter}}}, state) do
+  def handle_event({:set_alarm, {:ethereum_connection_error, %{reporter: _}}}, state) do
     _ = Logger.warn(":ethereum_connection_error alarm raised.")
     :ok = GenServer.cast(state.consumer, {:set_alarm, :ethereum_connection_error})
     {:ok, state}
   end
 
-  def handle_event({:clear_alarm, {:ethereum_connection_error, %{reporter: @reporter}}}, state) do
+  def handle_event({:clear_alarm, {:ethereum_connection_error, %{reporter: _}}}, state) do
     _ = Logger.warn(":ethereum_connection_error alarm cleared.")
     :ok = GenServer.cast(state.consumer, {:clear_alarm, :ethereum_connection_error})
     {:ok, state}

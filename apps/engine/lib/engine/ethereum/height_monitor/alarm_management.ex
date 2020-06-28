@@ -23,7 +23,10 @@ defmodule Engine.Ethereum.HeightMonitor.AlarmManagement do
     alarm_module.clear(Module.safe_concat(alarm_module, Types).ethereum_connection_error(__MODULE__))
   end
 
-  def connection_alarm(_, _, _) do
+  def connection_alarm(a, b, c) do
+    IO.inspect a
+    IO.inspect b
+    IO.inspect c
     :ok
   end
 

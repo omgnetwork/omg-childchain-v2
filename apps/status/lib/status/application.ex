@@ -14,7 +14,7 @@ defmodule Status.Application do
 
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
-
+    :ok = AlarmHandler.install(Alarm.alarm_types(), AlarmHandler.table_name())
     is_datadog_disabled = is_disabled?()
 
     children =
@@ -43,7 +43,7 @@ defmodule Status.Application do
   end
 
   def start_phase(:install_alarm_handler, _start_type, _phase_args) do
-    :ok = AlarmHandler.install(Alarm.alarm_types(), AlarmHandler.table_name())
+    :ok
   end
 
   @spec is_disabled?() :: boolean()
