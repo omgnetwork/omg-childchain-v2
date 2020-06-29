@@ -6,7 +6,7 @@ defmodule Engine.Ethereum.HeightMonitorTest do
   alias Engine.Ethereum.HeightMonitor
   alias Engine.Ethereum.HeightMonitor.AlarmManagement
   alias ExPlasma.Encoding
-  alias Status.Alert.Alarm
+  alias Status.Alert.Alarm, as: StatusAlarm
   alias Status.Alert.AlarmHandler
 
   setup_all do
@@ -16,7 +16,7 @@ defmodule Engine.Ethereum.HeightMonitorTest do
       apps |> Enum.reverse() |> Enum.each(&Application.stop/1)
     end)
 
-    :ok = AlarmHandler.install(Alarm.alarm_types(), AlarmHandler.table_name())
+    :ok = AlarmHandler.install(StatusAlarm.alarm_types(), AlarmHandler.table_name())
 
     {:ok, _} = EthereumClientMock.start_link()
     _ = Agent.start_link(fn -> %{} end, name: :connector)

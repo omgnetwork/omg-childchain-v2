@@ -9,7 +9,6 @@ defmodule API.Plugs.HealthTest do
 
   setup do
     Table.setup(AlarmHandler.table_name())
-    :ok
   end
 
   test "rejects requests if an alarm is raised" do

@@ -23,12 +23,13 @@ defmodule Engine.Ethereum.HeightMonitor.AlarmManagement do
     alarm_module.clear(Module.safe_concat(alarm_module, Types).ethereum_connection_error(__MODULE__))
   end
 
-  # def connection_alarm(a, b, c) do
-  #   IO.inspect(a)
-  #   IO.inspect(b)
-  #   IO.inspect(c)
-  #   :ok
-  # end
+  def connection_alarm(_, true, height) when not is_integer(height) do
+    :ok
+  end
+
+  def connection_alarm(_, false, height) when is_integer(height) do
+    :ok
+  end
 
   # Raise or clear the :ethereum_stalled_sync alarm
   @spec stall_alarm(module(), boolean(), boolean()) :: :ok | :duplicate
