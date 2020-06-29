@@ -42,10 +42,6 @@ defmodule Status.Application do
     Supervisor.start_link(children ++ child, strategy: :one_for_one, name: Status.Supervisor)
   end
 
-  def start_phase(:install_alarm_handler, _start_type, _phase_args) do
-    :ok
-  end
-
   @spec is_disabled?() :: boolean()
   defp is_disabled?() do
     Keyword.fetch!(Configuration.tracer(), :disabled?)

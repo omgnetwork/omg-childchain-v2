@@ -62,7 +62,6 @@ defmodule Engine.DB.Transaction do
       |> ExPlasma.decode()
       |> decode_params()
       |> Map.put(:tx_bytes, tx_bytes)
-      # TODO: Handle fees, load from DB? Buffer period, format?
       |> Map.put(:fees, :no_fees_required)
       |> Map.put(:kind, kind)
 
