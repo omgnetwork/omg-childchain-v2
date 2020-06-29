@@ -1,4 +1,3 @@
-Application.start(:sasl)
 Mix.Task.run("ecto.drop", ~w(--quiet))
 Mix.Task.run("ecto.create", ~w(--quiet))
 Mix.Task.run("ecto.migrate", ~w(--quiet))

@@ -7,6 +7,20 @@ defmodule Engine.Ethereum.MonitorTest do
   alias Engine.Ethereum.Monitor
   alias Engine.Ethereum.Monitor.AlarmHandler
 
+  setup_all do
+    {:ok, apps} = Application.ensure_all_started(:sasl)
+
+    on_exit(fn ->
+      apps |> Enum.reverse() |> Enum.each(&Application.stop/1)
+    end)
+
+    # :ok = AlarmHandler.install(StatusAlarm.alarm_types(), AlarmHandler.table_name())
+
+    # {:ok, _} = EthereumClientMock.start_link()
+    # _ = Agent.start_link(fn -> %{} end, name: :connector)
+    # :ok
+  end
+
   test "that init/1 creates state and starts the child " do
     child_spec = ChildProcess.prepare_child(:test_init_1)
     {:ok, %Monitor{child: child}} = Monitor.init(child_spec: child_spec, alarm_handler: AlarmHandler)

@@ -12,13 +12,10 @@ defmodule API.Plugs.HealthTest do
   end
 
   test "rejects requests if an alarm is raised" do
-    AlarmHandler.handle_event({:set_alarm, Types.ethereum_connection_error(__MODULE__)}, %{
-      alarms: [],
-      table_name: AlarmHandler.table_name()
-    })
-
+    alarm = Types.ethereum_connection_error(__MODULE__)
+    table_name = AlarmHandler.table_name()
+    AlarmHandler.handle_event({:set_alarm, alarm}, %{alarms: [], table_name: table_name})
     resp = Health.call(conn(:get, "/"), %{})
-
     assert resp.status == 503
   end
 

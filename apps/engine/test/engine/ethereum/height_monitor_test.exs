@@ -3,21 +3,13 @@ defmodule Engine.Ethereum.HeightMonitorTest do
   alias __MODULE__.Alarm
   alias __MODULE__.EthereumClientMock
   alias __MODULE__.EventBusListener
+  alias __MODULE__.HeightMonitorTestAlarmHandler
   alias Engine.Ethereum.HeightMonitor
   alias Engine.Ethereum.HeightMonitor.AlarmManagement
   alias ExPlasma.Encoding
-  alias Status.Alert.Alarm, as: StatusAlarm
-  alias Status.Alert.AlarmHandler
 
   setup_all do
-    {:ok, apps} = Application.ensure_all_started(:sasl)
-
-    on_exit(fn ->
-      apps |> Enum.reverse() |> Enum.each(&Application.stop/1)
-    end)
-
-    :ok = AlarmHandler.install(StatusAlarm.alarm_types(), AlarmHandler.table_name())
-
+    HeightMonitorTestAlarmHandler.start_link()
     {:ok, _} = EthereumClientMock.start_link()
     _ = Agent.start_link(fn -> %{} end, name: :connector)
     :ok
@@ -37,7 +29,8 @@ defmodule Engine.Ethereum.HeightMonitorTest do
         eth_module: EthereumClientMock,
         alarm_module: Alarm,
         event_bus_module: Bus,
-        opts: [url: "not used"]
+        opts: [url: "not used"],
+        sasl_alarm_handler: HeightMonitorTestAlarmHandler
       )
 
     test_pid = self()
@@ -290,6 +283,73 @@ defmodule Engine.Ethereum.HeightMonitorTest do
       def ethereum_stalled_sync(reporter) do
         {:ethereum_stalled_sync, %{node: Node.self(), reporter: reporter}}
       end
+    end
+  end
+
+  defmodule HeightMonitorTestAlarmHandler do
+    def start_link() do
+      case :gen_event.start_link({:local, __MODULE__}) do
+        {:ok, pid} ->
+          :gen_event.add_handler(__MODULE__, __MODULE__, [])
+          {:ok, pid}
+
+        error ->
+          error
+      end
+    end
+
+    def set_alarm(alarm) do
+      :gen_event.notify(__MODULE__, {:set_alarm, alarm})
+    end
+
+    def clear_alarm(alarm_id) do
+      :gen_event.notify(__MODULE__, {:clear_alarm, alarm_id})
+    end
+
+    def get_alarms() do
+      :gen_event.call(__MODULE__, __MODULE__, :get_alarms)
+    end
+
+    def add_alarm_handler(module) when is_atom(module) do
+      :gen_event.add_handler(__MODULE__, module, [])
+    end
+
+    def add_alarm_handler(module, args) when is_atom(module) do
+      :gen_event.add_handler(__MODULE__, module, args)
+    end
+
+    def delete_alarm_handler(module) when is_atom(module) do
+      :gen_event.delete_handler(__MODULE__, module, [])
+    end
+
+    ## -----------------------------------------------------------------
+    ## Default Alarm handler
+    # -----------------------------------------------------------------
+    def init(_), do: {:ok, []}
+
+    def handle_event({:set_alarm, alarm}, alarms) do
+      {:ok, [alarm | alarms]}
+    end
+
+    def handle_event({:clear_alarm, alarm_id}, alarms) do
+      {:ok, :lists.keydelete(alarm_id, 1, alarms)}
+    end
+
+    def handle_event(_, alarms) do
+      {:ok, alarms}
+    end
+
+    def handle_info(_, alarms), do: {:ok, alarms}
+
+    def handle_call(:get_alarms, alarms), do: {:ok, alarms, alarms}
+    def handle_call(_query, alarms), do: {:ok, {:error, :bad_query}, alarms}
+
+    def terminate(:swap, alarms) do
+      {:alarm_handler, alarms}
+    end
+
+    def terminate(_, _) do
+      :ok
     end
   end
 end

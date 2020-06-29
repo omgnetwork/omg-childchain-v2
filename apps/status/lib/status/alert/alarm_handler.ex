@@ -47,7 +47,6 @@ defmodule Status.Alert.AlarmHandler do
         {:ok, state}
 
       false ->
-        # the alarm has not been raised before and we're subscribed
         _ = Table.write_raise(state.table_name, elem(new_alarm, 0))
         {:ok, %{state | alarms: [new_alarm | state.alarms]}}
     end

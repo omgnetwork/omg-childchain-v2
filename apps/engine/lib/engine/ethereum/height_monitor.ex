@@ -65,8 +65,8 @@ defmodule Engine.Ethereum.HeightMonitor do
     _ = Logger.info("Starting #{__MODULE__} service.")
 
     alarm_handler = Keyword.get(opts, :alarm_handler, __MODULE__.AlarmHandler)
-
-    :ok = AlarmManagement.subscribe_to_alarms(alarm_handler, __MODULE__)
+    sasl_alarm_handler = Keyword.get(opts, :sasl_alarm_handler, :alarm_handler)
+    :ok = AlarmManagement.subscribe_to_alarms(sasl_alarm_handler, alarm_handler, __MODULE__)
 
     state = %__MODULE__{
       check_interval_ms: Keyword.fetch!(opts, :check_interval_ms),
