@@ -39,7 +39,7 @@ defmodule Engine.MixProject do
       {:postgrex, "~> 0.15"},
       {:telemetry, "~> 0.4"},
       {:ex_json_schema, "0.7.4"},
-      {:httpoison, "~> 1.7"},
+      {:httpoison, "1.6.0"},
       {:decorator, "~> 1.2"},
       # TEST
       {:exvcr, "~> 0.10", only: :test},
