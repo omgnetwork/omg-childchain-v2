@@ -3,6 +3,8 @@ defmodule API.V1.BlockGet do
   Fetches a block and returns data for the API response.
   """
 
+  use Spandex.Decorators
+
   alias Engine.DB.Block
   alias Engine.Repo
   alias ExPlasma.Encoding
@@ -17,6 +19,7 @@ defmodule API.V1.BlockGet do
   Fetches a block by the given hash from the params.
   """
   @spec by_hash(String.t()) :: block_response()
+  @decorate trace(service: :ecto, type: :backend)
   def by_hash(hash) do
     block = hash |> Encoding.to_binary() |> Block.query_by_hash() |> Repo.one()
 

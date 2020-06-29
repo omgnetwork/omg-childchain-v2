@@ -5,6 +5,7 @@ defmodule Engine.DB.Fees do
   """
 
   use Ecto.Schema
+  use Spandex.Decorators
   import Ecto.Changeset
   import Ecto.Query
   alias Ecto.UUID
@@ -51,6 +52,7 @@ defmodule Engine.DB.Fees do
   @doc """
   Fetch latest fees from the database.
   """
+  @decorate trace(service: :ecto, type: :backend)
   def fetch_latest() do
     Fees
     |> select([r], r)
@@ -66,6 +68,7 @@ defmodule Engine.DB.Fees do
   @doc """
   Add a new fees map to the database.
   """
+  @decorate trace(service: :ecto, type: :backend)
   def insert_fees(fees, fee_rules_uuid) do
     %Fees{}
     |> changeset(%{data: fees, fee_rules_uuid: fee_rules_uuid})

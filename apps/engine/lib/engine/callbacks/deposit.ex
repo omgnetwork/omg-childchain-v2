@@ -16,6 +16,8 @@ defmodule Engine.Callbacks.Deposit do
 
   @behaviour Engine.Callback
 
+  use Spandex.Decorators
+
   import Ecto.Changeset
 
   alias Ecto.Multi
@@ -29,6 +31,7 @@ defmodule Engine.Callbacks.Deposit do
   transaction, and UTXOs. This will wrap all the build deposits into one DB transaction.
   """
   @impl Callback
+  @decorate trace(service: :ecto, type: :backend)
   def callback(events, listener) do
     Multi.new()
     |> Callback.update_listener_height(events, listener)

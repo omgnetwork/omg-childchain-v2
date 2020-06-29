@@ -5,8 +5,11 @@ defmodule Engine.DB.FeeRules do
   """
 
   use Ecto.Schema
+  use Spandex.Decorators
+
   import Ecto.Changeset
   import Ecto.Query
+
   alias Ecto.UUID
   alias Engine.DB.FeeRules
   alias Engine.Repo
@@ -40,6 +43,7 @@ defmodule Engine.DB.FeeRules do
   @doc """
   Fetch latest rules from the database.
   """
+  @decorate trace(service: :ecto, type: :backend)
   def fetch_latest() do
     FeeRules
     |> select([r], r)
@@ -55,6 +59,7 @@ defmodule Engine.DB.FeeRules do
   @doc """
   Add a new rules map to the database.
   """
+  @decorate trace(service: :ecto, type: :backend)
   def insert_rules(rules) do
     %FeeRules{}
     |> changeset(%{data: rules})
