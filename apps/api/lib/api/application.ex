@@ -13,5 +13,5 @@ defmodule API.Application do
     Supervisor.start_link(children, opts)
   end
 
-  defp port(), do: String.to_integer(System.get_env("PORT") || "4000")
+  defp port(), do: String.to_integer(System.get_env("PORT") || "9656")
 end

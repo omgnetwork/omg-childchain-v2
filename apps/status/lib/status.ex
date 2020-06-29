@@ -13,7 +13,8 @@ defmodule Status do
                         :boot_in_progress,
                         :ethereum_connection_error,
                         :ethereum_stalled_sync,
-                        :main_supervisor_halted
+                        :main_supervisor_halted,
+                        :db_connection_lost
                       ],
                       do: [{{n, 0}, [], [false]}, {{n, 1}, [], [true]}]
                 )
