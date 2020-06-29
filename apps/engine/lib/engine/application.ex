@@ -13,7 +13,6 @@ defmodule Engine.Application do
   alias Engine.Feefeed.FeesSupervisor
   alias Engine.Repo.Monitor, as: RepoMonitor
   alias Engine.Telemetry.Handler
-  alias Status.Metric.Tracer
 
   require Logger
 
