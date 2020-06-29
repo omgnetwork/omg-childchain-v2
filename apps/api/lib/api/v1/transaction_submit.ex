@@ -3,6 +3,8 @@ defmodule API.V1.TransactionSubmit do
   Accepts a tx_bytes param and validates and inserts the transaction into the network.
   """
 
+  use Spandex.Decorators
+
   alias Engine.DB.Transaction
   alias Engine.Repo
   alias ExPlasma.Encoding
@@ -15,6 +17,7 @@ defmodule API.V1.TransactionSubmit do
   Validate and insert the tx_bytes.
   """
   @spec submit(String.t()) :: submit_response()
+  @decorate trace(service: :ecto, type: :backend)
   def submit("0x" <> _rest = hex_tx_bytes) do
     result =
       hex_tx_bytes

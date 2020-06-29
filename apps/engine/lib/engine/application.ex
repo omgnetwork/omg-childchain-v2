@@ -64,7 +64,7 @@ defmodule Engine.Application do
       :telemetry.attach(
         "spandex-query-tracer",
         [:engine, :repo, :query],
-        &submit_trace/4,
+        &SpandexEcto.TelemetryAdapter.handle_event/4,
         nil
       )
 
@@ -73,18 +73,6 @@ defmodule Engine.Application do
     case :telemetry.attach_many("alarm-handlers", Handler.supported_events(), &Handler.handle_event/4, nil) do
       :ok -> :ok
       {:error, :already_exists} -> :ok
-    end
-  end
-
-  defp submit_trace(arg1, arg2, arg3, arg4) do
-    if Tracer.current_trace_id() do
-      SpandexEcto.TelemetryAdapter.handle_event(arg1, arg2, arg3, arg4)
-    else
-      _ = Tracer.start_trace("query")
-
-      SpandexEcto.TelemetryAdapter.handle_event(arg1, arg2, arg3, arg4)
-
-      _ = Tracer.finish_trace()
     end
   end
 end

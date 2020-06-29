@@ -4,8 +4,11 @@ defmodule Engine.DB.Block do
   """
 
   use Ecto.Schema
+  use Spandex.Decorators
+
   import Ecto.Changeset
   import Ecto.Query
+
   alias Engine.DB.Transaction
 
   schema "blocks" do
@@ -37,6 +40,7 @@ defmodule Engine.DB.Block do
   attaches free transactions into a new block, awaiting for submission to the contract
   later on.
   """
+  @decorate trace(service: :ecto, type: :backend)
   def form() do
     Ecto.Multi.new()
     |> Ecto.Multi.insert("new-block", %__MODULE__{})
