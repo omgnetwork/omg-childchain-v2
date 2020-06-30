@@ -40,6 +40,7 @@ defmodule Engine.MixProject do
       {:telemetry, "~> 0.4"},
       {:ex_json_schema, "0.7.4"},
       {:httpoison, "1.6.0"},
+      {:hackney, "1.15.2", override: true},
       {:decorator, "~> 1.2"},
       # TEST
       {:exvcr, "~> 0.10", only: :test},

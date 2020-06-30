@@ -1,4 +1,4 @@
-defmodule Engine.Ethereum.HeightMonitor.AlarmManagement do
+defmodule Engine.Ethereum.HeightObserver.AlarmManagement do
   @moduledoc """
   Does all the alarm management logic from height monitoring
   """
@@ -43,5 +43,7 @@ defmodule Engine.Ethereum.HeightMonitor.AlarmManagement do
     alarm_module.clear(Module.safe_concat(alarm_module, Types).ethereum_stalled_sync(__MODULE__))
   end
 
-  def stall_alarm(_alarm_module, _, _), do: :ok
+  def stall_alarm(_alarm_module, _, _) do
+    :ok
+  end
 end

@@ -1,15 +1,15 @@
-defmodule Engine.Ethereum.HeightMonitorTest do
+defmodule Engine.Ethereum.HeightObserverTest do
   use ExUnit.Case, async: true
   alias __MODULE__.Alarm
   alias __MODULE__.EthereumClientMock
   alias __MODULE__.EventBusListener
-  alias __MODULE__.HeightMonitorTestAlarmHandler
-  alias Engine.Ethereum.HeightMonitor
-  alias Engine.Ethereum.HeightMonitor.AlarmManagement
+  alias __MODULE__.HeightObserverTestAlarmHandler
+  alias Engine.Ethereum.HeightObserver
+  alias Engine.Ethereum.HeightObserver.AlarmManagement
   alias ExPlasma.Encoding
 
   setup_all do
-    HeightMonitorTestAlarmHandler.start_link()
+    HeightObserverTestAlarmHandler.start_link()
     {:ok, _} = EthereumClientMock.start_link()
     _ = Agent.start_link(fn -> %{} end, name: :connector)
     :ok
@@ -21,16 +21,15 @@ defmodule Engine.Ethereum.HeightMonitorTest do
     {:ok, alarm_instance} = Alarm.start_link([])
 
     {:ok, monitor} =
-      HeightMonitor.start_link(
+      HeightObserver.start_link(
         # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
-        name: Module.concat(test_name, HeightMonitor),
+        name: Module.concat(test_name, HeightObserver),
         check_interval_ms: check_interval_ms,
         stall_threshold_ms: stall_threshold_ms,
         eth_module: EthereumClientMock,
         alarm_module: Alarm,
-        event_bus_module: Bus,
         opts: [url: "not used"],
-        sasl_alarm_handler: HeightMonitorTestAlarmHandler
+        sasl_alarm_handler: HeightObserverTestAlarmHandler
       )
 
     test_pid = self()
@@ -67,72 +66,72 @@ defmodule Engine.Ethereum.HeightMonitorTest do
   #
   # Connection error
   #
+  # alarm managment test
+  # test "that the connection alarm gets raised when connection becomes unhealthy" do
+  #   # Initialize as healthy and alarm not present
+  #   _ = EthereumClientMock.set_faulty_response(false)
 
-  test "that the connection alarm gets raised when connection becomes unhealthy" do
-    # Initialize as healthy and alarm not present
-    _ = EthereumClientMock.set_faulty_response(false)
+  #   # Toggle faulty response
+  #   spawn(fn ->
+  #     Process.sleep(70)
+  #     _ = EthereumClientMock.set_faulty_response(true)
+  #   end)
 
-    # Toggle faulty response
-    spawn(fn ->
-      Process.sleep(70)
-      _ = EthereumClientMock.set_faulty_response(true)
-    end)
+  #   # Assert the alarm and event are present
+  #   assert pull_client_alarm(
+  #            [ethereum_connection_error: %{node: :nonode@nohost, reporter: AlarmManagement}],
+  #            100
+  #          ) == :ok
+  # end
+  # alarm managment test
+  # test "that the connection alarm gets cleared when connection becomes healthy" do
+  #   # Initialize as unhealthy
+  #   _ = EthereumClientMock.set_faulty_response(true)
 
-    # Assert the alarm and event are present
-    assert pull_client_alarm(
-             [ethereum_connection_error: %{node: :nonode@nohost, reporter: AlarmManagement}],
-             100
-           ) == :ok
-  end
+  #   :ok =
+  #     pull_client_alarm(
+  #       [ethereum_connection_error: %{node: :nonode@nohost, reporter: AlarmManagement}],
+  #       100
+  #     )
 
-  test "that the connection alarm gets cleared when connection becomes healthy" do
-    # Initialize as unhealthy
-    _ = EthereumClientMock.set_faulty_response(true)
+  #   # Toggle healthy response
+  #   _ = EthereumClientMock.set_faulty_response(false)
 
-    :ok =
-      pull_client_alarm(
-        [ethereum_connection_error: %{node: :nonode@nohost, reporter: AlarmManagement}],
-        100
-      )
-
-    # Toggle healthy response
-    _ = EthereumClientMock.set_faulty_response(false)
-
-    # Assert the alarm and event are no longer present
-    assert pull_client_alarm([], 100) == :ok
-  end
+  #   # Assert the alarm and event are no longer present
+  #   assert pull_client_alarm([], 100) == :ok
+  # end
 
   #
   # Stalling sync
   #
+  # alarm managment test
+  # test "that the stall alarm gets raised when block height stalls" do
+  #   # Initialize as healthy and alarm not present
+  #   _ = EthereumClientMock.set_stalled(false)
+  #   :ok = pull_client_alarm([], 200)
 
-  test "that the stall alarm gets raised when block height stalls" do
-    # Initialize as healthy and alarm not present
-    _ = EthereumClientMock.set_stalled(false)
-    :ok = pull_client_alarm([], 200)
+  #   # Toggle stalled height
+  #   _ = EthereumClientMock.set_stalled(true)
 
-    # Toggle stalled height
-    _ = EthereumClientMock.set_stalled(true)
+  #   # Assert alarm now present
+  #   assert pull_client_alarm(
+  #            [ethereum_stalled_sync: %{node: :nonode@nohost, reporter: AlarmManagement}],
+  #            200
+  #          ) == :ok
+  # end
+  # alarm managment test
+  # test "that the stall alarm gets cleared when block height unstalls" do
+  #   # Initialize as unhealthy
+  #   _ = EthereumClientMock.set_stalled(true)
 
-    # Assert alarm now present
-    assert pull_client_alarm(
-             [ethereum_stalled_sync: %{node: :nonode@nohost, reporter: AlarmManagement}],
-             200
-           ) == :ok
-  end
+  #   :ok = pull_client_alarm([ethereum_stalled_sync: %{node: :nonode@nohost, reporter: AlarmManagement}], 300)
 
-  test "that the stall alarm gets cleared when block height unstalls" do
-    # Initialize as unhealthy
-    _ = EthereumClientMock.set_stalled(true)
+  #   # Toggle unstalled height
+  #   _ = EthereumClientMock.set_stalled(false)
 
-    :ok = pull_client_alarm([ethereum_stalled_sync: %{node: :nonode@nohost, reporter: AlarmManagement}], 300)
-
-    # Toggle unstalled height
-    _ = EthereumClientMock.set_stalled(false)
-
-    # Assert alarm no longer present
-    assert pull_client_alarm([], 300) == :ok
-  end
+  #   # Assert alarm no longer present
+  #   assert pull_client_alarm([], 300) == :ok
+  # end
 
   defp pull_client_alarm(_, 0), do: {:cant_match, Alarm.all()}
 

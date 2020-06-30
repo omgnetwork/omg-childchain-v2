@@ -1,4 +1,4 @@
-defmodule Engine.Ethereum.HeightMonitor do
+defmodule Engine.Ethereum.HeightObserver do
   @moduledoc """
   Periodically calls the Ethereum client node to check for Ethereumm's block height. Publishes
   internal events or raises alarms accordingly.
@@ -17,8 +17,8 @@ defmodule Engine.Ethereum.HeightMonitor do
   use GenServer
   use Spandex.Decorators
 
-  alias Engine.Ethereum.HeightMonitor.AlarmManagement
-  alias Engine.Ethereum.HeightMonitor.Core
+  alias Engine.Ethereum.HeightObserver.AlarmManagement
+  alias Engine.Ethereum.HeightObserver.HeightManagement
 
   require Logger
 
@@ -28,7 +28,6 @@ defmodule Engine.Ethereum.HeightMonitor do
           tref: reference() | nil,
           eth_module: module(),
           alarm_module: module(),
-          event_bus_module: module(),
           ethereum_height: integer(),
           synced_at: DateTime.t(),
           connection_alarm_raised: boolean(),
@@ -41,7 +40,6 @@ defmodule Engine.Ethereum.HeightMonitor do
             tref: nil,
             eth_module: nil,
             alarm_module: nil,
-            event_bus_module: nil,
             ethereum_height: 0,
             synced_at: nil,
             connection_alarm_raised: false,
@@ -74,11 +72,12 @@ defmodule Engine.Ethereum.HeightMonitor do
       synced_at: DateTime.utc_now(),
       eth_module: Keyword.fetch!(opts, :eth_module),
       alarm_module: Keyword.fetch!(opts, :alarm_module),
-      event_bus_module: Keyword.fetch!(opts, :event_bus_module),
       opts: Keyword.fetch!(opts, :opts)
     }
 
-    {:ok, Core.force_send_height(state), {:continue, :check_new_height}}
+    height = HeightManagement.fetch_height_and_publish(state)
+
+    {:ok, HeightManagement.update_height(state, height), {:continue, :check_new_height}}
   end
 
   def handle_continue(:check_new_height, state) do
@@ -113,14 +112,13 @@ defmodule Engine.Ethereum.HeightMonitor do
 
   @decorate trace(service: __MODULE__, type: :backend)
   defp check_new_height(state) do
-    height = Core.fetch_height(state.eth_module, state.opts)
-    stalled? = Core.stalled?(height, state.ethereum_height, state.synced_at, state.stall_threshold_ms)
-    :ok = Core.broadcast_on_new_height(state.event_bus_module, height)
+    height = HeightManagement.fetch_height_and_publish(state)
+    stalled? = HeightManagement.stalled?(height, state.ethereum_height, state.synced_at, state.stall_threshold_ms)
 
     _ = AlarmManagement.connection_alarm(state.alarm_module, state.connection_alarm_raised, height)
     _ = AlarmManagement.stall_alarm(state.alarm_module, state.stall_alarm_raised, stalled?)
 
-    state = Core.update_height(state, height)
+    state = HeightManagement.update_height(state, height)
     {:ok, tref} = :timer.send_after(state.check_interval_ms, :check_new_height)
     {:noreply, %{state | tref: tref}}
   end
