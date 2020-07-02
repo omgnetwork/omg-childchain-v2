@@ -64,7 +64,7 @@ defmodule Engine.Ethereum.HeightObserver do
 
     alarm_handler = Keyword.get(opts, :alarm_handler, __MODULE__.AlarmHandler)
     sasl_alarm_handler = Keyword.get(opts, :sasl_alarm_handler, :alarm_handler)
-    :ok = AlarmManagement.subscribe_to_alarms(sasl_alarm_handler, alarm_handler, __MODULE__)
+    :ok = AlarmManagement.subscribe_to_alarms(sasl_alarm_handler, alarm_handler, self())
 
     state = %__MODULE__{
       check_interval_ms: Keyword.fetch!(opts, :check_interval_ms),
@@ -75,9 +75,7 @@ defmodule Engine.Ethereum.HeightObserver do
       opts: Keyword.fetch!(opts, :opts)
     }
 
-    height = HeightManagement.fetch_height_and_publish(state)
-
-    {:ok, HeightManagement.update_height(state, height), {:continue, :check_new_height}}
+    {:ok, state, {:continue, :check_new_height}}
   end
 
   def handle_continue(:check_new_height, state) do

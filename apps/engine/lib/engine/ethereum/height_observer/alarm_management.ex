@@ -7,7 +7,7 @@ defmodule Engine.Ethereum.HeightObserver.AlarmManagement do
   def subscribe_to_alarms(sasl_alarm_handler, handler, consumer) do
     case Enum.member?(:gen_event.which_handlers(sasl_alarm_handler), handler) do
       true -> :ok
-      _ -> sasl_alarm_handler.add_alarm_handler(handler, consumer: consumer)
+      _ -> :gen_event.add_handler(sasl_alarm_handler, handler, consumer: consumer)
     end
   end
 

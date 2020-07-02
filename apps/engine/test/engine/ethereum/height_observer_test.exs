@@ -1,26 +1,23 @@
 defmodule Engine.Ethereum.HeightObserverTest do
   use ExUnit.Case, async: true
-  alias __MODULE__.Alarm
   alias __MODULE__.EthereumClientMock
-  alias __MODULE__.EventBusListener
-  alias __MODULE__.HeightObserverTestAlarmHandler
-  alias Engine.Ethereum.HeightObserver
-  alias Engine.Ethereum.HeightObserver.AlarmManagement
+  alias __MODULE__.Alarm
   alias ExPlasma.Encoding
+  alias Engine.Ethereum.HeightObserver
 
   setup_all do
-    HeightObserverTestAlarmHandler.start_link()
-    {:ok, _} = EthereumClientMock.start_link()
     _ = Agent.start_link(fn -> %{} end, name: :connector)
     :ok
   end
 
   setup %{test: test_name} do
-    check_interval_ms = 10
-    stall_threshold_ms = 100
+    Application.start(:sasl)
+    check_interval_ms = 8000
+    stall_threshold_ms = 16_000
     {:ok, alarm_instance} = Alarm.start_link([])
+    :ok = Bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
 
-    {:ok, monitor} =
+    {:ok, height_observer} =
       HeightObserver.start_link(
         # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
         name: Module.concat(test_name, HeightObserver),
@@ -28,196 +25,58 @@ defmodule Engine.Ethereum.HeightObserverTest do
         stall_threshold_ms: stall_threshold_ms,
         eth_module: EthereumClientMock,
         alarm_module: Alarm,
-        opts: [url: "not used"],
-        sasl_alarm_handler: HeightObserverTestAlarmHandler
+        opts: [url: "not used"]
+        # sasl_alarm_handler: HeightObserverTestAlarmHandler
       )
 
-    test_pid = self()
-    Agent.update(:connector, fn state -> Map.merge(state, %{monitor => alarm_instance, test_pid => alarm_instance}) end)
+    Agent.update(:connector, fn state -> Map.merge(state, %{height_observer => alarm_instance}) end)
 
-    _ =
-      on_exit(fn ->
-        _ = EthereumClientMock.reset_state()
-        _ = Process.sleep(10)
-        true = Process.exit(monitor, :kill)
-      end)
-
-    {:ok,
-     %{
-       monitor: monitor,
-       check_interval_ms: check_interval_ms,
-       stall_threshold_ms: stall_threshold_ms
-     }}
+    %{height_observer: height_observer}
   end
 
-  #
-  # Internal event publishing
-  #
+  test "height gets updated on init", %{height_observer: height_observer} do
+    assert %{ethereum_height: 12} = :sys.get_state(height_observer)
 
-  test "that an ethereum_new_height event is published when the height increases", context do
-    _ = EthereumClientMock.set_stalled(false)
-
-    {:ok, listener} = EventBusListener.start(self())
-    on_exit(fn -> GenServer.stop(listener) end)
-
-    assert_receive(:got_ethereum_new_height, Kernel.trunc(context.check_interval_ms * 10))
+    # handle continue
+    assert_receive {:internal_event_bus, :ethereum_new_height, 12}
+    # the next time is when the timer kicks in - check_interval_ms which is more then the timeout in refute_receive
+    refute_receive {:internal_event_bus, :ethereum_new_height, 13}
   end
 
-  #
-  # Connection error
-  #
-  # alarm managment test
-  # test "that the connection alarm gets raised when connection becomes unhealthy" do
-  #   # Initialize as healthy and alarm not present
-  #   _ = EthereumClientMock.set_faulty_response(false)
+  test "timer gets set", %{height_observer: height_observer} do
+    assert_receive {:internal_event_bus, :ethereum_new_height, 12}
 
-  #   # Toggle faulty response
-  #   spawn(fn ->
-  #     Process.sleep(70)
-  #     _ = EthereumClientMock.set_faulty_response(true)
-  #   end)
+    refute_receive {:internal_event_bus, :ethereum_new_height, 13}
 
-  #   # Assert the alarm and event are present
-  #   assert pull_client_alarm(
-  #            [ethereum_connection_error: %{node: :nonode@nohost, reporter: AlarmManagement}],
-  #            100
-  #          ) == :ok
-  # end
-  # alarm managment test
-  # test "that the connection alarm gets cleared when connection becomes healthy" do
-  #   # Initialize as unhealthy
-  #   _ = EthereumClientMock.set_faulty_response(true)
-
-  #   :ok =
-  #     pull_client_alarm(
-  #       [ethereum_connection_error: %{node: :nonode@nohost, reporter: AlarmManagement}],
-  #       100
-  #     )
-
-  #   # Toggle healthy response
-  #   _ = EthereumClientMock.set_faulty_response(false)
-
-  #   # Assert the alarm and event are no longer present
-  #   assert pull_client_alarm([], 100) == :ok
-  # end
-
-  #
-  # Stalling sync
-  #
-  # alarm managment test
-  # test "that the stall alarm gets raised when block height stalls" do
-  #   # Initialize as healthy and alarm not present
-  #   _ = EthereumClientMock.set_stalled(false)
-  #   :ok = pull_client_alarm([], 200)
-
-  #   # Toggle stalled height
-  #   _ = EthereumClientMock.set_stalled(true)
-
-  #   # Assert alarm now present
-  #   assert pull_client_alarm(
-  #            [ethereum_stalled_sync: %{node: :nonode@nohost, reporter: AlarmManagement}],
-  #            200
-  #          ) == :ok
-  # end
-  # alarm managment test
-  # test "that the stall alarm gets cleared when block height unstalls" do
-  #   # Initialize as unhealthy
-  #   _ = EthereumClientMock.set_stalled(true)
-
-  #   :ok = pull_client_alarm([ethereum_stalled_sync: %{node: :nonode@nohost, reporter: AlarmManagement}], 300)
-
-  #   # Toggle unstalled height
-  #   _ = EthereumClientMock.set_stalled(false)
-
-  #   # Assert alarm no longer present
-  #   assert pull_client_alarm([], 300) == :ok
-  # end
-
-  defp pull_client_alarm(_, 0), do: {:cant_match, Alarm.all()}
-
-  defp pull_client_alarm(match, n) do
-    case Alarm.all() do
-      ^match ->
-        :ok
-
-      _ ->
-        Process.sleep(50)
-        pull_client_alarm(match, n - 1)
-    end
+    assert %{ethereum_height: 12, tref: {_, tref}} = :sys.get_state(height_observer)
+    assert is_reference(tref)
   end
 
-  #
-  # Test submodules
-  #
+  test "handling messages for raising and lowering alarms", %{height_observer: height_observer} do
+    GenServer.cast(height_observer, {:set_alarm, :ethereum_connection_error})
+    %{connection_alarm_raised: true} = :sys.get_state(height_observer)
+    GenServer.cast(height_observer, {:clear_alarm, :ethereum_connection_error})
+    %{connection_alarm_raised: false} = :sys.get_state(height_observer)
+    GenServer.cast(height_observer, {:set_alarm, :ethereum_stalled_sync})
+    %{stall_alarm_raised: true} = :sys.get_state(height_observer)
+    GenServer.cast(height_observer, {:clear_alarm, :ethereum_stalled_sync})
+    %{stall_alarm_raised: false} = :sys.get_state(height_observer)
+  end
 
   defmodule EthereumClientMock do
-    @moduledoc """
-    Mocking the ETH module integration point.
-    """
-    use GenServer
+    def eth_block_number(_) do
+      block_number =
+        case Process.get(:eth_block_number) do
+          nil ->
+            Process.put(:eth_block_number, 12)
+            12
 
-    @initial_state %{height: "0x0", faulty: false, stalled: false}
+          number ->
+            Process.put(:eth_block_number, number + 1)
+            number + 1
+        end
 
-    def start_link(), do: GenServer.start_link(__MODULE__, [], name: __MODULE__)
-
-    def eth_block_number(_), do: GenServer.call(__MODULE__, :eth_block_number)
-
-    def set_faulty_response(faulty), do: GenServer.call(__MODULE__, {:set_faulty_response, faulty})
-
-    def set_long_response(milliseconds), do: GenServer.call(__MODULE__, {:set_long_response, milliseconds})
-
-    def set_stalled(stalled), do: GenServer.call(__MODULE__, {:set_stalled, stalled})
-
-    def reset_state(), do: GenServer.call(__MODULE__, :reset_state)
-
-    def stop(), do: GenServer.stop(__MODULE__, :normal)
-
-    def init(_), do: {:ok, @initial_state}
-
-    def handle_call(:reset_state, _, _state), do: {:reply, :ok, @initial_state}
-
-    def handle_call({:set_faulty_response, true}, _, state), do: {:reply, :ok, %{state | faulty: true}}
-    def handle_call({:set_faulty_response, false}, _, state), do: {:reply, :ok, %{state | faulty: false}}
-
-    def handle_call({:set_long_response, milliseconds}, _, state) do
-      {:reply, :ok, Map.merge(%{long_response: milliseconds}, state)}
-    end
-
-    def handle_call({:set_stalled, true}, _, state), do: {:reply, :ok, %{state | stalled: true}}
-    def handle_call({:set_stalled, false}, _, state), do: {:reply, :ok, %{state | stalled: false}}
-
-    # Heights management
-
-    def handle_call(:eth_block_number, _, %{faulty: true} = state) do
-      {:reply, :error, state}
-    end
-
-    def handle_call(:eth_block_number, _, %{long_response: milliseconds} = state) when is_number(milliseconds) do
-      _ = Process.sleep(milliseconds)
-      {:reply, {:ok, state.height}, %{state | height: next_height(state.height, state.stalled)}}
-    end
-
-    def handle_call(:eth_block_number, _, state) do
-      {:reply, {:ok, state.height}, %{state | height: next_height(state.height, state.stalled)}}
-    end
-
-    defp next_height(height, false), do: Encoding.to_hex(Encoding.to_int(height) + 1)
-    defp next_height(height, true), do: height
-  end
-
-  defmodule EventBusListener do
-    use GenServer
-
-    def start(parent), do: GenServer.start(__MODULE__, parent)
-
-    def init(parent) do
-      :ok = Bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
-      {:ok, parent}
-    end
-
-    def handle_info({:internal_event_bus, :ethereum_new_height, _height}, parent) do
-      _ = send(parent, :got_ethereum_new_height)
-      {:noreply, parent}
+      {:ok, Encoding.to_hex(block_number)}
     end
   end
 
@@ -229,7 +88,7 @@ defmodule Engine.Ethereum.HeightObserverTest do
     end
 
     def init(_) do
-      {:ok, []}
+      {:ok, %{}}
     end
 
     def clear_all() do
@@ -269,8 +128,8 @@ defmodule Engine.Ethereum.HeightObserverTest do
     end
 
     defp get_instance() do
-      monitor = self()
-      %{^monitor => alarm_instance} = Agent.get(:connector, fn state -> state end)
+      height_observer = self()
+      %{^height_observer => alarm_instance} = Agent.get(:connector, fn state -> state end)
       alarm_instance
     end
 

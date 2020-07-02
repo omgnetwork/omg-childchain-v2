@@ -6,10 +6,10 @@ defmodule Status.Alert.AlarmHandlerTest do
   alias Status.Alert.AlarmHandler.Table
 
   setup_all do
-    {:ok, apps} = Application.ensure_all_started(:sasl)
+    :ok = Application.start(:sasl)
 
     on_exit(fn ->
-      apps |> Enum.reverse() |> Enum.each(&Application.stop/1)
+      Application.stop(:sasl)
     end)
 
     :ok = AlarmHandler.install(Alarm.alarm_types(), AlarmHandler.table_name())
