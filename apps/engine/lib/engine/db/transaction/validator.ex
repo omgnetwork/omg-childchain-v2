@@ -54,15 +54,6 @@ defmodule Engine.DB.Transaction.Validator do
     end
   end
 
-  defp get_input_positions(changeset) do
-    changeset |> get_field(:inputs) |> Enum.map(&Map.get(&1, :position))
-  end
-
-  # Return all confirmed outputs that have the given positions.
-  defp usable_outputs_for(positions) do
-    where(Output.usable(), [output], output.position in ^positions)
-  end
-
   @doc """
   Attempts to recover witnesses (addresses) from the given signatures.
   Maps the list of witnesses to the `:witnesses` key in the changeset if valid,
@@ -74,14 +65,6 @@ defmodule Engine.DB.Transaction.Validator do
     |> get_field(:raw_tx)
     |> ExPlasma.Transaction.recover_signatures()
     |> process_signatures_validation_results(changeset)
-  end
-
-  defp process_signatures_validation_results({:ok, addresses}, changeset) do
-    put_change(changeset, :witnesses, addresses)
-  end
-
-  defp process_signatures_validation_results({:error, error}, changeset) do
-    add_error(changeset, :witnesses, "invalid signature: #{inspect(error)}")
   end
 
   @doc """
@@ -96,12 +79,6 @@ defmodule Engine.DB.Transaction.Validator do
     |> get_field(:raw_tx)
     |> ExPlasma.Transaction.validate()
     |> process_protocol_validation_results(changeset)
-  end
-
-  defp process_protocol_validation_results({:ok, _}, changeset), do: changeset
-
-  defp process_protocol_validation_results({:error, {field, message}}, changeset) do
-    add_error(changeset, field, @error_messages[message])
   end
 
   @doc """
@@ -123,6 +100,30 @@ defmodule Engine.DB.Transaction.Validator do
 
   def validate_statefully(changeset, %{tx_type: tx_type, fees: fees}) do
     get_validator(tx_type).validate(changeset, fees)
+  end
+
+  # Private
+  defp process_signatures_validation_results({:ok, addresses}, changeset) do
+    put_change(changeset, :witnesses, addresses)
+  end
+
+  defp process_signatures_validation_results({:error, error}, changeset) do
+    add_error(changeset, :witnesses, "invalid signature: #{inspect(error)}")
+  end
+
+  defp get_input_positions(changeset) do
+    changeset |> get_field(:inputs) |> Enum.map(&Map.get(&1, :position))
+  end
+
+  # Return all confirmed outputs that have the given positions.
+  defp usable_outputs_for(positions) do
+    where(Output.usable(), [output], output.position in ^positions)
+  end
+
+  defp process_protocol_validation_results({:ok, _}, changeset), do: changeset
+
+  defp process_protocol_validation_results({:error, {field, message}}, changeset) do
+    add_error(changeset, field, @error_messages[message])
   end
 
   defp get_validator(type), do: Map.fetch!(@type_validators, type)

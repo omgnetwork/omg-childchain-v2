@@ -10,9 +10,9 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
   import Ecto.Changeset, only: [get_field: 2, add_error: 3]
 
   alias Engine.DB.Transaction.PaymentV1.Type
-  alias Engine.DB.Transaction.PaymentV1.Validator.Amount, as: AmountValidator
-  alias Engine.DB.Transaction.PaymentV1.Validator.Merge, as: MergeValidator
-  alias Engine.DB.Transaction.PaymentV1.Validator.Witness, as: WitnessValidator
+  alias Engine.DB.Transaction.PaymentV1.Validator.Amount
+  alias Engine.DB.Transaction.PaymentV1.Validator.Merge
+  alias Engine.DB.Transaction.PaymentV1.Validator.Witness
 
   @error_messages [
     amounts_do_not_add_up: "output amounts are greater than input amounts",
@@ -27,7 +27,7 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
   @doc """
   Statefully validates a PaymentV1 transaction changeset.
   Note that the fee can be overriden if the transaction is a merge, in this case
-  :no_fees_required will be passed to the AmountValidator.
+  :no_fees_required will be passed to the Amount validator.
 
   Returns `:ok` if the transaction is valid, or `{:error, {field, error}}` otherwise.
   """
@@ -38,9 +38,9 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
     output_data = get_decoded_output_data(changeset, :outputs)
     witnesses = get_field(changeset, :witnesses)
 
-    with :ok <- WitnessValidator.validate(input_data, witnesses),
+    with :ok <- Witness.validate(input_data, witnesses),
          fees <- validate_merge_fees(fees, input_data, output_data),
-         :ok <- AmountValidator.validate(fees, input_data, output_data) do
+         :ok <- Amount.validate(fees, input_data, output_data) do
       changeset
     else
       {:error, {field, message}} ->
@@ -59,7 +59,7 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
   end
 
   defp validate_merge_fees(fees, input_data, output_data) do
-    case MergeValidator.is_merge?(input_data, output_data) do
+    case Merge.is_merge?(input_data, output_data) do
       true -> :no_fees_required
       false -> fees
     end

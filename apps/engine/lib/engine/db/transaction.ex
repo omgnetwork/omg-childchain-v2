@@ -64,9 +64,8 @@ defmodule Engine.DB.Transaction do
   @spec decode(tx_bytes, kind: atom()) :: Ecto.Changeset.t()
   def decode(tx_bytes, kind: kind) do
     params =
-      %{raw_tx: ExPlasma.decode(tx_bytes)}
-      |> decode_params()
-      |> Map.put(:tx_bytes, tx_bytes)
+      tx_bytes
+      |> tx_bytes_to_map()
       # TODO: Handle fees, load from DB? Buffer period, format?
       |> Map.put(:fees, :no_fees_required)
       |> Map.put(:kind, kind)
@@ -98,10 +97,13 @@ defmodule Engine.DB.Transaction do
     put_change(changeset, :tx_hash, tx_hash)
   end
 
-  defp decode_params(%{raw_tx: %{inputs: inputs, outputs: outputs, tx_type: tx_type}} = params) do
-    params
+  defp tx_bytes_to_map(tx_bytes) do
+    %{inputs: inputs, outputs: outputs, tx_type: tx_type} = raw_tx = ExPlasma.decode(tx_bytes)
+
+    %{raw_tx: raw_tx}
     |> Map.put(:inputs, Enum.map(inputs, &Map.from_struct/1))
     |> Map.put(:outputs, Enum.map(outputs, &Map.from_struct/1))
     |> Map.put(:tx_type, tx_type)
+    |> Map.put(:tx_bytes, tx_bytes)
   end
 end

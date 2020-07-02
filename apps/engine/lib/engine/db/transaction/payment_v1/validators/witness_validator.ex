@@ -59,5 +59,6 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator.Witness do
     end
   end
 
-  defp can_spend?(%{output_guard: owner}, witness), do: owner == witness
+  defp can_spend?(%{output_guard: witness}, witness), do: true
+  defp can_spend?(_output, _witness), do: false
 end

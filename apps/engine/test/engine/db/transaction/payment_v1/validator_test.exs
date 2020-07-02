@@ -1,6 +1,6 @@
 defmodule Engine.DB.Transaction.PaymentV1.ValidatorTest do
   @moduledoc """
-  This test module contains minimal testing of the Validator.
+  This test module contains minimal testing of the Validator. Most of the logic is tested in nested validators.
   """
   use Engine.DB.DataCase, async: true
 
