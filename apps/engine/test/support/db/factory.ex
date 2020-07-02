@@ -132,7 +132,7 @@ defmodule Engine.DB.Factory do
   end
 
   def payment_v1_transaction_factory(attr) do
-    entity = TestEntity.generate()
+    entity = TestEntity.alice()
 
     priv_encoded = Map.get(attr, :priv_encoded, entity.priv_encoded)
     addr = Map.get(attr, :addr, entity.addr)

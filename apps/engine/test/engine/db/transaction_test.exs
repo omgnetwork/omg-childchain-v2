@@ -85,7 +85,7 @@ defmodule Engine.DB.TransactionTest do
     end
 
     test "is valid when inputs are signed correctly" do
-      %{priv_encoded: priv_encoded, addr: addr} = TestEntity.generate()
+      %{priv_encoded: priv_encoded, addr: addr} = TestEntity.alice()
 
       data = %{output_guard: addr, token: <<0::160>>, amount: 10}
       insert(:output, %{output_data: data, blknum: 1, state: "confirmed"})
