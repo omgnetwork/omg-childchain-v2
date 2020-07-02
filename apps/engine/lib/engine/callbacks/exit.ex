@@ -7,6 +7,8 @@ defmodule Engine.Callbacks.Exit do
 
   @behaviour Engine.Callback
 
+  use Spandex.Decorators
+
   import Ecto.Query
 
   alias Ecto.Multi
@@ -17,6 +19,7 @@ defmodule Engine.Callbacks.Exit do
   Gather all the Output positions in the list of exit events.
   """
   @impl Callback
+  @decorate trace(service: :ecto, type: :backend)
   def callback(events, listener) do
     Multi.new()
     |> Callback.update_listener_height(events, listener)

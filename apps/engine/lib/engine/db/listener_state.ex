@@ -5,6 +5,7 @@ defmodule Engine.DB.ListenerState do
   """
 
   use Ecto.Schema
+  use Spandex.Decorators
 
   import Ecto.Changeset
   import Ecto.Query
@@ -33,6 +34,7 @@ defmodule Engine.DB.ListenerState do
   Return the height for the listener. Defaults to 0.
   """
   @spec get_height(atom()) :: non_neg_integer()
+  @decorate trace(service: :ecto, type: :backend)
   def get_height(listener) do
     name = "#{listener}"
 

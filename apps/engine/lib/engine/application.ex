@@ -59,6 +59,14 @@ defmodule Engine.Application do
   end
 
   defp attach_telemetry() do
+    :ok =
+      :telemetry.attach(
+        "spandex-query-tracer",
+        [:engine, :repo, :query],
+        &SpandexEcto.TelemetryAdapter.handle_event/4,
+        nil
+      )
+
     _ = Logger.info("Attaching telemetry handlers #{inspect(Handler.supported_events())}")
 
     case :telemetry.attach_many("alarm-handlers", Handler.supported_events(), &Handler.handle_event/4, nil) do

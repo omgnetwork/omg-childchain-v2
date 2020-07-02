@@ -28,9 +28,9 @@ defmodule API.MixProject do
     [
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.0"},
-      {:spandex, "~> 2.3"},
-      {:spandex_datadog, "~> 0.3"},
-      {:spandex_phoenix, "~> 0.4"}
+      {:spandex, "~> 3.0.1"},
+      {:spandex_datadog, "~> 1.0.0"},
+      {:spandex_phoenix, "~> 0.4.2"}
     ]
   end
 end
