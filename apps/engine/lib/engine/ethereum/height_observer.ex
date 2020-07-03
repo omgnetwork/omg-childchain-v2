@@ -32,6 +32,7 @@ defmodule Engine.Ethereum.HeightObserver do
           synced_at: DateTime.t(),
           connection_alarm_raised: boolean(),
           stall_alarm_raised: boolean(),
+          bus: module(),
           opts: keyword()
         }
 
@@ -44,6 +45,7 @@ defmodule Engine.Ethereum.HeightObserver do
             synced_at: nil,
             connection_alarm_raised: false,
             stall_alarm_raised: false,
+            bus: nil,
             opts: []
 
   #
@@ -59,20 +61,21 @@ defmodule Engine.Ethereum.HeightObserver do
   # GenServer behaviors
   #
 
-  def init(opts) do
+  def init(init_arg) do
     _ = Logger.info("Starting #{__MODULE__} service.")
 
-    alarm_handler = Keyword.get(opts, :alarm_handler, __MODULE__.AlarmHandler)
-    sasl_alarm_handler = Keyword.get(opts, :sasl_alarm_handler, :alarm_handler)
+    alarm_handler = Keyword.get(init_arg, :alarm_handler, __MODULE__.AlarmHandler)
+    sasl_alarm_handler = Keyword.get(init_arg, :sasl_alarm_handler, :alarm_handler)
     :ok = AlarmManagement.subscribe_to_alarms(sasl_alarm_handler, alarm_handler, self())
 
     state = %__MODULE__{
-      check_interval_ms: Keyword.fetch!(opts, :check_interval_ms),
-      stall_threshold_ms: Keyword.fetch!(opts, :stall_threshold_ms),
+      check_interval_ms: Keyword.fetch!(init_arg, :check_interval_ms),
+      stall_threshold_ms: Keyword.fetch!(init_arg, :stall_threshold_ms),
       synced_at: DateTime.utc_now(),
-      eth_module: Keyword.fetch!(opts, :eth_module),
-      alarm_module: Keyword.fetch!(opts, :alarm_module),
-      opts: Keyword.fetch!(opts, :opts)
+      eth_module: Keyword.fetch!(init_arg, :eth_module),
+      alarm_module: Keyword.fetch!(init_arg, :alarm_module),
+      bus: Keyword.get(init_arg, :bus, Bus),
+      opts: Keyword.fetch!(init_arg, :opts)
     }
 
     {:ok, state, {:continue, :check_new_height}}

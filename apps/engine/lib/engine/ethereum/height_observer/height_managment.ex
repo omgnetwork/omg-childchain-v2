@@ -37,7 +37,7 @@ defmodule Engine.Ethereum.HeightObserver.HeightManagement do
     |> case do
       {:ok, height} ->
         height = Encoding.to_int(height)
-        :ok = broadcast_on_new_height(height)
+        :ok = broadcast_on_new_height(state, height)
         height
 
       error ->
@@ -49,8 +49,8 @@ defmodule Engine.Ethereum.HeightObserver.HeightManagement do
   # we need to publish every height we fetched so that we can re-examine blocks in case of re-orgs
   # clients subscribed to this topic need to be aware of that and if a block number repeats,
   # it needs to re-write logs, for example
-  defp broadcast_on_new_height(height) do
+  defp broadcast_on_new_height(state, height) do
     event = Bus.Event.new({:root_chain, "ethereum_new_height"}, :ethereum_new_height, height)
-    Bus.local_broadcast(event)
+    state.bus.local_broadcast(event)
   end
 end

@@ -3,7 +3,10 @@ defmodule Engine.Ethereum.HeightObserver.AlarmManagmentTest do
   alias Engine.Ethereum.HeightObserver.AlarmManagement
 
   test "install and remove an an alarm handler", %{test: test_name} do
-    {:ok, [:sasl]} = Application.start(:sasl)
+    :ok = Application.start(:sasl)
+    on_exit(fn ->
+      IO.inspect "stopping sasl goddamit"
+      :ok = Application.stop(:sasl) end)
     [:alarm_handler] = :gen_event.which_handlers(:alarm_handler)
     consumer = test_name
 
@@ -16,7 +19,6 @@ defmodule Engine.Ethereum.HeightObserver.AlarmManagmentTest do
 
     :ok = AlarmManagement.subscribe_to_alarms(:alarm_handler, test_name, consumer)
     assert Enum.member?(:gen_event.which_handlers(:alarm_handler), test_name)
-    :ok = Application.stop(:sasl)
   end
 
   test "set connection_alarm when it's not set yet and the response is faulty", %{test: test_name} do

@@ -30,14 +30,12 @@ defmodule Engine.Ethereum.HeightObserver.HeightManagmentTest do
   end
 
   test "height gets published on the bus" do
-    :ok = Bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
-    HeightManagement.fetch_height_and_publish(%{eth_module: __MODULE__.EthMock, opts: []})
+    HeightManagement.fetch_height_and_publish(%{bus: __MODULE__.LeBus, eth_module: __MODULE__.EthMock, opts: []})
     assert_receive {:internal_event_bus, :ethereum_new_height, 17}
   end
 
   test "result on error does not get published on the bus" do
-    :ok = Bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
-    HeightManagement.fetch_height_and_publish(%{eth_module: __MODULE__.EthMockErr, opts: []})
+    HeightManagement.fetch_height_and_publish(%{bus: __MODULE__.LeBus, eth_module: __MODULE__.EthMockErr, opts: []})
     refute_receive {:internal_event_bus, :ethereum_new_height, _}
   end
 
@@ -50,6 +48,13 @@ defmodule Engine.Ethereum.HeightObserver.HeightManagmentTest do
   defmodule EthMockErr do
     def eth_block_number(_) do
       {:error, :connection_refused}
+    end
+  end
+
+  defmodule LeBus do
+    def local_broadcast(event) do
+      Kernel.send(self(), {:internal_event_bus, event.event, event.payload})
+      :ok
     end
   end
 end
