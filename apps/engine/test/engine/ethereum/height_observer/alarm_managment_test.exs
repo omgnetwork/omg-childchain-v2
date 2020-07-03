@@ -3,9 +3,13 @@ defmodule Engine.Ethereum.HeightObserver.AlarmManagmentTest do
   alias Engine.Ethereum.HeightObserver.AlarmManagement
 
   test "install and remove an an alarm handler", %{test: test_name} do
-    :ok = Application.start(:sasl)
+    case Application.start(:sasl) do
+      {:error, {:already_started, :sasl}} -> Application.stop(:sasl)
+      Application.start(:sasl)
+      :ok -> :ok
+
+    end
     on_exit(fn ->
-      IO.inspect "stopping sasl goddamit"
       :ok = Application.stop(:sasl) end)
     [:alarm_handler] = :gen_event.which_handlers(:alarm_handler)
     consumer = test_name
