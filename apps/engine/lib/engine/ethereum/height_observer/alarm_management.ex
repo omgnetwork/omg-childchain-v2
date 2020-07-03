@@ -3,7 +3,7 @@ defmodule Engine.Ethereum.HeightObserver.AlarmManagement do
   Does all the alarm management logic from height monitoring
   """
 
-  @spec subscribe_to_alarms(module(), module(), module()) :: :gen_event.add_handler_ret()
+  @spec subscribe_to_alarms(module(), module(), GenServer.server()) :: :gen_event.add_handler_ret()
   def subscribe_to_alarms(sasl_alarm_handler, handler, consumer) do
     case Enum.member?(:gen_event.which_handlers(sasl_alarm_handler), handler) do
       true -> :ok
