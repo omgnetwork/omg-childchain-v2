@@ -4,8 +4,8 @@ defmodule AlarmDetectionTest do
   alias Engine.Ethereum.HeightObserver
   alias Engine.Ethereum.RootChain.Rpc
   alias Engine.Geth
-  alias Status.Alert.Alarm
   alias Engine.Repo.Monitor, as: RepoMonitor
+  alias Status.Alert.Alarm
   @moduletag :integration
 
   setup do
