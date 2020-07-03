@@ -3,8 +3,9 @@ defmodule AlarmDetectionTest do
 
   alias Engine.Ethereum.HeightObserver
   alias Engine.Ethereum.RootChain.Rpc
-  alias Status.Alert.Alarm
   alias Engine.Geth
+  alias Status.Alert.Alarm
+  alias Engine.Repo.Monitor, as: RepoMonitor
   @moduletag :integration
 
   setup do
@@ -19,7 +20,7 @@ defmodule AlarmDetectionTest do
 
     url = "http://127.0.0.1:#{port}"
 
-    {:ok, pid} =
+    {:ok, height_observer_pid} =
       start_supervised(
         {HeightObserver,
          name: HeightObserver,
@@ -31,17 +32,25 @@ defmodule AlarmDetectionTest do
          event_bus_module: Bus}
       )
 
-    %{pid: pid, geth_pid: geth_pid}
+    %{height_observer_pid: height_observer_pid, geth_pid: geth_pid}
   end
 
-  test "alarm gets raised when geth stops listening", %{pid: pid, geth_pid: geth_pid} do
+  test "alarm gets raised when geth stops listening", %{
+    height_observer_pid: height_observer_pid,
+    # repo_monitor_pid: repo_monitor_pid,
+    geth_pid: geth_pid
+  } do
     Process.flag(:trap_exit, true)
     # geth traps exits as well, we get back :parent
     Process.exit(geth_pid, :killed)
 
     assert_receive {:EXIT, ^geth_pid, :parent}, 60_000
-    :erlang.trace(pid, true, [:receive])
-    assert_receive {:trace, ^pid, :receive, {:"$gen_cast", {:set_alarm, :ethereum_connection_error}}}, 8000
-    %{connection_alarm_raised: true} = :sys.get_state(pid)
+    :erlang.trace(height_observer_pid, true, [:receive])
+
+    assert_receive {:trace, ^height_observer_pid, :receive, {:"$gen_cast", {:set_alarm, :ethereum_connection_error}}},
+                   8000
+
+    %{connection_alarm_raised: true} = :sys.get_state(height_observer_pid)
+    :erlang.trace(height_observer_pid, false, [:receive])
   end
 end
