@@ -22,7 +22,7 @@ defmodule API.V1.Router do
   plug(:match)
   plug(:dispatch)
 
-  get "/status.get" do
+  get "/health.check" do
     conn = Health.call(conn, %{})
     send_resp(conn, conn.status, "")
   end
