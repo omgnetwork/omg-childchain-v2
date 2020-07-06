@@ -21,7 +21,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
         |> Validator.validate_inputs()
 
       assert changeset.valid?
-      assert get_field(changeset, :inputs) == [i_1_in_db, i_2_in_db]
+      assert Enum.sort(get_field(changeset, :inputs)) == Enum.sort([i_1_in_db, i_2_in_db])
     end
 
     test "returns an error if inputs don't exist" do
