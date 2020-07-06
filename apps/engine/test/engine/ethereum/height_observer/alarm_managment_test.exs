@@ -2,20 +2,15 @@ defmodule Engine.Ethereum.HeightObserver.AlarmManagmentTest do
   use ExUnit.Case, async: true
   alias Engine.Ethereum.HeightObserver.AlarmManagement
 
-  test "install and remove an an alarm handler", %{test: test_name} do
-    case Application.start(:sasl) do
-      {:error, {:already_started, :sasl}} ->
-        :ok = Application.stop(:sasl)
-        :ok = Application.start(:sasl)
-
-      :ok ->
-        :ok
-    end
-
+  setup do
     on_exit(fn ->
       :ok = Application.stop(:sasl)
     end)
 
+    :ok
+  end
+
+  test "install and remove an an alarm handler", %{test: test_name} do
     consumer = test_name
 
     defmodule test_name do
@@ -23,6 +18,15 @@ defmodule Engine.Ethereum.HeightObserver.AlarmManagmentTest do
         ^consumer = __MODULE__
         {:ok, %{}}
       end
+    end
+
+    case Application.start(:sasl) do
+      {:error, {:already_started, :sasl}} ->
+        :ok = Application.stop(:sasl)
+        :ok = Application.start(:sasl)
+
+      :ok ->
+        :ok
     end
 
     assert Enum.any?(Application.started_applications(), fn {app, _, _} -> :sasl == app end)
