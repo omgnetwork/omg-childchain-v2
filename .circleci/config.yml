@@ -54,7 +54,7 @@ jobs:
       - checkout
       - run: docker-compose up -d postgres
       - restore_cache:
-          key: v3-asdf-install
+          key: v4-asdf-install
       - run:
           name: Install Erlang and Elixir
           command: |
@@ -70,7 +70,7 @@ jobs:
             asdf global erlang 23.0.2
           no_output_timeout: 2400
       - save_cache:
-          key: v3-asdf-install
+          key: v4-asdf-install
           paths:
             - ~/.asdf
             - ~/.asdf-vm
