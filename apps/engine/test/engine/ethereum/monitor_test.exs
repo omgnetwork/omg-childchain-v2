@@ -8,7 +8,14 @@ defmodule Engine.Ethereum.MonitorTest do
   alias Engine.Ethereum.Monitor.AlarmHandler
 
   setup_all do
-    :ok = Application.start(:sasl)
+    case Application.start(:sasl) do
+      {:error, {:already_started, :sasl}} ->
+        :ok = Application.stop(:sasl)
+        :ok = Application.start(:sasl)
+
+      :ok ->
+        :ok
+    end
 
     on_exit(fn ->
       :ok = Application.stop(:sasl)
