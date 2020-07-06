@@ -5,8 +5,8 @@ defmodule Engine.Ethereum.HeightObserver.AlarmManagmentTest do
   test "install and remove an an alarm handler", %{test: test_name} do
     case Application.start(:sasl) do
       {:error, {:already_started, :sasl}} ->
-        Application.stop(:sasl)
-        Application.start(:sasl)
+        :ok = Application.stop(:sasl)
+        :ok = Application.start(:sasl)
 
       :ok ->
         :ok
@@ -16,7 +16,6 @@ defmodule Engine.Ethereum.HeightObserver.AlarmManagmentTest do
       :ok = Application.stop(:sasl)
     end)
 
-    [:alarm_handler] = :gen_event.which_handlers(:alarm_handler)
     consumer = test_name
 
     defmodule test_name do
@@ -26,6 +25,7 @@ defmodule Engine.Ethereum.HeightObserver.AlarmManagmentTest do
       end
     end
 
+    assert Enum.member?(:gen_event.which_handlers(:alarm_handler), :alarm_handler)
     :ok = AlarmManagement.subscribe_to_alarms(:alarm_handler, test_name, consumer)
     assert Enum.member?(:gen_event.which_handlers(:alarm_handler), test_name)
   end

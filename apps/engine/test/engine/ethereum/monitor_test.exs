@@ -8,10 +8,10 @@ defmodule Engine.Ethereum.MonitorTest do
   alias Engine.Ethereum.Monitor.AlarmHandler
 
   setup_all do
-    {:ok, [:sasl]} = Application.ensure_all_started(:sasl)
+    :ok = Application.start(:sasl)
 
     on_exit(fn ->
-      Application.stop(:sasl)
+      :ok = Application.stop(:sasl)
     end)
   end
 
