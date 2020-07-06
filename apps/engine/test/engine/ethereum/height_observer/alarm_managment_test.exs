@@ -4,7 +4,10 @@ defmodule Engine.Ethereum.HeightObserver.AlarmManagmentTest do
 
   setup do
     on_exit(fn ->
-      :ok = Application.stop(:sasl)
+      case Application.stop(:sasl) do
+        {:error, {:not_started, :sasl}} -> :ok
+        :ok -> :ok
+      end
     end)
 
     :ok
