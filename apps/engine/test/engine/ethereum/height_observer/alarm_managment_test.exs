@@ -25,7 +25,7 @@ defmodule Engine.Ethereum.HeightObserver.AlarmManagmentTest do
       end
     end
 
-    assert Enum.any?(Application.started_applications(), fn {app, _} -> :sasl == app end)
+    assert Enum.any?(Application.started_applications(), fn {app, _, _} -> :sasl == app end)
     assert Enum.member?(:gen_event.which_handlers(:alarm_handler), :alarm_handler)
     :ok = AlarmManagement.subscribe_to_alarms(:alarm_handler, test_name, consumer)
     assert Enum.member?(:gen_event.which_handlers(:alarm_handler), test_name)
