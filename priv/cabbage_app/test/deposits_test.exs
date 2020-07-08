@@ -1,23 +1,39 @@
-# Copyright 2019-2020 OmiseGO Pte Ltd
-
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-
-#     http://www.apache.org/licenses/LICENSE-2.0
-
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 defmodule DepositsTests do
   use Cabbage.Feature, async: true, file: "deposits.feature"
 
+  alias CabbageApp.Accounts
+
+  setup do
+    [{alice_account, alice_pkey}, {bob_account, _bob_pkey}] = Accounts.take_accounts(2)
+
+    %{alice_account: alice_account, alice_pkey: alice_pkey, bob_account: bob_account, gas: 0}
+  end
+
   defwhen ~r/^Alice deposits "(?<amount>[^"]+)" ETH to the root chain$/,
           %{amount: amount},
-          state do
-    {:ok, %{}}
+          %{alice_account: alice_account} = state do
+    initial_balance = Itest.Poller.root_chain_get_balance(alice_account)
+
+    {:ok, receipt_hash} =
+      Reorg.execute_in_reorg(fn ->
+        amount
+        |> Currency.to_wei()
+        |> Client.deposit(alice_account, Itest.PlasmaFramework.vault(Currency.ether()))
+      end)
+
+    gas_used = Client.get_gas_used(receipt_hash)
+
+    {_, new_state} =
+      Map.get_and_update!(state, :gas, fn current_gas ->
+        {current_gas, current_gas + gas_used}
+      end)
+
+    state =
+      new_state
+      |> Map.put_new(:alice_initial_balance, initial_balance)
+      |> Map.put(:deposit_transaction_hash, receipt_hash)
+
+    {:ok, state}
   end
 
   defthen ~r/^Alice should have "(?<amount>[^"]+)" ETH on the child chain$/,

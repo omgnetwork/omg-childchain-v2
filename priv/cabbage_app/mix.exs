@@ -19,6 +19,7 @@ defmodule CabbageApp.MixProject do
 
   defp deps do
     [
+      {:eip_55, "~> 0.1"},
       {:ex_plasma, git: "https://github.com/omisego/ex_plasma.git"},
       {:ethereumex, "~> 0.6.0"},
       {:ex_abi, "~> 0.4.0"},
