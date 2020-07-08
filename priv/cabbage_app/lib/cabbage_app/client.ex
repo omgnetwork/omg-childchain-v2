@@ -1,12 +1,16 @@
 defmodule CabbageApp.Client do
   @moduledoc false
 
+  alias CabbageApp.Client.Poller
   alias CabbageApp.Transactions.Deposit
   alias CabbageApp.Transactions.Encoding
+  alias CabbageApp.Transactions.Tokens
 
-  def deposit(amount_in_wei, output_address, vault_address, currency \\ Currency.ether()) do
+  @gas 180_000
+
+  def deposit(amount_in_wei, output_address, vault_address, currency \\ Tokens.ether()) do
     deposit_transaction = deposit_transaction(amount_in_wei, output_address, currency)
-    value = if currency == Currency.ether(), do: amount_in_wei, else: 0
+    value = if currency == Tokens.ether(), do: amount_in_wei, else: 0
     data = ABI.encode("deposit(bytes)", [deposit_transaction])
 
     txmap = %{
@@ -19,7 +23,8 @@ defmodule CabbageApp.Client do
 
     {:ok, receipt_hash} = Ethereumex.HttpClient.eth_send_transaction(txmap)
 
-    wait_on_receipt_confirmed(receipt_hash)
+    Poller.wait_on_receipt_confirmed(receipt_hash)
+
     {:ok, receipt_hash}
   end
 

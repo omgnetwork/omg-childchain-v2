@@ -1,4 +1,4 @@
-defmodule CabbageApp.Transactions.Currency do
+defmodule CabbageApp.Transactions.Tokens do
   @moduledoc false
 
   @ether <<0::160>>
