@@ -1,8 +1,8 @@
-defmodule CabbageTest do
+defmodule CabbageAppTest do
   use ExUnit.Case
   doctest Cabbage
 
   test "greets the world" do
-    assert Cabbage.hello() == :world
+    assert CabbageApp.hello() == :world
   end
 end

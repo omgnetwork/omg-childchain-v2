@@ -1,4 +1,4 @@
-defmodule Cabbage do
+defmodule CabbageApp do
   @moduledoc """
   Documentation for `Cabbage`.
   """
@@ -8,7 +8,7 @@ defmodule Cabbage do
 
   ## Examples
 
-      iex> Cabbage.hello()
+      iex> CabbageApp.hello()
       :world
 
   """
