@@ -14,20 +14,33 @@
 defmodule DepositsTests do
   use Cabbage.Feature, async: true, file: "deposits.feature"
 
-  defwhen ~r/^Alice deposits "(?<amount>[^"]+)" ETH to the root chain$/ do
-    IO.inspect(amount)
+  defwhen ~r/^Alice deposits "(?<amount>[^"]+)" ETH to the root chain$/,
+          %{amount: amount},
+          state do
     {:ok, %{}}
   end
 
-  defthen ~r/^Alice should have "(?<amount>[^"]+)" ETH on the child chain$/ do
+  defthen ~r/^Alice should have "(?<amount>[^"]+)" ETH on the child chain$/,
+          %{amount: amount},
+          state do
     {:ok, %{}}
   end
 
-  defwhen ~r/^Alice sends Bob "(?<amount>[^"]+)" ETH on the child chain$/ do
+  defwhen ~r/^Alice sends Bob "(?<amount>[^"]+)" ETH on the child chain$/,
+          %{amount: amount},
+          state do
     {:ok, %{}}
   end
 
-  defthen ~r/^Bob should have "(?<amount>[^"]+)" ETH on the child chain$/ do
+  defthen ~r/^Alice should have the root chain balance changed by "(?<amount>[^"]+)" ETH$/,
+          %{amount: amount},
+          state do
+    {:ok, state}
+  end
+
+  defthen ~r/^Bob should have "(?<amount>[^"]+)" ETH on the child chain$/,
+          %{amount: amount},
+          state do
     {:ok, %{}}
   end
 end
