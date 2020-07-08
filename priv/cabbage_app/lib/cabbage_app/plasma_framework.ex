@@ -10,7 +10,7 @@ defmodule CabbageApp.PlasmaFramework do
     contracts = parse_contracts()
 
     contracts["CONTRACT_ADDRESS_PLASMA_FRAMEWORK"]
-    |> Eip55.encode()
+    |> EIP55.encode()
     |> elem(1)
   end
 
@@ -63,8 +63,7 @@ defmodule CabbageApp.PlasmaFramework do
   # taken from the plasma-contracts deployment snapshot
   # this parsing occurs in several places around the codebase
   defp parse_contracts() do
-    local_umbrella_path =
-      Path.join([File.cwd!(), "../../../../", "localchain_contract_addresses.env"])
+    local_umbrella_path = Path.join([File.cwd!(), "../../", "localchain_contract_addresses.env"])
 
     contract_addreses_path =
       case File.exists?(local_umbrella_path) do

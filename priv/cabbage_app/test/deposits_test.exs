@@ -2,6 +2,10 @@ defmodule DepositsTests do
   use Cabbage.Feature, async: true, file: "deposits.feature"
 
   alias CabbageApp.Accounts
+  alias CabbageApp.Client
+  alias CabbageApp.Client.Poller
+  alias CabbageApp.Transactions.Tokens
+  alias CabbageApp.PlasmaFramework
 
   setup do
     [{alice_account, alice_pkey}, {bob_account, _bob_pkey}] = Accounts.take_accounts(2)
@@ -12,14 +16,12 @@ defmodule DepositsTests do
   defwhen ~r/^Alice deposits "(?<amount>[^"]+)" ETH to the root chain$/,
           %{amount: amount},
           %{alice_account: alice_account} = state do
-    initial_balance = Itest.Poller.root_chain_get_balance(alice_account)
+    initial_balance = Poller.root_chain_get_balance(alice_account)
 
     {:ok, receipt_hash} =
-      Reorg.execute_in_reorg(fn ->
-        amount
-        |> Currency.to_wei()
-        |> Client.deposit(alice_account, Itest.PlasmaFramework.vault(Currency.ether()))
-      end)
+      amount
+      |> Tokens.to_wei()
+      |> Client.deposit(alice_account, PlasmaFramework.vault(Tokens.ether()))
 
     gas_used = Client.get_gas_used(receipt_hash)
 
