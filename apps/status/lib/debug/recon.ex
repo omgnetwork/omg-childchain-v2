@@ -2,8 +2,8 @@ defmodule Status.Debug.Recon do
   @moduledoc """
   `Recon`, as a module, provides access to the high-level
   functionality contained in the ReconEx application.
-  It has functions in five main categories:
-  1. **State information**
+
+  **State information**
    * Process information is everything that has to do with the
      general state of the node. Functions such as `info/1` and
      `info/3` are wrappers to provide more details than
