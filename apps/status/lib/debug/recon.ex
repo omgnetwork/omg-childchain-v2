@@ -38,8 +38,7 @@ defmodule Status.Debug.Recon do
   Equivalent to `info(<a.b.c>)` where `a`, `b`, and `c` are integers
   part of a pid.
   """
-  @spec info(non_neg_integer, non_neg_integer, non_neg_integer) ::
-          [{info_type, [{info_key, term}]}, ...]
+  @spec info(non_neg_integer, non_neg_integer, non_neg_integer) :: [{info_type, [{info_key, term}]}, ...]
   def info(a, b, c), do: :recon.info(a, b, c)
 
   @doc """
@@ -128,11 +127,7 @@ defmodule Status.Debug.Recon do
   differentiate them. This can take a heavy toll on memory when you
   have many dozens of thousands of processes.
   """
-  @spec proc_window(
-          attribute_name :: atom,
-          non_neg_integer,
-          milliseconds :: pos_integer
-        ) :: [proc_attrs]
+  @spec proc_window(attribute_name :: atom, non_neg_integer, milliseconds :: pos_integer) :: [proc_attrs]
   def proc_window(attr_name, num, time) do
     :recon.proc_window(attr_name, num, time)
   end
@@ -170,8 +165,7 @@ defmodule Status.Debug.Recon do
   - doing memory management
   A scheduler isn't busy when doing anything else.
   """
-  @spec scheduler_usage(interval_ms) ::
-          [{scheduler_id :: pos_integer, usage :: number()}]
+  @spec scheduler_usage(interval_ms) :: [{scheduler_id :: pos_integer, usage :: number()}]
   def scheduler_usage(interval) when is_integer(interval) do
     :recon.scheduler_usage(interval)
   end
@@ -224,7 +218,7 @@ defmodule Status.Debug.Recon do
   Transforms a given term to a port.
   """
   @spec term_to_port(Recon.port_term()) :: port
-  def term_to_port(term) when is_binary(term) do
+  defp term_to_port(term) when is_binary(term) do
     term |> to_char_list() |> :recon_lib.term_to_port()
   end
 end

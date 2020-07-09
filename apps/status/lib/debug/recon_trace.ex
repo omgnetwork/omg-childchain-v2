@@ -221,7 +221,8 @@ defmodule Status.Debug.ReconTrace do
   end
 
   def calls(tspecs, max) when is_list(tspecs) do
-    Enum.map(tspecs, &to_erl_tspec/1)
+    tspecs
+    |> Enum.map(&to_erl_tspec/1)
     |> :recon_trace.calls(max, formatter: &format/1)
   end
 
@@ -321,7 +322,8 @@ defmodule Status.Debug.ReconTrace do
   end
 
   def calls(tspecs, max, opts) when is_list(tspecs) do
-    Enum.map(tspecs, &to_erl_tspec/1)
+    tspecs
+    |> Enum.map(&to_erl_tspec/1)
     |> :recon_trace.calls(max, add_formatter(opts))
   end
 
