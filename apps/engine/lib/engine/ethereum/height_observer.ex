@@ -35,7 +35,17 @@ defmodule Engine.Ethereum.HeightObserver do
           bus: module(),
           opts: keyword()
         }
-
+  @enforce_keys [
+    :check_interval_ms,
+    :stall_threshold_ms,
+    :eth_module,
+    :alarm_module,
+    :synced_at,
+    :connection_alarm_raised,
+    :stall_alarm_raised,
+    :bus,
+    :opts
+  ]
   defstruct check_interval_ms: 10_000,
             stall_threshold_ms: 20_000,
             tref: nil,
@@ -74,6 +84,8 @@ defmodule Engine.Ethereum.HeightObserver do
       synced_at: DateTime.utc_now(),
       eth_module: Keyword.fetch!(init_arg, :eth_module),
       alarm_module: Keyword.fetch!(init_arg, :alarm_module),
+      connection_alarm_raised: false,
+      stall_alarm_raised: false,
       bus: Keyword.get(init_arg, :bus, Bus),
       opts: Keyword.fetch!(init_arg, :opts)
     }

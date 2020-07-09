@@ -4,7 +4,7 @@ jobs:
   build:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.3
+      - image: circleci/elixir:1.10.4
       - image: circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: omisego_dev
@@ -28,7 +28,7 @@ jobs:
   test:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.3
+      - image: circleci/elixir:1.10.4
       - image: circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: omisego_dev
@@ -83,7 +83,7 @@ jobs:
   credo:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.3
+      - image: circleci/elixir:1.10.4
     environment:
       MIX_ENV=test
     steps:
@@ -127,7 +127,7 @@ jobs:
   dialyzer:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.3
+      - image: circleci/elixir:1.10.4
     environment:
       MIX_ENV=dev
     steps:
