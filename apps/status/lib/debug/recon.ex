@@ -1,4 +1,25 @@
 defmodule Status.Debug.Recon do
+  @moduledoc """
+  `Recon`, as a module, provides access to the high-level
+  functionality contained in the ReconEx application.
+  It has functions in five main categories:
+  1. **State information**
+   * Process information is everything that has to do with the
+     general state of the node. Functions such as `info/1` and
+     `info/3` are wrappers to provide more details than
+     `:erlang.process_info/1`, while providing it in a
+     production-safe manner. They have equivalents to
+     `:erlang.process_info/2` in the functions `info/2` and `info/4`,
+     respectively.
+   * `proc_count/2` and `proc_window/3` are to be used when you
+     require information about processes in a larger sense:
+     biggest consumers of given process information (say memory or
+     reductions), either absolutely or over a sliding time window,
+     respectively.
+   * `bin_leak/1` is a function that can be used to try and see if
+       your Erlang node is leaking refc binaries. See the function
+       itself for more details.
+  """
   @type interval_ms :: pos_integer
   @type timeout_ms :: non_neg_integer | :infinity
 
@@ -195,7 +216,7 @@ defmodule Status.Debug.Recon do
   """
   @spec term_to_pid(Recon.pid_term()) :: pid
   def term_to_pid(term) do
-    pre_process_pid_term(term) |> :recon_lib.term_to_pid()
+    term |> pre_process_pid_term() |> :recon_lib.term_to_pid()
   end
 
   defp pre_process_pid_term({_a, _b, _c} = pid_term) do
@@ -212,13 +233,5 @@ defmodule Status.Debug.Recon do
 
   defp pre_process_pid_term(pid_term) do
     pid_term
-  end
-
-  @doc """
-  Transforms a given term to a port.
-  """
-  @spec term_to_port(Recon.port_term()) :: port
-  defp term_to_port(term) when is_binary(term) do
-    term |> to_char_list() |> :recon_lib.term_to_port()
   end
 end

@@ -349,7 +349,7 @@ defmodule Status.Debug.ReconTrace do
   def format(trace_msg) do
     {type, pid, {hour, min, sec}, trace_info} = extract_info(trace_msg)
     header = :io_lib.format('~n~2.2.0w:~2.2.0w:~9.6.0f ~p', [hour, min, sec, pid])
-    body = format_body(type, trace_info) |> String.replace("~", "~~")
+    body = type |> format_body(trace_info) |> String.replace("~", "~~")
     '#{header} #{body}\n'
   end
 
@@ -477,7 +477,7 @@ defmodule Status.Debug.ReconTrace do
   end
 
   defp format_module(module_atom) do
-    to_string(module_atom) |> format_module1
+    module_atom |> to_string() |> format_module1
   end
 
   defp format_module1(<<"Elixir.", module_str::binary>>) do
@@ -493,7 +493,7 @@ defmodule Status.Debug.ReconTrace do
   end
 
   defp format_args(args) when is_list(args) do
-    arg_str = Enum.map(args, &inspect(&1, pretty: true)) |> Enum.join(", ")
+    arg_str = args |> Enum.map(&inspect(&1, pretty: true)) |> Enum.join(", ")
     "(" <> arg_str <> ")"
   end
 

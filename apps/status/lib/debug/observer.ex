@@ -1,5 +1,5 @@
 defmodule Status.Debug.Observer do
-  @doc """
+  @moduledoc """
   https://github.com/zhongwencool/observer_cli
   https://hexdocs.pm/observer_cli/
   """
