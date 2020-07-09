@@ -1,6 +1,4 @@
 defmodule Status.Debug.ReconTrace do
-  require :recon_trace
-
   @moduledoc """
   `ReconTrace` provides functions for tracing events in a safe
   manner for single Erlang virtual machine, currently for function
@@ -163,7 +161,7 @@ defmodule Status.Debug.ReconTrace do
   being tripped, and any errors. The rest will be sent to the other IO
   server (see http://erlang.org/doc/apps/stdlib/io_protocol.html).
   """
-
+  require :recon_trace
   #############
   ### TYPES ###
   #############
