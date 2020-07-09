@@ -1,6 +1,6 @@
 defmodule Engine.Ethereum.MonitorTest do
   @moduledoc false
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   alias __MODULE__.Alarm
   alias __MODULE__.ChildProcess
