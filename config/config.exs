@@ -98,4 +98,7 @@ config :engine, Engine.Feefeed.Rules.Source,
   branch: "master",
   filename: "fee_rules"
 
+config :api,
+  port: 9656
+
 import_config "#{Mix.env()}.exs"

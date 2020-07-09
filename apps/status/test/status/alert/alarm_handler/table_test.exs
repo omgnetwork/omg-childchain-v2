@@ -5,19 +5,17 @@ defmodule Status.Alert.AlarmHandler.TableTest do
   setup do
     # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
     table_name = String.to_atom("test-#{:rand.uniform(1000)}")
-    :ok = Table.table_setup(table_name)
+    :ok = Table.setup(table_name)
+    assert Keyword.get_values(:ets.info(table_name), :named_table)
+    assert Keyword.get_values(:ets.info(table_name), :type) == [:set]
+    assert Keyword.get_values(:ets.info(table_name), :protection) == [:protected]
+    assert Keyword.get_values(:ets.info(table_name), :read_concurrency)
     %{table_name: table_name}
   end
 
   describe "table_setup/1" do
     test "table setup is ok", %{table_name: table_name} do
       ^table_name = Table.table_name(table_name)
-    end
-  end
-
-  describe "table_settings/0" do
-    test "table name", %{table_name: _table_name} do
-      assert [:named_table, :set, :protected, read_concurrency: true] == Table.table_settings()
     end
   end
 

@@ -12,6 +12,7 @@ defmodule API.V1.Router do
 
   alias API.Plugs.ExpectParams
   alias API.Plugs.ExpectParams.InvalidParams
+  alias API.Plugs.Health
   alias API.V1.BlockGet
   alias API.V1.TransactionSubmit
 
@@ -21,8 +22,9 @@ defmodule API.V1.Router do
   plug(:match)
   plug(:dispatch)
 
-  get "/foo" do
-    render_json(conn, 200, %{})
+  get "/health.check" do
+    conn = Health.call(conn, %{})
+    send_resp(conn, conn.status, "")
   end
 
   post "/block.get" do

@@ -2,7 +2,6 @@ defmodule Engine.ReleaseTasks.Contract.External do
   @moduledoc false
 
   alias DBConnection.Backoff
-  alias Engine.Configuration
   alias Engine.Ethereum.RootChain.Abi
   alias Engine.Ethereum.RootChain.Rpc
   alias ExPlasma.Encoding
@@ -64,7 +63,7 @@ defmodule Engine.ReleaseTasks.Contract.External do
         # if ethereum client isn't ready yet, we wait until it comes back
         {timeout, backoff} = Backoff.backoff(Process.get(:backoff))
         %Backoff{} = Process.put(:backoff, backoff)
-        rpc_url = Keyword.get(opts, :url) || Configuration.ethereumex_url()
+        rpc_url = Keyword.get(opts, :url)
 
         _ =
           Logger.error(

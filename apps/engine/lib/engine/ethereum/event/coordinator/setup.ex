@@ -19,9 +19,9 @@ defmodule Engine.Ethereum.Event.Coordinator.Setup do
      ],
      %{
        depositor: [finality_margin: deposit_finality_margin],
-       exiter: [waits_for: :depositor, finality_margin: 0],
-       in_flight_exit: [waits_for: :depositor, finality_margin: 0],
-       piggyback: [waits_for: :in_flight_exit, finality_margin: 0]
+       exiter: [waits_for: :depositor, finality_margin: deposit_finality_margin],
+       in_flight_exit: [waits_for: :depositor, finality_margin: deposit_finality_margin],
+       piggyback: [waits_for: :in_flight_exit, finality_margin: deposit_finality_margin]
      }}
   end
 end

@@ -1,20 +1,23 @@
 defmodule Status.Alert.AlarmHandlerTest do
   use ExUnit.Case, async: true
 
+  alias Status.Alert.Alarm
   alias Status.Alert.AlarmHandler
   alias Status.Alert.AlarmHandler.Table
 
   setup_all do
-    {:ok, apps} = Application.ensure_all_started(:status)
+    :ok = Application.start(:sasl)
 
     on_exit(fn ->
-      apps |> Enum.reverse() |> Enum.each(&Application.stop/1)
+      Application.stop(:sasl)
     end)
+
+    :ok = AlarmHandler.install(Alarm.alarm_types(), AlarmHandler.table_name())
 
     handlers = :gen_event.which_handlers(:alarm_handler)
     Enum.each(handlers -- [AlarmHandler], fn handler -> :gen_event.delete_handler(:alarm_handler, handler, []) end)
     [AlarmHandler] = :gen_event.which_handlers(:alarm_handler)
-    _ = AlarmHandler.install([])
+    _ = AlarmHandler.install([], AlarmHandler.table_name())
     [AlarmHandler] = :gen_event.which_handlers(:alarm_handler)
     :ok
   end
@@ -39,7 +42,7 @@ defmodule Status.Alert.AlarmHandlerTest do
       alarm = {test_name, %{}}
       {:ok, state1} = AlarmHandler.handle_event({:set_alarm, alarm}, state)
       assert 1 == Keyword.fetch!(:ets.tab2list(state.table_name), test_name)
-      {:ok, state2} = AlarmHandler.handle_event({:clear_alarm, test_name}, state1)
+      {:ok, state2} = AlarmHandler.handle_event({:clear_alarm, alarm}, state1)
       assert 0 == Keyword.fetch!(:ets.tab2list(state2.table_name), test_name)
     end
 

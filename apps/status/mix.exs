@@ -25,7 +25,6 @@ defmodule Status.Mixfile do
   def application() do
     [
       mod: {Status.Application, []},
-      start_phases: [{:install_alarm_handler, []}],
       extra_applications: [:logger, :sasl, :os_mon, :statix, :telemetry],
       included_applications: [:vmstats]
     ]
