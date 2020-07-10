@@ -100,6 +100,82 @@ jobs:
           command: |
             cd priv/cabbage
             make start_daemon_services || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
+      - run:
+          name: Print docker states
+          command: |
+            docker image ls
+            docker-compose ps
+      - restore_cache:
+          key: v2-asdf-install
+      - run:
+          name: Install Erlang and Elixir
+          command: |
+            [ -d ~/.asdf-vm ] || git clone https://github.com/asdf-vm/asdf.git ~/.asdf-vm --branch v0.7.4
+            echo 'source ~/.asdf-vm/asdf.sh' >> $BASH_ENV
+            source $BASH_ENV
+            asdf plugin-add erlang || asdf plugin-update erlang
+            asdf plugin-add elixir || asdf plugin-update elixir
+            asdf install erlang 22.3
+            asdf install elixir 1.10.2
+            asdf global elixir 1.10.2
+            asdf global erlang 22.3
+          no_output_timeout: 2400
+      - save_cache:
+          key: v2-asdf-install
+          paths:
+            - ~/.asdf
+            - ~/.asdf-vm
+      - run: make install-hex-rebar
+      - run: sh .circleci/status.sh
+      - restore_cache:
+          key: v2-mix-specs-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+      - run:
+          name: Run specs
+          command: |
+            cd priv/cabbage
+            make install
+            make generate_api_code
+            mix deps.get
+            mix test
+      - run:
+          name: Run load test
+          command: |
+            cd priv/perf
+            make init
+            make test
+      - run:
+          name: (Cabbage) Format generated code and check for warnings
+          command: |
+            cd priv/cabbage
+            # run format ONLY on formatted code so that it cleans up quoted atoms because
+            # we cannot exclude folders to --warnings-as-errors
+            mix format apps/child_chain_api/lib/child_chain_api/model/*.ex
+            mix format apps/watcher_info_api/lib/watcher_info_api/model/*.ex
+            mix format apps/watcher_security_critical_api/lib/watcher_security_critical_api/model/*.ex
+            MIX_ENV=test mix do compile --warnings-as-errors --ignore-module-conflict --force, test --exclude test
+      - run:
+          name: (Perf) Format generated code and check for warnings
+          command: |
+            cd priv/perf
+            # run format ONLY on formatted code so that it cleans up quoted atoms because
+            # we cannot exclude folders to --warnings-as-errors
+            mix format apps/*_api/lib/*_api/model/*.ex
+            make format-code-check-warnings
+      - save_cache:
+          key: v2-mix-specs-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          paths:
+            - "priv/cabbage/deps"
+            - "priv/perf/deps"
+      - run:
+          name: (Cabbage) Credo and formatting
+          command: |
+            cd priv/cabbage
+            mix do credo, format --check-formatted --dry-run
+      - run:
+          name: (Perf) Credo and formatting
+          command: |
+            cd priv/perf
+            mix do credo, format --check-formatted --dry-run
 
   credo:
     working_directory: ~/childchain
@@ -202,6 +278,10 @@ workflows:
             - build
 
       - integration:
+          requires:
+            - build
+
+      - integration_cabbage:
           requires:
             - build
 
