@@ -85,6 +85,7 @@ jobs:
       image: ubuntu-1604:201903-01
     steps:
       - checkout
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run:
           name: "Pull Submodules"
           command: |
