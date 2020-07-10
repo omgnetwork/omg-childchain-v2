@@ -4,7 +4,7 @@ jobs:
   build:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.2
+      - image: circleci/elixir:1.10.4
       - image: circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: omisego_dev
@@ -17,10 +17,10 @@ jobs:
       - checkout
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
-          key: v3-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run: mix do deps.get, compile --warnings-as-errors --force
       - save_cache:
-          key: v3-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
           paths:
             - "deps"
             - "_build"
@@ -28,7 +28,7 @@ jobs:
   test:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.2
+      - image: circleci/elixir:1.10.4
       - image: circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: omisego_dev
@@ -41,7 +41,7 @@ jobs:
       - checkout
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
-          key: v3-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run: mix test
 
   integration:
@@ -54,42 +54,43 @@ jobs:
       - checkout
       - run: docker-compose up -d postgres
       - restore_cache:
-          key: v3-asdf-install
+          key: v5-asdf-install
       - run:
           name: Install Erlang and Elixir
           command: |
-            [ -d ~/.asdf-vm ] || git clone https://github.com/asdf-vm/asdf.git ~/.asdf-vm --branch v0.7.4
+            [ -d ~/.asdf-vm ] || git clone https://github.com/asdf-vm/asdf.git ~/.asdf-vm --branch v0.7.8
             echo 'source ~/.asdf-vm/asdf.sh' >> $BASH_ENV
             source $BASH_ENV
+            asdf update
             asdf plugin-add erlang || asdf plugin-update erlang
             asdf plugin-add elixir || asdf plugin-update elixir
-            asdf install erlang 22.3
-            asdf install elixir 1.10.2
-            asdf global elixir 1.10.2
-            asdf global erlang 22.3
+            asdf install erlang 23.0.2
+            asdf install elixir 1.10.4-otp-23
+            asdf global elixir 1.10.4-otp-23
+            asdf global erlang 23.0.2
+            mix local.rebar --force && mix local.hex --force
           no_output_timeout: 2400
       - save_cache:
-          key: v3-asdf-install
+          key: v5-asdf-install
           paths:
             - ~/.asdf
             - ~/.asdf-vm
       - run: make init-contracts
-      - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
-          key: v3-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run: mix test.integration
 
   credo:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.2
+      - image: circleci/elixir:1.10.4
     environment:
       MIX_ENV=test
     steps:
       - checkout
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
-          key: v3-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run: mix do credo --strict, format --check-formatted --dry-run
       - run:
           name: "Consistent naming of TX_HASH - it's tx_hash not txhash"
@@ -126,14 +127,14 @@ jobs:
   dialyzer:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.2
+      - image: circleci/elixir:1.10.4
     environment:
       MIX_ENV=dev
     steps:
       - checkout
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
-          key: v3-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+          key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - restore_cache:
           key: v1-dialyzer-plts-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run:

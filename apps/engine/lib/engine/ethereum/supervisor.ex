@@ -7,7 +7,7 @@ defmodule Engine.Ethereum.Supervisor do
 
   alias Engine.Configuration
   alias Engine.Ethereum.Height
-  alias Engine.Ethereum.HeightMonitor
+  alias Engine.Ethereum.HeightObserver
   alias Engine.Ethereum.RootChain.Rpc
   alias Status.Alert.Alarm
   require Logger
@@ -23,9 +23,9 @@ defmodule Engine.Ethereum.Supervisor do
 
     children = [
       {Height, []},
-      {HeightMonitor,
+      {HeightObserver,
        [
-         name: HeightMonitor,
+         name: HeightObserver,
          check_interval_ms: ethereum_events_check_interval_ms,
          stall_threshold_ms: ethereum_stalled_sync_threshold_ms,
          eth_module: Rpc,

@@ -1,11 +1,26 @@
 defmodule Engine.Ethereum.MonitorTest do
   @moduledoc false
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   alias __MODULE__.Alarm
   alias __MODULE__.ChildProcess
   alias Engine.Ethereum.Monitor
   alias Engine.Ethereum.Monitor.AlarmHandler
+
+  setup_all do
+    case Application.start(:sasl) do
+      {:error, {:already_started, :sasl}} ->
+        :ok = Application.stop(:sasl)
+        :ok = Application.start(:sasl)
+
+      :ok ->
+        :ok
+    end
+
+    on_exit(fn ->
+      :ok = Application.stop(:sasl)
+    end)
+  end
 
   test "that init/1 creates state and starts the child " do
     child_spec = ChildProcess.prepare_child(:test_init_1)

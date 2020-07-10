@@ -74,3 +74,6 @@ config :engine, Engine.Feefeed.Rules.Source,
   repo: System.get_env("GITHUB_REPO"),
   branch: System.get_env("GITHUB_BRANCH") || "master",
   filename: System.get_env("GITHUB_FILENAME") || "fee_rules"
+
+config :api,
+  port: String.to_integer(System.get_env("PORT") || "9656")

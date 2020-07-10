@@ -35,7 +35,7 @@ services:
     networks: 
       - default
   geth:
-    image: ethereum/client-go:v1.9.13
+    image: ethereum/client-go:v1.9.15
     entrypoint: /bin/sh -c ". data/command"
     environment:
       RPC_PORT: 8545

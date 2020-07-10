@@ -3,25 +3,23 @@ defmodule API.Plugs.HealthTest do
   use Plug.Test
 
   alias API.Plugs.Health
-  alias Status.Alert.Alarm
   alias Status.Alert.Alarm.Types
-
-  @moduletag :flakey
+  alias Status.Alert.AlarmHandler
+  alias Status.Alert.AlarmHandler.Table
 
   setup do
-    _ = Application.ensure_all_started(:status)
-    Alarm.clear_all()
+    Table.setup(AlarmHandler.table_name())
   end
 
   test "rejects requests if an alarm is raised" do
-    Alarm.set(Types.ethereum_connection_error(__MODULE__))
+    alarm = Types.ethereum_connection_error(__MODULE__)
+    table_name = AlarmHandler.table_name()
+    AlarmHandler.handle_event({:set_alarm, alarm}, %{alarms: [], table_name: table_name})
     resp = Health.call(conn(:get, "/"), %{})
-
     assert resp.status == 503
   end
 
   test "accepts requests if no alarm is raised" do
-    Alarm.clear_all()
     _ = Health.call(conn(:get, "/"), %{})
     assert :ok = call_plug(1000)
   end

@@ -4,14 +4,14 @@ defmodule API.Application do
   @moduledoc false
 
   use Application
+  alias API.Configuration
   require Logger
 
   def start(_type, _args) do
-    children = [{Plug.Cowboy, scheme: :http, plug: API.Router, options: [port: port()]}]
+    port = Configuration.port()
+    children = [{Plug.Cowboy, scheme: :http, plug: API.Router, options: [port: port]}]
     _ = Logger.info("Starting #{__MODULE__}")
     opts = [strategy: :one_for_one, name: API.Supervisor]
     Supervisor.start_link(children, opts)
   end
-
-  defp port(), do: String.to_integer(System.get_env("PORT") || "4000")
 end

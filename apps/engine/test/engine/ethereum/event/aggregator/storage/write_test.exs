@@ -43,12 +43,13 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage.WriteTest do
       event2 = %Event{eth_height: 2, event_signature: event_signature2}
       Write.logs([event1, event2], 1, 2, struct(state, event_signatures: [event_signature1, event_signature2]))
 
-      assert :ets.tab2list(state.ets) == [
-               {1, event_signature1, [event1]},
-               {1, event_signature2, []},
-               {2, event_signature2, [event2]},
-               {2, event_signature1, []}
-             ]
+      assert Enum.sort(:ets.tab2list(state.ets)) ==
+               Enum.sort([
+                 {1, event_signature1, [event1]},
+                 {1, event_signature2, []},
+                 {2, event_signature2, [event2]},
+                 {2, event_signature1, []}
+               ])
     end
 
     test "data gets persisted for every height we visited (when there are more events on the same height)", %{
@@ -61,12 +62,13 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage.WriteTest do
       event2 = %Event{eth_height: 2, event_signature: event_signature2}
       Write.logs([event1, event11, event2], 1, 2, struct(state, event_signatures: [event_signature1, event_signature2]))
 
-      assert :ets.tab2list(state.ets) == [
-               {1, event_signature1, [event1, event11]},
-               {1, event_signature2, []},
-               {2, event_signature2, [event2]},
-               {2, event_signature1, []}
-             ]
+      assert Enum.sort(:ets.tab2list(state.ets)) ==
+               Enum.sort([
+                 {1, event_signature1, [event1, event11]},
+                 {1, event_signature2, []},
+                 {2, event_signature2, [event2]},
+                 {2, event_signature1, []}
+               ])
     end
   end
 end

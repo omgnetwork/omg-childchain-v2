@@ -1,10 +1,10 @@
-defmodule Engine.Ethereum.HeightMonitor.AlarmHandler do
+defmodule Engine.Ethereum.HeightObserver.AlarmHandler do
   @moduledoc """
   Listens for :ethereum_connection_error and :ethereum_stalled_sync alarms and reflect
   the alarm's state back to the monitor.
   """
+  alias Engine.Ethereum.HeightObserver.AlarmManagement
   require Logger
-  @reporter Engine.Ethereum.HeightMonitor
 
   # The alarm reporter and monitor happen to be the same module here because we are just
   # reflecting the alarm's state back to the reporter.
@@ -18,25 +18,25 @@ defmodule Engine.Ethereum.HeightMonitor.AlarmHandler do
 
   def handle_call(_request, state), do: {:ok, :ok, state}
 
-  def handle_event({:set_alarm, {:ethereum_connection_error, %{reporter: @reporter}}}, state) do
+  def handle_event({:set_alarm, {:ethereum_connection_error, %{reporter: AlarmManagement}}}, state) do
     _ = Logger.warn(":ethereum_connection_error alarm raised.")
     :ok = GenServer.cast(state.consumer, {:set_alarm, :ethereum_connection_error})
     {:ok, state}
   end
 
-  def handle_event({:clear_alarm, {:ethereum_connection_error, %{reporter: @reporter}}}, state) do
+  def handle_event({:clear_alarm, {:ethereum_connection_error, %{reporter: AlarmManagement}}}, state) do
     _ = Logger.warn(":ethereum_connection_error alarm cleared.")
     :ok = GenServer.cast(state.consumer, {:clear_alarm, :ethereum_connection_error})
     {:ok, state}
   end
 
-  def handle_event({:set_alarm, {:ethereum_stalled_sync, %{reporter: @reporter}}}, state) do
+  def handle_event({:set_alarm, {:ethereum_stalled_sync, %{reporter: AlarmManagement}}}, state) do
     _ = Logger.warn(":ethereum_stalled_sync alarm raised.")
     :ok = GenServer.cast(state.consumer, {:set_alarm, :ethereum_stalled_sync})
     {:ok, state}
   end
 
-  def handle_event({:clear_alarm, {:ethereum_stalled_sync, %{reporter: @reporter}}}, state) do
+  def handle_event({:clear_alarm, {:ethereum_stalled_sync, %{reporter: AlarmManagement}}}, state) do
     _ = Logger.warn(":ethereum_stalled_sync alarm cleared.")
     :ok = GenServer.cast(state.consumer, {:clear_alarm, :ethereum_stalled_sync})
     {:ok, state}

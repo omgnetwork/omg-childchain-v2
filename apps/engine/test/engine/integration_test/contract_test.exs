@@ -9,7 +9,6 @@ defmodule ContractTest do
 
   setup_all do
     {:ok, _briefly} = Application.ensure_all_started(:briefly)
-    {:ok, _ethereumex} = Application.ensure_all_started(:ethereumex)
     port = Enum.random(35_000..40_000)
     {:ok, {_geth_pid, _container_id}} = Geth.start(port)
     %{port: port}

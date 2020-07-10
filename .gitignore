@@ -19,9 +19,6 @@ erl_crash.dump
 # Also ignore archive artifacts (built via "mix archive.build").
 *.ez
 
-#asdf elixir and erlang version spec
-.tool-versions
-
 # The directory Mix will write compiled artifacts to when in docker.
 /_build_docker/
 
