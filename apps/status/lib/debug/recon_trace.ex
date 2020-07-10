@@ -170,7 +170,7 @@ defmodule Status.Debug.ReconTrace do
   @type shellfun :: (term -> term)
   @type formatterfun :: (tuple -> iodata)
   @type millisecs :: non_neg_integer
-  @type pidspec :: :all | :existing | :new | Recon.pid_term()
+  @type pidspec :: :all | :existing | :new | Status.Debug.Recon.pid_term()
   @type max_traces :: non_neg_integer
   @type max_rate :: {max_traces, millisecs}
 
@@ -343,7 +343,7 @@ defmodule Status.Debug.ReconTrace do
   This can be overridden by passing
   `{:formatter, fn(term) -> io_data() end}` as an option to `calls/3`.
   """
-  @spec format(trace_msg :: tuple) :: iodata
+  @spec format(trace_msg :: tuple) :: charlist()
   def format(trace_msg) do
     {type, pid, {hour, min, sec}, trace_info} = extract_info(trace_msg)
     header = :io_lib.format('~n~2.2.0w:~2.2.0w:~9.6.0f ~p', [hour, min, sec, pid])

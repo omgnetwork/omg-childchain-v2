@@ -66,7 +66,7 @@ defmodule Status.Debug.Recon do
   Equivalent to `info(<a.b.c>, key)` where `a`, `b`, and `c` are
   integers part of a pid.
   """
-  @spec info(non_neg_integer, non_neg_integer, non_neg_integer, key :: info_type | [atom] | atom) :: term
+  @spec info(non_neg_integer, non_neg_integer, non_neg_integer, [atom] | atom) :: atom | Keyword.t() | {atom(), any()}
   def info(a, b, c, key), do: :recon.info(a, b, c, key)
 
   @doc """
@@ -105,9 +105,6 @@ defmodule Status.Debug.Recon do
   A fake attribute `:binary_memory` is also available to return the
   amount of memory used by refc binaries for a process.
   """
-  @spec info(pid_term, info_type) :: {info_type, [{info_key, term}]}
-  @spec info(pid_term, [atom]) :: [{atom, term}]
-  @spec info(pid_term, atom) :: {atom, term}
   def info(pid_term, info_type_or_keys) do
     pid_term |> term_to_pid() |> :recon.info(info_type_or_keys)
   end
@@ -214,7 +211,7 @@ defmodule Status.Debug.Recon do
   @doc """
   Transforms a given term to a pid.
   """
-  @spec term_to_pid(Recon.pid_term()) :: pid
+  @spec term_to_pid(pid_term()) :: pid
   def term_to_pid(term) do
     term |> pre_process_pid_term() |> :recon_lib.term_to_pid()
   end
