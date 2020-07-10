@@ -105,6 +105,7 @@ config :ex_plasma,
     verifying_contract: System.get_env("CONTRACT_ADDRESS_PLASMA_FRAMEWORK"),
     version: "1"
   }
+
 config :api,
   port: 9656
 
