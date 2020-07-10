@@ -6,6 +6,7 @@ defmodule Engine.Ethereum.RootChain.Event do
   alias Engine.Ethereum.RootChain.AbiEventSelector
   alias Engine.Ethereum.RootChain.Rpc
   alias ExPlasma.Encoding
+  alias ExPlasma.Crypto
   defstruct [:event_signature, :data, :call_data, :eth_height, :root_chain_tx_hash, :log_index]
 
   @type t() :: %__MODULE__{
@@ -19,7 +20,7 @@ defmodule Engine.Ethereum.RootChain.Event do
 
   def event_topic_for_signature(signature) do
     signature
-    |> Encoding.keccak_hash()
+    |> Crypto.keccak_hash()
     |> Encoding.to_hex()
   end
 

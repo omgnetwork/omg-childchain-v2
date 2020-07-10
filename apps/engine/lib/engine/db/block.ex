@@ -58,7 +58,7 @@ defmodule Engine.DB.Block do
 
   defp generate_block_hash(repo, %{"new-block" => block}) do
     txns = Engine.Repo.preload(block, :transactions).transactions
-    hash = txns |> Enum.map(& &1.tx_bytes) |> ExPlasma.Encoding.merkle_root_hash()
+    hash = txns |> Enum.map(& &1.tx_bytes) |> ExPlasma.Merkle.root_hash()
     changeset = Ecto.Changeset.change(block, hash: hash)
     repo.update(changeset)
   end

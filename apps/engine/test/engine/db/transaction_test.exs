@@ -5,12 +5,13 @@ defmodule Engine.DB.TransactionTest do
   alias Engine.DB.Output
   alias Engine.DB.Transaction
   alias Engine.Support.TestEntity
-  alias ExPlasma.Builder
+  alias ExPlasma.PaymentV1Builder
+  alias ExPlasma.Transaction.Signed
 
   describe "decode/2" do
     test "decodes tx_bytes and validates for a deposit" do
       %{tx_bytes: tx_bytes} = build(:deposit_transaction, amount: 0)
-      changeset = Transaction.decode(tx_bytes, kind: Transaction.kind_deposit())
+      {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_deposit())
 
       refute changeset.valid?
       assert assert "can not be zero" in errors_on(changeset).amount
@@ -18,13 +19,13 @@ defmodule Engine.DB.TransactionTest do
 
     test "decodes tx_bytes and validates for a transfer" do
       tx_bytes =
-        [tx_type: 1]
-        |> Builder.new()
-        |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 0)
-        |> ExPlasma.encode()
+        PaymentV1Builder.new()
+        |> PaymentV1Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
+        |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 0)
+        |> PaymentV1Builder.sign!(keys: [])
+        |> Signed.encode()
 
-      changeset = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
+      assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
 
       refute changeset.valid?
       assert assert "can not be zero" in errors_on(changeset).amount
@@ -33,17 +34,21 @@ defmodule Engine.DB.TransactionTest do
 
     test "casts and validate required fields" do
       tx_bytes =
-        [tx_type: 1]
-        |> Builder.new()
-        |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
-        |> ExPlasma.encode()
+        PaymentV1Builder.new()
+        |> PaymentV1Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
+        |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+        |> PaymentV1Builder.sign!(keys: [])
+        |> Signed.encode()
 
-      changeset = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
+      assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
+
+      signed_tx = get_field(changeset, :signed_tx)
 
       assert get_field(changeset, :tx_type) == 1
       assert get_field(changeset, :kind) == Transaction.kind_transfer()
       assert get_field(changeset, :tx_bytes) == tx_bytes
+      assert get_field(changeset, :tx_hash) == ExPlasma.Transaction.hash(signed_tx)
+      assert get_field(changeset, :witnesses) == []
     end
 
     test "builds the outputs" do
@@ -54,14 +59,14 @@ defmodule Engine.DB.TransactionTest do
       o_2_data = [token: <<0::160>>, amount: 10, output_guard: <<1::160>>]
 
       tx_bytes =
-        [tx_type: 1]
-        |> Builder.new()
-        |> Builder.add_input(blknum: input_blknum, txindex: 0, oindex: 0)
-        |> Builder.add_output(o_1_data)
-        |> Builder.add_output(o_2_data)
-        |> ExPlasma.encode()
+        PaymentV1Builder.new()
+        |> PaymentV1Builder.add_input(blknum: input_blknum, txindex: 0, oindex: 0)
+        |> PaymentV1Builder.add_output(o_1_data)
+        |> PaymentV1Builder.add_output(o_2_data)
+        |> PaymentV1Builder.sign!(keys: [])
+        |> Signed.encode()
 
-      changeset = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
+      assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
 
       assert [%Output{output_data: o_1_data_enc}, %Output{output_data: o_2_data_enc}] = get_field(changeset, :outputs)
       assert ExPlasma.Output.decode(o_1_data_enc).output_data == Enum.into(o_1_data, %{})
@@ -73,53 +78,37 @@ defmodule Engine.DB.TransactionTest do
       input = insert(:output, %{blknum: input_blknum, state: "confirmed"})
 
       tx_bytes =
-        [tx_type: 1]
-        |> Builder.new()
-        |> Builder.add_input(blknum: input_blknum, txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 10)
-        |> ExPlasma.encode()
+        PaymentV1Builder.new()
+        |> PaymentV1Builder.add_input(blknum: input_blknum, txindex: 0, oindex: 0)
+        |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 10)
+        |> PaymentV1Builder.sign!(keys: [])
+        |> Signed.encode()
 
-      changeset = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
+      assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
 
       assert get_field(changeset, :inputs) == [input]
     end
 
     test "is valid when inputs are signed correctly" do
-      %{priv_encoded: priv_encoded, addr: addr} = TestEntity.alice()
+      %{priv_encoded: priv_encoded_1, addr: addr_1} = TestEntity.alice()
+      %{priv_encoded: priv_encoded_2, addr: addr_2} = TestEntity.bob()
 
-      data = %{output_guard: addr, token: <<0::160>>, amount: 10}
-      insert(:output, %{output_data: data, blknum: 1, state: "confirmed"})
-      insert(:output, %{output_data: data, blknum: 2, state: "confirmed"})
+      data_1 = %{output_guard: addr_1, token: <<0::160>>, amount: 10}
+      data_2 = %{output_guard: addr_2, token: <<0::160>>, amount: 10}
+      insert(:output, %{output_data: data_1, blknum: 1, state: "confirmed"})
+      insert(:output, %{output_data: data_2, blknum: 2, state: "confirmed"})
 
       tx_bytes =
-        [tx_type: 1]
-        |> Builder.new()
-        |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
-        |> Builder.add_input(blknum: 2, txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 20)
-        |> Builder.sign([priv_encoded, priv_encoded])
-        |> ExPlasma.encode()
+        PaymentV1Builder.new()
+        |> PaymentV1Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
+        |> PaymentV1Builder.add_input(blknum: 2, txindex: 0, oindex: 0)
+        |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 20)
+        |> PaymentV1Builder.sign!(keys: [priv_encoded_1, priv_encoded_2])
+        |> Signed.encode()
 
-      changeset = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
+      assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
 
       assert changeset.valid?
-    end
-
-    test "builds the tx_hash" do
-      input_blknum = 1
-      insert(:output, %{blknum: input_blknum, state: "confirmed"})
-
-      tx_bytes =
-        [tx_type: 1]
-        |> Builder.new()
-        |> Builder.add_input(blknum: input_blknum, txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 10)
-        |> ExPlasma.encode()
-
-      changeset = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
-      tx_hash = ExPlasma.hash(tx_bytes)
-
-      assert get_field(changeset, :tx_hash) == tx_hash
     end
   end
 

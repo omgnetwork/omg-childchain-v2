@@ -15,8 +15,9 @@ defmodule Engine.DB.Factory do
   alias Engine.DB.Transaction
   alias Engine.Feefeed.Rules.Parser
   alias Engine.Support.TestEntity
-  alias ExPlasma.Builder
   alias ExPlasma.Output.Position
+  alias ExPlasma.PaymentV1Builder
+  alias ExPlasma.Transaction.Signed
 
   def input_piggyback_event_factory(attr \\ %{}) do
     tx_hash = Map.get(attr, :tx_hash, <<1::256>>)
@@ -108,10 +109,10 @@ defmodule Engine.DB.Factory do
       |> Position.to_map()
 
     tx_bytes =
-      [tx_type: 1]
-      |> Builder.new()
-      |> Builder.add_output(Enum.to_list(data))
-      |> ExPlasma.encode()
+      PaymentV1Builder.new()
+      |> PaymentV1Builder.add_output(Enum.to_list(data))
+      |> PaymentV1Builder.sign!(keys: [])
+      |> Signed.encode()
 
     output = build(:output, output_id: id, output_data: data, output_type: 1, state: "confirmed")
 
@@ -141,14 +142,15 @@ defmodule Engine.DB.Factory do
     default_blknum = sequence(:blknum, fn seq -> (seq + 1) * 1000 end)
     insert(:output, %{output_data: data, blknum: Map.get(attr, :blknum, default_blknum), state: "confirmed"})
 
-    [tx_type: 1]
-    |> Builder.new()
-    |> Builder.add_input(blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0)
-    |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
-    |> Builder.sign([priv_encoded])
-    |> ExPlasma.encode()
-    |> Transaction.decode(kind: Transaction.kind_transfer())
-    |> apply_changes()
+    tx_bytes =
+      PaymentV1Builder.new()
+      |> PaymentV1Builder.add_input(blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0)
+      |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+      |> PaymentV1Builder.sign!(keys: [priv_encoded])
+      |> Signed.encode()
+
+    {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
+    apply_changes(changeset)
   end
 
   # The "lowest" unit in the hierarchy. This is made to form into transactions

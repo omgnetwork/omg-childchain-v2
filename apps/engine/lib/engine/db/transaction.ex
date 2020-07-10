@@ -19,6 +19,7 @@ defmodule Engine.DB.Transaction do
   alias Engine.DB.Output
   alias Engine.DB.Transaction.Validator
   alias Engine.Repo
+  alias ExPlasma.Transaction.Recovered
 
   @type tx_bytes :: binary
 
@@ -38,7 +39,7 @@ defmodule Engine.DB.Transaction do
     # Avoid decoding/parsing signatures mutiple times along validation process
     field(:witnesses, {:array, :string}, virtual: true)
     # Avoid calling ExPlasma.decode(tx_bytes) multiple times along the validation process
-    field(:raw_tx, :map, virtual: true)
+    field(:signed_tx, :map, virtual: true)
 
     belongs_to(:block, Block)
     has_many(:inputs, Output, foreign_key: :spending_transaction_id)
@@ -63,47 +64,49 @@ defmodule Engine.DB.Transaction do
   """
   @spec decode(tx_bytes, kind: atom()) :: Ecto.Changeset.t()
   def decode(tx_bytes, kind: kind) do
-    params =
-      tx_bytes
-      |> tx_bytes_to_map()
-      # TODO: Handle fees, load from DB? Buffer period, format?
-      |> Map.put(:fees, :no_fees_required)
-      |> Map.put(:kind, kind)
+    with {:ok, params} <- tx_bytes_to_map(tx_bytes) do
+      params =
+        params
+        # TODO: Handle fees, load from DB? Buffer period, format?
+        |> Map.put(:fees, :no_fees_required)
+        |> Map.put(:kind, kind)
 
-    changeset(%__MODULE__{}, params)
+      {:ok, changeset(%__MODULE__{}, params)}
+    end
   end
 
-  def changeset(struct, %ExPlasma.Transaction{} = txn) do
-    changeset(struct, Map.from_struct(txn))
-  end
+  # def changeset(struct, %ExPlasma.Transaction{} = txn) do
+  #   changeset(struct, Map.from_struct(txn))
+  # end
 
   def changeset(struct, params) do
     struct
     |> Repo.preload(:inputs)
     |> Repo.preload(:outputs)
-    |> cast(params, [:raw_tx, :tx_bytes, :tx_type, :kind])
-    |> validate_required([:raw_tx, :tx_bytes, :tx_type, :kind])
+    |> cast(params, [:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type, :kind])
+    |> validate_required([:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type, :kind])
     |> cast_assoc(:inputs)
     |> cast_assoc(:outputs)
-    |> build_tx_hash()
-    |> Validator.validate_signatures()
+    # |> Validator.validate_signatures()
     |> Validator.validate_protocol()
     |> Validator.validate_inputs()
     |> Validator.validate_statefully(params)
   end
 
-  defp build_tx_hash(changeset) do
-    tx_hash = changeset |> get_field(:tx_bytes) |> ExPlasma.hash()
-    put_change(changeset, :tx_hash, tx_hash)
-  end
-
   defp tx_bytes_to_map(tx_bytes) do
-    %{inputs: inputs, outputs: outputs, tx_type: tx_type} = raw_tx = ExPlasma.decode(tx_bytes)
+    with {:ok, %Recovered{} = recovered} <- Recovered.decode(tx_bytes) do
+      inputs = ExPlasma.Transaction.get_inputs(recovered)
+      outputs = ExPlasma.Transaction.get_outputs(recovered)
+      tx_type = ExPlasma.Transaction.get_tx_type(recovered)
 
-    %{raw_tx: raw_tx}
-    |> Map.put(:inputs, Enum.map(inputs, &Map.from_struct/1))
-    |> Map.put(:outputs, Enum.map(outputs, &Map.from_struct/1))
-    |> Map.put(:tx_type, tx_type)
-    |> Map.put(:tx_bytes, tx_bytes)
+      {:ok,
+       %{signed_tx: recovered.signed_tx}
+       |> Map.put(:inputs, Enum.map(inputs, &Map.from_struct/1))
+       |> Map.put(:outputs, Enum.map(outputs, &Map.from_struct/1))
+       |> Map.put(:tx_hash, recovered.tx_hash)
+       |> Map.put(:witnesses, recovered.witnesses)
+       |> Map.put(:tx_type, tx_type)
+       |> Map.put(:tx_bytes, tx_bytes)}
+    end
   end
 end

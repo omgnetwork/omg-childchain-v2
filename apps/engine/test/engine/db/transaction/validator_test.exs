@@ -4,7 +4,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
   alias Engine.DB.Transaction
   alias Engine.DB.Transaction.Validator
   alias Engine.Repo
-  alias ExPlasma.Builder
+  alias ExPlasma.PaymentV1Builder
   alias ExPlasma.Output
 
   describe "validate_inputs/1" do
@@ -81,13 +81,13 @@ defmodule Engine.DB.Transaction.ValidatorTest do
 
   describe "validate_protocol/1" do
     test "returns the changeset unchanged when valid" do
-      tx =
-        [tx_type: 1]
-        |> Builder.new()
-        |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+      signed_tx =
+        PaymentV1Builder.new()
+        |> PaymentV1Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
+        |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+        |> PaymentV1Builder.sign!(keys: [])
 
-      changeset = change(%Transaction{}, %{tx_bytes: ExPlasma.encode(tx), raw_tx: tx})
+      changeset = change(%Transaction{}, %{tx_bytes: ExPlasma.encode(signed_tx), signed_tx: signed_tx})
       validated_changeset = Validator.validate_protocol(changeset)
 
       assert validated_changeset.valid?
@@ -95,15 +95,15 @@ defmodule Engine.DB.Transaction.ValidatorTest do
     end
 
     test "returns the changeset with an error if when invalid" do
-      tx =
-        [tx_type: 1]
-        |> Builder.new()
-        |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 0)
+      signed_tx =
+        PaymentV1Builder.new()
+        |> PaymentV1Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
+        |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 0)
+        |> PaymentV1Builder.sign!(keys: [])
 
       validated_changeset =
         %Transaction{}
-        |> change(%{tx_bytes: ExPlasma.encode(tx), raw_tx: tx})
+        |> change(%{tx_bytes: ExPlasma.encode(signed_tx), signed_tx: signed_tx})
         |> Validator.validate_protocol()
 
       refute validated_changeset.valid?
