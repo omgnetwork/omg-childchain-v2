@@ -25,7 +25,6 @@ defmodule Engine.Callbacks.Deposit do
   alias Engine.DB.Block
   alias Engine.DB.Transaction
   alias ExPlasma.PaymentV1Builder
-  alias ExPlasma.Transaction.Signed
 
   @doc """
   Inserts deposit events, recreating the transaction and forming the associated block,
@@ -56,7 +55,7 @@ defmodule Engine.Callbacks.Deposit do
         amount: event.data["amount"]
       )
       |> PaymentV1Builder.sign!(keys: [])
-      |> Signed.encode()
+      |> ExPlasma.encode()
 
     {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_deposit())
 

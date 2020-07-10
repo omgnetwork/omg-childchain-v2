@@ -55,20 +55,6 @@ defmodule Engine.DB.Transaction.Validator do
   end
 
   @doc """
-  Attempts to recover witnesses (addresses) from the given signatures.
-  Maps the list of witnesses to the `:witnesses` key in the changeset if valid,
-  or adds an error to changeset otherwise.
-  """
-
-  # @spec validate_signatures(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  # def validate_signatures(changeset) do
-  #   changeset
-  #   |> get_field(:raw_tx)
-  #   |> ExPlasma.Transaction.recover_signatures()
-  #   |> process_signatures_validation_results(changeset)
-  # end
-
-  @doc """
   Validate the transaction bytes with the generic transaction format protocol.
   See ExPlasma.Transaction.validate/1.
 
@@ -104,14 +90,6 @@ defmodule Engine.DB.Transaction.Validator do
   end
 
   # Private
-  defp process_signatures_validation_results({:ok, addresses}, changeset) do
-    put_change(changeset, :witnesses, addresses)
-  end
-
-  defp process_signatures_validation_results({:error, error}, changeset) do
-    add_error(changeset, :witnesses, "invalid signature: #{inspect(error)}")
-  end
-
   defp get_input_positions(changeset) do
     changeset |> get_field(:inputs) |> Enum.map(&Map.get(&1, :position))
   end

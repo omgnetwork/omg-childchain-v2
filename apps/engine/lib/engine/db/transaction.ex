@@ -12,7 +12,7 @@ defmodule Engine.DB.Transaction do
   """
 
   use Ecto.Schema
-  import Ecto.Changeset, only: [put_change: 3, cast: 3, cast_assoc: 2, get_field: 2, validate_required: 2]
+  import Ecto.Changeset, only: [cast: 3, cast_assoc: 2, validate_required: 2]
   import Ecto.Query, only: [from: 2]
 
   alias Engine.DB.Block

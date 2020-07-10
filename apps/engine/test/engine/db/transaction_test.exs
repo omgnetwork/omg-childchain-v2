@@ -6,7 +6,6 @@ defmodule Engine.DB.TransactionTest do
   alias Engine.DB.Transaction
   alias Engine.Support.TestEntity
   alias ExPlasma.PaymentV1Builder
-  alias ExPlasma.Transaction.Signed
 
   describe "decode/2" do
     test "decodes tx_bytes and validates for a deposit" do
@@ -23,7 +22,7 @@ defmodule Engine.DB.TransactionTest do
         |> PaymentV1Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 0)
         |> PaymentV1Builder.sign!(keys: [])
-        |> Signed.encode()
+        |> ExPlasma.encode()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
 
@@ -38,7 +37,7 @@ defmodule Engine.DB.TransactionTest do
         |> PaymentV1Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
         |> PaymentV1Builder.sign!(keys: [])
-        |> Signed.encode()
+        |> ExPlasma.encode()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
 
@@ -64,7 +63,7 @@ defmodule Engine.DB.TransactionTest do
         |> PaymentV1Builder.add_output(o_1_data)
         |> PaymentV1Builder.add_output(o_2_data)
         |> PaymentV1Builder.sign!(keys: [])
-        |> Signed.encode()
+        |> ExPlasma.encode()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
 
@@ -82,7 +81,7 @@ defmodule Engine.DB.TransactionTest do
         |> PaymentV1Builder.add_input(blknum: input_blknum, txindex: 0, oindex: 0)
         |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 10)
         |> PaymentV1Builder.sign!(keys: [])
-        |> Signed.encode()
+        |> ExPlasma.encode()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
 
@@ -104,7 +103,7 @@ defmodule Engine.DB.TransactionTest do
         |> PaymentV1Builder.add_input(blknum: 2, txindex: 0, oindex: 0)
         |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 20)
         |> PaymentV1Builder.sign!(keys: [priv_encoded_1, priv_encoded_2])
-        |> Signed.encode()
+        |> ExPlasma.encode()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
 
