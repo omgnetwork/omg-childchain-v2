@@ -28,6 +28,8 @@ deps-childchain:
 
 .PHONY: test test-console test-focus test-console-focus
 
+init_test: init-contracts
+
 test:
 	$(ENV_TEST) mix test
 
@@ -150,4 +152,4 @@ clean-contracts:
 
 get-alarm:
 	echo "Childchain alarms" ; \
-	curl -s -X GET http://localhost:9656/alarm.get 
+	curl -s -X GET http://localhost:9656/alarm.get

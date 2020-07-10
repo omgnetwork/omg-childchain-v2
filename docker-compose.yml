@@ -17,7 +17,7 @@ services:
       POSTGRES_USER: omisego_dev
       POSTGRES_PASSWORD: omisego_dev
       POSTGRES_DB: engine_repo
-    networks: 
+    networks:
       - default
   childchain:
     image: omisego/childchain:latest
@@ -32,7 +32,7 @@ services:
       ETHEREUM_EVENTS_CHECK_INTERVAL_MS: 800
     expose:
       - "9656"
-    networks: 
+    networks:
       - default
   geth:
     image: ethereum/client-go:v1.9.15
@@ -49,9 +49,92 @@ services:
       - ./data:/data
       - ./docker/geth/command:/data/command
       - ./docker/geth/geth-blank-password:/data/geth-blank-password
-    networks: 
+    networks:
       - default
+
+  watcher:
+    image: omisego/watcher:latest
+    command: "full_local"
+    container_name: watcher
+    env_file:
+      - ./localchain_contract_addresses.env
+    environment:
+      - ETHEREUM_NETWORK=LOCALCHAIN
+      - ETHEREUM_RPC_URL=http://geth:8545
+      - CHILD_CHAIN_URL=http://childchain:9656
+      - PORT=7434
+      - APP_ENV=local_docker_development
+      - DD_HOSTNAME=datadog
+      - DD_DISABLED=true
+      - DB_PATH=/data
+      - ETHEREUM_EVENTS_CHECK_INTERVAL_MS=800
+      - ETHEREUM_STALLED_SYNC_THRESHOLD_MS=20000
+      - ETHEREUM_BLOCK_TIME_SECONDS=1
+      - EXIT_PROCESSOR_SLA_MARGIN=5520
+      - EXIT_PROCESSOR_SLA_MARGIN_FORCED=TRUE
+      - LOGGER_BACKEND=console
+      - RELEASE_COOKIE=development
+      - NODE_HOST=127.0.0.1
+    restart: always
+    ports:
+      - "7434:7434"
+    expose:
+      - "7434"
+    volumes:
+      - ./data:/data
+    healthcheck:
+      test: curl watcher:7434
+      interval: 30s
+      timeout: 1s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      - childchain
+    networks:
+      - default
+
+  watcher_info:
+    image: omisego/watcher_info:latest
+    command: "full_local"
+    container_name: watcher_info
+    env_file:
+      - ./localchain_contract_addresses.env
+    environment:
+      - ETHEREUM_NETWORK=LOCALCHAIN
+      - ETHEREUM_RPC_URL=http://geth:8545
+      - CHILD_CHAIN_URL=http://childchain:9656
+      - DATABASE_URL=postgresql://omisego_dev:omisego_dev@postgres:5432/engine_repo
+      - PORT=7534
+      - APP_ENV=local_docker_development
+      - DD_HOSTNAME=datadog
+      - DD_DISABLED=true
+      - DB_PATH=/data
+      - ETHEREUM_EVENTS_CHECK_INTERVAL_MS=800
+      - ETHEREUM_BLOCK_TIME_SECONDS=1
+      - EXIT_PROCESSOR_SLA_MARGIN=5520
+      - EXIT_PROCESSOR_SLA_MARGIN_FORCED=TRUE
+      - LOGGER_BACKEND=console
+      - RELEASE_COOKIE=development
+      - NODE_HOST=127.0.0.1
+    restart: always
+    ports:
+      - "7534:7534"
+    expose:
+      - "7534"
+    volumes:
+      - ./data:/data
+    healthcheck:
+      test: curl watcher_info:7534
+      interval: 30s
+      timeout: 1s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      - childchain
+      - postgres
+    networks:
+      - default
+
 networks:
   default:
     name: childchain_default
-

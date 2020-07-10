@@ -80,6 +80,27 @@ jobs:
           key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run: mix test.integration
 
+  integration_cabbage:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - run:
+          name: "Pull Submodules"
+          command: |
+            git submodule init
+            git submodule update --remote
+      - run:
+          name: Setup data dir
+          command: |
+            [ -d data ] || mkdir data && chmod 777 data
+      - run: make docker-childchain
+      - run:
+          name: Start daemon services
+          command: |
+            cd priv/cabbage
+            make start_daemon_services || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
+
   credo:
     working_directory: ~/childchain
     docker:
@@ -103,7 +124,7 @@ jobs:
             if [ $_counter -gt 3 ]; then
               echo "Have you been naughty or nice? Find out if Santa knows."
               exit 1
-            fi 
+            fi
       - run:
           name: "Consistent naming of CHILDCHAIN - it's childchain not child_chain or child-chain"
           command: |
