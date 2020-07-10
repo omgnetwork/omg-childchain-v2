@@ -10,6 +10,12 @@ IMAGE_BUILD_DIR ?= $(PWD)
 ENV_DEV         ?= env MIX_ENV=dev
 ENV_TEST        ?= env MIX_ENV=test
 ENV_PROD        ?= env MIX_ENV=prod
+HEX_URL    ?= https://repo.hex.pm/installs/1.8.0/hex-0.20.5.ez
+HEX_SHA    ?= cb7fdddbc4e5051b403cfb5e874ceb5cb0ecbe981a2a1517b97f9f76c67d234692e901ff48ee10dc712f728ae6ed0a51b11b8bd65b5db5582896123de20e7d49
+REBAR_URL  ?= https://repo.hex.pm/installs/1.0.0/rebar-2.6.2
+REBAR_SHA  ?= ff1c5ddfce1fcfd73fd65b8bfc0ff1c13aefc2e98921d528cbc1f35e86c9caa1c9c4e848b9ce6404d9a81c50cfcf0e45dd0dddb23cd42708664c41fce6618900
+REBAR3_URL ?= https://repo.hex.pm/installs/1.0.0/rebar3-3.5.1
+REBAR3_SHA ?= 86e998642991d384e9a6d4f216552609496da0e6ec4eb235df5b8b637d078c1a118bc7cdab501d1d54d24e0b6642adf32cc0c43019d948304301ceef227bedfd
 
 clean:
 	rm -rf _build/*
@@ -29,6 +35,11 @@ deps-childchain:
 .PHONY: test test-console test-focus test-console-focus
 
 init_test: init-contracts
+
+install-hex-rebar:
+	mix archive.install ${HEX_URL} --force --sha512 ${HEX_SHA}
+	mix local.rebar rebar ${REBAR_URL} --force --sha512 ${REBAR_SHA}
+	mix local.rebar rebar3 ${REBAR3_URL} --force --sha512 ${REBAR3_SHA}
 
 test:
 	$(ENV_TEST) mix test
