@@ -19,6 +19,17 @@ services:
       POSTGRES_DB: engine_repo
     networks:
       - default
+
+  postgres_watcher:
+    image: postgres:12.2-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: omisego_dev
+      POSTGRES_PASSWORD: omisego_dev
+      POSTGRES_DB: omisego_dev
+    networks:
+      - default
+
   childchain:
     image: omisego/childchain:latest
     command: "full_local"
@@ -103,7 +114,7 @@ services:
       - ETHEREUM_NETWORK=LOCALCHAIN
       - ETHEREUM_RPC_URL=http://geth:8545
       - CHILD_CHAIN_URL=http://childchain:9656
-      - DATABASE_URL=postgresql://omisego_dev:omisego_dev@postgres:5432/engine_repo
+      - DATABASE_URL=postgresql://omisego_dev:omisego_dev@postgres_watcher:5432/omisego_dev
       - PORT=7534
       - APP_ENV=local_docker_development
       - DD_HOSTNAME=datadog
