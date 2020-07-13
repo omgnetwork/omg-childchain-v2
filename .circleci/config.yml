@@ -128,7 +128,6 @@ jobs:
           paths:
             - ~/.asdf
             - ~/.asdf-vm
-      - run: make install-hex-rebar
       - run: sh .circleci/status.sh
       - restore_cache:
           key: v2-mix-specs-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
