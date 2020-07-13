@@ -120,6 +120,7 @@ jobs:
             asdf install elixir 1.10.2
             asdf global elixir 1.10.2
             asdf global erlang 22.3
+            mix local.rebar --force && mix local.hex --force
           no_output_timeout: 2400
       - save_cache:
           key: v2-asdf-install
