@@ -202,7 +202,7 @@ jobs:
           command: |
             export SHELL=/bin/bash
             set +eo pipefail
-            _counter=$(grep -ri "child_chain" . | grep -c "child_chain")
+            _counter=$(grep -ri --exclude-dir=./priv/cabbage "child_chain" . | grep -c "child_chain")
             echo "Current occurrences of child_chain:"
             echo $_counter
             if [ $_counter -gt 3 ]; then
