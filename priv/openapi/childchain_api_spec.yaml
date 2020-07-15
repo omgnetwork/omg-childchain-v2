@@ -1,0 +1,245 @@
+openapi: "3.0.0"
+info:
+  description: "This is the documentation for childchain API."
+  version: "1.0.0"
+  title: "Childchain API"
+tags:
+  - name: Block
+    description: Block related API.
+  - name: Transaction
+    description: Transaction related API.
+  - name: Other
+    description: Other API.
+paths:
+  /block.get:
+    post:
+      tags:
+        - Block
+      summary: This endpoint retrieves a specific block from child chain by its hash which was published on root chain.
+      operationId: block_get
+      requestBody:
+        description: HEX-encoded hash of the block
+        required: true
+        content:
+          application/json:
+            schema:
+              title: GetBlockBodySchema
+              type: object
+              properties:
+                hash:
+                  type: string
+              required:
+                - hash
+              example:
+                hash: '0x0017372421f9a92bedb7163310918e623557ab5310befc14e67212b660c33bec'
+      responses:
+        '200':
+          description: Block succcessful response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - description: The response schema for a successful operation
+                    type: object
+                    properties:
+                      service_name:
+                        type: string
+                      version:
+                        type: string
+                      success:
+                        type: boolean
+                      data:
+                        type: object
+                    required:
+                      - version
+                      - success
+                      - data
+                      - service_name
+                    example:
+                      service_name: child_chain
+                      version: 1.0
+                      success: true
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          transactions:
+                            type: array
+                            items:
+                              type: string
+                          hash:
+                            type: string
+                          blknum:
+                            type: integer
+                            format: int64
+                    example:
+                      data:
+                        blknum: 123000
+                        hash: '0x2733e50f526ec2fa19a22b31e8ed50f23cd1fdf94c9154ed3a7609a2f1ff981f'
+                        transactions:
+                          - 0xf8d083015ba98080808080940000...
+        '400':
+          description: Returns an input validation error
+          content:
+            application/json:
+              schema:
+                description: The response schema for an error
+                allOf:
+                  - description: The response schema for a successful operation
+                    type: object
+                    properties:
+                      service_name:
+                        type: string
+                      version:
+                        type: string
+                      success:
+                        type: boolean
+                      data:
+                        type: object
+                    required:
+                      - version
+                      - success
+                      - data
+                      - service_name
+                    example:
+                      service_name: childchain
+                      version: 1.0
+                      data: {}
+                  - type: object
+                    properties:
+                      data:
+                        description: The object schema for an error
+                        type: object
+                        properties:
+                          error:
+                            type: string
+                        required:
+                          - error
+                    required:
+                      - error
+                    example:
+                      success: false
+                      data:
+                        error: ArgumentError
+  /transaction.submit:
+    post:
+      tags:
+        - Transaction
+      summary: This endpoint submits a signed transaction to the child chain.
+      operationId: submit
+      requestBody:
+        description: Signed transaction RLP-encoded to bytes and HEX-encoded to string
+        required: true
+        content:
+          application/json:
+            schema:
+              title: TransactionSubmitBodySchema
+              type: object
+              properties:
+                transaction:
+                  type: string
+              required:
+                - transaction
+              example:
+                transaction: 0xf8d083015ba98080808080940000...
+      responses:
+        '200':
+          description: Transaction submission successful response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - description: The response schema for a successful operation
+                    type: object
+                    properties:
+                      service_name:
+                        type: string
+                      version:
+                        type: string
+                      success:
+                        type: boolean
+                      data:
+                        type: object
+                    required:
+                      - version
+                      - success
+                      - data
+                      - service_name
+                    example:
+                      service_name: childchain
+                      version: 1.0
+                      data: {}
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          blknum:
+                            type: integer
+                            format: int64
+                          txindex:
+                            type: integer
+                            format: int16
+                          txhash:
+                            type: string
+                    example:
+                      data:
+                        blknum: 123000
+                        txindex: 111
+                        txhash: '0xbdf562c24ace032176e27621073df58ce1c6f65de3b5932343b70ba03c72132d'
+        '400':
+          description: Returns an input validation error
+          content:
+            application/json:
+              schema:
+                description: The response schema for an error
+                allOf:
+                  - description: The response schema for a successful operation
+                    type: object
+                    properties:
+                      service_name:
+                        type: string
+                      version:
+                        type: string
+                      success:
+                        type: boolean
+                      data:
+                        type: object
+                    required:
+                      - version
+                      - success
+                      - data
+                      - service_name
+                    example:
+                      service_name: childchain
+                      version: 1.0
+                      data: {}
+                  - type: object
+                    properties:
+                      data:
+                        description: The object schema for an error
+                        type: object
+                        properties:
+                          error:
+                            type: string
+                        required:
+                          - error
+                    required:
+                      - error
+                    example:
+                      success: false
+                      data:
+                        error: ArgumentError
+
+  /health.check:
+    get:
+      tags:
+        - Other
+      summary: This endpoint checks if the childchain is healthy.
+      operationId: healthcheck
+      responses:
+        '200':
+          description: Childchain is healthy
+        '503':
+          description: Childchain is not healthy
