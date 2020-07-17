@@ -1,0 +1,5 @@
+TransactionSubmitSchema:
+  type: object
+  properties:
+    tx_hash:
+      type: string
