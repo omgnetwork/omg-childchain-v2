@@ -1,8 +1,15 @@
-openapi: "3.0.0"
+openapi: 3.0.0
 info:
-  description: "This is the documentation for childchain API."
-  version: "1.0.0"
-  title: "Childchain API"
+  version: 1.0.0
+  title: Childchain API
+  description: |
+    This is the documentation for childchain API.
+  contact:
+    name: OmiseGO
+    email: omisego@omisego.co
+  license:
+    name: 'Apache 2.0: https://www.apache.org/licenses/LICENSE-2.0'
+    url: 'https://omisego.network/'
 tags:
   - name: Block
     description: Block related API.
@@ -10,6 +17,8 @@ tags:
     description: Transaction related API.
   - name: Other
     description: Other API.
+servers:
+  - url: 'http://localhost:9656/'
 paths:
   /block.get:
     post:
@@ -57,8 +66,8 @@ paths:
                       - service_name
                     example:
                       service_name: childchain
-                      version: 1.0
-                      success: true
+                      version: '1.0'
+                      data: {}
                   - type: object
                     properties:
                       data:
@@ -104,7 +113,7 @@ paths:
                       - service_name
                     example:
                       service_name: childchain
-                      version: 1.0
+                      version: '1.0'
                       data: {}
                   - type: object
                     properties:
@@ -117,16 +126,19 @@ paths:
                         required:
                           - error
                     required:
-                      - error
+                      - data
                     example:
                       success: false
                       data:
-                        error: ArgumentError
+                        object: error
+                        error: string
   /transaction.submit:
     post:
       tags:
         - Transaction
       summary: This endpoint submits a signed transaction to the child chain.
+      description: |
+        Normally you should call the Watcher's Transaction - Submit instead of this. The Watcher's version performs various security and validation checks before submitting the transaction, so is much safer. However, if the Watcher is not available this version exists.
       operationId: submit
       requestBody:
         description: Signed transaction RLP-encoded to bytes and HEX-encoded to string
@@ -168,7 +180,7 @@ paths:
                       - service_name
                     example:
                       service_name: childchain
-                      version: 1.0
+                      version: '1.0'
                       data: {}
                   - type: object
                     properties:
@@ -205,7 +217,7 @@ paths:
                       - service_name
                     example:
                       service_name: childchain
-                      version: 1.0
+                      version: '1.0'
                       data: {}
                   - type: object
                     properties:
@@ -218,12 +230,12 @@ paths:
                         required:
                           - error
                     required:
-                      - error
+                      - data
                     example:
                       success: false
                       data:
-                        error: ArgumentError
-
+                        object: error
+                        error: string
   /health.check:
     get:
       tags:
