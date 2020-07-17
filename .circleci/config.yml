@@ -80,7 +80,7 @@ jobs:
           key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run: mix test.integration
 
-  integration_cabbage:
+  test_docker_compose_release:
     machine:
       image: ubuntu-1604:201903-01
     steps:
@@ -277,7 +277,7 @@ workflows:
           requires:
             - build
 
-      - integration_cabbage:
+      - test_docker_compose_release:
           requires:
             - build
 
