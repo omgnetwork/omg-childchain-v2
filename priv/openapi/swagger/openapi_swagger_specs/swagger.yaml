@@ -23,9 +23,9 @@ servers:
   - url: 'http://localhost:9656/'
 
 paths:
-  /transaction.submit:
-    $ref: 'transaction/paths.yaml#/transaction.submit'
   /block.get:
     $ref: 'block/paths.yaml#/block.get'
-  # /health.check:
-  #   $ref: 'other/paths.yaml#/health.check'
+  /transaction.submit:
+    $ref: 'transaction/paths.yaml#/transaction.submit'
+  /health.check:
+    $ref: 'other/paths.yaml#/health.check'
