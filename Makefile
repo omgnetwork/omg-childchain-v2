@@ -136,7 +136,7 @@ cabbage-reorg-childchain-logs:
 	docker-compose -f docker-compose.yml -f ./priv/cabbage/docker-compose-reorg.yml -f ./priv/cabbage/docker-compose-specs.yml logs --follow childchain
 
 cabbage-reorg-geth-logs:
-	docker-compose -f docker-compose.yml -f ./priv/cabbage/docker-compose-reorg.yml -f ./priv/cabbage/docker-compose-specs.yml logs --follow | grep "geth_"
+	docker-compose -f docker-compose.yml -f ./priv/cabbage/docker-compose-reorg.yml -f ./priv/cabbage/docker-compose-specs.yml logs --follow | grep "geth-"
 
 cabbage-reorgs-logs:
 	docker-compose -f docker-compose.yml -f ./priv/cabbage/docker-compose-reorg.yml -f ./priv/cabbage/docker-compose-specs.yml logs --follow | grep "reorg"
