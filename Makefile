@@ -124,6 +124,23 @@ docker-remote-childchain:
 operator_api_specs:
 	swagger-cli bundle -r -t yaml -o apps/rpc/priv/swagger/operator_api_specs.yaml apps/rpc/priv/swagger/operator_api_specs/swagger.yaml
 
+### Cabbage reorg docker logs
+
+cabbage-reorg-watcher-logs:
+	docker-compose -f docker-compose.yml -f ./priv/cabbage/docker-compose-reorg.yml -f ./priv/cabbage/docker-compose-specs.yml logs --follow watcher
+
+cabbage-reorg-watcher_info-logs:
+	docker-compose -f docker-compose.yml -f ./priv/cabbage/docker-compose-reorg.yml -f ./priv/cabbage/docker-compose-specs.yml logs --follow watcher_info
+
+cabbage-reorg-childchain-logs:
+	docker-compose -f docker-compose.yml -f ./priv/cabbage/docker-compose-reorg.yml -f ./priv/cabbage/docker-compose-specs.yml logs --follow childchain
+
+cabbage-reorg-geth-logs:
+	docker-compose -f docker-compose.yml -f ./priv/cabbage/docker-compose-reorg.yml -f ./priv/cabbage/docker-compose-specs.yml logs --follow | grep "geth"
+
+cabbage-reorgs-logs:
+	docker-compose -f docker-compose.yml -f ./priv/cabbage/docker-compose-reorg.yml -f ./priv/cabbage/docker-compose-specs.yml logs --follow | grep "reorg"
+
 ### git setup
 hooks:
 	git config core.hooksPath .githooks
