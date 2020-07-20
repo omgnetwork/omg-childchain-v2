@@ -77,7 +77,7 @@ services:
     image: nginx:latest
     container_name: nginx_geth
     volumes:
-      - ./docker/nginx/nginx.conf:/etc/nginx/geth_nginx.conf:ro
+      - ./docker/nginx/geth_nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - 8545:80
       - 8546:81
