@@ -1,0 +1,6 @@
+InputValidationError:
+  description: Returns an input validation error
+  content:
+    application/json:
+      schema:
+        $ref: 'response_schemas.yaml#/ErrorResponseSchema'
