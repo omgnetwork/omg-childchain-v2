@@ -23,7 +23,13 @@ defmodule Engine.ReleaseTasks.Contract.Validators do
     uri = URI.parse(url)
     domain = uri.host |> String.to_charlist() |> :inet_parse.domain()
 
-    case uri.scheme != nil && domain do
+    ip =
+      case uri.host |> String.to_charlist() |> :inet.parse_address() do
+        {:ok, _} -> true
+        _ -> false
+      end
+
+    case uri.scheme != nil && (domain || ip) do
       true -> url
       _ -> raise ArgumentError, message: "#{key} must be set to a valid URL."
     end
