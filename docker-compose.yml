@@ -44,7 +44,7 @@ services:
       - ./localchain_contract_addresses.env
     environment:
       DATABASE_URL: postgres
-      ETHEREUM_RPC_URL: http://geth:8545
+      ETHEREUM_RPC_URL: http://172.27.0.102:8545
       LOGGER_BACKEND: console
       ETHEREUM_EVENTS_CHECK_INTERVAL_MS: 800
     expose:
@@ -99,8 +99,8 @@ services:
       - ./localchain_contract_addresses.env
     environment:
       - ETHEREUM_NETWORK=LOCALCHAIN
-      - ETHEREUM_RPC_URL=http://geth:8545
-      - CHILD_CHAIN_URL=http://childchain:9656
+      - ETHEREUM_RPC_URL=http://172.27.0.102:8545
+      - CHILD_CHAIN_URL=http://172.27.0.103:9656
       - PORT=7434
       - APP_ENV=local_docker_development
       - DD_HOSTNAME=datadog
@@ -141,9 +141,9 @@ services:
       - ./localchain_contract_addresses.env
     environment:
       - ETHEREUM_NETWORK=LOCALCHAIN
-      - ETHEREUM_RPC_URL=http://geth:8545
-      - CHILD_CHAIN_URL=http://childchain:9656
-      - DATABASE_URL=postgresql://omisego_dev:omisego_dev@postgres_watcher:5432/omisego_dev
+      - ETHEREUM_RPC_URL=http://172.27.0.102:8545
+      - CHILD_CHAIN_URL=http://172.27.0.103:9656
+      - DATABASE_URL=postgresql://omisego_dev:omisego_dev@172.27.0.106:5432/omisego_dev
       - PORT=7534
       - APP_ENV=local_docker_development
       - DD_HOSTNAME=datadog
