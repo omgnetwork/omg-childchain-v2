@@ -177,6 +177,7 @@ jobs:
             [ -d data1 ] || mkdir data1 && chmod 777 data1
             [ -d data2 ] || mkdir data2 && chmod 777 data2
             [ -d data ] || mkdir data && chmod 777 data
+      - run: make docker-childchain
       - run:
           name: Start daemon services
           command: |
