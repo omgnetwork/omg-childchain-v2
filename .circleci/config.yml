@@ -166,6 +166,7 @@ jobs:
       REORG: true
     steps:
       - checkout
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run:
           name: "Pull Submodules"
           command: |
