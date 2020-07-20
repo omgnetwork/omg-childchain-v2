@@ -32,13 +32,15 @@ defmodule Status.Mixfile do
 
   defp deps() do
     [
+      {:observer_cli, "~> 1.5"},
+      {:recon, "~> 2.5"},
       {:telemetry, "~> 0.4.1"},
       {:sentry, "~> 7.0"},
       {:statix, git: "https://github.com/omisego/statix.git", branch: "otp-21.3.8.4-support-global-tag-patch"},
       {:spandex_datadog, "~> 1.0.0"},
       {:decorator, "~> 1.2"},
       {:vmstats, "~> 2.3", runtime: false},
-      {:ink, "~> 1.0"}
+      {:ink, "~> 1.1"}
     ]
   end
 end
