@@ -10,7 +10,6 @@ defmodule Engine.Application do
   alias Engine.Ethereum.Monitor.AlarmHandler
   alias Engine.Ethereum.Supervisor, as: EthereumSupervisor
   alias Engine.Ethereum.SyncSupervisor
-  alias Engine.Feefeed.FeesSupervisor
   alias Engine.Repo.Monitor, as: RepoMonitor
   alias Engine.Telemetry.Handler
 
@@ -44,8 +43,7 @@ defmodule Engine.Application do
     children = [
       EthereumSupervisor.child_spec([]),
       Supervisor.child_spec({RepoMonitor, repo_args}, id: RepoMonitor),
-      Supervisor.child_spec({SyncMonitor, monitor_args}, id: SyncMonitor),
-      FeesSupervisor
+      Supervisor.child_spec({SyncMonitor, monitor_args}, id: SyncMonitor)
     ]
 
     _ = Logger.info("Starting #{__MODULE__}")
