@@ -9,11 +9,8 @@ defmodule Engine.DB.Factory do
   import Ecto.Query
 
   alias Engine.DB.Block
-  alias Engine.DB.FeeRules
-  alias Engine.DB.Fees
   alias Engine.DB.Output
   alias Engine.DB.Transaction
-  alias Engine.Feefeed.Rules.Parser
   alias ExPlasma.Builder
   alias ExPlasma.Output.Position
 
