@@ -38,7 +38,7 @@ defmodule Engine.DB.Transaction do
     # Virtual fields used for convenience and validation
     # Avoid decoding/parsing signatures mutiple times along validation process
     field(:witnesses, {:array, :string}, virtual: true)
-    # Avoid calling ExPlasma.decode(tx_bytes) multiple times along the validation process
+    # Avoid calling decode(tx_bytes) multiple times along the validation process
     field(:signed_tx, :map, virtual: true)
 
     belongs_to(:block, Block)
@@ -75,10 +75,6 @@ defmodule Engine.DB.Transaction do
     end
   end
 
-  # def changeset(struct, %ExPlasma.Transaction{} = txn) do
-  #   changeset(struct, Map.from_struct(txn))
-  # end
-
   def changeset(struct, params) do
     struct
     |> Repo.preload(:inputs)
@@ -87,14 +83,13 @@ defmodule Engine.DB.Transaction do
     |> validate_required([:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type, :kind])
     |> cast_assoc(:inputs)
     |> cast_assoc(:outputs)
-    # |> Validator.validate_signatures()
     |> Validator.validate_protocol()
     |> Validator.validate_inputs()
     |> Validator.validate_statefully(params)
   end
 
   defp tx_bytes_to_map(tx_bytes) do
-    with {:ok, %Recovered{} = recovered} <- Recovered.decode(tx_bytes) do
+    with {:ok, %Recovered{} = recovered} <- ExPlasma.decode(tx_bytes, :recovered) do
       inputs = ExPlasma.Transaction.get_inputs(recovered)
       outputs = ExPlasma.Transaction.get_outputs(recovered)
       tx_type = ExPlasma.Transaction.get_tx_type(recovered)

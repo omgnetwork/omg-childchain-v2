@@ -21,20 +21,18 @@ defmodule API.V1.BlockGet do
   @spec by_hash(String.t()) :: block_response()
   @decorate trace(service: :ecto, type: :backend)
   def by_hash(hash) do
-    block = hash |> Encoding.to_binary() |> Block.query_by_hash() |> Repo.one()
+    with {:ok, decoded_hash} <- Encoding.to_binary(hash),
+         block when not is_nil(block) <- decoded_hash |> Block.query_by_hash() |> Repo.one() do
+      block = Repo.preload(block, :transactions)
 
-    case block do
-      nil ->
-        %{}
-
-      block ->
-        block = Repo.preload(block, :transactions)
-
-        %{
-          blknum: block.number,
-          hash: Encoding.to_hex(block.hash),
-          transactions: Enum.map(block.transactions, fn txn -> Encoding.to_hex(txn.tx_bytes) end)
-        }
+      %{
+        blknum: block.number,
+        hash: Encoding.to_hex(block.hash),
+        transactions: Enum.map(block.transactions, fn txn -> Encoding.to_hex(txn.tx_bytes) end)
+      }
+    else
+      nil -> %{}
+      error -> error
     end
   end
 end

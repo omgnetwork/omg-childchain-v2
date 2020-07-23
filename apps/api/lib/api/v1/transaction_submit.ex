@@ -19,8 +19,8 @@ defmodule API.V1.TransactionSubmit do
   @spec submit(String.t()) :: submit_response()
   @decorate trace(service: :ecto, type: :backend)
   def submit("0x" <> _rest = hex_tx_bytes) do
-    with {:ok, changeset} <-
-           hex_tx_bytes |> Encoding.to_binary() |> Transaction.decode(kind: Transaction.kind_transfer()),
+    with {:ok, binary} <- Encoding.to_binary(hex_tx_bytes),
+         {:ok, changeset} <- Transaction.decode(binary, kind: Transaction.kind_transfer()),
          {:ok, transaction} <- Repo.insert(changeset) do
       %{tx_hash: Encoding.to_hex(transaction.tx_hash)}
     else

@@ -26,6 +26,20 @@ defmodule Engine.DB.Transaction.Validator do
   @callback validate(Ecto.Changeset.t(), accepted_fee_t()) :: Ecto.Changeset.t()
 
   @doc """
+  Validate the transaction bytes with the generic transaction format protocol.
+  See ExPlasma.Transaction.validate/1.
+
+  Returns the changeset unchanged if valid or with an error otherwise.
+  """
+  @spec validate_protocol(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  def validate_protocol(changeset) do
+    changeset
+    |> get_field(:signed_tx)
+    |> ExPlasma.Transaction.validate()
+    |> process_protocol_validation_results(changeset)
+  end
+
+  @doc """
   Validates that the given changesets inputs are correct. To create a transaction with inputs:
     * The position for the input must exist.
     * The position for the input must not have been spent.
@@ -52,20 +66,6 @@ defmodule Engine.DB.Transaction.Validator do
       missing_inputs ->
         add_error(changeset, :inputs, "inputs #{inspect(missing_inputs)} are missing, spent, or not yet available")
     end
-  end
-
-  @doc """
-  Validate the transaction bytes with the generic transaction format protocol.
-  See ExPlasma.Transaction.validate/1.
-
-  Returns the changeset unchanged if valid or with an error otherwise.
-  """
-  @spec validate_protocol(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  def validate_protocol(changeset) do
-    changeset
-    |> get_field(:signed_tx)
-    |> ExPlasma.Transaction.validate()
-    |> process_protocol_validation_results(changeset)
   end
 
   @doc """
@@ -99,7 +99,7 @@ defmodule Engine.DB.Transaction.Validator do
     where(Output.usable(), [output], output.position in ^positions)
   end
 
-  defp process_protocol_validation_results({:ok, _}, changeset), do: changeset
+  defp process_protocol_validation_results(:ok, changeset), do: changeset
 
   defp process_protocol_validation_results({:error, {field, message}}, changeset) do
     add_error(changeset, field, @error_messages[message])
