@@ -49,7 +49,7 @@ defmodule Engine.Fees.JSONSingleSpecParser do
          {:ok, pegged_amount} <- validate_optional_positive_amount(pegged_amount, :invalid_pegged_amount),
          {:ok, pegged_currency} <- validate_pegged_currency(pegged_currency),
          {:ok, pegged_subunit_to_unit} <-
-           validate_optional_positive_amount(pegged_subunit_to_unit, :invalid_pegged_subunit_to_unit),
+           validate_optional_positive_integer_amount(pegged_subunit_to_unit, :invalid_pegged_subunit_to_unit),
          :ok <- validate_pegged_fields(pegged_currency, pegged_amount, pegged_subunit_to_unit),
          {:ok, updated_at} <- validate_updated_at(updated_at),
          {:ok, fee_type} <- validate_fee_type(fee_type) do
@@ -72,8 +72,15 @@ defmodule Engine.Fees.JSONSingleSpecParser do
   defp validate_positive_amount(amount, _error) when is_integer(amount) and amount > 0, do: {:ok, amount}
   defp validate_positive_amount(_amount, error), do: {:error, error}
 
+  defp validate_optional_positive_integer_amount(nil, _error), do: {:ok, nil}
+
+  defp validate_optional_positive_integer_amount(amount, _error) when is_integer(amount) and amount > 0,
+    do: {:ok, amount}
+
+  defp validate_optional_positive_integer_amount(_amount, error), do: {:error, error}
+
   defp validate_optional_positive_amount(nil, _error), do: {:ok, nil}
-  defp validate_optional_positive_amount(amount, _error) when is_integer(amount) and amount > 0, do: {:ok, amount}
+  defp validate_optional_positive_amount(amount, _error) when amount > 0, do: {:ok, amount}
   defp validate_optional_positive_amount(_amount, error), do: {:error, error}
 
   defp validate_pegged_currency(nil), do: {:ok, nil}
@@ -109,5 +116,6 @@ defmodule Engine.Fees.JSONSingleSpecParser do
   end
 
   defp validate_fee_type("fixed"), do: {:ok, :fixed}
+  defp validate_fee_type("pegged"), do: {:ok, :pegged}
   defp validate_fee_type(_), do: {:error, :unsupported_fee_type}
 end
