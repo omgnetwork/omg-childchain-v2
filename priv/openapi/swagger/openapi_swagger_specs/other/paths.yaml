@@ -1,0 +1,11 @@
+health.check:
+  get:
+    tags:
+      - Other
+    summary: This endpoint checks if the childchain is healthy.
+    operationId: healthcheck
+    responses:
+      '200':
+        description: Childchain is healthy
+      '503':
+        description: Childchain is not healthy

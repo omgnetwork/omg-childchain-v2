@@ -1,0 +1,31 @@
+openapi: 3.0.0
+info:
+  version: '1.0.0'
+  title: Childchain API
+  description: >
+    This is the documentation for childchain API.
+  contact:
+    name: OmiseGO
+    email: omisego@omisego.co
+  license:
+    name: 'Apache 2.0: https://www.apache.org/licenses/LICENSE-2.0'
+    url: 'https://omisego.network/'
+
+tags:
+  - name: Block
+    description: Block related API.
+  - name: Transaction
+    description: Transaction related API.
+  - name: Other
+    description: Other API.
+
+servers:
+  - url: 'http://localhost:9656/'
+
+paths:
+  /block.get:
+    $ref: 'block/paths.yaml#/block.get'
+  /transaction.submit:
+    $ref: 'transaction/paths.yaml#/transaction.submit'
+  /health.check:
+    $ref: 'other/paths.yaml#/health.check'
