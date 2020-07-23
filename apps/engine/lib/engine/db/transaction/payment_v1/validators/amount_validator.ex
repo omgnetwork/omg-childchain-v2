@@ -1,9 +1,16 @@
-defmodule Engine.DB.Transaction.PaymentV1.AmountValidator do
+defmodule Engine.DB.Transaction.PaymentV1.Validator.Amount do
   @moduledoc """
   Contains validation logic for amounts, see validate/3 for more details.
   """
 
   alias Engine.DB.Transaction.PaymentV1.Type
+
+  @type validation_result_t() ::
+          :ok
+          | {:error, {:inputs, :amounts_do_not_add_up}}
+          | {:error, {:inputs, :fees_not_covered}}
+          | {:error, {:inputs, :fee_token_not_accepted}}
+          | {:error, {:inputs, :overpaying_fees}}
 
   @doc """
   Validates that the amount per token given in the inputs and outputs is correct.
@@ -21,11 +28,17 @@ defmodule Engine.DB.Transaction.PaymentV1.AmountValidator do
   - If no token/amount left then it must be a merge or an error
   - We finally match the amount with the given fees
 
-  Returns `:ok` if the transaction is valid, or `{:error, {field, error}}` otherwise.
+  Returns
+  - `:ok` if the amounts are valid,
+  or returns:
+  - `{:error, {:inputs, :amounts_do_not_add_up}}` if output amounts are greater than input amounts
+  - `{:error, {:inputs, :fees_not_covered}}` if fees are not covered by inputs
+  - `{:error, {:inputs, :fee_token_not_accepted}}` if the given fee token is not supported
+  - `{:error, {:inputs, :overpaying_fees}}` if fees are being overpaid.
 
   ## Example:
 
-  iex> Engine.DB.Transaction.PaymentV1.AmountValidator.validate(
+  iex> Engine.DB.Transaction.PaymentV1.Validator.Amount.validate(
   ...> %{<<1::160>> => [1, 3]},[
   ...> %{output_guard: <<1::160>>, token: <<1::160>>, amount: 1},
   ...> %{output_guard: <<1::160>>, token: <<2::160>>, amount: 2}], [
@@ -33,7 +46,7 @@ defmodule Engine.DB.Transaction.PaymentV1.AmountValidator do
   :ok
   """
   @spec validate(Type.optional_accepted_fees_t(), Type.output_list_t(), Type.output_list_t()) ::
-          Type.validation_result_t()
+          validation_result_t()
   def validate(fees, input_data, output_data) do
     input_amounts = reduce_amounts(input_data)
     output_amounts = reduce_amounts(output_data)
