@@ -26,5 +26,5 @@ defmodule Engine.Fees.Fees do
   A map of currency to amounts used internally where amounts is a list of supported fee amounts.
   """
   @type typed_merged_fee_t() :: %{non_neg_integer() => merged_fee_t()}
-  @type merged_fee_t() :: %{Crypto.address_t() => list(pos_integer())}
+  @type merged_fee_t() :: %{address_t() => list(pos_integer())}
 end

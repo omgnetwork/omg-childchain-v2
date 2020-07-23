@@ -106,7 +106,7 @@ defmodule Engine.Fees.FeeServer do
     {:noreply, new_state}
   end
 
-  @spec invalid_fee_source() :: {:invalid_fee_source, map()}
+  @spec invalid_fee_source() :: {:invalid_fee_source, %{:node => atom(), :reporter => Engine.Fees.FeeServer}}
   defp invalid_fee_source(),
     do: {:invalid_fee_source, %{node: Node.self(), reporter: __MODULE__}}
 
