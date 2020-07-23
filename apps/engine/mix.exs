@@ -36,6 +36,11 @@ defmodule Engine.MixProject do
       {:ethereumex, "0.6.3"},
       {:ecto_sql, "~> 3.4"},
       {:ex_plasma, git: "https://github.com/omisego/ex_plasma.git", ref: "a5d250f4dd36efa7d70b767a306389cf79d572de"},
+      {
+        :ex_unit_fixtures,
+        git: "https://github.com/omisego/ex_unit_fixtures.git", branch: "feature/require_files_not_load", only: [:test]
+      },
+      {:fake_server, "~> 2.1", only: [:test], runtime: false, override: true},
       {:postgrex, "~> 0.15"},
       {:telemetry, "~> 0.4"},
       {:ex_json_schema, "0.7.4"},
