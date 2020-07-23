@@ -47,11 +47,11 @@ defmodule Engine.Fees.FeeServer do
 
     interval = state.fee_adapter_check_interval_ms
     {:ok, fee_adapter_check_timer} = :timer.send_interval(interval, self(), :update_fee_specs)
-    state = %__MODULE__{state | fee_adapter_check_timer: fee_adapter_check_timer}
+    new_state = %__MODULE__{state | fee_adapter_check_timer: fee_adapter_check_timer}
 
     _ = Logger.info("Started #{inspect(__MODULE__)}")
 
-    {:ok, state}
+    {:ok, new_state}
   end
 
   @doc """

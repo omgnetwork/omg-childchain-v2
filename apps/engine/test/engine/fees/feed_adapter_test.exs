@@ -4,11 +4,12 @@ defmodule OMG.ChildChain.Fees.FeedAdapterTest do
   use ExUnitFixtures
   use ExUnit.Case, async: true
 
-  alias FakeServer.Agents.EnvAgent
-  alias FakeServer.Env
-  alias FakeServer.HTTP.Server
   alias Engine.Fees.FeedAdapter
   alias Engine.Fees.JSONFeeParser
+  alias FakeServer.Agents.EnvAgent
+  alias FakeServer.Env
+  alias FakeServer.HTTP.Response
+  alias FakeServer.HTTP.Server
 
   @moduletag :child_chain
 
@@ -123,7 +124,7 @@ defmodule OMG.ChildChain.Fees.FeedAdapterTest do
       :current_fee_specs
       |> Agent.get(& &1)
       |> make_response()
-      |> FakeServer.HTTP.Response.ok(headers)
+      |> Response.ok(headers)
     end)
 
     {update_feed_price(initial_price), port}

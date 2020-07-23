@@ -4,8 +4,8 @@ defmodule Engine.Fees.FeedAdapter do
   """
   @behaviour Engine.Fees.Adapter
 
-  alias Engine.Fees.FeeUpdater
   alias Engine.Fees.Client
+  alias Engine.Fees.FeeUpdater
 
   @doc """
   Pulls the fee specification from fees feed. Feed updates fee prices based on Ethereum's gas price.

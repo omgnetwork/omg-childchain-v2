@@ -2,9 +2,10 @@ defmodule Engine.Fees.JSONFeeParser do
   @moduledoc """
   Transaction's fee validation functions
   """
-  require Logger
 
   alias Engine.Fees.JSONSingleSpecParser
+
+  require Logger
 
   @type parsing_error() ::
           JSONSingleSpecParser.parsing_error()
