@@ -171,7 +171,7 @@ services:
       start_period: 30s
     depends_on:
       - childchain
-      - postgres
+      - postgres_watcher
     networks:
       chain_net:
         ipv4_address: 172.27.0.105
