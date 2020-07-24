@@ -1,3 +1,11 @@
+# This docker compose file contains 2 postgres images that can be used in a master-slave mode.
+# postgres-0 is the primary host, this us be the master postgres that is used to write data into the db.
+# All written data are synced to the the postgres-1 db, and both images are using repmgr which handles
+# switching a slave node to a master one if the primary master goes down.
+# So, if postgres-0 goes down, postgres-1 will become the new master and will start accepting to write data
+# into the DB. When postgre-1 goes back up it'll be as a slave.
+# Images used are from https://github.com/bitnami/bitnami-docker-postgresql-repmgr, more detail there.
+
 version: "3.7"
 services:
   nginx:
