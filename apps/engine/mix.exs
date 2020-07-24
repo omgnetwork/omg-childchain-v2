@@ -40,7 +40,7 @@ defmodule Engine.MixProject do
         :ex_unit_fixtures,
         git: "https://github.com/omisego/ex_unit_fixtures.git", branch: "feature/require_files_not_load", only: [:test]
       },
-      {:fake_server, "~> 2.1", only: [:test], runtime: false, override: true},
+      {:fake_server, "~> 2.1", only: :test},
       {:postgrex, "~> 0.15"},
       {:telemetry, "~> 0.4"},
       {:ex_json_schema, "0.7.4"},
