@@ -9,5 +9,6 @@ services:
       POSTGRES_USER: omisego_dev
       POSTGRES_PASSWORD: omisego_dev
       POSTGRES_DB: engine_repo
-    networks: 
-      - default
+    networks:
+      chain_net:
+        ipv4_address: 172.27.0.110

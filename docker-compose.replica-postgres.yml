@@ -8,8 +8,9 @@ services:
       - postgres-0
   postgres-0:
     image: bitnami/postgresql-repmgr:12-debian-10
-    networks: 
-      - default
+    networks:
+      chain_net:
+        ipv4_address: 172.27.0.110
     environment:
       - POSTGRESQL_USERNAME=omisego_dev
       - POSTGRESQL_PASSWORD=omisego_dev
@@ -23,8 +24,9 @@ services:
       - REPMGR_PORT_NUMBER=5432
   postgres-1:
     image: bitnami/postgresql-repmgr:12-debian-10
-    networks: 
-      - default
+    networks:
+      chain_net:
+        ipv4_address: 172.27.0.111
     environment:
       - POSTGRESQL_USERNAME=omisego_dev
       - POSTGRESQL_PASSWORD=omisego_dev
