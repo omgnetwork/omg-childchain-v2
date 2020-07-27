@@ -36,6 +36,39 @@ services:
       chain_net:
         ipv4_address: 172.27.0.106
 
+  postgres_feefeed:
+    image: postgres:12.2-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: feefeed
+      POSTGRES_PASSWORD: feefeed
+      POSTGRES_DB: feefeed
+    networks:
+      chain_net:
+        ipv4_address: 172.27.0.109
+
+  feefeed:
+    image: omisego/feefeed:latest
+    command: "start"
+    container_name: feefeed
+    environment:
+      - GITHUB_TOKEN=""
+      - GITHUB_ORGANISATION=omgnetwork
+      - GITHUB_REPO=fee-rules
+      - GITHUB_BRANCH=development
+      - GITHUB_FILENAME=fee_rules.json
+      - DATABASE_URL=postgresql://feefeed:feefeed@172.27.0.109:5432/feefeed
+      - SECRET_KEY_BASE="Y8naENMR8b+vbPHILjwNtEfWFrnbGi2k+UYWm75VnKHfsavmyGLtTmmeJxAGK+zJ"
+      - DATADOG_DISABLED=true
+      - DATADOG_HOST="http://localhost"
+      - ETHEREUM_NODE_URL=http://172.27.0.102:80
+    depends_on:
+      - postgres_feefeed
+    restart: always
+    networks:
+      chain_net:
+        ipv4_address: 172.27.0.110
+
   childchain:
     image: omisego/childchain:latest
     command: "full_local"
@@ -49,6 +82,8 @@ services:
       ETHEREUM_EVENTS_CHECK_INTERVAL_MS: 800
     expose:
       - "9656"
+    depends_on:
+      - feefeed
     networks:
       chain_net:
         ipv4_address: 172.27.0.103
