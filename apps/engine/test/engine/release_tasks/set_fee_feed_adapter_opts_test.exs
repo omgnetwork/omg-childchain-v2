@@ -3,7 +3,7 @@ defmodule Engine.ReleaseTasks.SetFeeFeedAdapterOptsTest do
   alias Engine.Fees.FeedAdapter
   alias Engine.ReleaseTasks.SetFeeFeedAdapterOpts
 
-  @app :omg_child_chain
+  @app :engine
   @config_key :fee_adapter
   @env_fee_adapter "FEE_ADAPTER"
   @env_fee_feed_url "FEE_FEED_URL"
@@ -70,7 +70,7 @@ defmodule Engine.ReleaseTasks.SetFeeFeedAdapterOptsTest do
     ]
 
     config = [
-      omg_child_chain: [fee_adapter: {OMG.ChildChain.Fees.FeedAdapter, opts: adapter_opts}]
+      engine: [fee_adapter: {Engine.Fees.FeedAdapter, opts: adapter_opts}]
     ]
 
     # Intentionally not configuring @env_fee_feed_url and @env_stored_fee_update_interval_minutes
@@ -78,7 +78,7 @@ defmodule Engine.ReleaseTasks.SetFeeFeedAdapterOptsTest do
     :ok = System.put_env(@env_fee_change_tolerance_percent, "50")
     config = SetFeeFeedAdapterOpts.load(config, [])
 
-    {adapter, opts: new_opts} = config[:omg_child_chain][:fee_adapter]
+    {adapter, opts: new_opts} = config[:engine][:fee_adapter]
 
     assert adapter == FeedAdapter
     assert new_opts[:fee_feed_url] == adapter_opts[:fee_feed_url]

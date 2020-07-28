@@ -9,6 +9,7 @@ defmodule Engine.Ethereum.Supervisor do
   alias Engine.Ethereum.Height
   alias Engine.Ethereum.HeightObserver
   alias Engine.Ethereum.RootChain.Rpc
+  alias Engine.Fees.FeeServer
   alias Status.Alert.Alarm
   require Logger
 
@@ -19,9 +20,11 @@ defmodule Engine.Ethereum.Supervisor do
   def init(_args) do
     ethereum_events_check_interval_ms = Configuration.ethereum_events_check_interval_ms()
     ethereum_stalled_sync_threshold_ms = Configuration.ethereum_stalled_sync_threshold_ms()
+    fee_server_opts = Configuration.fee_server_opts()
     url = Configuration.url()
 
     children = [
+      {FeeServer, fee_server_opts},
       {Height, []},
       {HeightObserver,
        [
