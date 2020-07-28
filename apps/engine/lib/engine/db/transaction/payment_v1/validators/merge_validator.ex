@@ -1,4 +1,4 @@
-defmodule Engine.DB.Transaction.PaymentV1.MergeValidator do
+defmodule Engine.DB.Transaction.PaymentV1.Validator.Merge do
   @moduledoc """
   Decides whether transactions qualify as "merge" transactions that use a single token,
   single recipient address and have fewer outputs than inputs. This decision is necessary
@@ -19,7 +19,7 @@ defmodule Engine.DB.Transaction.PaymentV1.MergeValidator do
 
   ## Example:
 
-  iex> Engine.DB.Transaction.PaymentV1.MergeValidator.is_merge?([
+  iex> Engine.DB.Transaction.PaymentV1.Validator.Merge.is_merge?([
   ...> %{output_guard: <<1::160>>, token: <<1::160>>, amount: 1 },
   ...> %{output_guard: <<1::160>>, token: <<1::160>>, amount: 2}], [
   ...> %{output_guard: <<1::160>>, token: <<1::160>>, amount: 3}])

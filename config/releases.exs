@@ -20,10 +20,7 @@ config :engine,
   ethereum_stalled_sync_threshold_ms: String.to_integer(System.get_env("ETHEREUM_STALLED_SYNC_THRESHOLD_MS") || "20000")
 
 config :engine, Engine.Repo,
-  database: "engine_repo",
-  username: "omisego_dev",
-  password: "omisego_dev",
-  hostname: System.get_env("DATABASE_URL") || "localhost",
+  url: System.get_env("DATABASE_URL"),
   backoff_type: :stop
 
 config :ethereumex,
