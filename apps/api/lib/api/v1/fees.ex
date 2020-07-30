@@ -33,13 +33,9 @@ defmodule API.V1.Fees do
   @spec get_filtered_fees(list(pos_integer()), list(String.t()) | nil) ::
           {:ok, Fees.full_fee_t()} | {:error, :currency_fee_not_supported}
   defp get_filtered_fees(tx_types, currencies) do
-    case FeeServer.current_fees() do
-      {:ok, fees} ->
-        FeeFilter.filter(fees, tx_types, currencies)
+    {:ok, fees} = FeeServer.current_fees()
 
-      error ->
-        error
-    end
+    FeeFilter.filter(fees, tx_types, currencies)
   end
 
   defp to_currency(currency_str) do
