@@ -90,9 +90,9 @@ defmodule Engine.DB.Transaction do
 
   defp tx_bytes_to_map(tx_bytes) do
     with {:ok, %Recovered{} = recovered} <- ExPlasma.decode(tx_bytes, :recovered) do
-      inputs = ExPlasma.Transaction.get_inputs(recovered)
-      outputs = ExPlasma.Transaction.get_outputs(recovered)
-      tx_type = ExPlasma.Transaction.get_tx_type(recovered)
+      inputs = ExPlasma.get_inputs(recovered)
+      outputs = ExPlasma.get_outputs(recovered)
+      tx_type = ExPlasma.get_tx_type(recovered)
 
       {:ok,
        %{signed_tx: recovered.signed_tx}

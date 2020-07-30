@@ -35,7 +35,7 @@ defmodule Engine.DB.Transaction.Validator do
   def validate_protocol(changeset) do
     changeset
     |> get_field(:signed_tx)
-    |> ExPlasma.Transaction.validate()
+    |> ExPlasma.validate()
     |> process_protocol_validation_results(changeset)
   end
 

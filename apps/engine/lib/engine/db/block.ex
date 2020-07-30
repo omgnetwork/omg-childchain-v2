@@ -9,7 +9,11 @@ defmodule Engine.DB.Block do
   import Ecto.Changeset
   import Ecto.Query
 
+  alias Ecto.Changeset
+  alias Ecto.Multi
   alias Engine.DB.Transaction
+  alias Engine.Repo
+  alias ExPlasma.Merkle
 
   schema "blocks" do
     field(:hash, :binary)
@@ -42,11 +46,11 @@ defmodule Engine.DB.Block do
   """
   @decorate trace(service: :ecto, type: :backend)
   def form() do
-    Ecto.Multi.new()
-    |> Ecto.Multi.insert("new-block", %__MODULE__{})
-    |> Ecto.Multi.run("form-block", &attach_block_to_transactions/2)
-    |> Ecto.Multi.run("hash-block", &generate_block_hash/2)
-    |> Engine.Repo.transaction()
+    Multi.new()
+    |> Multi.insert("new-block", %__MODULE__{})
+    |> Multi.run("form-block", &attach_block_to_transactions/2)
+    |> Multi.run("hash-block", &generate_block_hash/2)
+    |> Repo.transaction()
   end
 
   defp attach_block_to_transactions(repo, %{"new-block" => block}) do
@@ -60,8 +64,8 @@ defmodule Engine.DB.Block do
     transactions_query =
       from(transaction in Transaction, where: transaction.block_id == ^block.id, select: transaction.tx_bytes)
 
-    hash = transactions_query |> Engine.Repo.all() |> ExPlasma.Merkle.root_hash()
-    changeset = Ecto.Changeset.change(block, hash: hash)
+    hash = transactions_query |> Repo.all() |> Merkle.root_hash()
+    changeset = Changeset.change(block, hash: hash)
     repo.update(changeset)
   end
 end

@@ -1,16 +1,16 @@
 defmodule API.V1.RouterTest do
   use Engine.DB.DataCase, async: true
   use Plug.Test
-  import ExPlasma.Encoding, only: [to_hex: 1]
 
   alias API.Plugs.ExpectParams.InvalidParams
   alias API.V1.Router
+  alias ExPlasma.Encoding
 
   describe "/block.get" do
     test "that it returns a block" do
       transaction = insert(:deposit_transaction)
-      tx_bytes = to_hex(transaction.tx_bytes)
-      hash = to_hex(transaction.block.hash)
+      tx_bytes = Encoding.to_hex(transaction.tx_bytes)
+      hash = Encoding.to_hex(transaction.block.hash)
       number = transaction.block.number
       {:ok, payload} = post("/block.get", %{hash: hash})
 
@@ -47,8 +47,8 @@ defmodule API.V1.RouterTest do
     test "decodes a transaction and inserts it" do
       _ = insert(:deposit_transaction)
       txn = build(:payment_v1_transaction)
-      tx_bytes = ExPlasma.Encoding.to_hex(txn.tx_bytes)
-      tx_hash = ExPlasma.Encoding.to_hex(txn.tx_hash)
+      tx_bytes = Encoding.to_hex(txn.tx_bytes)
+      tx_hash = Encoding.to_hex(txn.tx_hash)
       {:ok, payload} = post("/transaction.submit", %{transaction: tx_bytes})
 
       assert_payload_data(payload, %{"tx_hash" => tx_hash})

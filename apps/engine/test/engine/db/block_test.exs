@@ -6,13 +6,15 @@ defmodule Engine.DB.BlockTest do
 
   alias Engine.DB.Block
   alias Engine.DB.Transaction
+  alias Engine.Repo
+  alias ExPlasma.Merkle
 
   describe "form/0" do
     test "forms a block from the existing pending transactions" do
       _ = insert(:deposit_transaction)
       _ = insert(:payment_v1_transaction)
       {:ok, %{"new-block" => block}} = Block.form()
-      transactions = Engine.Repo.all(from(t in Transaction, where: t.block_id == ^block.id))
+      transactions = Repo.all(from(t in Transaction, where: t.block_id == ^block.id))
 
       assert length(transactions) == 1
     end
@@ -20,7 +22,7 @@ defmodule Engine.DB.BlockTest do
     test "generates the block hash" do
       _ = insert(:deposit_transaction)
       txn1 = insert(:payment_v1_transaction)
-      hash = ExPlasma.Merkle.root_hash([txn1.tx_bytes])
+      hash = Merkle.root_hash([txn1.tx_bytes])
 
       assert {:ok, %{"hash-block" => block}} = Block.form()
       assert block.hash == hash
@@ -32,13 +34,13 @@ defmodule Engine.DB.BlockTest do
       _ = insert(:deposit_transaction)
       _ = insert(:payment_v1_transaction)
       {:ok, %{"hash-block" => block}} = Block.form()
-      result = block.hash |> Block.query_by_hash() |> Engine.Repo.one()
+      result = block.hash |> Block.query_by_hash() |> Repo.one()
 
       assert result.hash == block.hash
     end
 
     test "returns nil if no block" do
-      result = <<0::160>> |> Block.query_by_hash() |> Engine.Repo.one()
+      result = <<0::160>> |> Block.query_by_hash() |> Repo.one()
       assert result == nil
     end
   end

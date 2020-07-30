@@ -46,7 +46,7 @@ defmodule Engine.DB.TransactionTest do
       assert get_field(changeset, :tx_type) == 1
       assert get_field(changeset, :kind) == Transaction.kind_transfer()
       assert get_field(changeset, :tx_bytes) == tx_bytes
-      assert get_field(changeset, :tx_hash) == ExPlasma.Transaction.hash(signed_tx)
+      assert get_field(changeset, :tx_hash) == ExPlasma.hash(signed_tx)
       assert get_field(changeset, :witnesses) == []
     end
 

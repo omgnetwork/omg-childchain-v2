@@ -4,6 +4,7 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator.Witness do
   """
 
   alias Engine.DB.Transaction.PaymentV1.Type
+  alias ExPlasma.Crypto
 
   @type validation_result_t() ::
           :ok
@@ -30,7 +31,7 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator.Witness do
   ...> [<<1::160>>, <<2::160>>])
   :ok
   """
-  @spec validate(Type.output_list_t(), list(ExPlasma.Crypto.address_t())) :: validation_result_t()
+  @spec validate(Type.output_list_t(), list(Crypto.address_t())) :: validation_result_t()
   def validate(inputs, witnesses) do
     with :ok <- validate_length(inputs, witnesses),
          :ok <- validate_input_ownership(inputs, witnesses) do
