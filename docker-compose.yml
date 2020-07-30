@@ -94,6 +94,7 @@ services:
       - "9656"
     depends_on:
       - feefeed
+    restart: always
     networks:
       chain_net:
         ipv4_address: 172.27.0.103
