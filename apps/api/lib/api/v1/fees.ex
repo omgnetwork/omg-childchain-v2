@@ -5,6 +5,8 @@ defmodule API.V1.Fees do
 
   alias Engine.Fees.{FeeFilter, FeeServer}
 
+  import API.Validator
+
   @type fees_response() :: %{
           required(String.t()) => fee_type()
         }
@@ -24,13 +26,11 @@ defmodule API.V1.Fees do
   """
   @spec all(map()) :: fees_response()
   def all(params) do
-    # with {:ok, currencies} <- expect(params, "currencies", list: &to_currency/1, optional: true),
-    #      {:ok, tx_types} <- expect(params, "tx_types", list: &to_tx_type/1, optional: true),
-    #      {:ok, filtered_fees} <- get_filtered_fees(tx_types, currencies) do
-    #   filtered_fees
-    # end
-
-    get_filtered_fees(params, params)
+    with {:ok, currencies} <- expect(params, "currencies", list: &to_currency/1, optional: true),
+         {:ok, tx_types} <- expect(params, "tx_types", list: &to_tx_type/1, optional: true),
+         {:ok, filtered_fees} <- get_filtered_fees(tx_types, currencies) do
+      filtered_fees
+    end
   end
 
   @spec get_filtered_fees(list(pos_integer()), list(String.t()) | nil) ::
@@ -43,5 +43,13 @@ defmodule API.V1.Fees do
       error ->
         error
     end
+  end
+
+  defp to_currency(currency_str) do
+    expect(%{"currency" => currency_str}, "currency", :address)
+  end
+
+  defp to_tx_type(tx_type_str) do
+    expect(%{"tx_type" => tx_type_str}, "tx_type", :non_neg_integer)
   end
 end
