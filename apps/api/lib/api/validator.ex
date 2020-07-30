@@ -42,7 +42,7 @@ defmodule API.Validator do
     opts
     |> replace_aliases()
     |> Enum.reduce(
-      map |> get(key),
+      get(map, key),
       &validate/2
     )
     |> case do
@@ -66,10 +66,8 @@ defmodule API.Validator do
   """
   @spec all_success_or_error([{:ok, any()} | {:error, any()}]) :: list() | {:error, any()}
   def all_success_or_error(result_list) do
-    with nil <- result_list |> Enum.find(&(:error == Kernel.elem(&1, 0))),
-         do:
-           result_list
-           |> Enum.map(fn {:ok, elt} -> elt end)
+    with nil <- Enum.find(result_list, &(:error == Kernel.elem(&1, 0))),
+         do: Enum.map(result_list, fn {:ok, elt} -> elt end)
   end
 
   @doc """
@@ -168,7 +166,7 @@ defmodule API.Validator do
     end
 
     val
-    |> Enum.reduce_while([], fn elt, acc -> mapper.(elt) |> list_reducer.(acc) end)
+    |> Enum.reduce_while([], fn elt, acc -> elt |> mapper.() |> list_reducer.(acc) end)
     |> case do
       list when is_list(list) ->
         {Enum.reverse(list), []}
@@ -185,8 +183,8 @@ defmodule API.Validator do
   defp validate({validator, args}, acc), do: Kernel.apply(__MODULE__, validator, [acc, args])
 
   defp replace_aliases(validators) do
-    validators
-    |> Enum.reduce(
+    Enum.reduce(
+      validators,
       [],
       fn v, acc ->
         key = validator_name(v)

@@ -2,10 +2,9 @@ defmodule API.V1.Fees do
   @moduledoc """
   Fetches fees and returns data for the API response.
   """
+  import API.Validator
 
   alias Engine.Fees.{FeeFilter, Fees, FeeServer}
-
-  import API.Validator
 
   @type fees_response() :: %{non_neg_integer() => %{<<_::160>> => fee_type()}}
 
