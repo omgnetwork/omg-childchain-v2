@@ -56,8 +56,8 @@ services:
       - GITHUB_ORGANISATION=omgnetwork
       - GITHUB_REPO=fee-rules
       - GITHUB_BRANCH=master
-      - RULES_FETCH_INTERVAL=10
-      - RATES_FETCH_INTERVAL=10
+      - RULES_FETCH_INTERVAL=2
+      - RATES_FETCH_INTERVAL=2
       - GITHUB_FILENAME=fee_rules
       - DATABASE_URL=postgresql://feefeed:feefeed@172.27.0.109:5432/feefeed
       - SECRET_KEY_BASE="Y8naENMR8b+vbPHILjwNtEfWFrnbGi2k+UYWm75VnKHfsavmyGLtTmmeJxAGK+zJ"
@@ -82,10 +82,14 @@ services:
     env_file:
       - ./localchain_contract_addresses.env
     environment:
-      DATABASE_URL: postgres
+      DATABASE_URL: postgresql://omisego_dev:omisego_dev@172.27.0.107:5432/engine_repo
       ETHEREUM_RPC_URL: http://172.27.0.102:80
       LOGGER_BACKEND: console
       ETHEREUM_EVENTS_CHECK_INTERVAL_MS: 800
+      FEE_FEED_URL: http://172.27.0.110:4000/api/v1
+      FEE_CHANGE_TOLERANCE_PERCENT: 20
+      FEE_ADAPTER: FEED
+      STORED_FEE_UPDATE_INTERVAL_MINUTES: 2
     expose:
       - "9656"
     depends_on:
