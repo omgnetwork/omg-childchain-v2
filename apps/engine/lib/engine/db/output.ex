@@ -14,8 +14,6 @@ defmodule Engine.DB.Output do
   import Ecto.Changeset
   import Ecto.Query, only: [from: 2]
 
-  alias ExPlasma.Output
-
   schema "outputs" do
     # Extracted from `output_id`
     field(:position, :integer)
@@ -70,8 +68,8 @@ defmodule Engine.DB.Output do
         changeset
 
       _output_data ->
-        output = struct(%Output{}, params)
-        put_change(changeset, :output_data, Output.encode(output))
+        output = struct(%ExPlasma.Output{}, params)
+        put_change(changeset, :output_data, ExPlasma.Output.encode(output))
     end
   end
 
@@ -81,8 +79,8 @@ defmodule Engine.DB.Output do
         changeset
 
       _output_id ->
-        output = struct(%Output{}, params)
-        put_change(changeset, :output_id, Output.encode(output, as: :input))
+        output = struct(%ExPlasma.Output{}, params)
+        put_change(changeset, :output_id, ExPlasma.Output.encode(output, as: :input))
     end
   end
 end
