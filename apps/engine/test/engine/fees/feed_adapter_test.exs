@@ -109,7 +109,7 @@ end
 defmodule ResponseFactory do
   use FakeServer.ResponseFactory
 
-  def json_rpc_response do
+  def json_rpc_response() do
     ok(
       %{
         version: "1.0",

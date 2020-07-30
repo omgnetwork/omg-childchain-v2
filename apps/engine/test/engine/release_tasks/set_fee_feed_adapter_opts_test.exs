@@ -76,9 +76,9 @@ defmodule Engine.ReleaseTasks.SetFeeFeedAdapterOptsTest do
     # Intentionally not configuring @env_fee_feed_url and @env_stored_fee_update_interval_minutes
     :ok = System.put_env(@env_fee_adapter, "feed")
     :ok = System.put_env(@env_fee_change_tolerance_percent, "50")
-    config = SetFeeFeedAdapterOpts.load(config, [])
+    new_config = SetFeeFeedAdapterOpts.load(config, [])
 
-    {adapter, opts: new_opts} = config[:engine][:fee_adapter]
+    {adapter, opts: new_opts} = new_config[:engine][:fee_adapter]
 
     assert adapter == FeedAdapter
     assert new_opts[:fee_feed_url] == adapter_opts[:fee_feed_url]
