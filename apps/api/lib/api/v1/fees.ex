@@ -3,28 +3,25 @@ defmodule API.V1.Fees do
   Fetches fees and returns data for the API response.
   """
 
-  alias Engine.Fees.{FeeFilter, FeeServer}
+  alias Engine.Fees.{FeeFilter, Fees, FeeServer}
 
   import API.Validator
 
-  @type fees_response() :: %{
-          required(String.t()) => fee_type()
-        }
+  @type fees_response() :: %{non_neg_integer() => %{<<_::160>> => fee_type()}}
 
   @type fee_type() :: %{
           required(:amount) => pos_integer(),
-          required(:currency) => String.t(),
           required(:subunit_to_unit) => pos_integer(),
           required(:pegged_amount) => pos_integer(),
-          required(:pegged_currency) => String.t(),
+          required(:pegged_currency) => binary(),
           required(:pegged_subunit_to_unit) => pos_integer(),
-          required(:updated_at) => String.t()
+          required(:updated_at) => DateTime.t()
         }
 
   @doc """
   Fetches fees.
   """
-  @spec all(map()) :: fees_response()
+  @spec all(map()) :: fees_response() | API.Validator.validation_error_t()
   def all(params) do
     with {:ok, currencies} <- expect(params, "currencies", list: &to_currency/1, optional: true),
          {:ok, tx_types} <- expect(params, "tx_types", list: &to_tx_type/1, optional: true),

@@ -14,6 +14,7 @@ defmodule API.V1.Router do
   alias API.Plugs.ExpectParams.InvalidParams
   alias API.Plugs.Health
   alias API.V1.BlockGet
+  alias API.V1.Fees
   alias API.V1.TransactionSubmit
 
   plug(Plug.Parsers, parsers: [:json], json_decoder: Jason)
