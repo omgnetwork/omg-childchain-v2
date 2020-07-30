@@ -37,6 +37,11 @@ defmodule API.V1.Router do
     render_json(conn, 200, data)
   end
 
+  post "/fees.all" do
+    data = Fees.all(conn.params)
+    render_json(conn, 200, data)
+  end
+
   # The "input validations" are being raised up through the plug pipeline's as errors. We
   # catch InvalidParams here as we are using this with ExpectParams to raise the error message here.
   defp handle_errors(conn, %{reason: %InvalidParams{message: message}}) do
