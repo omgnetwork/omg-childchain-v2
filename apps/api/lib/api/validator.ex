@@ -107,8 +107,9 @@ defmodule API.Validator do
     end
   end
 
-  @spec from_hex(<<_::16, _::_*8>>) :: binary
-  def from_hex("0x" <> encoded), do: Base.decode16!(encoded, case: :lower)
+  @spec from_hex(<<_::16, _::_*8>>) :: {:ok, binary()} | {:error, :invalid_hex}
+  def from_hex("0x" <> hexstr), do: Base.decode16(hexstr, case: :mixed)
+  def from_hex(_), do: {:error, :invalid_hex}
 
   @spec length({any(), list()}, non_neg_integer()) :: {any(), list()}
   def length({_, [_ | _]} = err, _len), do: err
