@@ -2,8 +2,8 @@ defmodule API.V1.TransactionSubmitTest do
   use Engine.DB.DataCase, async: true
 
   alias API.V1.TransactionSubmit
-  alias ExPlasma.PaymentV1Builder
   alias ExPlasma.Encoding
+  alias ExPlasma.PaymentV1Builder
 
   describe "submit/1" do
     test "decodes and inserts a tx_bytes into the DB" do

@@ -4,8 +4,8 @@ defmodule Engine.DB.Transaction.ValidatorTest do
   alias Engine.DB.Transaction
   alias Engine.DB.Transaction.Validator
   alias Engine.Repo
-  alias ExPlasma.PaymentV1Builder
   alias ExPlasma.Output
+  alias ExPlasma.PaymentV1Builder
 
   describe "validate_inputs/1" do
     test "associate inputs if all inputs are usable in the correct order" do

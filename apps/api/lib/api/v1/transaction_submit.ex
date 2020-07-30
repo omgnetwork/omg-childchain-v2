@@ -16,7 +16,7 @@ defmodule API.V1.TransactionSubmit do
   @doc """
   Validate and insert the tx_bytes.
   """
-  @spec submit(String.t()) :: submit_response()
+  @spec submit(String.t()) :: submit_response() | no_return()
   @decorate trace(service: :ecto, type: :backend)
   def submit("0x" <> _rest = hex_tx_bytes) do
     with {:ok, binary} <- Encoding.to_binary(hex_tx_bytes),

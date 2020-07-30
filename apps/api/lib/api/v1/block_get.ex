@@ -22,7 +22,7 @@ defmodule API.V1.BlockGet do
   @decorate trace(service: :ecto, type: :backend)
   def by_hash(hash) do
     with {:ok, decoded_hash} <- Encoding.to_binary(hash),
-         block when not is_nil(block) <- decoded_hash |> Block.query_by_hash() |> Repo.one() do
+         block when is_map(block) <- decoded_hash |> Block.query_by_hash() |> Repo.one() do
       block = Repo.preload(block, :transactions)
 
       %{
