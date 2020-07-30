@@ -48,13 +48,13 @@ services:
         ipv4_address: 172.27.0.109
 
   feefeed:
-    image: "e2f0834d7fb3"
+    image: "omisego/feefeed:latest"
     command: "start"
     container_name: feefeed
     environment:
       - GITHUB_TOKEN=""
       - GITHUB_ORGANISATION=omgnetwork
-      - GITHUB_REPO=fee-rules
+      - GITHUB_REPO=fee-rules-public
       - GITHUB_BRANCH=master
       - RULES_FETCH_INTERVAL=2
       - RATES_FETCH_INTERVAL=2
