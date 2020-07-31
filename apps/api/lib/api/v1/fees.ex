@@ -4,6 +4,7 @@ defmodule API.V1.Fees do
   """
   import API.Validator
 
+  alias API.Response
   alias Engine.Fees.{FeeFilter, Fees, FeeServer}
 
   @type fees_response() :: %{non_neg_integer() => %{<<_::160>> => fee_type()}}
@@ -49,6 +50,7 @@ defmodule API.V1.Fees do
     fees
     |> Enum.map(&parse_for_type/1)
     |> Enum.into(%{})
+    |> Response.sanitize()
   end
 
   defp parse_for_type({tx_type, fees}) do
