@@ -12,7 +12,7 @@ defmodule API.ResponseTest do
 
   test "cleaning response: remove nested meta keys" do
     data =
-      %{
+      Response.sanitize(%{
         address: "0xd5b6e653beec1f8131d2ea4f574b2fd58770d9e0",
         utxos: [
           %{
@@ -31,8 +31,7 @@ defmodule API.ResponseTest do
             id: 1
           }
         ]
-      }
-      |> Response.sanitize()
+      })
 
     assert false ==
              Enum.any?(

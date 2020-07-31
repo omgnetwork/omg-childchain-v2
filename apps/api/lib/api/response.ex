@@ -43,7 +43,7 @@ defmodule API.Response do
   end
 
   def sanitize(list) when is_list(list) do
-    list |> Enum.map(&sanitize/1)
+    Enum.map(list, &sanitize/1)
   end
 
   def sanitize(map_or_struct) when is_map(map_or_struct) do
@@ -76,7 +76,8 @@ defmodule API.Response do
 
   defp do_filter(map_or_struct) do
     if :code.is_loaded(Ecto) do
-      Enum.filter(map_or_struct, fn
+      map_or_struct
+      |> Enum.filter(fn
         {_, %{__struct__: Ecto.Association.NotLoaded}} -> false
         _ -> true
       end)
@@ -89,11 +90,11 @@ defmodule API.Response do
   # Allows to skip sanitize on specifies keys provided in list in key :skip_hex_encode
   defp sanitize_map(map) do
     {skip_keys, map} = Map.pop(map, :skip_hex_encode, [])
-    skip_keys = MapSet.new(skip_keys)
+    new_skip_keys = MapSet.new(skip_keys)
 
     map
     |> Enum.map(fn {k, v} ->
-      case MapSet.member?(skip_keys, k) do
+      case MapSet.member?(new_skip_keys, k) do
         true -> {k, v}
         false -> {k, sanitize(v)}
       end
