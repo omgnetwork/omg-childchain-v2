@@ -10,8 +10,6 @@ defmodule Engine.Fees.FeedAdapterTest do
   alias Engine.Fees.JSONFeeParser
   alias FakeServer.Response
 
-  @moduletag :child_chain
-
   @eth <<0::160>>
   @eth_hex "0x" <> Base.encode16(@eth, case: :lower)
   @payment_tx_type 1

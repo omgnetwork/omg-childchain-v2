@@ -56,8 +56,8 @@ services:
       - GITHUB_ORGANISATION=omgnetwork
       - GITHUB_REPO=fee-rules-public
       - GITHUB_BRANCH=master
-      - RULES_FETCH_INTERVAL=2
-      - RATES_FETCH_INTERVAL=2
+      - RULES_FETCH_INTERVAL=20
+      - RATES_FETCH_INTERVAL=20
       - GITHUB_FILENAME=fee_rules
       - DATABASE_URL=postgresql://feefeed:feefeed@172.27.0.109:5432/feefeed
       - SECRET_KEY_BASE="Y8naENMR8b+vbPHILjwNtEfWFrnbGi2k+UYWm75VnKHfsavmyGLtTmmeJxAGK+zJ"

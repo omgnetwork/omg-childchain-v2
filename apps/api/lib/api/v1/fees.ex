@@ -25,7 +25,7 @@ defmodule API.V1.Fees do
     with {:ok, currencies} <- expect(params, "currencies", list: &to_currency/1, optional: true),
          {:ok, tx_types} <- expect(params, "tx_types", list: &to_tx_type/1, optional: true),
          {:ok, filtered_fees} <- get_filtered_fees(tx_types, currencies) do
-      filtered_fees
+      to_api_format(filtered_fees)
     end
   end
 
@@ -43,5 +43,27 @@ defmodule API.V1.Fees do
 
   defp to_tx_type(tx_type_str) do
     expect(%{"tx_type" => tx_type_str}, "tx_type", :non_neg_integer)
+  end
+
+  defp to_api_format(fees) do
+    fees
+    |> Enum.map(&parse_for_type/1)
+    |> Enum.into(%{})
+  end
+
+  defp parse_for_type({tx_type, fees}) do
+    {Integer.to_string(tx_type), Enum.map(fees, &parse_for_token/1)}
+  end
+
+  defp parse_for_token({currency, fee}) do
+    %{
+      currency: currency,
+      amount: fee.amount,
+      subunit_to_unit: fee.subunit_to_unit,
+      pegged_currency: {:skip_hex_encode, fee.pegged_currency},
+      pegged_amount: fee.pegged_amount,
+      pegged_subunit_to_unit: fee.pegged_subunit_to_unit,
+      updated_at: {:skip_hex_encode, fee.updated_at}
+    }
   end
 end
