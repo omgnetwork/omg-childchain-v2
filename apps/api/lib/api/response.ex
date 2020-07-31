@@ -103,10 +103,5 @@ defmodule API.Response do
 
   defp to_map(struct), do: Map.drop(struct, [:__struct__, :__meta__])
 
-  defp to_response(data, result) do
-    %{
-      success: result == :success,
-      data: data
-    }
-  end
+  defp to_response(data, _result), do: data
 end

@@ -18,15 +18,36 @@ defmodule API.V1.Fees do
           required(:updated_at) => DateTime.t()
         }
 
+  @errors %{
+    tx_type_not_supported: %{
+      code: "fee:tx_type_not_supported",
+      description: "One or more of the given transaction types are not supported."
+    },
+    currency_fee_not_supported: %{
+      code: "fee:currency_fee_not_supported",
+      description: "One or more of the given currencies are not supported as a fee-token."
+    },
+    operation_not_found: %{
+      code: "operation:not_found",
+      description: "Operation cannot be found. Check request URL."
+    },
+    operation_bad_request: %{
+      code: "operation:bad_request",
+      description: "Parameters required by this operation are missing or incorrect."
+    }
+  }
+
   @doc """
   Fetches fees.
   """
-  @spec all(map()) :: fees_response() | API.Validator.validation_error_t()
-  def all(params) do
-    with {:ok, currencies} <- expect(params, "currencies", list: &to_currency/1, optional: true),
-         {:ok, tx_types} <- expect(params, "tx_types", list: &to_tx_type/1, optional: true),
+  @spec all(Plug.Conn.t()) :: fees_response() | API.Validator.validation_error_t()
+  def all(conn) do
+    with {:ok, currencies} <- expect(conn.params, "currencies", list: &to_currency/1, optional: true),
+         {:ok, tx_types} <- expect(conn.params, "tx_types", list: &to_tx_type/1, optional: true),
          {:ok, filtered_fees} <- get_filtered_fees(tx_types, currencies) do
       to_api_format(filtered_fees)
+    else
+      error -> handle_error(conn, error)
     end
   end
 
@@ -50,7 +71,7 @@ defmodule API.V1.Fees do
     fees
     |> Enum.map(&parse_for_type/1)
     |> Enum.into(%{})
-    |> Response.sanitize()
+    |> Response.serialize()
   end
 
   defp parse_for_type({tx_type, fees}) do
@@ -68,4 +89,43 @@ defmodule API.V1.Fees do
       updated_at: {:skip_hex_encode, fee.updated_at}
     }
   end
+
+  defp handle_error(conn, {:error, {:validation_error, param_name, validator}}) do
+    error = error_info(conn, :operation_bad_request)
+
+    serialize_error(error.code, error.description, %{
+      validation_error: %{parameter: param_name, validator: inspect(validator)}
+    })
+  end
+
+  defp handle_error(conn, {:error, reason}) do
+    error = error_info(conn, reason)
+
+    serialize_error(error.code, error.description)
+  end
+
+  defp handle_error(conn, :error), do: handle_error(conn, {:error, :unknown_error})
+
+  defp handle_error(conn, _), do: handle_error(conn, {:error, :unknown_error})
+
+  defp error_info(conn, reason) do
+    case Map.get(@errors, reason) do
+      nil -> %{code: "#{conn.path_info}#{inspect(reason)}", description: nil}
+      error -> error
+    end
+  end
+
+  @spec serialize_error(atom() | String.t(), String.t() | nil, map() | nil) :: map()
+  defp serialize_error(code, description, messages \\ nil) do
+    %{
+      object: :error,
+      code: code,
+      description: description
+    }
+    |> add_messages(messages)
+    |> Response.serialize()
+  end
+
+  defp add_messages(data, nil), do: data
+  defp add_messages(data, messages), do: Map.put_new(data, :messages, messages)
 end

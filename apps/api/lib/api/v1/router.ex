@@ -39,7 +39,7 @@ defmodule API.V1.Router do
   end
 
   post "/fees.all" do
-    data = Fees.all(conn.params)
+    data = Fees.all(conn)
     render_json(conn, 200, data)
   end
 
