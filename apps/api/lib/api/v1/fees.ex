@@ -7,10 +7,11 @@ defmodule API.V1.Fees do
   alias API.Response
   alias Engine.Fees.{FeeFilter, Fees, FeeServer}
 
-  @type fees_response() :: %{non_neg_integer() => %{<<_::160>> => fee_type()}}
+  @type fees_response() :: %{non_neg_integer() => fee_type()}
 
   @type fee_type() :: %{
           required(:amount) => pos_integer(),
+          required(:currency) => String.t(),
           required(:subunit_to_unit) => pos_integer(),
           required(:pegged_amount) => pos_integer(),
           required(:pegged_currency) => binary(),
@@ -103,10 +104,6 @@ defmodule API.V1.Fees do
 
     serialize_error(error.code, error.description)
   end
-
-  defp handle_error(conn, :error), do: handle_error(conn, {:error, :unknown_error})
-
-  defp handle_error(conn, _), do: handle_error(conn, {:error, :unknown_error})
 
   defp error_info(conn, reason) do
     case Map.get(@errors, reason) do

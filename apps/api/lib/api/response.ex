@@ -5,7 +5,7 @@ defmodule API.Response do
 
   @sha String.replace(elem(System.cmd("git", ["rev-parse", "--short=7", "HEAD"]), 0), "\n", "")
 
-  @type response_t :: %{version: binary(), success: boolean(), data: map()}
+  @type response_t :: map()
 
   def serialize_page(data, data_paging) do
     data
