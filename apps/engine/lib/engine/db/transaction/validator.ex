@@ -12,11 +12,6 @@ defmodule Engine.DB.Transaction.Validator do
   alias Engine.DB.Transaction.PaymentV1
   alias Engine.Repo
 
-  @error_messages [
-    cannot_be_zero: "can not be zero",
-    exceeds_maximum: "can not exceed maximum value"
-  ]
-
   @type_validators %{
     1 => PaymentV1.Validator
   }
@@ -102,7 +97,8 @@ defmodule Engine.DB.Transaction.Validator do
   defp process_protocol_validation_results(:ok, changeset), do: changeset
 
   defp process_protocol_validation_results({:error, {field, message}}, changeset) do
-    add_error(changeset, field, @error_messages[message])
+    formatted_message = message |> Atom.to_string() |> String.replace("_", " ") |> String.capitalize()
+    add_error(changeset, field, formatted_message)
   end
 
   defp get_validator(type), do: Map.fetch!(@type_validators, type)

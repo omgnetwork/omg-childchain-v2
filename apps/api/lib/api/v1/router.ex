@@ -11,47 +11,39 @@ defmodule API.V1.Router do
   use Plug.ErrorHandler
 
   alias API.Plugs.ExpectParams
-  alias API.Plugs.ExpectParams.InvalidParams
+  # alias API.Plugs.ExpectParams.InvalidParams
   alias API.Plugs.Health
-  alias API.V1.BlockGet
-  alias API.V1.TransactionSubmit
+  alias API.V1.Controller.Block
+  alias API.V1.Controller.Transaction
+  alias API.V1.Responder
+
+  @expected_params %{
+    "/v1/block.get" => [
+      %{name: "hash", type: :hex, required: true}
+    ],
+    "/v1/transaction.submit" => [
+      %{name: "transaction", type: :hex, required: true}
+    ]
+  }
 
   plug(Plug.Parsers, parsers: [:json], json_decoder: Jason)
-  plug(ExpectParams, key: "hash", path: "/block.get", hex: true)
-  plug(ExpectParams, key: "transaction", path: "/transaction.submit", hex: true)
+  plug(ExpectParams, expected_params: @expected_params, responder: Responder)
+
   plug(:match)
   plug(:dispatch)
 
   get "/health.check" do
     conn = Health.call(conn, %{})
-    send_resp(conn, conn.status, "")
+    Responder.respond(conn, "")
   end
 
   post "/block.get" do
-    data = BlockGet.by_hash(conn.params["hash"])
-    render_json(conn, 200, data)
+    data = Block.get_by_hash(conn.params["hash"])
+    Responder.respond(conn, data)
   end
 
   post "/transaction.submit" do
-    data = TransactionSubmit.submit(conn.params["transaction"])
-    render_json(conn, 200, data)
-  end
-
-  # The "input validations" are being raised up through the plug pipeline's as errors. We
-  # catch InvalidParams here as we are using this with ExpectParams to raise the error message here.
-  defp handle_errors(conn, %{reason: %InvalidParams{message: message}}) do
-    render_json(conn, 400, %{error: message})
-  end
-
-  # V1 Parity wraps the body of the contents with this.
-  defp render_json(conn, status, data) do
-    payload =
-      Jason.encode!(%{
-        service_name: "childchain",
-        version: "1.0",
-        data: data
-      })
-
-    send_resp(conn, status, payload)
+    data = Transaction.submit(conn.params["transaction"])
+    Responder.respond(conn, data)
   end
 end

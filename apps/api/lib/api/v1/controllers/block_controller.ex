@@ -1,6 +1,6 @@
-defmodule API.V1.BlockGet do
+defmodule API.V1.Controller.Block do
   @moduledoc """
-  Fetches a block and returns data for the API response.
+  Contains block related API functions.
   """
 
   use Spandex.Decorators
@@ -8,6 +8,7 @@ defmodule API.V1.BlockGet do
   alias Engine.DB.Block
   alias Engine.Repo
   alias ExPlasma.Encoding
+  alias API.V1.Serializer
 
   @type block_response() :: %{
           required(:blknum) => pos_integer(),
@@ -18,21 +19,23 @@ defmodule API.V1.BlockGet do
   @doc """
   Fetches a block by the given hash from the params.
   """
-  @spec by_hash(String.t()) :: block_response()
+  # @spec by_hash(String.t()) :: block_response()
   @decorate trace(service: :ecto, type: :backend)
-  def by_hash(hash) do
+  def get_by_hash(hash) do
     with {:ok, decoded_hash} <- Encoding.to_binary(hash),
          block when is_map(block) <- decoded_hash |> Block.query_by_hash() |> Repo.one() do
-      block = Repo.preload(block, :transactions)
+      serialized =
+        block
+        |> Repo.preload(:transactions)
+        |> Serializer.Block.serialize()
 
-      %{
-        blknum: block.number,
-        hash: Encoding.to_hex(block.hash),
-        transactions: Enum.map(block.transactions, fn txn -> Encoding.to_hex(txn.tx_bytes) end)
-      }
+      {:ok, serialized}
     else
-      nil -> %{}
-      error -> error
+      nil ->
+        {:error, :not_found, "No block matching the given hash"}
+
+      error ->
+        error
     end
   end
 end

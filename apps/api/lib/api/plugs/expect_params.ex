@@ -1,53 +1,67 @@
 defmodule API.Plugs.ExpectParams do
   @moduledoc """
-  Checks that a request has the expected params, otherwise raise an error. Here are the options:
-
-  * :path - Specify the `path` you want this to check. like `path: "/foo"
-  * :key  - Specify the `conn.params` key you want to check, `key: "hash"`
-  * :hex  - Check that the specified key is a string prefixed with `0x`.
-
-  To use in your pipeline you can just:
-
-  plug ExpectParams, key: "foo", path: "/bar", hex: false
+  Checks that a request has the expected params.
+  Returns the conn with filtered params, removing any unwanted param, if success
+  or responds with an error otherwise.
 
   Leverages the scrub_params/2 code from Phoenix.
   """
 
-  alias __MODULE__.InvalidParams
-
   def init(options), do: options
 
   def call(conn, opts) do
-    if conn.request_path == opts[:path] do
-      conn |> scrub_params(opts[:key]) |> validate_hex(opts[:key], opts[:hex])
+    expected_params = Keyword.fetch!(opts, :expected_params)
+    responder = Keyword.fetch!(opts, :responder)
+
+    with expected_params when is_list(expected_params) <- Map.get(expected_params, conn.request_path, :path_not_found),
+         {:ok, params} <- validate_params(conn.params, expected_params) do
+      %{conn | params: params}
     else
-      conn
+      :path_not_found ->
+        conn
+
+      error ->
+        responder.respond(conn, error)
     end
   end
 
-  defp validate_hex(conn, required_key, true) when is_binary(required_key) do
-    if conn.params |> Map.get(required_key) |> is_hex?() do
-      conn
-    else
-      raise InvalidParams, "#{required_key} must be prefixed with \"0x\""
+  defp validate_params(conn_params, expected_params) do
+    Enum.reduce_while(expected_params, {:ok, %{}}, fn param, {:ok, acc} ->
+      with {:ok, value} <- validate_required(conn_params, param.name, param.required),
+           {:ok, value} <- validate_value(value, param.name),
+           :ok <- validate_format(value, param.type) do
+        {:cont, {:ok, Map.put(acc, param.name, value)}}
+      else
+        error -> {:halt, error}
+      end
+    end)
+  end
+
+  defp validate_required(conn_params, param_name, true) when is_map_key(conn_params, param_name),
+    do: {:ok, Map.get(conn_params, param_name)}
+
+  defp validate_required(_, param_name, true),
+    do: {:error, :missing_required_param, "missing required key '#{param_name}'"}
+
+  defp validate_required(conn_params, param_name, false), do: {:ok, Map.get(conn_params, param_name)}
+
+  defp validate_value(nil, _param_name), do: {:ok, nil}
+
+  defp validate_value(param_value, param_name) do
+    case scrub_param(param_value) do
+      nil ->
+        {:error, :invalid_param_value, "value for key '#{param_name}' is invalid, got: '#{param_value}'"}
+
+      param ->
+        {:ok, param}
     end
   end
 
-  defp validate_hex(conn, _required_key, _), do: conn
+  defp validate_format(nil, _format), do: :ok
+  defp validate_format("0x" <> _, :hex), do: :ok
 
-  defp is_hex?("0x" <> _), do: true
-  defp is_hex?(_), do: false
-
-  defp scrub_params(conn, required_key) when is_binary(required_key) do
-    param = conn.params |> Map.get(required_key) |> scrub_param()
-
-    unless param do
-      raise InvalidParams, "missing required key \"#{required_key}\""
-    end
-
-    params = Map.put(conn.params, required_key, param)
-    %Plug.Conn{conn | params: params}
-  end
+  defp validate_format(value, :hex),
+    do: {:error, :invalid_param_type, "hex values must be prefixed with 0x, got: '#{value}'"}
 
   defp scrub_param(%{} = param) do
     Enum.reduce(param, %{}, fn {k, v}, acc ->
@@ -66,8 +80,4 @@ defmodule API.Plugs.ExpectParams do
   defp scrub?(" " <> rest), do: scrub?(rest)
   defp scrub?(""), do: true
   defp scrub?(_), do: false
-
-  defmodule InvalidParams do
-    defexception [:message]
-  end
 end

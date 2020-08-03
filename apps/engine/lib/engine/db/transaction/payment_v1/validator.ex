@@ -16,13 +16,13 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
   alias ExPlasma.Output
 
   @error_messages [
-    amounts_do_not_add_up: "output amounts are greater than input amounts",
-    fees_not_covered: "fees are not covered by inputs",
-    fee_token_not_accepted: "fee token is not accepted",
-    overpaying_fees: "overpaying fees",
-    unauthorized_spend: "given signatures do not match the inputs owners",
-    missing_signature: "not enough signatures for the number of inputs",
-    superfluous_signature: "too many signatures for the number of inputs"
+    amounts_do_not_add_up: "Output amounts are greater than input amounts",
+    fees_not_covered: "Fees are not covered by inputs",
+    fee_token_not_accepted: "Fee token is not accepted",
+    overpaying_fees: "Overpaying fees",
+    unauthorized_spend: "Given signatures do not match the inputs owners",
+    missing_signature: "Not enough signatures for the number of inputs",
+    superfluous_signature: "Too many signatures for the number of inputs"
   ]
 
   @doc """
