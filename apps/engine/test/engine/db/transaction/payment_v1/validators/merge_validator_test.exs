@@ -1,9 +1,9 @@
-defmodule Engine.DB.Transaction.PaymentV1.MergeValidatorTest do
+defmodule Engine.DB.Transaction.PaymentV1.Validator.MergeTest do
   use ExUnit.Case, async: true
 
-  alias Engine.DB.Transaction.PaymentV1.MergeValidator
+  alias Engine.DB.Transaction.PaymentV1.Validator.Merge
 
-  doctest MergeValidator
+  doctest Merge
 
   @alice <<1::160>>
   @bob <<2::160>>
@@ -17,7 +17,7 @@ defmodule Engine.DB.Transaction.PaymentV1.MergeValidatorTest do
 
       o_1 = build_output(@token_1, 4, @alice)
 
-      assert MergeValidator.is_merge?([i_1, i_2], [o_1])
+      assert Merge.is_merge?([i_1, i_2], [o_1])
     end
 
     test "returns false when has as many outputs than inputs" do
@@ -27,7 +27,7 @@ defmodule Engine.DB.Transaction.PaymentV1.MergeValidatorTest do
       o_1 = build_output(@token_1, 2, @alice)
       o_2 = build_output(@token_1, 2, @alice)
 
-      refute MergeValidator.is_merge?([i_1, i_2], [o_1, o_2])
+      refute Merge.is_merge?([i_1, i_2], [o_1, o_2])
     end
 
     test "returns false when has more outputs than inputs" do
@@ -36,7 +36,7 @@ defmodule Engine.DB.Transaction.PaymentV1.MergeValidatorTest do
       o_1 = build_output(@token_1, 1, @alice)
       o_2 = build_output(@token_1, 2, @alice)
 
-      refute MergeValidator.is_merge?([i_1], [o_1, o_2])
+      refute Merge.is_merge?([i_1], [o_1, o_2])
     end
 
     test "returns false when has more than 1 token" do
@@ -47,7 +47,7 @@ defmodule Engine.DB.Transaction.PaymentV1.MergeValidatorTest do
       o_1 = build_output(@token_1, 4, @alice)
       o_2 = build_output(@token_2, 4, @alice)
 
-      refute MergeValidator.is_merge?([i_1, i_2, i_3], [o_1, o_2])
+      refute Merge.is_merge?([i_1, i_2, i_3], [o_1, o_2])
     end
 
     test "returns false when has more than 1 account" do
@@ -56,7 +56,7 @@ defmodule Engine.DB.Transaction.PaymentV1.MergeValidatorTest do
 
       o_1 = build_output(@token_1, 4, @bob)
 
-      refute MergeValidator.is_merge?([i_1, i_2], [o_1])
+      refute Merge.is_merge?([i_1, i_2], [o_1])
     end
   end
 

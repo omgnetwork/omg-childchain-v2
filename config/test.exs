@@ -19,5 +19,14 @@ config :engine,
   ethereum_events_check_interval_ms: 10,
   coordinator_eth_height_check_interval_ms: 10
 
+config :ex_plasma,
+  eip_712_domain: %{
+    name: "OMG Network",
+    salt: "0xfad5c7f626d80f9256ef01929f3beb96e058b8b4b0e3fe52d84f054c0e2a7a83",
+    verifying_contract:
+      System.get_env("CONTRACT_ADDRESS_PLASMA_FRAMEWORK", "0xd17e1233a03affb9092d5109179b43d6a8828607"),
+    version: "1"
+  }
+
 config :plug, :validate_header_keys_during_test, true
 config :logger, level: :warn
