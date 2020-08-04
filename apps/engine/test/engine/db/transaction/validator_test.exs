@@ -107,7 +107,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
         |> Validator.validate_protocol()
 
       refute validated_changeset.valid?
-      assert {"can not be zero", _} = validated_changeset.errors[:amount]
+      assert {"Cannot be zero", _} = validated_changeset.errors[:amount]
     end
   end
 
@@ -195,7 +195,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
       validated_changeset = Validator.validate_statefully(changeset, params)
 
       refute validated_changeset.valid?
-      assert {"fees are not covered by inputs", _} = validated_changeset.errors[:inputs]
+      assert {"Fees are not covered by inputs", _} = validated_changeset.errors[:inputs]
     end
   end
 

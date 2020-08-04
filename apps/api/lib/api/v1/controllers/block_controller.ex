@@ -5,10 +5,10 @@ defmodule API.V1.Controller.Block do
 
   use Spandex.Decorators
 
+  alias API.V1.Serializer
   alias Engine.DB.Block
   alias Engine.Repo
   alias ExPlasma.Encoding
-  alias API.V1.Serializer
 
   @type block_response() :: %{
           required(:blknum) => pos_integer(),

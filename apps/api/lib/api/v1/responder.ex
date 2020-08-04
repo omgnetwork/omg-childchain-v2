@@ -20,8 +20,6 @@ defmodule API.V1.Responder do
     render_json(conn, Success.serialize(data))
   end
 
-  def respond(conn, a), do: IO.inspect(a)
-
   # Sends a V1 response with the encoded data.
   defp render_json(conn, data) do
     conn

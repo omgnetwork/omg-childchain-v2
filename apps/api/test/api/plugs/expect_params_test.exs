@@ -3,52 +3,38 @@ defmodule API.Plugs.ExpectParamsTest do
   use Plug.Test
 
   alias API.Plugs.ExpectParams
-  alias API.Plugs.ExpectParams.InvalidParams
 
-  test "raises an error if a param is missing" do
-    assert_raise(InvalidParams, "missing required key \"foo\"", fn ->
-      call_plug("/", %{})
-    end)
+  defmodule DummyReponder do
+    def respond(_conn, data), do: data
   end
 
-  test "does not raise if params exist" do
-    resp = call_plug("/", %{foo: "hi"})
-    assert resp.params == %{"foo" => "hi"}
-  end
+  @expected_params %{
+    "foo" => [
+      %{name: "foo", type: :hex, required: true},
+      %{name: "bar", type: :hex, required: false}
+    ]
+  }
 
-  test "raises error for a given path" do
-    assert_raise(InvalidParams, "missing required key \"foo\"", fn ->
-      call_plug("/", %{})
-    end)
-  end
+  describe "call/2" do
+    test "returns the conn with params when valid, default optional to nil" do
+      params = %{"foo" => "0x01"}
+      assert %{params: validated_params} = call_plug("foo", params)
+      assert validated_params == Map.put(params, "bar", nil)
+    end
 
-  test "does not raises error for a non matching path" do
-    resp = call_plug("/dog", %{bar: "hi"})
-    assert resp.params == %{"bar" => "hi"}
-  end
+    test "calls responder with a `missing_required_param` error when a required param is missing" do
+      assert call_plug("foo", %{}) == {:error, :missing_required_param, "missing required key 'foo'"}
+    end
 
-  test "raises for an empty string" do
-    assert_raise(InvalidParams, "missing required key \"foo\"", fn ->
-      call_plug("/", %{foo: ""})
-    end)
-  end
-
-  test "raises for an blank string" do
-    assert_raise(InvalidParams, "missing required key \"foo\"", fn ->
-      call_plug("/", %{foo: "  "})
-    end)
-  end
-
-  test "raises error if not a hex string" do
-    assert_raise(InvalidParams, "bar must be prefixed with \"0x\"", fn ->
-      call_plug("/bar", %{bar: "123456"})
-    end)
+    test "returns the conn unchanged if the path is not valid" do
+      conn = conn(:get, "undefined", %{})
+      assert ExpectParams.call(conn, expected_params: @expected_params, responder: DummyReponder) == conn
+    end
   end
 
   defp call_plug(path, params) do
     :get
     |> conn(path, params)
-    |> ExpectParams.call(key: "foo", path: "/")
-    |> ExpectParams.call(key: "bar", path: "/bar", hex: true)
+    |> ExpectParams.call(expected_params: @expected_params, responder: DummyReponder)
   end
 end

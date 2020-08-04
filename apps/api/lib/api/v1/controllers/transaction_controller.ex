@@ -5,10 +5,10 @@ defmodule API.V1.Controller.Transaction do
 
   use Spandex.Decorators
 
+  alias API.V1.Serializer
   alias Engine.DB.Transaction
   alias Engine.Repo
   alias ExPlasma.Encoding
-  alias API.V1.Serializer
 
   @type submit_response() :: %{
           required(:tx_hash) => String.t()

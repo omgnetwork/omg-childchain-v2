@@ -2,81 +2,70 @@ defmodule API.V1.RouterTest do
   use Engine.DB.DataCase, async: true
   use Plug.Test
 
-  alias API.Plugs.ExpectParams.InvalidParams
   alias API.V1.Router
   alias ExPlasma.Encoding
 
-  describe "/block.get" do
+  describe "block.get" do
     test "that it returns a block" do
       transaction = insert(:deposit_transaction)
       tx_bytes = Encoding.to_hex(transaction.tx_bytes)
       hash = Encoding.to_hex(transaction.block.hash)
       number = transaction.block.number
-      {:ok, payload} = post("/block.get", %{hash: hash})
+      {:ok, payload} = post("block.get", %{hash: hash})
 
       assert_payload_data(payload, %{"blknum" => number, "hash" => hash, "transactions" => [tx_bytes]})
     end
 
     test "that it returns an error if missing hash params" do
-      req = conn(:post, "/block.get", "{}")
+      {:ok, payload} = post("block.get", %{})
 
-      assert_raise(InvalidParams, fn -> Router.call(req, Router.init([])) end)
-      assert {400, _header, body} = sent_resp(req)
-
-      payload = Jason.decode!(body)
-
-      assert_payload_data(payload, %{"error" => "missing required key \"hash\""})
+      assert_payload_data(payload, %{
+        "code" => "missing_required_param",
+        "description" => "missing required key 'hash'",
+        "object" => "error"
+      })
     end
 
     test "that it returns an error if hash param is not a hex" do
-      req =
-        :post
-        |> conn("/block.get", Jason.encode!(%{hash: "12345"}))
-        |> put_req_header("content-type", "application/json")
+      {:ok, payload} = post("block.get", %{hash: "12345"})
 
-      assert_raise(InvalidParams, fn -> Router.call(req, Router.init([])) end)
-      assert {400, _header, body} = sent_resp(req)
-
-      payload = Jason.decode!(body)
-
-      assert_payload_data(payload, %{"error" => "hash must be prefixed with \"0x\""})
+      assert_payload_data(payload, %{
+        "code" => "invalid_param_type",
+        "description" => "hex values must be prefixed with 0x, got: '12345'",
+        "object" => "error"
+      })
     end
   end
 
-  describe "/transaction.submit" do
+  describe "transaction.submit" do
     test "decodes a transaction and inserts it" do
       _ = insert(:deposit_transaction)
       txn = build(:payment_v1_transaction)
       tx_bytes = Encoding.to_hex(txn.tx_bytes)
       tx_hash = Encoding.to_hex(txn.tx_hash)
-      {:ok, payload} = post("/transaction.submit", %{transaction: tx_bytes})
+      {:ok, payload} = post("transaction.submit", %{transaction: tx_bytes})
 
       assert_payload_data(payload, %{"tx_hash" => tx_hash})
     end
 
     test "that it returns an error if missing transaction params" do
-      req = conn(:post, "/transaction.submit", "{}")
+      {:ok, payload} = post("transaction.submit", %{})
 
-      assert_raise(InvalidParams, fn -> Router.call(req, Router.init([])) end)
-      assert {400, _header, body} = sent_resp(req)
-
-      payload = Jason.decode!(body)
-
-      assert_payload_data(payload, %{"error" => "missing required key \"transaction\""})
+      assert_payload_data(payload, %{
+        "code" => "missing_required_param",
+        "description" => "missing required key 'transaction'",
+        "object" => "error"
+      })
     end
 
     test "that it returns an error if transaction param is not a hex" do
-      req =
-        :post
-        |> conn("/transaction.submit", Jason.encode!(%{transaction: "12345"}))
-        |> put_req_header("content-type", "application/json")
+      {:ok, payload} = post("transaction.submit", %{transaction: "12345"})
 
-      assert_raise(InvalidParams, fn -> Router.call(req, Router.init([])) end)
-      assert {400, _header, body} = sent_resp(req)
-
-      payload = Jason.decode!(body)
-
-      assert_payload_data(payload, %{"error" => "transaction must be prefixed with \"0x\""})
+      assert_payload_data(payload, %{
+        "code" => "invalid_param_type",
+        "description" => "hex values must be prefixed with 0x, got: '12345'",
+        "object" => "error"
+      })
     end
   end
 
