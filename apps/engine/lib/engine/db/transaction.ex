@@ -64,14 +64,19 @@ defmodule Engine.DB.Transaction do
   """
   @spec decode(tx_bytes, kind: atom()) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
   def decode(tx_bytes, kind: kind) do
-    with {:ok, params} <- tx_bytes_to_map(tx_bytes) do
-      params =
-        params
-        # TODO: Handle fees, load from DB? Buffer period, format?
-        |> Map.put(:fees, :no_fees_required)
-        |> Map.put(:kind, kind)
+    case ExPlasma.decode(tx_bytes, :recovered) do
+      {:ok, %Recovered{} = recovered} ->
+        params =
+          recovered
+          |> recovered_to_map()
+          # TODO: Handle fees, load from DB? Buffer period, format?
+          |> Map.put(:fees, :no_fees_required)
+          |> Map.put(:kind, kind)
 
-      {:ok, changeset(%__MODULE__{}, params)}
+        {:ok, changeset(%__MODULE__{}, params)}
+
+      {:error, _decoding_error_atom} = error ->
+        error
     end
   end
 
@@ -88,20 +93,19 @@ defmodule Engine.DB.Transaction do
     |> Validator.validate_statefully(params)
   end
 
-  defp tx_bytes_to_map(tx_bytes) do
-    with {:ok, %Recovered{} = recovered} <- ExPlasma.decode(tx_bytes, :recovered) do
-      inputs = ExPlasma.get_inputs(recovered)
-      outputs = ExPlasma.get_outputs(recovered)
-      tx_type = ExPlasma.get_tx_type(recovered)
+  defp recovered_to_map(recovered) do
+    inputs = recovered |> ExPlasma.get_inputs() |> Enum.map(&Map.from_struct/1)
+    outputs = recovered |> ExPlasma.get_outputs() |> Enum.map(&Map.from_struct/1)
+    tx_type = ExPlasma.get_tx_type(recovered)
 
-      {:ok,
-       %{signed_tx: recovered.signed_tx}
-       |> Map.put(:inputs, Enum.map(inputs, &Map.from_struct/1))
-       |> Map.put(:outputs, Enum.map(outputs, &Map.from_struct/1))
-       |> Map.put(:tx_hash, recovered.tx_hash)
-       |> Map.put(:witnesses, recovered.witnesses)
-       |> Map.put(:tx_type, tx_type)
-       |> Map.put(:tx_bytes, tx_bytes)}
-    end
+    %{
+      signed_tx: recovered.signed_tx,
+      inputs: inputs,
+      outputs: outputs,
+      tx_type: tx_type,
+      tx_hash: recovered.tx_hash,
+      witnesses: recovered.witnesses,
+      tx_bytes: recovered.signed_tx_bytes
+    }
   end
 end

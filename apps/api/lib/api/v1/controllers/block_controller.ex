@@ -34,7 +34,7 @@ defmodule API.V1.Controller.Block do
       nil ->
         {:error, :not_found, "No block matching the given hash"}
 
-      error ->
+      {:error, :decoding_error} = error ->
         error
     end
   end
