@@ -48,4 +48,8 @@ defmodule API.V1.Router do
     data = Transaction.submit(conn.params["transaction"])
     Responder.respond(conn, data)
   end
+
+  match _ do
+    Responder.respond(conn, {:error, :operation_not_found})
+  end
 end

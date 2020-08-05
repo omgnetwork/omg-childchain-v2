@@ -6,6 +6,7 @@ defmodule API.V1.ErrorEnhancer do
 
   @descriptions %{
     decoding_error: "Invalid hex encoded binary",
+    operation_not_found: "The given operation is invalid",
     malformed_rlp: "The given RLP encoded bytes is malformed"
   }
 
