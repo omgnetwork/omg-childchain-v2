@@ -1,6 +1,5 @@
 defmodule API.Serializer.Base do
-  @moduledoc """
-  """
+  @moduledoc false
 
   def serialize(data, success, version) do
     %{

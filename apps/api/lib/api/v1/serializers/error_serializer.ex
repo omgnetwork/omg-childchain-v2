@@ -1,5 +1,6 @@
 defmodule API.V1.Serializer.Error do
   @moduledoc """
+  Contain functions that serialize errors into a v1 format
   """
 
   alias API.Serializer.Error

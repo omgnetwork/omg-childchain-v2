@@ -10,14 +10,10 @@ defmodule API.V1.Controller.Transaction do
   alias Engine.Repo
   alias ExPlasma.Encoding
 
-  @type submit_response() :: %{
-          required(:tx_hash) => String.t()
-        }
-
   @doc """
   Validate and insert the tx_bytes.
   """
-  @spec submit(String.t()) :: submit_response() | no_return()
+  @spec submit(String.t()) :: {:ok, Serializer.Transaction.serialized_hash()} | {:error, atom() | Ecto.Changeset.t()}
   @decorate trace(service: :ecto, type: :backend)
   def submit("0x" <> _rest = hex_tx_bytes) do
     with {:ok, binary} <- Encoding.to_binary(hex_tx_bytes),

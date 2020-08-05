@@ -1,4 +1,9 @@
 defmodule API.V1.ErrorEnhancer do
+  @moduledoc """
+  Contain functions that help to enhance error into a
+  {:error, atom, string} format that suits API response.
+  """
+
   @descriptions %{
     decoding_error: "Invalid hex encoded binary",
     malformed_rlp: "The given RLP encoded bytes is malformed"

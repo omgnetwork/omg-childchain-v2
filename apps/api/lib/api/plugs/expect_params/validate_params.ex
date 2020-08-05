@@ -15,11 +15,13 @@ defmodule API.Plugs.ExpectParams.ValidateParams do
     end)
   end
 
-  defp validate_required(conn_params, param_name, true) when is_map_key(conn_params, param_name),
-    do: {:ok, Map.get(conn_params, param_name)}
+  defp validate_required(conn_params, param_name, true) when is_map_key(conn_params, param_name) do
+    {:ok, Map.get(conn_params, param_name)}
+  end
 
-  defp validate_required(_, param_name, true),
-    do: {:error, :missing_required_param, "missing required key '#{param_name}'"}
+  defp validate_required(_, param_name, true) do
+    {:error, :missing_required_param, "missing required key '#{param_name}'"}
+  end
 
   defp validate_required(conn_params, param_name, false), do: {:ok, Map.get(conn_params, param_name)}
 

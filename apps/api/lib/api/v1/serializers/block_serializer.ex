@@ -1,8 +1,15 @@
 defmodule API.V1.Serializer.Block do
   @moduledoc """
+  Contain functions that serialize blocks into different format
   """
 
   alias ExPlasma.Encoding
+
+  @type serialized_block() :: %{
+          required(:blknum) => pos_integer(),
+          required(:hash) => String.t(),
+          required(:transactions) => [String.t()]
+        }
 
   def serialize(block) do
     %{
