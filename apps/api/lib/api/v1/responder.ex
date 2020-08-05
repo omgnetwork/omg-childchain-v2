@@ -7,7 +7,6 @@ defmodule API.V1.Responder do
   alias API.V1.ErrorEnhancer
   alias API.V1.Serializer.Error
   alias API.V1.Serializer.Success
-  alias Plug.Conn
 
   def respond(conn, {:error, _code} = error) do
     respond(conn, ErrorEnhancer.enhance(error))
