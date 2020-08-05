@@ -32,7 +32,7 @@ defmodule API.V1.BlockGet do
       }
     else
       nil -> %{}
-      error -> error
+      {:error, :decoding_error} = error -> error
     end
   end
 end
