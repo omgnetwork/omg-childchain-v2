@@ -17,24 +17,43 @@ services:
     restart: always
     ports:
       - "5432:5432"
+    volumes:
+      - ./docker/create_databases.sql:/docker-entrypoint-initdb.d/create_databases.sql
     environment:
-      POSTGRES_USER: omisego_dev
-      POSTGRES_PASSWORD: omisego_dev
-      POSTGRES_DB: engine_repo
+      - POSTGRES_MULTIPLE_DATABASES="feefeed","engine_repo","omisego_dev",
+      - POSTGRES_USER=omisegodev
+      - POSTGRES_PASSWORD=omisegodev
     networks:
       chain_net:
         ipv4_address: 172.27.0.107
 
-  postgres_watcher:
-    image: postgres:12.2-alpine
-    restart: always
+  feefeed:
+    image: "omisego/feefeed:latest"
+    command: "start"
+    container_name: feefeed
     environment:
-      POSTGRES_USER: omisego_dev
-      POSTGRES_PASSWORD: omisego_dev
-      POSTGRES_DB: omisego_dev
+      - GITHUB_TOKEN=""
+      - GITHUB_ORGANISATION=omgnetwork
+      - GITHUB_REPO=fee-rules-public
+      - GITHUB_BRANCH=master
+      - RULES_FETCH_INTERVAL=20
+      - RATES_FETCH_INTERVAL=20
+      - GITHUB_FILENAME=fee_rules
+      - DATABASE_URL=postgresql://feefeed:feefeed@172.27.0.107:5432/feefeed
+      - SECRET_KEY_BASE="Y8naENMR8b+vbPHILjwNtEfWFrnbGi2k+UYWm75VnKHfsavmyGLtTmmeJxAGK+zJ"
+      - DATADOG_DISABLED=true
+      - DATADOG_HOST="localhost"
+      - ETHEREUM_NODE_URL=http://172.27.0.102:80
+    ports:
+      - "4000:4000"
+    expose:
+      - "4000"
+    depends_on:
+      - postgres
+    restart: always
     networks:
       chain_net:
-        ipv4_address: 172.27.0.106
+        ipv4_address: 172.27.0.110
 
   childchain:
     image: omisego/childchain:latest
@@ -43,12 +62,19 @@ services:
     env_file:
       - ./localchain_contract_addresses.env
     environment:
-      DATABASE_URL: postgres
+      DATABASE_URL: postgresql://engine_repo:engine_repo@172.27.0.107:5432/engine_repo
       ETHEREUM_RPC_URL: http://172.27.0.102:80
       LOGGER_BACKEND: console
       ETHEREUM_EVENTS_CHECK_INTERVAL_MS: 800
+      FEE_FEED_URL: http://172.27.0.110:4000/api/v1/fees
+      FEE_CHANGE_TOLERANCE_PERCENT: 20
+      FEE_ADAPTER: FEED
+      STORED_FEE_UPDATE_INTERVAL_MINUTES: 2
     expose:
       - "9656"
+    depends_on:
+      - feefeed
+    restart: always
     networks:
       chain_net:
         ipv4_address: 172.27.0.103
@@ -143,7 +169,7 @@ services:
       - ETHEREUM_NETWORK=LOCALCHAIN
       - ETHEREUM_RPC_URL=http://172.27.0.102:80
       - CHILD_CHAIN_URL=http://172.27.0.103:9656
-      - DATABASE_URL=postgresql://omisego_dev:omisego_dev@172.27.0.106:5432/omisego_dev
+      - DATABASE_URL=postgresql://omisego_dev:omisego_dev@172.27.0.107:5432/omisego_dev
       - PORT=7534
       - APP_ENV=local_docker_development
       - DD_HOSTNAME=datadog
