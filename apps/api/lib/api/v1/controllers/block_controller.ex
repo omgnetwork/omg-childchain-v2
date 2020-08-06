@@ -7,7 +7,6 @@ defmodule API.V1.Controller.Block do
 
   alias API.V1.Serializer
   alias Engine.DB.Block
-  alias Engine.Repo
   alias ExPlasma.Encoding
 
   @type get_by_hash_error() :: {:error, :decoding_error} | {:error, :not_found, String.t()}
@@ -19,15 +18,10 @@ defmodule API.V1.Controller.Block do
   @decorate trace(service: :ecto, type: :backend)
   def get_by_hash(hash) do
     with {:ok, decoded_hash} <- Encoding.to_binary(hash),
-         block when is_map(block) <- decoded_hash |> Block.query_by_hash() |> Repo.one() do
-      serialized =
-        block
-        |> Repo.preload(:transactions)
-        |> Serializer.Block.serialize()
-
-      {:ok, serialized}
+         {:ok, block} <- Block.get_by_hash(decoded_hash, :transactions) do
+      {:ok, Serializer.Block.serialize(block)}
     else
-      nil ->
+      {:error, nil} ->
         {:error, :not_found, "No block matching the given hash"}
 
       {:error, :decoding_error} = error ->

@@ -14,6 +14,23 @@ defmodule Engine.DB.Output do
   import Ecto.Changeset
   import Ecto.Query, only: [from: 2]
 
+  alias Engine.DB.Transaction
+
+  @type t() :: %{
+          creating_transaction: Transaction.t(),
+          creating_transaction_id: pos_integer(),
+          id: pos_integer(),
+          inserted_at: DateTime.t(),
+          output_data: binary() | nil,
+          output_id: pos_integer() | nil,
+          output_type: pos_integer(),
+          position: pos_integer() | nil,
+          spending_transaction: Transaction.t() | nil,
+          spending_transaction_id: pos_integer() | nil,
+          state: String.t(),
+          updated_at: DateTime.t()
+        }
+
   schema "outputs" do
     # Extracted from `output_id`
     field(:position, :integer)
