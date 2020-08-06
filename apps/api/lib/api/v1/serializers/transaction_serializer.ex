@@ -10,6 +10,6 @@ defmodule API.V1.Serializer.Transaction do
         }
 
   def serialize_hash(transaction) do
-    %{tx_hash: Encoding.to_hex(transaction.tx_hash)}
+    %{object: "transaction", tx_hash: Encoding.to_hex(transaction.tx_hash)}
   end
 end

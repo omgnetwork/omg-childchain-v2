@@ -11,7 +11,7 @@ defmodule API.V1.Controller.BlockTest do
       hex_tx_bytes = [Encoding.to_hex(transaction.tx_bytes)]
 
       assert Block.get_by_hash(hash) ==
-               {:ok, %{blknum: transaction.block.number, hash: hash, transactions: hex_tx_bytes}}
+               {:ok, %{blknum: transaction.block.number, hash: hash, transactions: hex_tx_bytes, object: "block"}}
     end
 
     test "it returns `not_found` for missing blocks" do

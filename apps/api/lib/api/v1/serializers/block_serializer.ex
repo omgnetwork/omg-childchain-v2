@@ -13,6 +13,7 @@ defmodule API.V1.Serializer.Block do
 
   def serialize(block) do
     %{
+      object: "block",
       blknum: block.number,
       hash: Encoding.to_hex(block.hash),
       transactions: Enum.map(block.transactions, &Encoding.to_hex(&1.tx_bytes))

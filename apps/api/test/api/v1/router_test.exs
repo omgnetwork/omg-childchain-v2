@@ -13,7 +13,12 @@ defmodule API.V1.RouterTest do
       number = transaction.block.number
       {:ok, payload} = post("block.get", %{hash: hash})
 
-      assert_payload_data(payload, %{"blknum" => number, "hash" => hash, "transactions" => [tx_bytes]})
+      assert_payload_data(payload, %{
+        "blknum" => number,
+        "hash" => hash,
+        "transactions" => [tx_bytes],
+        "object" => "block"
+      })
     end
 
     test "that it returns an error if missing hash params" do
@@ -45,7 +50,7 @@ defmodule API.V1.RouterTest do
       tx_hash = Encoding.to_hex(txn.tx_hash)
       {:ok, payload} = post("transaction.submit", %{transaction: tx_bytes})
 
-      assert_payload_data(payload, %{"tx_hash" => tx_hash})
+      assert_payload_data(payload, %{"tx_hash" => tx_hash, "object" => "transaction"})
     end
 
     test "that it returns an error if missing transaction params" do

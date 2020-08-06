@@ -12,7 +12,7 @@ defmodule API.V1.Controllere.TransactionTest do
       tx_hash = Encoding.to_hex(txn.tx_hash)
       tx_bytes = Encoding.to_hex(txn.tx_bytes)
 
-      assert Transaction.submit(tx_bytes) == {:ok, %{tx_hash: tx_hash}}
+      assert Transaction.submit(tx_bytes) == {:ok, %{tx_hash: tx_hash, object: "transaction"}}
     end
 
     test "it raises an error if the tranasaction is invalid" do
