@@ -32,7 +32,13 @@ config :engine,
   plasma_framework: contracts["CONTRACT_ADDRESS_PLASMA_FRAMEWORK"],
   erc20_vault: contracts["CONTRACT_ADDRESS_ERC20_VAULT"],
   eth_vault: contracts["CONTRACT_ADDRESS_ETH_VAULT"],
-  payment_exit_game: contracts["CONTRACT_ADDRESS_PAYMENT_EXIT_GAME"]
+  payment_exit_game: contracts["CONTRACT_ADDRESS_PAYMENT_EXIT_GAME"],
+  fee_adapter_check_interval_ms: 10_000
+
+config :engine, Engine.Fees,
+  fee_feed_url: "http://localhost:4000/api/v1",
+  fee_change_tolerance_percent: 25,
+  stored_fee_update_interval_minutes: 1
 
 config :engine, Engine.Repo,
   database: "engine_repo",

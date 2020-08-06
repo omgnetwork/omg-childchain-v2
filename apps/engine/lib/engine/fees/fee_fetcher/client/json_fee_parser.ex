@@ -1,9 +1,9 @@
-defmodule Engine.Fees.JSONFeeParser do
+defmodule Engine.Fees.FeeFetcher.Client.JSONFeeParser do
   @moduledoc """
   Transaction's fee validation functions
   """
 
-  alias Engine.Fees.JSONFeeParser.JSONSingleSpecParser
+  alias Engine.Fees.FeeFetcher.Client.JSONFeeParser.JSONSingleSpecParser
 
   require Logger
 
@@ -80,9 +80,11 @@ defmodule Engine.Fees.JSONFeeParser do
     %{token: token} = token_fee
     token_fee = Map.drop(token_fee, [:token])
     # checks whether token was specified before
-    if Map.has_key?(token_fee_map, token),
-      do: {[{:error, :duplicate_token, tx_type, spec_index} | errors], token_fee_map, spec_index + 1, tx_type},
-      else: {errors, Map.put(token_fee_map, token, token_fee), spec_index + 1, tx_type}
+    if Map.has_key?(token_fee_map, token) do
+      {[{:error, :duplicate_token, tx_type, spec_index} | errors], token_fee_map, spec_index + 1, tx_type}
+    else
+      {errors, Map.put(token_fee_map, token, token_fee), spec_index + 1, tx_type}
+    end
   end
 
   defp handle_parser_output({[], fee_specs}) do

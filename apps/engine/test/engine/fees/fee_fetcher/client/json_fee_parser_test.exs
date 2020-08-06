@@ -1,8 +1,8 @@
-defmodule Engine.Fees.JSONFeeParserTest do
+defmodule Engine.Fees.FeeFetcher.Client.JSONFeeParserTest do
   @moduledoc false
   use ExUnit.Case, async: true
 
-  alias Engine.Fees.JSONFeeParser
+  alias Engine.Fees.FeeFetcher.Client.JSONFeeParser
 
   @moduletag :capture_log
 
