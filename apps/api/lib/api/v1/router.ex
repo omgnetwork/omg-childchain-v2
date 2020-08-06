@@ -14,6 +14,7 @@ defmodule API.V1.Router do
   alias API.Plugs.ExpectParams.InvalidParams
   alias API.Plugs.Health
   alias API.V1.BlockGet
+  alias API.V1.Fees
   alias API.V1.TransactionSubmit
 
   plug(Plug.Parsers, parsers: [:json], json_decoder: Jason)
@@ -34,6 +35,11 @@ defmodule API.V1.Router do
 
   post "/transaction.submit" do
     data = TransactionSubmit.submit(conn.params["transaction"])
+    render_json(conn, 200, data)
+  end
+
+  post "/fees.all" do
+    data = Fees.all(conn)
     render_json(conn, 200, data)
   end
 
