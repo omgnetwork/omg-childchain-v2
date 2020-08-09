@@ -62,30 +62,30 @@ defmodule Engine.Ethereum.SyncSupervisor do
         get_events_callback: &Aggregator.deposit_created/2,
         process_events_callback: &Deposit.callback/2
       ),
-      EthereumEventListener.prepare_child(
-        ets: ListenerStorage.listener_checkin(),
-        metrics_collection_interval: metrics_collection_interval,
-        contract_deployment_height: contract_deployment_height,
-        service_name: :in_flight_exit,
-        get_events_callback: &Aggregator.in_flight_exit_started/2,
-        process_events_callback: &exit_and_ignore_validities/1
-      ),
-      EthereumEventListener.prepare_child(
-        ets: ListenerStorage.listener_checkin(),
-        metrics_collection_interval: metrics_collection_interval,
-        contract_deployment_height: contract_deployment_height,
-        service_name: :piggyback,
-        get_events_callback: &Aggregator.in_flight_exit_piggybacked/2,
-        process_events_callback: &exit_and_ignore_validities/1
-      ),
-      EthereumEventListener.prepare_child(
-        ets: ListenerStorage.listener_checkin(),
-        metrics_collection_interval: metrics_collection_interval,
-        contract_deployment_height: contract_deployment_height,
-        service_name: :exiter,
-        get_events_callback: &Aggregator.exit_started/2,
-        process_events_callback: &exit_and_ignore_validities/1
-      ),
+      # EthereumEventListener.prepare_child(
+      #   ets: ListenerStorage.listener_checkin(),
+      #   metrics_collection_interval: metrics_collection_interval,
+      #   contract_deployment_height: contract_deployment_height,
+      #   service_name: :in_flight_exit,
+      #   get_events_callback: &Aggregator.in_flight_exit_started/2,
+      #   process_events_callback: &exit_and_ignore_validities/1
+      # ),
+      # EthereumEventListener.prepare_child(
+      #   ets: ListenerStorage.listener_checkin(),
+      #   metrics_collection_interval: metrics_collection_interval,
+      #   contract_deployment_height: contract_deployment_height,
+      #   service_name: :piggyback,
+      #   get_events_callback: &Aggregator.in_flight_exit_piggybacked/2,
+      #   process_events_callback: &exit_and_ignore_validities/1
+      # ),
+      # EthereumEventListener.prepare_child(
+      #   ets: ListenerStorage.listener_checkin(),
+      #   metrics_collection_interval: metrics_collection_interval,
+      #   contract_deployment_height: contract_deployment_height,
+      #   service_name: :exiter,
+      #   get_events_callback: &Aggregator.exit_started/2,
+      #   process_events_callback: &exit_and_ignore_validities/1
+      # ),
       {ChildObserver, [monitor: monitor]}
     ]
   end
