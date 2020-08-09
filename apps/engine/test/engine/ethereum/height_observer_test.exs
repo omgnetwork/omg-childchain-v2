@@ -11,7 +11,14 @@ defmodule Engine.Ethereum.HeightObserverTest do
   end
 
   setup %{test: test_name} do
-    Application.start(:sasl)
+    case Application.start(:sasl) do
+      {:error, {:already_started, :sasl}} ->
+        :ok = Application.stop(:sasl)
+        :ok = Application.start(:sasl)
+
+      :ok ->
+        :ok
+    end
 
     on_exit(fn ->
       Application.stop(:sasl)
