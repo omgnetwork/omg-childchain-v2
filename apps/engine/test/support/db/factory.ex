@@ -193,5 +193,4 @@ defmodule Engine.DB.Factory do
       gas: 827
     }
   end
-
 end
