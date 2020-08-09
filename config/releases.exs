@@ -73,12 +73,5 @@ config :status, Status.Metric.Tracer,
 config :engine, Engine.Feefeed.Rules.Scheduler,
   interval: String.to_integer(System.get_env("RULES_FETCH_INTERVAL") || "180")
 
-config :engine, Engine.Feefeed.Rules.Worker.Source,
-  token: mandatory.("GITHUB_TOKEN", "GITHUB_TOKEN for Feefeed is mandatory."),
-  org: System.get_env("GITHUB_ORGANISATION") || "omgnetwork",
-  repo: mandatory.("GITHUB_REPO", "GITHUB_REPO for Feefeed is mandatory."),
-  branch: System.get_env("GITHUB_BRANCH") || "master",
-  filename: System.get_env("GITHUB_FILENAME") || "fee_rules"
-
 config :api,
   port: String.to_integer(System.get_env("PORT") || "9656")

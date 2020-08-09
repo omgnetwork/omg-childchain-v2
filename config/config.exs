@@ -100,12 +100,6 @@ config :os_mon,
 
 config :engine, Engine.Feefeed.Rules.Scheduler, interval: 180
 
-config :engine, Engine.Feefeed.Rules.Worker.Source,
-  org: "omgnetwork",
-  repo: "fee-rules",
-  branch: "master",
-  filename: "fee_rules"
-
 config :ex_plasma,
   eip_712_domain: %{
     name: "OMG Network",

@@ -67,13 +67,6 @@ defmodule Engine.Configuration do
     Application.fetch_env!(@app, Engine.Feefeed.Rules.Scheduler)[:interval]
   end
 
-  def source_config() do
-    @app
-    |> Application.fetch_env!(Engine.Feefeed.Rules.Worker.Source)
-    |> Enum.into(%{})
-    |> Map.merge(%{vsn: Application.spec(:engine, :vsn)})
-  end
-
   def db_fetch_retry_interval() do
     Application.fetch_env!(@app, :db_fetch_retry_interval)
   end
