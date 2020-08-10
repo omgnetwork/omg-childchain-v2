@@ -4,8 +4,8 @@ defmodule Engine.DB.Transaction.ValidatorTest do
   alias Engine.DB.Transaction
   alias Engine.DB.Transaction.Validator
   alias Engine.Repo
+  alias ExPlasma.Builder
   alias ExPlasma.Output
-  alias ExPlasma.PaymentV1Builder
 
   describe "validate_inputs/1" do
     test "associate inputs if all inputs are usable in the correct order" do
@@ -82,10 +82,11 @@ defmodule Engine.DB.Transaction.ValidatorTest do
   describe "validate_protocol/1" do
     test "returns the changeset unchanged when valid" do
       signed_tx =
-        PaymentV1Builder.new()
-        |> PaymentV1Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
-        |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
-        |> PaymentV1Builder.sign!(keys: [])
+        1
+        |> Builder.new()
+        |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
+        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+        |> Builder.sign!([])
 
       changeset = change(%Transaction{}, %{tx_bytes: ExPlasma.encode(signed_tx), signed_tx: signed_tx})
       validated_changeset = Validator.validate_protocol(changeset)
@@ -96,10 +97,11 @@ defmodule Engine.DB.Transaction.ValidatorTest do
 
     test "returns the changeset with an error if when invalid" do
       signed_tx =
-        PaymentV1Builder.new()
-        |> PaymentV1Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
-        |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 0)
-        |> PaymentV1Builder.sign!(keys: [])
+        1
+        |> Builder.new()
+        |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
+        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 0)
+        |> Builder.sign!([])
 
       validated_changeset =
         %Transaction{}

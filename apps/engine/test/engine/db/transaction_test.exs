@@ -5,7 +5,7 @@ defmodule Engine.DB.TransactionTest do
   alias Engine.DB.Output
   alias Engine.DB.Transaction
   alias Engine.Support.TestEntity
-  alias ExPlasma.PaymentV1Builder
+  alias ExPlasma.Builder
 
   describe "decode/2" do
     test "decodes tx_bytes and validates for a deposit" do
@@ -18,10 +18,11 @@ defmodule Engine.DB.TransactionTest do
 
     test "decodes tx_bytes and validates for a transfer" do
       tx_bytes =
-        PaymentV1Builder.new()
-        |> PaymentV1Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
-        |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 0)
-        |> PaymentV1Builder.sign!(keys: [])
+        1
+        |> Builder.new()
+        |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
+        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 0)
+        |> Builder.sign!([])
         |> ExPlasma.encode()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
@@ -33,10 +34,11 @@ defmodule Engine.DB.TransactionTest do
 
     test "casts and validate required fields" do
       tx_bytes =
-        PaymentV1Builder.new()
-        |> PaymentV1Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
-        |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
-        |> PaymentV1Builder.sign!(keys: [])
+        1
+        |> Builder.new()
+        |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
+        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+        |> Builder.sign!([])
         |> ExPlasma.encode()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
@@ -58,11 +60,12 @@ defmodule Engine.DB.TransactionTest do
       o_2_data = [token: <<0::160>>, amount: 10, output_guard: <<1::160>>]
 
       tx_bytes =
-        PaymentV1Builder.new()
-        |> PaymentV1Builder.add_input(blknum: input_blknum, txindex: 0, oindex: 0)
-        |> PaymentV1Builder.add_output(o_1_data)
-        |> PaymentV1Builder.add_output(o_2_data)
-        |> PaymentV1Builder.sign!(keys: [])
+        1
+        |> Builder.new()
+        |> Builder.add_input(blknum: input_blknum, txindex: 0, oindex: 0)
+        |> Builder.add_output(o_1_data)
+        |> Builder.add_output(o_2_data)
+        |> Builder.sign!([])
         |> ExPlasma.encode()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
@@ -77,10 +80,11 @@ defmodule Engine.DB.TransactionTest do
       input = insert(:output, %{blknum: input_blknum, state: "confirmed"})
 
       tx_bytes =
-        PaymentV1Builder.new()
-        |> PaymentV1Builder.add_input(blknum: input_blknum, txindex: 0, oindex: 0)
-        |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 10)
-        |> PaymentV1Builder.sign!(keys: [])
+        1
+        |> Builder.new()
+        |> Builder.add_input(blknum: input_blknum, txindex: 0, oindex: 0)
+        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 10)
+        |> Builder.sign!([])
         |> ExPlasma.encode()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
@@ -98,11 +102,12 @@ defmodule Engine.DB.TransactionTest do
       insert(:output, %{output_data: data_2, blknum: 2, state: "confirmed"})
 
       tx_bytes =
-        PaymentV1Builder.new()
-        |> PaymentV1Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
-        |> PaymentV1Builder.add_input(blknum: 2, txindex: 0, oindex: 0)
-        |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 20)
-        |> PaymentV1Builder.sign!(keys: [priv_encoded_1, priv_encoded_2])
+        1
+        |> Builder.new()
+        |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
+        |> Builder.add_input(blknum: 2, txindex: 0, oindex: 0)
+        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 20)
+        |> Builder.sign!([priv_encoded_1, priv_encoded_2])
         |> ExPlasma.encode()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
