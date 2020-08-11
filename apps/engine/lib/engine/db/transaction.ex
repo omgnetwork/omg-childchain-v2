@@ -19,7 +19,6 @@ defmodule Engine.DB.Transaction do
   alias Engine.DB.Output
   alias Engine.DB.Transaction.Validator
   alias Engine.Repo
-  alias ExPlasma.Transaction.Recovered
 
   @type tx_bytes :: binary
 
@@ -78,21 +77,19 @@ defmodule Engine.DB.Transaction do
   The main action of the system. Takes tx_bytes and forms the appropriate
   associations for the transaction and outputs and runs the changeset.
   """
-  @spec decode(tx_bytes, kind: atom()) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
-  def decode(tx_bytes, kind: kind) do
-    case ExPlasma.decode(tx_bytes, :recovered) do
-      {:ok, %Recovered{} = recovered} ->
-        params =
-          recovered
-          |> recovered_to_map()
-          # TODO: Handle fees, load from DB? Buffer period, format?
-          |> Map.put(:fees, :no_fees_required)
-          |> Map.put(:kind, kind)
+  @spec decode(tx_bytes, atom()) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
+  def decode(tx_bytes, kind) do
+    with {:ok, decoded} <- ExPlasma.decode(tx_bytes),
+         {:ok, recovered} <- ExPlasma.Transaction.with_witnesses(decoded) do
+      params =
+        recovered
+        |> recovered_to_map()
+        # TODO: Handle fees, load from DB? Buffer period, format?
+        |> Map.put(:fees, :no_fees_required)
+        |> Map.put(:kind, kind)
+        |> Map.put(:tx_bytes, tx_bytes)
 
-        {:ok, changeset(%__MODULE__{}, params)}
-
-      {:error, _decoding_error_atom} = error ->
-        error
+      {:ok, changeset(%__MODULE__{}, params)}
     end
   end
 
@@ -111,19 +108,18 @@ defmodule Engine.DB.Transaction do
 
   def insert(changeset), do: Repo.insert(changeset)
 
-  defp recovered_to_map(recovered) do
-    inputs = recovered |> ExPlasma.get_inputs() |> Enum.map(&Map.from_struct/1)
-    outputs = recovered |> ExPlasma.get_outputs() |> Enum.map(&Map.from_struct/1)
-    tx_type = ExPlasma.get_tx_type(recovered)
+  defp recovered_to_map(transaction) do
+    inputs = Enum.map(transaction.inputs, &Map.from_struct/1)
+    outputs = Enum.map(transaction.outputs, &Map.from_struct/1)
+    tx_hash = ExPlasma.hash(transaction)
 
     %{
-      signed_tx: recovered.signed_tx,
+      signed_tx: transaction,
       inputs: inputs,
       outputs: outputs,
-      tx_type: tx_type,
-      tx_hash: recovered.tx_hash,
-      witnesses: recovered.witnesses,
-      tx_bytes: recovered.signed_tx_bytes
+      tx_hash: tx_hash,
+      tx_type: transaction.tx_type,
+      witnesses: transaction.witnesses
     }
   end
 end

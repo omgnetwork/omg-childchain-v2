@@ -12,8 +12,8 @@ defmodule Engine.DB.Factory do
   alias Engine.DB.Output
   alias Engine.DB.Transaction
   alias Engine.Support.TestEntity
+  alias ExPlasma.Builder
   alias ExPlasma.Output.Position
-  alias ExPlasma.PaymentV1Builder
 
   def input_piggyback_event_factory(attr \\ %{}) do
     tx_hash = Map.get(attr, :tx_hash, <<1::256>>)
@@ -105,9 +105,10 @@ defmodule Engine.DB.Factory do
       |> Position.to_map()
 
     tx_bytes =
-      PaymentV1Builder.new()
-      |> PaymentV1Builder.add_output(Enum.to_list(data))
-      |> PaymentV1Builder.sign!(keys: [])
+      ExPlasma.payment_v1()
+      |> Builder.new()
+      |> Builder.add_output(Enum.to_list(data))
+      |> Builder.sign!([])
       |> ExPlasma.encode()
 
     output = build(:output, output_id: id, output_data: data, output_type: 1, state: "confirmed")
@@ -139,13 +140,14 @@ defmodule Engine.DB.Factory do
     insert(:output, %{output_data: data, blknum: Map.get(attr, :blknum, default_blknum), state: "confirmed"})
 
     tx_bytes =
-      PaymentV1Builder.new()
-      |> PaymentV1Builder.add_input(blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0)
-      |> PaymentV1Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
-      |> PaymentV1Builder.sign!(keys: [priv_encoded])
+      ExPlasma.payment_v1()
+      |> Builder.new()
+      |> Builder.add_input(blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0)
+      |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+      |> Builder.sign!([priv_encoded])
       |> ExPlasma.encode()
 
-    {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
+    {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
     apply_changes(changeset)
   end
 
