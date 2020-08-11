@@ -82,7 +82,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
   describe "validate_protocol/1" do
     test "returns the changeset unchanged when valid" do
       signed_tx =
-        1
+        ExPlasma.payment_v1()
         |> Builder.new()
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
@@ -97,7 +97,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
 
     test "returns the changeset with an error if when invalid" do
       signed_tx =
-        1
+        ExPlasma.payment_v1()
         |> Builder.new()
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 0)

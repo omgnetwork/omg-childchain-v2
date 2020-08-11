@@ -35,7 +35,7 @@ defmodule Engine.MixProject do
       {:ex_abi, "~> 0.4"},
       {:ethereumex, "0.6.3"},
       {:ecto_sql, "~> 3.4"},
-      {:ex_plasma, git: "https://github.com/omisego/ex_plasma.git", ref: "141ad382cb5085db0923eed296a9eead696e511a"},
+      {:ex_plasma, git: "https://github.com/omisego/ex_plasma.git", ref: "525aca70f986a7f8a884428adabf96e51fc0cacc"},
       {:postgrex, "~> 0.15"},
       {:telemetry, "~> 0.4"},
       {:ex_json_schema, "0.7.4"},

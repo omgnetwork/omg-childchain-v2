@@ -10,7 +10,7 @@ defmodule Engine.DB.TransactionTest do
   describe "decode/2" do
     test "decodes tx_bytes and validates for a deposit" do
       %{tx_bytes: tx_bytes} = build(:deposit_transaction, amount: 0)
-      {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_deposit())
+      {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_deposit())
 
       refute changeset.valid?
       assert assert "can not be zero" in errors_on(changeset).amount
@@ -18,14 +18,14 @@ defmodule Engine.DB.TransactionTest do
 
     test "decodes tx_bytes and validates for a transfer" do
       tx_bytes =
-        1
+        ExPlasma.payment_v1()
         |> Builder.new()
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 0)
         |> Builder.sign!([])
         |> ExPlasma.encode()
 
-      assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
+      assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
 
       refute changeset.valid?
       assert assert "can not be zero" in errors_on(changeset).amount
@@ -34,14 +34,14 @@ defmodule Engine.DB.TransactionTest do
 
     test "casts and validate required fields" do
       tx_bytes =
-        1
+        ExPlasma.payment_v1()
         |> Builder.new()
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
         |> Builder.sign!([])
         |> ExPlasma.encode()
 
-      assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
+      assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
 
       signed_tx = get_field(changeset, :signed_tx)
 
@@ -60,7 +60,7 @@ defmodule Engine.DB.TransactionTest do
       o_2_data = [token: <<0::160>>, amount: 10, output_guard: <<1::160>>]
 
       tx_bytes =
-        1
+        ExPlasma.payment_v1()
         |> Builder.new()
         |> Builder.add_input(blknum: input_blknum, txindex: 0, oindex: 0)
         |> Builder.add_output(o_1_data)
@@ -68,7 +68,7 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.sign!([])
         |> ExPlasma.encode()
 
-      assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
+      assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
 
       assert [%Output{output_data: o_1_data_enc}, %Output{output_data: o_2_data_enc}] = get_field(changeset, :outputs)
       assert ExPlasma.Output.decode(o_1_data_enc).output_data == Enum.into(o_1_data, %{})
@@ -80,14 +80,14 @@ defmodule Engine.DB.TransactionTest do
       input = insert(:output, %{blknum: input_blknum, state: "confirmed"})
 
       tx_bytes =
-        1
+        ExPlasma.payment_v1()
         |> Builder.new()
         |> Builder.add_input(blknum: input_blknum, txindex: 0, oindex: 0)
         |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 10)
         |> Builder.sign!([])
         |> ExPlasma.encode()
 
-      assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
+      assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
 
       assert get_field(changeset, :inputs) == [input]
     end
@@ -102,7 +102,7 @@ defmodule Engine.DB.TransactionTest do
       insert(:output, %{output_data: data_2, blknum: 2, state: "confirmed"})
 
       tx_bytes =
-        1
+        ExPlasma.payment_v1()
         |> Builder.new()
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> Builder.add_input(blknum: 2, txindex: 0, oindex: 0)
@@ -110,7 +110,7 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.sign!([priv_encoded_1, priv_encoded_2])
         |> ExPlasma.encode()
 
-      assert {:ok, changeset} = Transaction.decode(tx_bytes, kind: Transaction.kind_transfer())
+      assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
 
       assert changeset.valid?
     end

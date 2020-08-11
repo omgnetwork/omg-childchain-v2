@@ -61,8 +61,8 @@ defmodule Engine.DB.Transaction do
   The main action of the system. Takes tx_bytes and forms the appropriate
   associations for the transaction and outputs and runs the changeset.
   """
-  @spec decode(tx_bytes, kind: atom()) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
-  def decode(tx_bytes, kind: kind) do
+  @spec decode(tx_bytes, atom()) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
+  def decode(tx_bytes, kind) do
     with {:ok, decoded} <- ExPlasma.decode(tx_bytes),
          {:ok, recovered} <- ExPlasma.Transaction.with_witnesses(decoded) do
       params =

@@ -18,7 +18,7 @@ defmodule API.V1.TransactionSubmitTest do
     test "it raises an error if the tranasaction is invalid" do
       assert_raise ArgumentError, "amount can not be zero", fn ->
         invalid_hex_tx_bytes =
-          1
+          ExPlasma.payment_v1()
           |> Builder.new()
           |> Builder.add_output(output_guard: <<0::160>>, token: <<0::160>>, amount: 0)
           |> Builder.sign!([])
