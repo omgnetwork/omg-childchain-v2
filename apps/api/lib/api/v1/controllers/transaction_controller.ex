@@ -16,7 +16,7 @@ defmodule API.V1.Controller.Transaction do
   @decorate trace(service: :ecto, type: :backend)
   def submit(hex_tx_bytes) do
     with {:ok, binary} <- Encoding.to_binary(hex_tx_bytes),
-         {:ok, changeset} <- Transaction.decode(binary, kind: Transaction.kind_transfer()),
+         {:ok, changeset} <- Transaction.decode(binary, Transaction.kind_transfer()),
          {:ok, transaction} <- Transaction.insert(changeset) do
       {:ok, Serializer.Transaction.serialize_hash(transaction)}
     end

@@ -3,7 +3,7 @@ defmodule API.V1.Controllere.TransactionTest do
 
   alias API.V1.Controller.Transaction
   alias ExPlasma.Encoding
-  alias ExPlasma.PaymentV1Builder
+  alias ExPlasma.Builder
 
   describe "submit/1" do
     test "decodes and inserts a tx_bytes into the DB" do
@@ -17,9 +17,10 @@ defmodule API.V1.Controllere.TransactionTest do
 
     test "it raises an error if the tranasaction is invalid" do
       invalid_hex_tx_bytes =
-        PaymentV1Builder.new()
-        |> PaymentV1Builder.add_output(output_guard: <<0::160>>, token: <<0::160>>, amount: 0)
-        |> PaymentV1Builder.sign!(keys: [])
+        ExPlasma.payment_v1()
+        |> Builder.new()
+        |> Builder.add_output(output_guard: <<0::160>>, token: <<0::160>>, amount: 0)
+        |> Builder.sign!([])
         |> ExPlasma.encode()
         |> Encoding.to_hex()
 

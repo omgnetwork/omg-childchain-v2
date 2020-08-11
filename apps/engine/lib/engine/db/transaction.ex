@@ -30,7 +30,7 @@ defmodule Engine.DB.Transaction do
           inserted_at: DateTime.t(),
           kind: :deposit | :transfer,
           outputs: list(Output.t()),
-          signed_tx: ExPlasma.Transaction.Signed.t() | nil,
+          signed_tx: ExPlasma.Transaction.t() | nil,
           tx_bytes: binary(),
           tx_hash: <<_::256>>,
           tx_type: pos_integer(),
