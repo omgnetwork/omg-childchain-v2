@@ -41,24 +41,20 @@ defmodule Engine.Ethereum.Authority.Submitter do
     {:ok, state}
   end
 
-  @doc """
-  The purpose here is to check if blocks need to be resubmitted because
-     they were not accepted (LOW GAS) or whatever other reason!
-  """
   def handle_info({:internal_event_bus, :ethereum_new_height, new_height}, state) do
     spawn(fn -> submit(new_height, state) end)
     {:noreply, %{state | height: new_height}}
   end
 
-  @doc """
-  The purpose here is to check if blocks need to be resubmitted because
-     they were not accepted (LOW GAS) or whatever other reason!
-  """
   def handle_cast(:submit, state) do
     spawn(fn -> submit(state.height, state) end)
     {:noreply, state}
   end
 
+  # This is the submitting part of block. At this point, a blocks are already formed.
+  # We compared formed blocks with blocks already accepted and persisted to Ethereum.
+  # Any kind of conflicts are resolved in the PG transaction, nonce of the Ethereum transaction
+  # and the consesus mechanism of Ethereum.
   defp submit(height, state) do
     next_child_block = External.next_child_block(state.plasma_framework, state.opts)
     mined_child_block = Core.mined(next_child_block, state.child_block_interval)

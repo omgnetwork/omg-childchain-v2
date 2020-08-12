@@ -12,15 +12,15 @@ defmodule Engine.Ethereum.Event.Coordinator.Setup do
     - piggyback-related events must wait for IFE start events
   """
 
-  def coordinator_setup(metrics_collection_interval, deposit_finality_margin) do
+  def coordinator_setup(metrics_collection_interval, finality_margin) do
     {[
        metrics_collection_interval: metrics_collection_interval
      ],
      %{
-       depositor: [finality_margin: deposit_finality_margin],
-       exiter: [waits_for: :depositor, finality_margin: deposit_finality_margin],
-       in_flight_exit: [waits_for: :depositor, finality_margin: deposit_finality_margin],
-       piggyback: [waits_for: :in_flight_exit, finality_margin: deposit_finality_margin]
+       depositor: [finality_margin: finality_margin],
+       exiter: [waits_for: :depositor, finality_margin: finality_margin],
+       in_flight_exit: [waits_for: :depositor, finality_margin: finality_margin],
+       piggyback: [waits_for: :in_flight_exit, finality_margin: finality_margin]
      }}
   end
 end
