@@ -1,7 +1,7 @@
-defmodule API.Plugs.ExpectParams.ValidateParamsTest do
+defmodule API.Plugs.ExpectParams.ParamsValidatorTest do
   use ExUnit.Case, async: true
 
-  alias API.Plugs.ExpectParams.ValidateParams
+  alias API.Plugs.ExpectParams.ParamsValidator
 
   @expected_params [
     %{name: "foo", type: :hex, required: true},
@@ -45,6 +45,6 @@ defmodule API.Plugs.ExpectParams.ValidateParamsTest do
   end
 
   def validate(params) do
-    ValidateParams.validate(params, @expected_params)
+    ParamsValidator.validate(params, @expected_params)
   end
 end

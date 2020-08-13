@@ -1,4 +1,4 @@
-defmodule API.Plugs.ExpectParams.ValidateParams do
+defmodule API.Plugs.ExpectParams.ParamsValidator do
   @moduledoc """
   Contains validation logic for params.
   """
