@@ -7,7 +7,9 @@ defmodule API.V1.ErrorEnhancer do
   @descriptions %{
     decoding_error: "Invalid hex encoded binary",
     operation_not_found: "The given operation is invalid",
-    malformed_rlp: "The given RLP encoded bytes is malformed"
+    malformed_rlp: "The given RLP encoded bytes is malformed",
+    unsupported_media_type_error: "Content-Type header must be set to application/json",
+    unexpected_error: "An unexpected error occured"
   }
 
   def enhance({:error, %Ecto.Changeset{} = changeset}) do

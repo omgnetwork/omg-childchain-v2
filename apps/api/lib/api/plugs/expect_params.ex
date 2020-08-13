@@ -4,6 +4,19 @@ defmodule API.Plugs.ExpectParams do
   Returns the conn with filtered params, removing any unwanted param, if success
   or responds with an error otherwise.
 
+  Here are the required options:
+  * :expected_params - A map of path to params, like:
+
+    %{
+      "POST:block.get" => [
+        %{name: "hash", type: :hex, required: true}
+      ],
+      "POST:transaction.submit" => [
+        %{name: "transaction", type: :hex, required: true}
+      ]
+    }
+  * :responder - A responder conforming to the `API.Responder` behaviour.
+
   Leverages the scrub_params/2 code from Phoenix.
   """
 
@@ -28,5 +41,5 @@ defmodule API.Plugs.ExpectParams do
     end
   end
 
-  defp get_path(conn), do: Enum.join(conn.path_info, "/")
+  defp get_path(conn), do: conn.method <> ":" <> Enum.join(conn.path_info, "/")
 end

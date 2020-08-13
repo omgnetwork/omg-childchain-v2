@@ -3,11 +3,14 @@ defmodule API.V1.Responder do
   Serialize, encode and sends data, either valid or invalid (errors)
   """
 
+  @behaviour API.Responder
+
   alias API.Responder, as: BaseResponder
   alias API.V1.ErrorEnhancer
   alias API.V1.Serializer.Error
   alias API.V1.Serializer.Success
 
+  @impl BaseResponder
   def respond(conn, {:error, _code} = error) do
     respond(conn, ErrorEnhancer.enhance(error))
   end

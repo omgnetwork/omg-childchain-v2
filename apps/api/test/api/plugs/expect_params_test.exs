@@ -9,7 +9,7 @@ defmodule API.Plugs.ExpectParamsTest do
   end
 
   @expected_params %{
-    "foo" => [
+    "GET:foo" => [
       %{name: "foo", type: :hex, required: true},
       %{name: "bar", type: :hex, required: false}
     ]
@@ -28,6 +28,11 @@ defmodule API.Plugs.ExpectParamsTest do
 
     test "returns the conn unchanged if the path is not valid" do
       conn = conn(:get, "undefined", %{})
+      assert ExpectParams.call(conn, expected_params: @expected_params, responder: DummyReponder) == conn
+    end
+
+    test "returns the conn unchanged if the method is not valid" do
+      conn = conn(:post, "foo", %{})
       assert ExpectParams.call(conn, expected_params: @expected_params, responder: DummyReponder) == conn
     end
   end

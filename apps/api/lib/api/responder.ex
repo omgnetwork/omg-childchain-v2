@@ -5,6 +5,8 @@ defmodule API.Responder do
 
   alias Plug.Conn
 
+  @callback respond(Conn.t(), {:ok, map()} | {:error, atom()} | {:error, atom(), String.t()}) :: Conn.t()
+
   # Sends a response with the encoded data.
   def render_json(conn, data) do
     conn
