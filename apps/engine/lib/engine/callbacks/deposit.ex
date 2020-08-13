@@ -48,16 +48,17 @@ defmodule Engine.Callbacks.Deposit do
 
   defp build_deposit(multi, %{} = event) do
     tx_bytes =
-      [tx_type: 1]
+      ExPlasma.payment_v1()
       |> Builder.new()
       |> Builder.add_output(
         output_guard: event.data["depositor"],
         token: event.data["token"],
         amount: event.data["amount"]
       )
+      |> Builder.sign!([])
       |> ExPlasma.encode()
 
-    changeset = Transaction.decode(tx_bytes, kind: Transaction.kind_deposit())
+    {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_deposit())
 
     confirmed_output = changeset |> get_field(:outputs) |> hd()
 

@@ -64,7 +64,7 @@ defmodule Poller do
     _ =
       Logger.info(
         "Revert reason for #{inspect(hash)}: revert string: #{inspect(decode_reason(reason))}, revert binary: #{
-          inspect(Encoding.to_binary(reason), limit: :infinity)
+          inspect(Encoding.to_binary!(reason), limit: :infinity)
         }"
       )
   end

@@ -13,6 +13,7 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
   alias Engine.DB.Transaction.PaymentV1.Validator.Amount
   alias Engine.DB.Transaction.PaymentV1.Validator.Merge
   alias Engine.DB.Transaction.PaymentV1.Validator.Witness
+  alias ExPlasma.Output
 
   @error_messages [
     amounts_do_not_add_up: "output amounts are greater than input amounts",
@@ -53,7 +54,7 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
     |> get_field(type)
     |> Enum.map(fn output ->
       output.output_data
-      |> ExPlasma.Output.decode()
+      |> Output.decode()
       |> Map.get(:output_data)
     end)
   end
