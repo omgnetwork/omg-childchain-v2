@@ -5,6 +5,7 @@ defmodule Engine.Ethereum.SyncSupervisor do
   use Supervisor
 
   alias Engine.Callbacks.Deposit
+  alias Engine.Callbacks.ExitStarted
   alias Engine.Configuration
   alias Engine.Ethereum.ChildObserver
   alias Engine.Ethereum.Event.Aggregator
@@ -82,15 +83,15 @@ defmodule Engine.Ethereum.SyncSupervisor do
       #   get_events_callback: &Aggregator.in_flight_exit_piggybacked/2,
       #   process_events_callback: &exit_and_ignore_validities/1
       # ),
-      # EthereumEventListener.prepare_child(
-      #   ets: ListenerStorage.listener_checkin(),
-      #   metrics_collection_interval: metrics_collection_interval,
-      #   ethereum_events_check_interval_ms: ethereum_events_check_interval_ms,
-      #   contract_deployment_height: contract_deployment_height,
-      #   service_name: :exiter,
-      #   get_events_callback: &Aggregator.exit_started/2,
-      #   process_events_callback: &exit_and_ignore_validities/1
-      # ),
+       Listener.prepare_child(
+         ets: ListenerStorage.listener_checkin(),
+         metrics_collection_interval: metrics_collection_interval,
+         coordinator_eth_height_check_interval_ms: coordinator_eth_height_check_interval_ms,
+         contract_deployment_height: contract_deployment_height,
+         service_name: :exiter,
+         get_events_callback: &Aggregator.exit_started/2,
+         process_events_callback: &ExitStarted.callback/2
+       ),
       {ChildObserver, [monitor: monitor]}
     ]
   end
