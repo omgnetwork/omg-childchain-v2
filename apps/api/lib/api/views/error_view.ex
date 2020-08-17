@@ -1,9 +1,9 @@
-defmodule API.Serializer.Error do
+defmodule API.View.Error do
   @moduledoc """
   Contain functions that serialize errors
   """
 
-  alias API.Serializer.Base
+  alias API.View.Base
 
   def serialize(code, description, version) do
     data = %{

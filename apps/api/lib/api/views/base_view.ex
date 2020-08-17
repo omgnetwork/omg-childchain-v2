@@ -1,4 +1,4 @@
-defmodule API.Serializer.Base do
+defmodule API.View.Base do
   @moduledoc false
 
   def serialize(data, success, version) do

@@ -1,10 +1,10 @@
-defmodule API.V1.Serializer.BlockTest do
+defmodule API.V1.View.BlockTest do
   @moduledoc """
   """
 
   use Engine.DB.DataCase, async: true
 
-  alias API.V1.Serializer.Block
+  alias API.V1.View.Block
   alias ExPlasma.Encoding
 
   describe "serialize/1" do

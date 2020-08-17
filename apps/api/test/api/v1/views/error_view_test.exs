@@ -1,10 +1,10 @@
-defmodule API.V1.Serializer.ErrorTest do
+defmodule API.V1.View.ErrorTest do
   @moduledoc """
   """
 
   use ExUnit.Case, async: true
 
-  alias API.V1.Serializer.Error
+  alias API.V1.View.Error
 
   describe "serialize/1" do
     test "serializes a tuple of errors" do

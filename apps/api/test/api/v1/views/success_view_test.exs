@@ -1,10 +1,10 @@
-defmodule API.V1.Serializer.SuccessTest do
+defmodule API.V1.View.SuccessTest do
   @moduledoc """
   """
 
   use ExUnit.Case, async: true
 
-  alias API.V1.Serializer.Success
+  alias API.V1.View.Success
 
   describe "serialize/1" do
     test "serializes data" do

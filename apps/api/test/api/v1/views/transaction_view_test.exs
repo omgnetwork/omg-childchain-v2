@@ -1,10 +1,10 @@
-defmodule API.V1.Serializer.TransactionTest do
+defmodule API.V1.View.TransactionTest do
   @moduledoc """
   """
 
   use Engine.DB.DataCase, async: true
 
-  alias API.V1.Serializer.Transaction
+  alias API.V1.View.Transaction
   alias ExPlasma.Encoding
 
   describe "serialize/1" do

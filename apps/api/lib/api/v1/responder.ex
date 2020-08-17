@@ -7,8 +7,8 @@ defmodule API.V1.Responder do
 
   alias API.Responder, as: BaseResponder
   alias API.V1.ErrorEnhancer
-  alias API.V1.Serializer.Error
-  alias API.V1.Serializer.Success
+  alias API.V1.View.Error
+  alias API.V1.View.Success
 
   @impl BaseResponder
   def respond(conn, {:error, _code} = error) do
