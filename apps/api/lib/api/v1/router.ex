@@ -12,9 +12,12 @@ defmodule API.V1.Router do
 
   alias API.Plugs.ExpectParams
   alias API.Plugs.Health
+  alias API.Plugs.Responder
+  alias API.Plugs.Version
   alias API.V1.Controller.Block
   alias API.V1.Controller.Transaction
-  alias API.V1.Responder
+
+  @api_version "1.0"
 
   @expected_params %{
     "GET:health.check" => [],
@@ -26,8 +29,13 @@ defmodule API.V1.Router do
     ]
   }
 
+  plug(Version, @api_version)
   plug(Plug.Parsers, parsers: [:json], pass: ["application/json"], json_decoder: Jason)
-  plug(ExpectParams, expected_params: @expected_params, responder: Responder)
+  plug(ExpectParams, @expected_params)
+
+  # Calling responder once here to allow early response/halt of conn if there was an error
+  # in the pipeline above (ie: missing params)
+  plug(Responder)
 
   plug(:match)
   plug(:dispatch)
@@ -35,33 +43,41 @@ defmodule API.V1.Router do
   get "health.check" do
     conn
     |> Health.call(%{})
-    |> Responder.respond({:ok, %{}})
+    |> put_conn_response({:ok, %{}})
   end
 
   post "block.get" do
     data = Block.get_by_hash(conn.params["hash"])
-    Responder.respond(conn, data)
+    put_conn_response(conn, data)
   end
 
   post "transaction.submit" do
     data = Transaction.submit(conn.params["transaction"])
-    Responder.respond(conn, data)
+    put_conn_response(conn, data)
   end
 
   match _ do
-    Responder.respond(conn, {:error, :operation_not_found})
+    put_conn_response(conn, {:error, :operation_not_found})
   end
+
+  # Calling Reponder as the last step of the pipeline. At the point, the conn is expected
+  # to have a :response key.
+  plug(Responder)
 
   # Errors raised by Plug.Parsers
   defp handle_errors(conn, %{reason: %Plug.Parsers.UnsupportedMediaTypeError{}}) do
     conn
     |> put_status(400)
-    |> Responder.respond({:error, :unsupported_media_type_error})
+    |> put_conn_response({:error, :unsupported_media_type_error})
+    |> Responder.call([])
   end
 
   defp handle_errors(conn, _error) do
     conn
     |> put_status(400)
-    |> Responder.respond({:error, :unexpected_error})
+    |> put_conn_response({:error, :unexpected_error})
+    |> Responder.call([])
   end
+
+  defp put_conn_response(conn, data), do: assign(conn, :response, data)
 end

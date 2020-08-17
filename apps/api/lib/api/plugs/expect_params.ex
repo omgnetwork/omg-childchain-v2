@@ -2,10 +2,9 @@ defmodule API.Plugs.ExpectParams do
   @moduledoc """
   Checks that a request has the expected params.
   Returns the conn with filtered params, removing any unwanted param, if success
-  or responds with an error otherwise.
+  or assigns an error to the :response key otherwise.
 
-  Here are the required options:
-  * :expected_params - A map of path to params, like:
+  * :expected_params is a map of path to params, like:
 
     %{
       "POST:block.get" => [
@@ -15,18 +14,16 @@ defmodule API.Plugs.ExpectParams do
         %{name: "transaction", type: :hex, required: true}
       ]
     }
-  * :responder - A responder conforming to the `API.Responder` behaviour.
 
   Leverages the scrub_params/2 code from Phoenix.
   """
 
   alias __MODULE__.ParamsValidator
+  alias Plug.Conn
 
-  def init(options), do: options
+  def init(expected_params), do: expected_params
 
-  def call(conn, opts) do
-    expected_params = Keyword.fetch!(opts, :expected_params)
-    responder = Keyword.fetch!(opts, :responder)
+  def call(conn, expected_params) do
     unversioned_path = get_path(conn)
 
     with path_params when is_list(path_params) <- Map.get(expected_params, unversioned_path, :path_not_found),
@@ -37,7 +34,7 @@ defmodule API.Plugs.ExpectParams do
         conn
 
       error ->
-        responder.respond(conn, error)
+        Conn.assign(conn, :response, error)
     end
   end
 

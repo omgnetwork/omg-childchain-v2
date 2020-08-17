@@ -1,4 +1,4 @@
-defmodule API.V1.ErrorEnhancer do
+defmodule API.ErrorEnhancer do
   @moduledoc """
   Contain functions that help to enhance error into a
   {:error, atom, string} format that suits API response.
