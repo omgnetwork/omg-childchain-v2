@@ -1,6 +1,7 @@
 Mix.Task.run("ecto.drop", ~w(--quiet))
 Mix.Task.run("ecto.create", ~w(--quiet))
 Mix.Task.run("ecto.migrate", ~w(--quiet))
+{:ok, _} = Application.ensure_all_started(:fake_server)
 {:ok, _ecto} = Application.ensure_all_started(:ecto)
 {:ok, _ecto_sql} = Application.ensure_all_started(:ecto_sql)
 {:ok, _postgrex} = Application.ensure_all_started(:postgrex)

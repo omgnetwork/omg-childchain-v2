@@ -1,9 +1,9 @@
-defmodule Engine.Fees.Parser do
+defmodule Engine.Fees.Fetcher.Client.Parser do
   @moduledoc """
   Transaction's fee validation functions
   """
 
-  alias Engine.Fees.Parser.SingleSpecParser
+  alias Engine.Fees.Fetcher.Client.Parser.SingleSpecParser
 
   require Logger
 
