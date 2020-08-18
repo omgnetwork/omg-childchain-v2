@@ -4,26 +4,30 @@ defmodule Engine.Fees.JSONFeeParser.JSONSingleSpecParser do
   """
   require Logger
 
-  # the fee spec for a specific type/token is missing keys
+  @typedoc """
+  The fee spec for a specific type/token is missing keys:
+
+  - :invalid_fee_spec - the fee spec is invalid
+  - :invalid_fee - the fee amount is invalid (must be >= 0)
+  - :invalid_subunit_to_unit - the subunit to unit is invalid (must be > 0)
+  - :invalid_pegged_amount - the pegged amount is invalid (must be > 0)
+  - :invalid_pegged_currency - the pegged currency is invalid (must be > 0)
+  - :invalid_pegged_subunit_to_unit - the pegged subunit to unit is invalid (must be > 0)
+  - :invalid_timestamp - the updated at date is invalid (wrong date format)
+  - :bad_address_encoding - the token address is invalid (must be a valid Ethereum address)
+  - :invalid_pegged_fields - pegged fields must either be all nil or all not nil
+  - :unsupported_fee_type - at the moment only "fixed" fee type is supported
+  """
   @type parsing_error() ::
           :invalid_fee_spec
-          # the fee amount is invalid (must be >= 0)
           | :invalid_fee
-          # the subunit to unit is invalid (must be > 0)
           | :invalid_subunit_to_unit
-          # the pegged amount is invalid (must be > 0)
           | :invalid_pegged_amount
-          # the pegged currency is invalid (must be > 0)
           | :invalid_pegged_currency
-          # the pegged subunit to unit is invalid (must be > 0)
           | :invalid_pegged_subunit_to_unit
-          # the updated at date is invalid (wrong date format)
           | :invalid_timestamp
-          # the token address is invalid (must be a valid Ethereum address)
           | :bad_address_encoding
-          # pegged fields must either be all nil or all not nil
           | :invalid_pegged_fields
-          # at the moment only "fixed" fee type is supported
           | :unsupported_fee_type
 
   @doc """
@@ -74,8 +78,9 @@ defmodule Engine.Fees.JSONFeeParser.JSONSingleSpecParser do
 
   defp validate_optional_positive_integer_amount(nil, _error), do: {:ok, nil}
 
-  defp validate_optional_positive_integer_amount(amount, _error) when is_integer(amount) and amount > 0,
-    do: {:ok, amount}
+  defp validate_optional_positive_integer_amount(amount, _error) when is_integer(amount) and amount > 0 do
+    {:ok, amount}
+  end
 
   defp validate_optional_positive_integer_amount(_amount, error), do: {:error, error}
 
