@@ -1,10 +1,10 @@
-defmodule Engine.Fees.FeeFetcherTest do
+defmodule Engine.Fees.FetcherTest do
   @moduledoc false
 
   use ExUnit.Case, async: true
 
-  alias Engine.Fees.FeeFetcher
-  alias Engine.Fees.FeeFetcher.Client.JSONFeeParser
+  alias Engine.Fees.Fetcher
+  alias Engine.Fees.Fetcher.Client.Parser
   alias FakeServer.Response
 
   @eth <<0::160>>
@@ -46,11 +46,11 @@ defmodule Engine.Fees.FeeFetcherTest do
     end
 
     test "Updates fees fetched from feed when no fees previously set", %{initial_fees: fees, fee_adapter_opts: opts} do
-      assert {:ok, ^fees} = FeeFetcher.get_fee_specs(opts, nil)
+      assert {:ok, ^fees} = Fetcher.get_fee_specs(opts, nil)
     end
 
     test "Does not update when fees has not changed in long time period", %{initial_fees: fees, fee_adapter_opts: opts} do
-      assert :ok = FeeFetcher.get_fee_specs(opts, fees)
+      assert :ok = Fetcher.get_fee_specs(opts, fees)
     end
 
     test "Does not update when fees changed within tolerance", %{
@@ -59,7 +59,7 @@ defmodule Engine.Fees.FeeFetcherTest do
     } do
       _ = update_feed_price(109)
 
-      assert :ok = FeeFetcher.get_fee_specs(opts, fees)
+      assert :ok = Fetcher.get_fee_specs(opts, fees)
     end
 
     test "Updates when fees changed above tolerance, although under update interval", %{
@@ -67,13 +67,13 @@ defmodule Engine.Fees.FeeFetcherTest do
       fee_adapter_opts: opts
     } do
       updated_fees = update_feed_price(110)
-      assert {:ok, ^updated_fees} = FeeFetcher.get_fee_specs(opts, fees)
+      assert {:ok, ^updated_fees} = Fetcher.get_fee_specs(opts, fees)
     end
   end
 
   defp make_fee_specs(amount), do: %{@payment_tx_type => %{@eth_hex => Map.put(@fee, :amount, amount)}}
 
-  defp parse_specs(map), do: map |> Jason.encode!() |> JSONFeeParser.parse()
+  defp parse_specs(map), do: map |> Jason.encode!() |> Parser.parse()
 
   defp get_current_fee_specs(),
     do: :current_fee_specs |> Agent.get(& &1) |> parse_specs()

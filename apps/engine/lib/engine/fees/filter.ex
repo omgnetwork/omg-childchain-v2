@@ -1,4 +1,4 @@
-defmodule Engine.Fees.FeeFilter do
+defmodule Engine.Fees.Filter do
   @moduledoc """
   Filtering of fees.
   """
@@ -11,7 +11,7 @@ defmodule Engine.Fees.FeeFilter do
 
   ## Examples
 
-      iex> Engine.Fees.FeeFilter.filter(
+      iex> Engine.Fees.Filter.filter(
       ...>   %{
       ...>     1 => %{
       ...>       "eth" => %{

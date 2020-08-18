@@ -1,10 +1,10 @@
-defmodule Engine.Fees.FeeFetcher do
+defmodule Engine.Fees.Fetcher do
   @moduledoc """
   Adapter pulls actual fees prices from fee feed.
   """
 
-  alias Engine.Fees.FeeFetcher.Client
-  alias Engine.Fees.FeeFetcher.FeeUpdater
+  alias Engine.Fees.Fetcher.Client
+  alias Engine.Fees.Fetcher.Updater
 
   @doc """
   Pulls the fee specification from fees feed. Feed updates fee prices based on Ethereum's gas price.
@@ -29,7 +29,7 @@ defmodule Engine.Fees.FeeFetcher do
   defp can_update(opts, stored_specs, fetched_specs) do
     tolerance_percent = Keyword.fetch!(opts, :fee_change_tolerance_percent)
 
-    FeeUpdater.can_update(
+    Updater.can_update(
       stored_specs,
       fetched_specs,
       tolerance_percent

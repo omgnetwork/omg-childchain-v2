@@ -1,4 +1,4 @@
-defmodule Engine.Fees.FeeFetcher.FeeUpdater.FeeMerger do
+defmodule Engine.Fees.Fetcher.Updater.Merger do
   @moduledoc """
   Handles the parsing, formatting and merging of previous and current fees
   """
@@ -10,7 +10,7 @@ defmodule Engine.Fees.FeeFetcher.FeeUpdater.FeeMerger do
 
   ## Examples
 
-      iex> Engine.Fees.FeeFetcher.FeeUpdater.FeeMerger.merge_specs(
+      iex> Engine.Fees.Fetcher.Updater.Merger.merge_specs(
       ...>   %{
       ...>     1 => %{
       ...>       "eth" => %{

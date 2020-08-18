@@ -1,10 +1,10 @@
-defmodule Engine.Fees.FeeFetcher.FeeUpdater do
+defmodule Engine.Fees.Fetcher.Updater do
   @moduledoc """
   Decides whether fees will be updated from the fetched fees from the feed.
   """
 
   alias Engine.Fees
-  alias Engine.Fees.FeeFetcher.FeeUpdater.FeeMerger
+  alias Engine.Fees.Fetcher.Updater.Merger
 
   @type can_update_result_t :: {:ok, Fees.full_fee_t()} | :no_changes
 
@@ -33,7 +33,7 @@ defmodule Engine.Fees.FeeFetcher.FeeUpdater do
 
     with false <- stored_and_fetched_differs_on_tx_type?(merged),
          false <- stored_and_fetched_differs_on_token?(merged),
-         amount_diffs = Map.values(FeeMerger.merge_specs(stored_fees, fetched_fees)),
+         amount_diffs = Map.values(Merger.merge_specs(stored_fees, fetched_fees)),
          false <- is_change_significant?(amount_diffs, tolerance_percent) do
       :no_changes
     else

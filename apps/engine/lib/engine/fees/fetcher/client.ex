@@ -1,9 +1,9 @@
-defmodule Engine.Fees.FeeFetcher.Client do
+defmodule Engine.Fees.Fetcher.Client do
   @moduledoc """
   Provides functions to communicate with Child Chain API
   """
 
-  alias Engine.Fees.FeeFetcher.Client.JSONFeeParser
+  alias Engine.Fees.Fetcher.Client.Parser
 
   require Logger
 
@@ -33,7 +33,7 @@ defmodule Engine.Fees.FeeFetcher.Client do
     end
   end
 
-  defp parse_fee_response_body({:ok, body}), do: JSONFeeParser.parse(body)
+  defp parse_fee_response_body({:ok, body}), do: Parser.parse(body)
   defp parse_fee_response_body(error), do: error
 
   defp get_unparsed_response_body({:ok, %HTTPoison.Response{} = response}) do

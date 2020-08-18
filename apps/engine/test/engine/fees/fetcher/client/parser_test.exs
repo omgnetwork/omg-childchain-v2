@@ -1,8 +1,8 @@
-defmodule Engine.Fees.FeeFetcher.Client.JSONFeeParserTest do
+defmodule Engine.Fees.Fetcher.Client.ParserTest do
   @moduledoc false
   use ExUnit.Case, async: true
 
-  alias Engine.Fees.FeeFetcher.Client.JSONFeeParser
+  alias Engine.Fees.Fetcher.Client.Parser
 
   @moduletag :capture_log
 
@@ -58,7 +58,7 @@ defmodule Engine.Fees.FeeFetcher.Client.JSONFeeParserTest do
           }
       )
 
-      assert {:ok, tx_type_map} = JSONFeeParser.parse(json)
+      assert {:ok, tx_type_map} = Parser.parse(json)
       assert tx_type_map[1][@eth][:amount] == 43_000_000_000_000
       assert tx_type_map[1][@eth][:updated_at] == "2019-01-01T10:10:00+00:00" |> DateTime.from_iso8601() |> elem(1)
 
@@ -72,7 +72,7 @@ defmodule Engine.Fees.FeeFetcher.Client.JSONFeeParserTest do
     end
 
     test "successfuly parses an empty fee spec map" do
-      assert {:ok, %{}} = JSONFeeParser.parse("{}")
+      assert {:ok, %{}} = Parser.parse("{}")
     end
 
     test "returns an `invalid_tx_type` error when given a non integer tx type" do
@@ -92,7 +92,7 @@ defmodule Engine.Fees.FeeFetcher.Client.JSONFeeParserTest do
         }
       })
 
-      assert {:error, [{:error, :invalid_tx_type, "non_integer_key", 0}]} == JSONFeeParser.parse(json)
+      assert {:error, [{:error, :invalid_tx_type, "non_integer_key", 0}]} == Parser.parse(json)
     end
 
     test "returns an `invalid_json_format` error when json is not in the correct format" do
@@ -110,7 +110,7 @@ defmodule Engine.Fees.FeeFetcher.Client.JSONFeeParserTest do
           }
         }
       })
-      assert {:error, [{:error, :invalid_fee_spec, _, _}]} = JSONFeeParser.parse(json)
+      assert {:error, [{:error, :invalid_fee_spec, _, _}]} = Parser.parse(json)
     end
 
     test "`duplicate_token` is not detected by the parser, first occurance takes precedence" do
@@ -138,7 +138,7 @@ defmodule Engine.Fees.FeeFetcher.Client.JSONFeeParserTest do
           }
         }
       })
-      assert {:ok, %{1 => %{@eth => %{amount: 1}}}} = JSONFeeParser.parse(json)
+      assert {:ok, %{1 => %{@eth => %{amount: 1}}}} = Parser.parse(json)
     end
   end
 end

@@ -1,4 +1,4 @@
-defmodule Engine.Fees.FeeServer do
+defmodule Engine.Fees.Server do
   @moduledoc """
   Maintains current fee rates and tokens in which fees may be paid.
 
@@ -10,7 +10,7 @@ defmodule Engine.Fees.FeeServer do
 
   alias Engine.DB.Fees, as: DbFees
   alias Engine.Fees
-  alias Engine.Fees.FeeFetcher
+  alias Engine.Fees.Fetcher
   alias Status.Alert.Alarm
 
   require Logger
@@ -84,7 +84,7 @@ defmodule Engine.Fees.FeeServer do
   defp update_fee_specs(state) do
     current_fee_specs = load_current_fees()
 
-    case FeeFetcher.get_fee_specs(state.fee_fetcher_opts, current_fee_specs.term) do
+    case Fetcher.get_fee_specs(state.fee_fetcher_opts, current_fee_specs.term) do
       {:ok, fee_specs} ->
         {:ok, _} = save_fees(fee_specs)
         _ = Logger.info("Reloaded fee specs from FeeFetcher")

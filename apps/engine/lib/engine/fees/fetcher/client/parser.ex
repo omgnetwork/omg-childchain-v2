@@ -1,19 +1,24 @@
-defmodule Engine.Fees.FeeFetcher.Client.JSONFeeParser do
+defmodule Engine.Fees.Fetcher.Client.Parser do
   @moduledoc """
   Transaction's fee validation functions
   """
 
-  alias Engine.Fees.FeeFetcher.Client.JSONFeeParser.JSONSingleSpecParser
+  alias Engine.Fees.Fetcher.Client.Parser.SingleSpecParser
 
   require Logger
 
+  @typedoc """
+  Parsing error type:
+
+  - :duplicate_token - there is a duplicated token for the same tx type
+  - :invalid_json_format - the format of the json is invalid (ie: it's an array)
+  - :invalid_tx_type - the tx type can't be parsed to an integer
+  """
+
   @type parsing_error() ::
-          JSONSingleSpecParser.parsing_error()
-          # There is a duplicated token for the same tx type
+          SingleSpecParser.parsing_error()
           | :duplicate_token
-          # the format of the json is invalid (ie: it's an array)
           | :invalid_json_format
-          # the tx type can't be parsed to an integer
           | :invalid_tx_type
 
   @doc """
@@ -23,8 +28,8 @@ defmodule Engine.Fees.FeeFetcher.Client.JSONFeeParser do
   @spec parse(binary() | map() | list()) ::
           {:ok, Engine.Fees.full_fee_t()}
           | {:error, list({:error, parsing_error(), any(), non_neg_integer() | nil})}
-  def parse(file_content) when is_binary(file_content) do
-    case Jason.decode(file_content) do
+  def parse(fee_spec_json) when is_binary(fee_spec_json) do
+    case Jason.decode(fee_spec_json) do
       {:ok, json} -> parse(json)
       error -> error
     end
@@ -52,7 +57,7 @@ defmodule Engine.Fees.FeeFetcher.Client.JSONFeeParser do
 
   defp parse_for_type({tx_type, ""}, fee_spec) do
     fee_spec
-    |> Enum.map(&JSONSingleSpecParser.parse/1)
+    |> Enum.map(&SingleSpecParser.parse/1)
     |> Enum.reduce({[], %{}, 1, tx_type}, &spec_reducer/2)
   end
 
@@ -80,11 +85,9 @@ defmodule Engine.Fees.FeeFetcher.Client.JSONFeeParser do
     %{token: token} = token_fee
     token_fee = Map.drop(token_fee, [:token])
     # checks whether token was specified before
-    if Map.has_key?(token_fee_map, token) do
-      {[{:error, :duplicate_token, tx_type, spec_index} | errors], token_fee_map, spec_index + 1, tx_type}
-    else
-      {errors, Map.put(token_fee_map, token, token_fee), spec_index + 1, tx_type}
-    end
+    if Map.has_key?(token_fee_map, token),
+      do: {[{:error, :duplicate_token, tx_type, spec_index} | errors], token_fee_map, spec_index + 1, tx_type},
+      else: {errors, Map.put(token_fee_map, token, token_fee), spec_index + 1, tx_type}
   end
 
   defp handle_parser_output({[], fee_specs}) do

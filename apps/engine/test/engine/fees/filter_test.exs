@@ -1,11 +1,11 @@
-defmodule Engine.Fees.FeeFilterTest do
+defmodule Engine.Fees.FilterTest do
   @moduledoc false
 
   use ExUnit.Case, async: true
 
-  alias Engine.Fees.FeeFilter
+  alias Engine.Fees.Filter
 
-  doctest Engine.Fees.FeeFilter
+  doctest Engine.Fees.Filter
 
   @eth <<0::160>>
   @not_eth_1 <<1::size(160)>>
@@ -48,23 +48,23 @@ defmodule Engine.Fees.FeeFilterTest do
 
   describe "filter/2" do
     test "does not filter tx_type when given an empty list" do
-      assert FeeFilter.filter(@fees, [], []) == {:ok, @fees}
+      assert Filter.filter(@fees, [], []) == {:ok, @fees}
     end
 
     test "does not filter tx_type when given a nil value" do
-      assert FeeFilter.filter(@fees, nil, []) == {:ok, @fees}
+      assert Filter.filter(@fees, nil, []) == {:ok, @fees}
     end
 
     test "does not filter currencies when given an empty list" do
-      assert FeeFilter.filter(@fees, [], []) == {:ok, @fees}
+      assert Filter.filter(@fees, [], []) == {:ok, @fees}
     end
 
     test "does not filter currencies when given a nil value" do
-      assert FeeFilter.filter(@fees, [], nil) == {:ok, @fees}
+      assert Filter.filter(@fees, [], nil) == {:ok, @fees}
     end
 
     test "filter fees by currency given a list of currencies" do
-      assert FeeFilter.filter(@fees, [], [@eth]) ==
+      assert Filter.filter(@fees, [], [@eth]) ==
                {:ok,
                 %{
                   @payment_tx_type => Map.take(@payment_fees, [@eth]),
@@ -72,15 +72,15 @@ defmodule Engine.Fees.FeeFilterTest do
                   3 => %{}
                 }}
 
-      assert FeeFilter.filter(@fees, [], [@not_eth_2]) == {:ok, %{@payment_tx_type => %{}, 2 => %{}, 3 => @fees[3]}}
+      assert Filter.filter(@fees, [], [@not_eth_2]) == {:ok, %{@payment_tx_type => %{}, 2 => %{}, 3 => @fees[3]}}
     end
 
     test "filter fees by tx_type when given a list of tx_types" do
-      assert FeeFilter.filter(@fees, [1, 2], []) == {:ok, Map.drop(@fees, [3])}
+      assert Filter.filter(@fees, [1, 2], []) == {:ok, Map.drop(@fees, [3])}
     end
 
     test "filter fees by both tx_type and currencies" do
-      assert FeeFilter.filter(@fees, [1, 2], [@eth]) ==
+      assert Filter.filter(@fees, [1, 2], [@eth]) ==
                {:ok,
                 %{
                   @payment_tx_type => Map.take(@payment_fees, [@eth]),
@@ -90,12 +90,12 @@ defmodule Engine.Fees.FeeFilterTest do
 
     test "returns an error when given an unsupported currency" do
       other_token = <<9::160>>
-      assert FeeFilter.filter(@fees, [], [other_token]) == {:error, :currency_fee_not_supported}
+      assert Filter.filter(@fees, [], [other_token]) == {:error, :currency_fee_not_supported}
     end
 
     test "returns an error when given an unsupported tx_type" do
       tx_type = 99_999
-      assert FeeFilter.filter(@fees, [tx_type], []) == {:error, :tx_type_not_supported}
+      assert Filter.filter(@fees, [tx_type], []) == {:error, :tx_type_not_supported}
     end
   end
 end
