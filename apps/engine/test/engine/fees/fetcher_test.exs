@@ -40,7 +40,7 @@ defmodule Engine.Fees.FetcherTest do
          after_period_updated_at: :os.system_time(:second) - 5 * 60 - 1,
          fee_adapter_opts: [
            fee_change_tolerance_percent: 10,
-           fee_feed_url: "localhost:#{port}"
+           fee_feed_url: "localhost:#{port}/fees"
          ]
        }}
     end
