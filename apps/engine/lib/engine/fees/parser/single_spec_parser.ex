@@ -1,4 +1,4 @@
-defmodule Engine.Fees.JSONFeeParser.JSONSingleSpecParser do
+defmodule Engine.Fees.Parser.SingleSpecParser do
   @moduledoc """
   Parsing module for a single fee spec
   """

@@ -1,19 +1,24 @@
-defmodule Engine.Fees.JSONFeeParser do
+defmodule Engine.Fees.Parser do
   @moduledoc """
   Transaction's fee validation functions
   """
 
-  alias Engine.Fees.JSONFeeParser.JSONSingleSpecParser
+  alias Engine.Fees.Parser.SingleSpecParser
 
   require Logger
 
+  @typedoc """
+  Parsing error type:
+
+  - :duplicate_token - there is a duplicated token for the same tx type
+  - :invalid_json_format - the format of the json is invalid (ie: it's an array)
+  - :invalid_tx_type - the tx type can't be parsed to an integer
+  """
+
   @type parsing_error() ::
-          JSONSingleSpecParser.parsing_error()
-          # There is a duplicated token for the same tx type
+          SingleSpecParser.parsing_error()
           | :duplicate_token
-          # the format of the json is invalid (ie: it's an array)
           | :invalid_json_format
-          # the tx type can't be parsed to an integer
           | :invalid_tx_type
 
   @doc """
@@ -52,7 +57,7 @@ defmodule Engine.Fees.JSONFeeParser do
 
   defp parse_for_type({tx_type, ""}, fee_spec) do
     fee_spec
-    |> Enum.map(&JSONSingleSpecParser.parse/1)
+    |> Enum.map(&SingleSpecParser.parse/1)
     |> Enum.reduce({[], %{}, 1, tx_type}, &spec_reducer/2)
   end
 
