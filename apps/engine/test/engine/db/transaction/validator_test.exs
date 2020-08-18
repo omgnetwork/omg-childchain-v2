@@ -81,13 +81,14 @@ defmodule Engine.DB.Transaction.ValidatorTest do
 
   describe "validate_protocol/1" do
     test "returns the changeset unchanged when valid" do
-      tx =
-        [tx_type: 1]
+      signed_tx =
+        ExPlasma.payment_v1()
         |> Builder.new()
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+        |> Builder.sign!([])
 
-      changeset = change(%Transaction{}, %{tx_bytes: ExPlasma.encode(tx), raw_tx: tx})
+      changeset = change(%Transaction{}, %{tx_bytes: ExPlasma.encode(signed_tx), signed_tx: signed_tx})
       validated_changeset = Validator.validate_protocol(changeset)
 
       assert validated_changeset.valid?
@@ -95,15 +96,16 @@ defmodule Engine.DB.Transaction.ValidatorTest do
     end
 
     test "returns the changeset with an error if when invalid" do
-      tx =
-        [tx_type: 1]
+      signed_tx =
+        ExPlasma.payment_v1()
         |> Builder.new()
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 0)
+        |> Builder.sign!([])
 
       validated_changeset =
         %Transaction{}
-        |> change(%{tx_bytes: ExPlasma.encode(tx), raw_tx: tx})
+        |> change(%{tx_bytes: ExPlasma.encode(signed_tx), signed_tx: signed_tx})
         |> Validator.validate_protocol()
 
       refute validated_changeset.valid?
