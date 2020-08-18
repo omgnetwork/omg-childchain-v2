@@ -105,9 +105,10 @@ defmodule Engine.DB.Factory do
       |> Position.to_map()
 
     tx_bytes =
-      [tx_type: 1]
+      ExPlasma.payment_v1()
       |> Builder.new()
       |> Builder.add_output(Enum.to_list(data))
+      |> Builder.sign!([])
       |> ExPlasma.encode()
 
     output = build(:output, output_id: id, output_data: data, output_type: 1, state: "confirmed")
@@ -138,14 +139,16 @@ defmodule Engine.DB.Factory do
     default_blknum = sequence(:blknum, fn seq -> (seq + 1) * 1000 end)
     insert(:output, %{output_data: data, blknum: Map.get(attr, :blknum, default_blknum), state: "confirmed"})
 
-    [tx_type: 1]
-    |> Builder.new()
-    |> Builder.add_input(blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0)
-    |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
-    |> Builder.sign([priv_encoded])
-    |> ExPlasma.encode()
-    |> Transaction.decode(kind: Transaction.kind_transfer())
-    |> apply_changes()
+    tx_bytes =
+      ExPlasma.payment_v1()
+      |> Builder.new()
+      |> Builder.add_input(blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0)
+      |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+      |> Builder.sign!([priv_encoded])
+      |> ExPlasma.encode()
+
+    {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
+    apply_changes(changeset)
   end
 
   # The "lowest" unit in the hierarchy. This is made to form into transactions

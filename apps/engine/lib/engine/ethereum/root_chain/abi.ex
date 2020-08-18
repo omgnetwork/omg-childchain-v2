@@ -1,6 +1,6 @@
 defmodule Engine.Ethereum.RootChain.Abi do
   @moduledoc """
-  Functions that provide ethereum log decoding 
+  Functions that provide ethereum log decoding
   """
   alias Engine.Ethereum.RootChain.AbiEventSelector
   alias Engine.Ethereum.RootChain.AbiFunctionSelector
@@ -11,7 +11,7 @@ defmodule Engine.Ethereum.RootChain.Abi do
   def decode_function(enriched_data, signature) do
     "0x" <> data = enriched_data
     <<method_id::binary-size(4), _::binary>> = :keccakf1600.hash(:sha3_256, signature)
-    method_id |> Encoding.to_hex() |> Kernel.<>(data) |> Encoding.to_binary() |> decode_function()
+    method_id |> Encoding.to_hex() |> Kernel.<>(data) |> Encoding.to_binary!() |> decode_function()
   end
 
   def decode_function(enriched_data) do
@@ -38,7 +38,7 @@ defmodule Engine.Ethereum.RootChain.Abi do
     topics =
       Enum.map(log["topics"], fn
         nil -> nil
-        topic -> Encoding.to_binary(topic)
+        topic -> Encoding.to_binary!(topic)
       end)
 
     {_event_spec, data} =
@@ -48,7 +48,7 @@ defmodule Engine.Ethereum.RootChain.Abi do
         Enum.at(topics, 1),
         Enum.at(topics, 2),
         Enum.at(topics, 3),
-        Encoding.to_binary(log["data"])
+        Encoding.to_binary!(log["data"])
       )
 
     data
@@ -63,7 +63,7 @@ defmodule Engine.Ethereum.RootChain.Abi do
     %Event{
       data: event,
       eth_height: Encoding.to_int(log["blockNumber"]),
-      root_chain_tx_hash: Encoding.to_binary(log["transactionHash"]),
+      root_chain_tx_hash: Encoding.to_binary!(log["transactionHash"]),
       log_index: Encoding.to_int(log["logIndex"]),
       event_signature: event_signature
     }

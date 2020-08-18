@@ -131,7 +131,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       exit_started_log =
         to_block
         |> exit_started_log_decoded()
-        |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary() |> Abi.decode_function())
+        |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary!() |> Abi.decode_function())
 
       in_flight_exit_output_piggybacked_log = in_flight_exit_output_piggybacked_log_decoded(from_block)
 
@@ -233,7 +233,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       exit_started_log =
         to_block
         |> exit_started_log_decoded()
-        |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary() |> Abi.decode_function())
+        |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary!() |> Abi.decode_function())
 
       in_flight_exit_output_piggybacked_log = in_flight_exit_output_piggybacked_log_decoded(from_block)
 
@@ -305,7 +305,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       exit_started_log =
         to_block
         |> exit_started_log_decoded()
-        |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary() |> Abi.decode_function())
+        |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary!() |> Abi.decode_function())
 
       assert Aggregator.exit_started(aggregator, from_block, to_block) == {:ok, [exit_started_log]}
 
@@ -369,7 +369,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       exit_started_log =
         to_block
         |> exit_started_log_decoded()
-        |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary() |> Abi.decode_function())
+        |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary!() |> Abi.decode_function())
 
       in_flight_exit_output_piggybacked_log = in_flight_exit_output_piggybacked_log_decoded(from_block)
 

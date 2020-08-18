@@ -1,7 +1,7 @@
 defmodule Engine.Ethereum.Event.Aggregator do
   @moduledoc """
   This process combines all plasma contract events we're interested in and does eth_getLogs + enriches them if needed
-  for all Ethereum Event Listener processes. 
+  for all Ethereum Event Listener processes.
   """
   use GenServer
 
@@ -62,7 +62,7 @@ defmodule Engine.Ethereum.Event.Aggregator do
   end
 
   def init(opts) do
-    contracts = opts |> Keyword.fetch!(:contracts) |> Enum.map(&Encoding.to_binary(&1))
+    contracts = opts |> Keyword.fetch!(:contracts) |> Enum.map(&Encoding.to_binary!(&1))
     ets = Keyword.fetch!(opts, :ets)
     event_interface = Keyword.get(opts, :event_interface, Event)
 

@@ -10,6 +10,7 @@ defmodule Engine.DB.Output do
   """
 
   use Ecto.Schema
+
   import Ecto.Changeset
   import Ecto.Query, only: [from: 2]
 
