@@ -1,4 +1,4 @@
-defmodule Engine.DB.Fees do
+defmodule Engine.DB.Fee do
   @moduledoc """
   This module represents computed fees and how they
   are stored in the database.

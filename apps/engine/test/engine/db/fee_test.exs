@@ -1,7 +1,7 @@
-defmodule Engine.DB.FeesTest do
+defmodule Engine.DB.FeeTest do
   use Engine.DB.DataCase, async: true
 
-  alias Engine.DB.Fees
+  alias Engine.DB.Fee
 
   @term %{
     1 => %{
@@ -30,7 +30,7 @@ defmodule Engine.DB.FeesTest do
     test "inserts a new fees record" do
       params = %{term: @term}
 
-      {:ok, fees} = Fees.insert(params)
+      {:ok, fees} = Fee.insert(params)
 
       assert fees.term == @term
       refute is_nil(fees.hash)
@@ -39,10 +39,10 @@ defmodule Engine.DB.FeesTest do
     test "does not inserts or updates a record if it was already inserted" do
       params = %{term: @term}
 
-      {:ok, _fees1} = Fees.insert(params)
-      {:ok, _fees2} = Fees.insert(params)
+      {:ok, _fees1} = Fee.insert(params)
+      {:ok, _fees2} = Fee.insert(params)
 
-      assert Engine.Repo.aggregate(Fees, :count, :hash) == 1
+      assert Engine.Repo.aggregate(Fee, :count, :hash) == 1
     end
   end
 
@@ -50,19 +50,19 @@ defmodule Engine.DB.FeesTest do
     test "fetch the latest fees" do
       params1 = %{term: @term}
 
-      {:ok, _fees1} = Fees.insert(params1)
+      {:ok, _fees1} = Fee.insert(params1)
 
       Process.sleep(1_000)
 
       params2 = %{term: %{}}
 
-      {:ok, fees2} = Fees.insert(params2)
+      {:ok, fees2} = Fee.insert(params2)
 
-      assert Fees.fetch_latest() == {:ok, fees2}
+      assert Fee.fetch_latest() == {:ok, fees2}
     end
 
     test "return {:error, :not_found} if there is nothing in the table" do
-      assert Fees.fetch_latest() == {:error, :not_found}
+      assert Fee.fetch_latest() == {:error, :not_found}
     end
   end
 end

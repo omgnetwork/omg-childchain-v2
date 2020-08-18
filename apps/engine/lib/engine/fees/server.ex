@@ -8,7 +8,7 @@ defmodule Engine.Fees.Server do
   """
   use GenServer
 
-  alias Engine.DB.Fees, as: DbFees
+  alias Engine.DB.Fee, as: Fee
   alias Engine.Fees
   alias Engine.Fees.Fetcher
   alias Status.Alert.Alarm
@@ -101,11 +101,11 @@ defmodule Engine.Fees.Server do
   end
 
   defp save_fees(new_fee_specs) do
-    DbFees.insert(%{term: new_fee_specs})
+    Fee.insert(%{term: new_fee_specs})
   end
 
   defp load_current_fees() do
-    case DbFees.fetch_latest() do
+    case Fee.fetch_latest() do
       {:ok, fees} -> fees
       _ -> nil
     end
