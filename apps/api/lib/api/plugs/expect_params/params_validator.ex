@@ -40,8 +40,9 @@ defmodule API.Plugs.ExpectParams.ParamsValidator do
   defp validate_format(nil, _format), do: :ok
   defp validate_format("0x" <> _, :hex), do: :ok
 
-  defp validate_format(value, :hex),
-    do: {:error, :invalid_param_type, "hex values must be prefixed with 0x, got: '#{value}'"}
+  defp validate_format(value, :hex) do
+    {:error, :invalid_param_type, "hex values must be prefixed with 0x, got: '#{value}'"}
+  end
 
   defp scrub_param(%{} = param) do
     Enum.reduce(param, %{}, fn {k, v}, acc ->
