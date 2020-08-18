@@ -11,6 +11,7 @@ defmodule Engine.DB.Factory do
   alias Engine.DB.Block
   alias Engine.DB.Output
   alias Engine.DB.Transaction
+  alias Engine.Ethereum.RootChain.Event
   alias Engine.Support.TestEntity
   alias ExPlasma.Builder
   alias ExPlasma.Output.Position
@@ -40,6 +41,18 @@ defmodule Engine.DB.Factory do
       |> Map.put(:data, %{
         "tx_hash" => tx_hash,
         "output_index" => index
+      })
+
+    build(:event, params)
+  end
+
+  def in_flight_exit_started_factory(attr \\ %{}) do
+    params =
+      attr
+      |> Map.put(:signature, "InFlightExitStarted(address,bytes32)")
+      |> Map.put(:data, %{
+       "initiator" => Map.get(attr, :initiator, <<1::160>>),
+       "tx_hash" => Map.get(attr, :tx_hash, <<1::256>>)
       })
 
     build(:event, params)
@@ -80,7 +93,7 @@ defmodule Engine.DB.Factory do
     log_index = Map.get(attr, :log_index, 1)
     root_chain_tx_hash = Map.get(attr, :log_index, <<1::160>>)
 
-    %{
+    %Event{
       data: data,
       call_data: call_data,
       eth_height: height,
