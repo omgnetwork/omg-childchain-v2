@@ -16,6 +16,7 @@ defmodule API.V1.Router do
   alias API.Plugs.Version
   alias API.V1.Controller.Block
   alias API.V1.Controller.Transaction
+  alias API.V1.ErrorHandler
 
   @api_version "1.0"
 
@@ -33,8 +34,9 @@ defmodule API.V1.Router do
   plug(Plug.Parsers, parsers: [:json], pass: ["application/json"], json_decoder: Jason)
   plug(ExpectParams, @expected_params)
 
-  # Calling responder once here to allow early response/halt of conn if there was an error
-  # in the pipeline above (ie: missing params)
+  # Calling Responder once here to allow early response/halt of conn if there was an error
+  # in the pipeline above (ie: missing params). If there is no `:response` key in the conn
+  # assigns, this will not do anything.
   plug(Responder)
 
   plug(:match)
@@ -60,24 +62,12 @@ defmodule API.V1.Router do
     put_conn_response(conn, {:error, :operation_not_found})
   end
 
-  # Calling Reponder as the last step of the pipeline. At the point, the conn is expected
-  # to have a :response key.
+  # Calling Reponder as the last step of the pipeline. At this point, the conn is expected
+  # to have :response and :api_version keys in its assigns.
   plug(Responder)
 
-  # Errors raised by Plug.Parsers
-  defp handle_errors(conn, %{reason: %Plug.Parsers.UnsupportedMediaTypeError{}}) do
-    conn
-    |> put_status(400)
-    |> put_conn_response({:error, :unsupported_media_type_error})
-    |> Responder.call([])
-  end
-
-  defp handle_errors(conn, _error) do
-    conn
-    |> put_status(400)
-    |> put_conn_response({:error, :unexpected_error})
-    |> Responder.call([])
-  end
+  # Errors raised by Plugs
+  defp handle_errors(conn, error), do: ErrorHandler.handle(conn, error)
 
   defp put_conn_response(conn, data), do: assign(conn, :response, data)
 end

@@ -1,14 +1,14 @@
-defmodule API.V1.View.SuccessTest do
+defmodule API.View.SuccessTest do
   @moduledoc """
   """
 
   use ExUnit.Case, async: true
 
-  alias API.V1.View.Success
+  alias API.View.Success
 
-  describe "serialize/1" do
+  describe "serialize/2" do
     test "serializes data" do
-      assert Success.serialize(%{some: :data}) == %{
+      assert Success.serialize(%{some: :data}, "1.0") == %{
                data: %{some: :data},
                service_name: "childchain",
                success: true,

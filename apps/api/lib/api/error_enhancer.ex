@@ -9,7 +9,9 @@ defmodule API.ErrorEnhancer do
     operation_not_found: "The given operation is invalid",
     malformed_rlp: "The given RLP encoded bytes is malformed",
     unsupported_media_type_error: "Content-Type header must be set to application/json",
-    unexpected_error: "An unexpected error occured"
+    unexpected_error: "An unexpected error occured",
+    malformed_body: "Body is not a valid JSON.",
+    request_too_large: "Request is too large"
   }
 
   def enhance({:error, %Ecto.Changeset{} = changeset}) do

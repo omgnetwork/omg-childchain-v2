@@ -5,6 +5,15 @@ defmodule API.V1.RouterTest do
   alias API.V1.Router
   alias ExPlasma.Encoding
 
+  test "sets the api version" do
+    conn =
+      :post
+      |> conn("/")
+      |> Router.call(Router.init([]))
+
+    assert conn.assigns[:api_version] == "1.0"
+  end
+
   describe "block.get" do
     test "that it returns a block" do
       transaction = insert(:deposit_transaction)

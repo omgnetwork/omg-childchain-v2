@@ -1,16 +1,21 @@
-defmodule API.V1.ResponderTest do
+defmodule API.Plugs.ResponderTest do
   use Engine.DB.DataCase, async: true
   use Plug.Test
 
-  alias API.V1.Responder
+  alias API.Plugs.Responder
+  alias Plug.Conn
 
   setup do
     {:ok, %{conn: conn(:post, "/")}}
   end
 
-  describe "respond/2" do
-    test "renders a v1 json response with an error tuple containing a description", context do
-      Responder.respond(context.conn, {:error, :some_code, "some_description"})
+  describe "call/2" do
+    test "renders a json response with an error tuple containing a description", context do
+      context.conn
+      |> set_api_version("1.0")
+      |> set_response({:error, :some_code, "some_description"})
+      |> Responder.call([])
+
       assert {200, _headers, body} = sent_resp(context.conn)
 
       assert Jason.decode!(body) == %{
@@ -21,8 +26,12 @@ defmodule API.V1.ResponderTest do
              }
     end
 
-    test "renders a v1 json response with an error tuple with a known description", context do
-      Responder.respond(context.conn, {:error, :decoding_error})
+    test "renders a json response with an error tuple with a known description", context do
+      context.conn
+      |> set_api_version("1.0")
+      |> set_response({:error, :decoding_error})
+      |> Responder.call([])
+
       assert {200, _headers, body} = sent_resp(context.conn)
 
       assert Jason.decode!(body) == %{
@@ -37,8 +46,12 @@ defmodule API.V1.ResponderTest do
              }
     end
 
-    test "renders a v1 json response with an error tuple with an known description", context do
-      Responder.respond(context.conn, {:error, :qwerty})
+    test "renders a json response with an error tuple with an known description", context do
+      context.conn
+      |> set_api_version("1.0")
+      |> set_response({:error, :qwerty})
+      |> Responder.call([])
+
       assert {200, _headers, body} = sent_resp(context.conn)
 
       assert Jason.decode!(body) == %{
@@ -53,9 +66,15 @@ defmodule API.V1.ResponderTest do
              }
     end
 
-    test "renders a v1 json response with some data", context do
-      Responder.respond(context.conn, {:ok, %{some: :data}})
-      assert {200, _headers, body} = sent_resp(context.conn)
+    test "renders a json response with some data", context do
+      context.conn
+      |> set_api_version("1.0")
+      |> set_response({:ok, %{some: :data}})
+      |> Responder.call([])
+
+      assert {200, headers, body} = sent_resp(context.conn)
+
+      assert {"content-type", "application/json; charset=utf-8"} in headers
 
       assert Jason.decode!(body) == %{
                "data" => %{"some" => "data"},
@@ -65,4 +84,7 @@ defmodule API.V1.ResponderTest do
              }
     end
   end
+
+  defp set_api_version(conn, version), do: Conn.assign(conn, :api_version, version)
+  defp set_response(conn, response), do: Conn.assign(conn, :response, response)
 end

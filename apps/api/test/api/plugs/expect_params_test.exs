@@ -3,10 +3,7 @@ defmodule API.Plugs.ExpectParamsTest do
   use Plug.Test
 
   alias API.Plugs.ExpectParams
-
-  defmodule DummyReponder do
-    def respond(_conn, data), do: data
-  end
+  alias Plug.Conn
 
   @expected_params %{
     "GET:foo" => [
@@ -22,24 +19,25 @@ defmodule API.Plugs.ExpectParamsTest do
       assert validated_params == Map.put(params, "bar", nil)
     end
 
-    test "calls responder with a `missing_required_param` error when a required param is missing" do
-      assert call_plug("foo", %{}) == {:error, :missing_required_param, "missing required key 'foo'"}
+    test "returns the conn with a `missing_required_param` error when a required param is missing" do
+      assert %Conn{} = conn = call_plug("foo", %{})
+      assert conn.assigns[:response] == {:error, :missing_required_param, "missing required key 'foo'"}
     end
 
     test "returns the conn unchanged if the path is not valid" do
       conn = conn(:get, "undefined", %{})
-      assert ExpectParams.call(conn, expected_params: @expected_params, responder: DummyReponder) == conn
+      assert ExpectParams.call(conn, @expected_params) == conn
     end
 
     test "returns the conn unchanged if the method is not valid" do
       conn = conn(:post, "foo", %{})
-      assert ExpectParams.call(conn, expected_params: @expected_params, responder: DummyReponder) == conn
+      assert ExpectParams.call(conn, @expected_params) == conn
     end
   end
 
   defp call_plug(path, params) do
     :get
     |> conn(path, params)
-    |> ExpectParams.call(expected_params: @expected_params, responder: DummyReponder)
+    |> ExpectParams.call(@expected_params)
   end
 end

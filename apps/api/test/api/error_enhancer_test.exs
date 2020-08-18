@@ -1,6 +1,6 @@
-defmodule API.V1.ErrorEnhancerTest do
+defmodule API.ErrorEnhancerTest do
   use ExUnit.Case, async: true
-  alias API.V1.ErrorEnhancer
+  alias API.ErrorEnhancer
 
   describe "enhance/1" do
     test "enhance a changeset error" do

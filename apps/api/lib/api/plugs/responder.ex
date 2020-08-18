@@ -8,6 +8,8 @@ defmodule API.Plugs.Responder do
   alias API.View.Success
   alias Plug.Conn
 
+  @response_content_type "application/json"
+
   def init(options), do: options
 
   def call(conn, _opts), do: respond(conn, conn.assigns[:response])
@@ -28,14 +30,10 @@ defmodule API.Plugs.Responder do
 
   defp render_json(conn, data) do
     conn
-    |> set_conn_resp_headers()
     |> set_conn_resp(data)
+    |> Conn.put_resp_content_type(@response_content_type)
     |> Conn.send_resp()
     |> Conn.halt()
-  end
-
-  defp set_conn_resp_headers(conn) do
-    Conn.put_resp_content_type(conn, "application/json")
   end
 
   defp set_conn_resp(conn, data) do
