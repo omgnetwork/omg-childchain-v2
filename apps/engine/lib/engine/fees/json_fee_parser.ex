@@ -23,8 +23,8 @@ defmodule Engine.Fees.JSONFeeParser do
   @spec parse(binary() | map() | list()) ::
           {:ok, Engine.Fees.full_fee_t()}
           | {:error, list({:error, parsing_error(), any(), non_neg_integer() | nil})}
-  def parse(file_content) when is_binary(file_content) do
-    case Jason.decode(file_content) do
+  def parse(fee_spec_json) when is_binary(fee_spec_json) do
+    case Jason.decode(fee_spec_json) do
       {:ok, json} -> parse(json)
       error -> error
     end
