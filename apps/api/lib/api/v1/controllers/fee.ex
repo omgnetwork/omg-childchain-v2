@@ -47,7 +47,7 @@ defmodule API.V1.Controller.Fee do
          {:ok, filtered_fees} <- get_filtered_fees(params["tx_types"], currencies) do
       {:ok, Fee.serialize(filtered_fees)}
     else
-      error -> %{}
+      error -> handle_error(error)
     end
   end
 
@@ -71,44 +71,37 @@ defmodule API.V1.Controller.Fee do
     end
   end
 
-  defp to_binary([value | tail], acc) do
+  defp list_to_binary([value | tail], acc) do
     case Encoding.to_binary(value) do
-      {:ok, binary} -> to_binary(tail, [binary | acc])
+      {:ok, binary} -> list_to_binary(tail, [binary | acc])
       error -> error
     end
   end
 
-  defp handle_error(conn, {:error, {:validation_error, param_name, validator}}) do
-    error = error_info(conn, :operation_bad_request)
-
-    serialize_error(error.code, error.description, %{
-      validation_error: %{parameter: param_name, validator: inspect(validator)}
-    })
-  end
-
-  defp handle_error(conn, {:error, reason}) do
-    error = error_info(conn, reason)
+  defp handle_error(conn, {:error, {:validation_error, _param_name, _validator}}) do
+    error = error_info(:operation_bad_request)
 
     serialize_error(error.code, error.description)
   end
 
-  defp error_info(conn, reason) do
+  defp handle_error({:error, reason}) do
+    error = error_info(reason)
+
+    serialize_error(error.code, error.description)
+  end
+
+  defp error_info(reason) do
     case Map.get(@errors, reason) do
-      nil -> %{code: "#{conn.path_info}#{inspect(reason)}", description: nil}
+      nil -> %{code: "fee:#{inspect(reason)}", description: nil}
       error -> error
     end
   end
 
-  @spec serialize_error(atom() | String.t(), String.t() | nil, map() | nil) :: map()
-  defp serialize_error(code, description, messages \\ nil) do
-    %{
-      object: :error,
-      code: code,
-      description: description
+  defp serialize_error(code, description) do
+    {
+      :error,
+      code,
+      description
     }
-    |> add_messages(messages)
   end
-
-  defp add_messages(data, nil), do: data
-  defp add_messages(data, messages), do: Map.put_new(data, :messages, messages)
 end

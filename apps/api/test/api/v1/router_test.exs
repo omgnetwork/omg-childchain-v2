@@ -118,6 +118,36 @@ defmodule API.V1.RouterTest do
 
       assert_payload_data(payload, expected_result)
     end
+
+    test "fees.all returns an error when given unsupported currency" do
+      {:ok, payload} = post("fees.all", %{"currencies" => ["0x0000000000000000000000000000000000000005"]})
+
+      assert_payload_data(payload, %{
+        "code" => "fee:currency_fee_not_supported",
+        "description" => "One or more of the given currencies are not supported as a fee-token.",
+        "object" => "error"
+      })
+    end
+
+    test "fees.all endpoint rejects request with non list currencies" do
+      {:ok, payload} = post("fees.all", %{"currencies" => "0x0000000000000000000000000000000000000005"})
+
+      assert_payload_data(payload, %{
+        "code" => "invalid_param_type",
+        "description" => "provided value is not a list, got: '0x0000000000000000000000000000000000000005'",
+        "object" => "error"
+      })
+    end
+
+    test "fees.all returns an error when given unsupported tx_types" do
+      {:ok, payload} = post("fees.all", %{"tx_types" => [99_999]})
+
+      assert_payload_data(payload, %{
+        "code" => "fee:tx_type_not_supported",
+        "description" => "One or more of the given transaction types are not supported.",
+        "object" => "error"
+      })
+    end
   end
 
   describe "block.get" do
