@@ -37,9 +37,13 @@ defmodule Engine.DB.Fee do
     |> Repo.insert(on_conflict: :nothing)
   end
 
-  def fetch_latest() do
+  def fetch_current_fees(), do: fetch_latest("current_fees")
+  def fetch_merged_fees(), do: fetch_latest("merged_fees")
+  def fetch_previous_fees(), do: fetch_latest("previous_fees")
+
+  defp fetch_latest(type) do
     __MODULE__
-    |> where([r], r.type == ^"current_fees")
+    |> where([r], r.type == ^type)
     |> order_by([r], desc: r.inserted_at)
     |> limit(1)
     |> Repo.one()

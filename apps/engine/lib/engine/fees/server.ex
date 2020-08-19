@@ -11,20 +11,25 @@ defmodule Engine.Fees.Server do
   alias Engine.DB.Fee, as: Fee
   alias Engine.Fees
   alias Engine.Fees.Fetcher
+  alias Engine.Fees.Fetcher.Updater.Merger
   alias Status.Alert.Alarm
 
   require Logger
 
   defstruct [
     :fee_fetcher_check_interval_ms,
+    :fee_buffer_duration_ms,
     :fee_fetcher_opts,
-    fee_fetcher_check_timer: nil
+    fee_fetcher_check_timer: nil,
+    expire_fee_timer: nil
   ]
 
   @typep t() :: %__MODULE__{
            fee_fetcher_check_interval_ms: pos_integer(),
+           fee_buffer_duration_ms: pos_integer(),
            fee_fetcher_opts: Keyword.t(),
-           fee_fetcher_check_timer: :timer.tref()
+           fee_fetcher_check_timer: :timer.tref(),
+           expire_fee_timer: :timer.tref()
          }
 
   def start_link(opts) do
@@ -47,6 +52,15 @@ defmodule Engine.Fees.Server do
   end
 
   @doc """
+  Returns a list of amounts that are accepted as a fee for each token/type.
+  These amounts include the currently supported fees plus the buffered ones.
+  """
+  @spec accepted_fees() :: {:ok, Fees.typed_merged_fee_t()}
+  def accepted_fees() do
+    {:ok, load_accepted_fees()}
+  end
+
+  @doc """
   Returns currently accepted tokens and amounts in which transaction fees are collected for each transaction type
   """
   @spec current_fees() :: {:ok, Fees.full_fee_t()}
@@ -54,6 +68,18 @@ defmodule Engine.Fees.Server do
     fees = load_current_fees()
 
     {:ok, fees.term}
+  end
+
+  def handle_info(:expire_previous_fees, state) do
+    current_fees = current_fees()
+
+    merged_fee_specs = Merger.merge_specs(current_fees.term, nil)
+
+    {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: "merged_fees"})
+    {:ok, _} = Fee.insert(%{term: %{}, type: "previous_fees"})
+
+    _ = Logger.info("Previous fees are now invalid and current fees must be paid")
+    {:noreply, state}
   end
 
   def handle_info(:update_fee_specs, state) do
@@ -89,7 +115,8 @@ defmodule Engine.Fees.Server do
         {:ok, _} = save_fees(fee_specs)
         _ = Logger.info("Reloaded fee specs from FeeFetcher")
 
-        {:ok, state}
+        new_expire_fee_timer = start_expiration_timer(state.expire_fee_timer, state.fee_buffer_duration_ms)
+        {:ok, %__MODULE__{state | expire_fee_timer: new_expire_fee_timer}}
 
       :ok ->
         :ok
@@ -100,12 +127,33 @@ defmodule Engine.Fees.Server do
     end
   end
 
+  defp start_expiration_timer(timer, fee_buffer_duration_ms) do
+    # If a timer was already started, we cancel it
+    _ = if timer != nil, do: Process.cancel_timer(timer)
+    # We then start a new timer that will set the previous fees to nil uppon expiration
+    Process.send_after(self(), :expire_previous_fees, fee_buffer_duration_ms)
+  end
+
   defp save_fees(new_fee_specs) do
-    Fee.insert(%{term: new_fee_specs, type: "current_fees"})
+    previous_fee_specs = current_fees()
+    merged_fee_specs = Merger.merge_specs(new_fee_specs, previous_fee_specs.term)
+
+    {:ok, _} = Fee.insert(%{term: previous_fee_specs, type: "previous_fees"})
+    {:ok, _} = Fee.insert(%{term: new_fee_specs, type: "current_fees"})
+    {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: "merged_fees"})
+
+    :ok
   end
 
   defp load_current_fees() do
-    case Fee.fetch_latest() do
+    case Fee.fetch_current_fees() do
+      {:ok, fees} -> fees
+      _ -> nil
+    end
+  end
+
+  defp load_accepted_fees() do
+    case Fee.fetch_merged_fees() do
       {:ok, fees} -> fees
       _ -> nil
     end

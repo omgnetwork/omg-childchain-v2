@@ -61,8 +61,8 @@ defmodule Engine.DB.FeeTest do
     end
   end
 
-  describe "fetch_latest/0" do
-    test "fetch the latest fees" do
+  describe "fetch_current_fees/0" do
+    test "fetches the latest fees" do
       params1 = %{term: @term, type: "current_fees"}
 
       {:ok, _fees1} = Fee.insert(params1)
@@ -73,11 +73,11 @@ defmodule Engine.DB.FeeTest do
 
       {:ok, fees2} = Fee.insert(params2)
 
-      assert Fee.fetch_latest() == {:ok, fees2}
+      assert Fee.fetch_current_fees() == {:ok, fees2}
     end
 
     test "return {:error, :not_found} if there is nothing in the table" do
-      assert Fee.fetch_latest() == {:error, :not_found}
+      assert Fee.fetch_current_fees() == {:error, :not_found}
     end
   end
 end
