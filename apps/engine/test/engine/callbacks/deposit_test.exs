@@ -5,6 +5,7 @@ defmodule Engine.Callbacks.DepositTest do
 
   alias Engine.Callbacks.Deposit
   alias Engine.DB.Block
+  alias Engine.DB.ListenerState
   alias Engine.DB.Output
   alias Engine.DB.Transaction
 
@@ -81,5 +82,12 @@ defmodule Engine.Callbacks.DepositTest do
     assert {:ok, _} = Deposit.callback(deposit_events_listener3, :depositor)
 
     assert listener_for(:depositor, height: 406)
+  end
+
+  # Check to see if the listener has a given state, like height.
+  #   assert listener_for(:depositor, height: 100)
+  defp listener_for(listener, height: height) do
+    name = "#{listener}"
+    %ListenerState{height: ^height, listener: ^name} = Engine.Repo.get(ListenerState, name)
   end
 end
