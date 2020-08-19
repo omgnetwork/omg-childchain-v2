@@ -1,11 +1,11 @@
-defmodule API.V1.Fee do
+defmodule API.V1.Controller.Fee do
   @moduledoc """
   Fetches fees and returns data for the API response.
   """
-  import API.Validator
 
-  alias API.Response
+  alias API.V1.View.Fee
   alias Engine.Fees
+  alias ExPlasma.Encoding
 
   @type fees_response() :: %{non_neg_integer() => fee_type()}
 
@@ -42,13 +42,12 @@ defmodule API.V1.Fee do
   Fetches fees.
   """
   @spec all(Plug.Conn.t()) :: fees_response() | API.Validator.validation_error_t()
-  def all(conn) do
-    with {:ok, currencies} <- expect(conn.params, "currencies", list: &to_currency/1, optional: true),
-         {:ok, tx_types} <- expect(conn.params, "tx_types", list: &to_tx_type/1, optional: true),
-         {:ok, filtered_fees} <- get_filtered_fees(tx_types, currencies) do
-      to_api_format(filtered_fees)
+  def all(params) do
+    with {:ok, currencies} <- to_binary(params["currencies"]),
+         {:ok, filtered_fees} <- get_filtered_fees(params["tx_types"], currencies) do
+      {:ok, Fee.serialize(filtered_fees)}
     else
-      error -> handle_error(conn, error)
+      error -> %{}
     end
   end
 
@@ -60,35 +59,22 @@ defmodule API.V1.Fee do
     Fees.filter(fees, tx_types, currencies)
   end
 
-  defp to_currency(currency_str) do
-    expect(%{"currency" => currency_str}, "currency", :address)
+  defp to_binary(list, acc \\ [])
+
+  defp to_binary(nil, _acc), do: {:ok, []}
+
+  defp to_binary([value], acc) do
+    case Encoding.to_binary(value) do
+      {:ok, bin} -> {:ok, Enum.reverse([value | acc])}
+      error -> error
+    end
   end
 
-  defp to_tx_type(tx_type_str) do
-    expect(%{"tx_type" => tx_type_str}, "tx_type", :non_neg_integer)
-  end
-
-  defp to_api_format(fees) do
-    fees
-    |> Enum.map(&parse_for_type/1)
-    |> Enum.into(%{})
-    |> Response.serialize()
-  end
-
-  defp parse_for_type({tx_type, fees}) do
-    {Integer.to_string(tx_type), Enum.map(fees, &parse_for_token/1)}
-  end
-
-  defp parse_for_token({currency, fee}) do
-    %{
-      currency: currency,
-      amount: fee.amount,
-      subunit_to_unit: fee.subunit_to_unit,
-      pegged_currency: {:skip_hex_encode, fee.pegged_currency},
-      pegged_amount: fee.pegged_amount,
-      pegged_subunit_to_unit: fee.pegged_subunit_to_unit,
-      updated_at: {:skip_hex_encode, fee.updated_at}
-    }
+  defp to_binary([value | tail], acc) do
+    case Encoding.to_binary(value) do
+      {:ok, binary} -> to_binary(tail, [binary | acc])
+      error -> error
+    end
   end
 
   defp handle_error(conn, {:error, {:validation_error, param_name, validator}}) do
@@ -120,7 +106,6 @@ defmodule API.V1.Fee do
       description: description
     }
     |> add_messages(messages)
-    |> Response.serialize()
   end
 
   defp add_messages(data, nil), do: data

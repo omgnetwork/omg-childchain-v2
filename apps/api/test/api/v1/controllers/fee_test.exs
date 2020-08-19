@@ -1,47 +1,8 @@
-defmodule API.V1.FeesTest do
+defmodule API.V1.Controller.FeeTest do
   use ExUnit.Case, async: true
 
-  alias API.V1.Fees
+  alias API.V1.Controller.Fee
   alias Engine.DB.Fee, as: DbFees
-
-  setup_all do
-    fee_specs = %{
-      1 => %{
-        Base.decode16!("0000000000000000000000000000000000000000") => %{
-          amount: 1,
-          subunit_to_unit: 1_000_000_000_000_000_000,
-          pegged_amount: 1,
-          pegged_currency: "USD",
-          pegged_subunit_to_unit: 100,
-          updated_at: DateTime.from_unix!(1_546_336_800)
-        },
-        Base.decode16!("0000000000000000000000000000000000000001") => %{
-          amount: 2,
-          subunit_to_unit: 1_000_000_000_000_000_000,
-          pegged_amount: 1,
-          pegged_currency: "USD",
-          pegged_subunit_to_unit: 100,
-          updated_at: DateTime.from_unix!(1_546_336_800)
-        }
-      },
-      2 => %{
-        Base.decode16!("0000000000000000000000000000000000000000") => %{
-          amount: 2,
-          subunit_to_unit: 1_000_000_000_000_000_000,
-          pegged_amount: 1,
-          pegged_currency: "USD",
-          pegged_subunit_to_unit: 100,
-          updated_at: DateTime.from_unix!(1_546_336_800)
-        }
-      }
-    }
-
-    params = %{term: fee_specs, type: "current_fees"}
-
-    {:ok, _fees} = DbFees.insert(params)
-
-    %{}
-  end
 
   describe "all/1" do
     test "filters the result when given currencies" do

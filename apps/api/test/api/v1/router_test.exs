@@ -3,6 +3,7 @@ defmodule API.V1.RouterTest do
   use Plug.Test
 
   alias API.V1.Router
+  alias Engine.DB.Fee, as: DbFees
   alias ExPlasma.Encoding
 
   test "sets the api version" do
@@ -12,6 +13,85 @@ defmodule API.V1.RouterTest do
       |> Router.call(Router.init([]))
 
     assert conn.assigns[:api_version] == "1.0"
+  end
+
+  describe "fees.all" do
+    setup do
+      fee_specs = %{
+        1 => %{
+          Base.decode16!("0000000000000000000000000000000000000000") => %{
+            amount: 1,
+            subunit_to_unit: 1_000_000_000_000_000_000,
+            pegged_amount: 1,
+            pegged_currency: "USD",
+            pegged_subunit_to_unit: 100,
+            updated_at: DateTime.from_unix!(1_546_336_800)
+          },
+          Base.decode16!("0000000000000000000000000000000000000001") => %{
+            amount: 2,
+            subunit_to_unit: 1_000_000_000_000_000_000,
+            pegged_amount: 1,
+            pegged_currency: "USD",
+            pegged_subunit_to_unit: 100,
+            updated_at: DateTime.from_unix!(1_546_336_800)
+          }
+        },
+        2 => %{
+          Base.decode16!("0000000000000000000000000000000000000000") => %{
+            amount: 2,
+            subunit_to_unit: 1_000_000_000_000_000_000,
+            pegged_amount: 1,
+            pegged_currency: "USD",
+            pegged_subunit_to_unit: 100,
+            updated_at: DateTime.from_unix!(1_546_336_800)
+          }
+        }
+      }
+
+      params = %{term: fee_specs, type: "current_fees"}
+
+      {:ok, _fees} = DbFees.insert(params)
+
+      %{}
+    end
+
+    test "fees.all endpoint does not filter when given empty currencies" do
+      {:ok, payload} = post("fees.all", %{})
+
+      assert_payload_data(payload, %{
+        "1" => [
+          %{
+            "amount" => 1,
+            "currency" => "0x0000000000000000000000000000000000000000",
+            "pegged_amount" => 1,
+            "pegged_currency" => "USD",
+            "pegged_subunit_to_unit" => 100,
+            "subunit_to_unit" => 1_000_000_000_000_000_000,
+            "updated_at" => "2019-01-01T10:00:00Z"
+          },
+          %{
+            "amount" => 2,
+            "currency" => "0x0000000000000000000000000000000000000001",
+            "pegged_amount" => 1,
+            "pegged_currency" => "USD",
+            "pegged_subunit_to_unit" => 100,
+            "subunit_to_unit" => 1_000_000_000_000_000_000,
+            "updated_at" => "2019-01-01T10:00:00Z"
+          }
+        ],
+        "2" => [
+          %{
+            "amount" => 2,
+            "currency" => "0x0000000000000000000000000000000000000000",
+            "pegged_amount" => 1,
+            "pegged_currency" => "USD",
+            "pegged_subunit_to_unit" => 100,
+            "subunit_to_unit" => 1_000_000_000_000_000_000,
+            "updated_at" => "2019-01-01T10:00:00Z"
+          }
+        ]
+      })
+    end
   end
 
   describe "block.get" do
