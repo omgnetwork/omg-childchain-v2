@@ -12,13 +12,13 @@ defmodule Engine.Ethereum.Height do
     GenServer.call(__MODULE__, :get)
   end
 
-  def start_link(args) do
-    GenServer.start_link(__MODULE__, args, name: Keyword.get(args, :name, __MODULE__))
+  def start_link(init_arg) do
+    GenServer.start_link(__MODULE__, init_arg, name: Keyword.get(init_arg, :name, __MODULE__))
   end
 
-  def init(opts) do
+  def init(init_arg) do
     _ = Logger.info("Starting #{__MODULE__} service.")
-    event_bus = Keyword.get(opts, :event_bus, Bus)
+    event_bus = Keyword.get(init_arg, :event_bus, Bus)
     :ok = event_bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
     {:ok, {:error, :ethereum_height}}
   end

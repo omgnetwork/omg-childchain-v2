@@ -43,9 +43,9 @@ defmodule Engine.Ethereum.Event.Coordinator do
   def handle_continue(:setup, {args, configs_services}) do
     _ = Logger.info("Starting #{__MODULE__} service. #{inspect({args, configs_services})}")
     metrics_collection_interval = Keyword.fetch!(args, :metrics_collection_interval)
-    coordinator_eth_height_check_interval_ms = Keyword.fetch!(args, :coordinator_eth_height_check_interval_ms)
+
     {:ok, rootchain_height} = Height.get()
-    {:ok, _} = schedule_get_ethereum_height(coordinator_eth_height_check_interval_ms)
+    :ok = Bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
     state = Core.init(configs_services, rootchain_height)
 
     configs_services |> Map.keys() |> request_sync()
@@ -61,8 +61,7 @@ defmodule Engine.Ethereum.Event.Coordinator do
     {:noreply, state}
   end
 
-  def handle_info(:update_root_chain_height, state) do
-    {:ok, root_chain_height} = Height.get()
+  def handle_info({:internal_event_bus, :ethereum_new_height, root_chain_height}, state) do
     {:ok, state} = Core.update_root_chain_height(state, root_chain_height)
     {:noreply, state}
   end
@@ -80,10 +79,6 @@ defmodule Engine.Ethereum.Event.Coordinator do
 
   def handle_call(:get_ethereum_heights, _from, state) do
     {:reply, {:ok, Core.get_ethereum_heights(state)}, state}
-  end
-
-  defp schedule_get_ethereum_height(interval) do
-    :timer.send_interval(interval, self(), :update_root_chain_height)
   end
 
   defp request_sync(services) do

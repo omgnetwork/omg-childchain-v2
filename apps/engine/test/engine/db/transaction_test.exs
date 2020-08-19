@@ -13,7 +13,7 @@ defmodule Engine.DB.TransactionTest do
       {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_deposit())
 
       refute changeset.valid?
-      assert assert "can not be zero" in errors_on(changeset).amount
+      assert assert "Cannot be zero" in errors_on(changeset).amount
     end
 
     test "decodes tx_bytes and validates for a transfer" do
@@ -28,7 +28,7 @@ defmodule Engine.DB.TransactionTest do
       assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
 
       refute changeset.valid?
-      assert assert "can not be zero" in errors_on(changeset).amount
+      assert assert "Cannot be zero" in errors_on(changeset).amount
       assert assert "inputs [1000000000] are missing, spent, or not yet available" in errors_on(changeset).inputs
     end
 

@@ -16,7 +16,6 @@ defmodule Engine.MixProject do
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application() do
     [
       extra_applications: [:logger, :sasl],
@@ -25,7 +24,6 @@ defmodule Engine.MixProject do
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       # {:dep_from_hexpm, "~> 0.3.0"},
@@ -42,10 +40,12 @@ defmodule Engine.MixProject do
       {:httpoison, "1.6.0"},
       {:hackney, "1.15.2", override: true},
       {:decorator, "~> 1.2"},
+      {:ex_rlp, "~> 0.5.3"},
       # TEST
       {:exvcr, "~> 0.10", only: :test},
       {:ex_machina, "~> 2.4", only: [:test]},
       {:briefly, git: "https://github.com/CargoSense/briefly.git", only: [:test]},
+      {:fake_server, "~> 2.1", only: :test},
       {:yaml_elixir, "~> 2.4.0", only: [:test]},
       {:spandex_ecto, "~> 0.6.2"},
       {:spandex, "~> 3.0.1"},
