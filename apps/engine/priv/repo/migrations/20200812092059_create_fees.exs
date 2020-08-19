@@ -4,8 +4,8 @@ defmodule Engine.Repo.Migrations.CreateFees do
   def change do
     create table(:fees, primary_key: false) do
       add(:hash, :string, primary_key: true)
+      add(:type, :string, primary_key: true)
       add(:term, :binary, null: false)
-      add(:type, :string, null: false)
 
       timestamps(type: :utc_datetime)
     end

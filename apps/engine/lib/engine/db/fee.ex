@@ -17,8 +17,8 @@ defmodule Engine.DB.Fee do
   @primary_key false
   schema "fees" do
     field(:hash, :string, primary_key: true)
+    field(:type, :string, primary_key: true)
     field(:term, Term)
-    field(:type, :string)
 
     timestamps(type: :utc_datetime)
   end
