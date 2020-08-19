@@ -1,7 +1,7 @@
-defmodule Engine.Fees.Parser.SingleSpecParserTest do
+defmodule Engine.Fees.Fetcher.Client.Parser.SingleSpecParserTest do
   @moduledoc false
   use ExUnit.Case, async: true
-  alias Engine.Fees.Parser.SingleSpecParser
+  alias Engine.Fees.Fetcher.Client.Parser.SingleSpecParser
 
   @eth <<0::160>>
   @eth_hex "0x" <> Base.encode16(@eth)

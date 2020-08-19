@@ -1,8 +1,8 @@
-defmodule Engine.Fees.ParserTest do
+defmodule Engine.Fees.Fetcher.Client.ParserTest do
   @moduledoc false
   use ExUnit.Case, async: true
 
-  alias Engine.Fees.Parser
+  alias Engine.Fees.Fetcher.Client.Parser
 
   @moduletag :capture_log
 

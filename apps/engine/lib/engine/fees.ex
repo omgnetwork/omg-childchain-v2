@@ -3,6 +3,9 @@ defmodule Engine.Fees do
   Transaction's fee validation functions.
   """
 
+  alias Engine.Fees.Filter
+  alias Engine.Fees.Server
+
   @typedoc "A map of token addresses to a single fee spec"
   @type fee_t() :: %{address_t() => fee_spec_t()}
   @typedoc """
@@ -27,4 +30,8 @@ defmodule Engine.Fees do
   """
   @type typed_merged_fee_t() :: %{non_neg_integer() => merged_fee_t()}
   @type merged_fee_t() :: %{address_t() => list(pos_integer())}
+
+  defdelegate filter(fees, tx_types), to: Filter
+  defdelegate filter(fees, tx_types, currencies), to: Filter
+  defdelegate current_fees(), to: Server
 end
