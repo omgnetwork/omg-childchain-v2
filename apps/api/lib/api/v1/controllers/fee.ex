@@ -41,7 +41,7 @@ defmodule API.V1.Controller.Fee do
   @doc """
   Fetches fees.
   """
-  @spec all(Plug.Conn.t()) :: fees_response() | API.Validator.validation_error_t()
+  @spec all(map()) :: fees_response() | API.Validator.validation_error_t()
   def all(params) do
     with {:ok, currencies} <- list_to_binary(params["currencies"]),
          {:ok, filtered_fees} <- get_filtered_fees(params["tx_types"], currencies) do
@@ -76,12 +76,6 @@ defmodule API.V1.Controller.Fee do
       {:ok, binary} -> list_to_binary(tail, [binary | acc])
       error -> error
     end
-  end
-
-  defp handle_error(conn, {:error, {:validation_error, _param_name, _validator}}) do
-    error = error_info(:operation_bad_request)
-
-    serialize_error(error.code, error.description)
   end
 
   defp handle_error({:error, reason}) do
