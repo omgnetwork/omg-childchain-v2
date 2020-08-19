@@ -28,7 +28,7 @@ defmodule Engine.DB.FeeTest do
 
   describe "insert/1" do
     test "inserts a new fees record" do
-      params = %{term: @term}
+      params = %{term: @term, type: "current_fees"}
 
       {:ok, fees} = Fee.insert(params)
 
@@ -36,25 +36,40 @@ defmodule Engine.DB.FeeTest do
       refute is_nil(fees.hash)
     end
 
-    test "does not inserts or updates a record if it was already inserted" do
-      params = %{term: @term}
+    test "does not insert or updates a record if it was already inserted" do
+      params = %{term: @term, type: "merged_fees"}
 
       {:ok, _fees1} = Fee.insert(params)
       {:ok, _fees2} = Fee.insert(params)
 
       assert Engine.Repo.aggregate(Fee, :count, :hash) == 1
     end
+
+    test "does not insert a fee with an unknown type" do
+      params = %{term: @term, type: "my_fees"}
+
+      assert {:error, %{errors: errors}} = Fee.insert(params)
+
+      assert errors == [
+               type:
+                 {"is invalid",
+                  [
+                    validation: :inclusion,
+                    enum: ["previous_fees", "merged_fees", "current_fees"]
+                  ]}
+             ]
+    end
   end
 
   describe "fetch_latest/0" do
     test "fetch the latest fees" do
-      params1 = %{term: @term}
+      params1 = %{term: @term, type: "current_fees"}
 
       {:ok, _fees1} = Fee.insert(params1)
 
       Process.sleep(1_000)
 
-      params2 = %{term: %{}}
+      params2 = %{term: %{}, type: "current_fees"}
 
       {:ok, fees2} = Fee.insert(params2)
 

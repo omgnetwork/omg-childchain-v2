@@ -2,7 +2,7 @@ defmodule API.V1.FeesTest do
   use ExUnit.Case, async: true
 
   alias API.V1.Fees
-  alias Engine.DB.Fees, as: DbFees
+  alias Engine.DB.Fee, as: DbFees
 
   setup_all do
     fee_specs = %{
@@ -36,7 +36,7 @@ defmodule API.V1.FeesTest do
       }
     }
 
-    params = %{term: fee_specs}
+    params = %{term: fee_specs, type: "current_fees"}
 
     {:ok, _fees} = DbFees.insert(params)
 

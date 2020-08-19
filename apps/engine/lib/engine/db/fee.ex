@@ -11,12 +11,14 @@ defmodule Engine.DB.Fee do
 
   alias Engine.Repo
 
-  @required_fields [:term]
+  @required_fields [:term, :type]
+  @allowed_types ["previous_fees", "merged_fees", "current_fees"]
 
   @primary_key false
   schema "fees" do
     field(:hash, :string, primary_key: true)
     field(:term, Term)
+    field(:type, :string)
 
     timestamps(type: :utc_datetime)
   end
@@ -25,6 +27,7 @@ defmodule Engine.DB.Fee do
     struct
     |> cast(params, @required_fields)
     |> validate_required(@required_fields)
+    |> validate_inclusion(:type, @allowed_types)
     |> put_hash()
   end
 
@@ -36,7 +39,7 @@ defmodule Engine.DB.Fee do
 
   def fetch_latest() do
     __MODULE__
-    |> select([r], r)
+    |> where([r], r.type == ^"current_fees")
     |> order_by([r], desc: r.inserted_at)
     |> limit(1)
     |> Repo.one()

@@ -101,7 +101,7 @@ defmodule Engine.Fees.Server do
   end
 
   defp save_fees(new_fee_specs) do
-    Fee.insert(%{term: new_fee_specs})
+    Fee.insert(%{term: new_fee_specs, type: "current_fees"})
   end
 
   defp load_current_fees() do
