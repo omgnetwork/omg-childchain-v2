@@ -52,8 +52,8 @@ defmodule Engine.DB.Factory do
       attr
       |> Map.put(:signature, "InFlightExitStarted(address,bytes32)")
       |> Map.put(:data, %{
-       "initiator" => Map.get(attr, :initiator, <<1::160>>),
-       "tx_hash" => Map.get(attr, :tx_hash, <<1::256>>)
+        "initiator" => Map.get(attr, :initiator, <<1::160>>),
+        "tx_hash" => Map.get(attr, :tx_hash, <<1::256>>)
       })
 
     build(:event, params)
