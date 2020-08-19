@@ -5,6 +5,3 @@ lib/engine/release_tasks/contract.ex:61
 
 #broken mix/lib/mix/tasks
 lib/mix/tasks/childchain.ex:24
-
-#broken pattern match with raise
-lib/api/v1/transaction_submit.ex:22

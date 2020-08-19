@@ -11,53 +11,62 @@ defmodule API.V1.Router do
   use Plug.ErrorHandler
 
   alias API.Plugs.ExpectParams
-  alias API.Plugs.ExpectParams.InvalidParams
   alias API.Plugs.Health
-  alias API.V1.BlockGet
-  alias API.V1.Fees
-  alias API.V1.TransactionSubmit
+  alias API.Plugs.Responder
+  alias API.Plugs.Version
+  alias API.V1.Controller.Block
+  alias API.V1.Controller.Transaction
+  alias API.V1.ErrorHandler
 
-  plug(Plug.Parsers, parsers: [:json], json_decoder: Jason)
-  plug(ExpectParams, key: "hash", path: "/block.get", hex: true)
-  plug(ExpectParams, key: "transaction", path: "/transaction.submit", hex: true)
+  @api_version "1.0"
+
+  @expected_params %{
+    "GET:health.check" => [],
+    "POST:block.get" => [
+      %{name: "hash", type: :hex, required: true}
+    ],
+    "POST:transaction.submit" => [
+      %{name: "transaction", type: :hex, required: true}
+    ]
+  }
+
+  plug(Version, @api_version)
+  plug(Plug.Parsers, parsers: [:json], pass: ["application/json"], json_decoder: Jason)
+  plug(ExpectParams, @expected_params)
+
+  # Calling Responder once here to allow early response/halt of conn if there was an error
+  # in the pipeline above (ie: missing params). If there is no `:response` key in the conn
+  # assigns, this will not do anything.
+  plug(Responder)
   plug(:match)
   plug(:dispatch)
 
-  get "/health.check" do
-    conn = Health.call(conn, %{})
-    send_resp(conn, conn.status, "")
+  get "health.check" do
+    conn
+    |> Health.call(%{})
+    |> put_conn_response({:ok, %{}})
   end
 
-  post "/block.get" do
-    data = BlockGet.by_hash(conn.params["hash"])
-    render_json(conn, 200, data)
+  post "block.get" do
+    data = Block.get_by_hash(conn.params["hash"])
+    put_conn_response(conn, data)
   end
 
-  post "/transaction.submit" do
-    data = TransactionSubmit.submit(conn.params["transaction"])
-    render_json(conn, 200, data)
+  post "transaction.submit" do
+    data = Transaction.submit(conn.params["transaction"])
+    put_conn_response(conn, data)
   end
 
-  post "/fees.all" do
-    data = Fees.all(conn)
-    render_json(conn, 200, data)
+  match _ do
+    put_conn_response(conn, {:error, :operation_not_found})
   end
 
-  # The "input validations" are being raised up through the plug pipeline's as errors. We
-  # catch InvalidParams here as we are using this with ExpectParams to raise the error message here.
-  defp handle_errors(conn, %{reason: %InvalidParams{message: message}}) do
-    render_json(conn, 400, %{error: message})
-  end
+  # Calling Reponder as the last step of the pipeline. At this point, the conn is expected
+  # to have :response and :api_version keys in its assigns.
+  plug(Responder)
 
-  # V1 Parity wraps the body of the contents with this.
-  defp render_json(conn, status, data) do
-    payload =
-      Jason.encode!(%{
-        service_name: "childchain",
-        version: "1.0",
-        data: data
-      })
+  # Errors raised by Plugs
+  defp handle_errors(conn, error), do: ErrorHandler.handle(conn, error)
 
-    send_resp(conn, status, payload)
-  end
+  defp put_conn_response(conn, data), do: assign(conn, :response, data)
 end
