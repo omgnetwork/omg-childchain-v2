@@ -4,7 +4,7 @@ defmodule Engine.Ethereum.Event.CoordinatorTest do
   alias Engine.Ethereum.Event.Coordinator.Setup
 
   setup do
-    {_args, config_services} = Setup.coordinator_setup(1, 1, 1)
+    {_args, config_services} = Setup.coordinator_setup(1, 1)
     init = Core.init(config_services, 10)
 
     pid =

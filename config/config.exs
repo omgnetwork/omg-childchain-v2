@@ -26,6 +26,7 @@ end
 contracts = parse_contracts.()
 
 config :engine,
+  finality_margin: 10,
   network: "TEST",
   tx_hash_contract: contracts["TX_HASH_CONTRACT"],
   authority_address: contracts["AUTHORITY_ADDRESS"],
@@ -98,11 +99,6 @@ config :os_mon,
   system_memory_high_watermark: 1
 
 config :engine, Engine.Feefeed.Rules.Scheduler, interval: 180
-
-config :engine, Engine.Feefeed.Rules.Source,
-  org: "omisego",
-  branch: "master",
-  filename: "fee_rules"
 
 config :ex_plasma,
   eip_712_domain: %{
