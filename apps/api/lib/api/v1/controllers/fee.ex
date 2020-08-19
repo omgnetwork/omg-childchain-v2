@@ -43,7 +43,7 @@ defmodule API.V1.Controller.Fee do
   """
   @spec all(Plug.Conn.t()) :: fees_response() | API.Validator.validation_error_t()
   def all(params) do
-    with {:ok, currencies} <- to_binary(params["currencies"]),
+    with {:ok, currencies} <- list_to_binary(params["currencies"]),
          {:ok, filtered_fees} <- get_filtered_fees(params["tx_types"], currencies) do
       {:ok, Fee.serialize(filtered_fees)}
     else
@@ -59,13 +59,14 @@ defmodule API.V1.Controller.Fee do
     Fees.filter(fees, tx_types, currencies)
   end
 
-  defp to_binary(list, acc \\ [])
+  defp list_to_binary(list, acc \\ [])
 
-  defp to_binary(nil, _acc), do: {:ok, []}
+  defp list_to_binary(nil, _acc), do: {:ok, []}
+  defp list_to_binary([], _acc), do: {:ok, []}
 
-  defp to_binary([value], acc) do
+  defp list_to_binary([value], acc) do
     case Encoding.to_binary(value) do
-      {:ok, bin} -> {:ok, Enum.reverse([value | acc])}
+      {:ok, bin} -> {:ok, Enum.reverse([bin | acc])}
       error -> error
     end
   end

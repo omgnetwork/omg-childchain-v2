@@ -52,45 +52,71 @@ defmodule API.V1.RouterTest do
 
       {:ok, _fees} = DbFees.insert(params)
 
-      %{}
+      %{
+        expected_result: %{
+          "1" => [
+            %{
+              "amount" => 1,
+              "currency" => "0x0000000000000000000000000000000000000000",
+              "pegged_amount" => 1,
+              "pegged_currency" => "USD",
+              "pegged_subunit_to_unit" => 100,
+              "subunit_to_unit" => 1_000_000_000_000_000_000,
+              "updated_at" => "2019-01-01T10:00:00Z"
+            },
+            %{
+              "amount" => 2,
+              "currency" => "0x0000000000000000000000000000000000000001",
+              "pegged_amount" => 1,
+              "pegged_currency" => "USD",
+              "pegged_subunit_to_unit" => 100,
+              "subunit_to_unit" => 1_000_000_000_000_000_000,
+              "updated_at" => "2019-01-01T10:00:00Z"
+            }
+          ],
+          "2" => [
+            %{
+              "amount" => 2,
+              "currency" => "0x0000000000000000000000000000000000000000",
+              "pegged_amount" => 1,
+              "pegged_currency" => "USD",
+              "pegged_subunit_to_unit" => 100,
+              "subunit_to_unit" => 1_000_000_000_000_000_000,
+              "updated_at" => "2019-01-01T10:00:00Z"
+            }
+          ]
+        }
+      }
     end
 
-    test "fees.all endpoint does not filter when given empty currencies" do
+    test "fees.all endpoint does not filter without an empty body", %{expected_result: expected_result} do
       {:ok, payload} = post("fees.all", %{})
 
-      assert_payload_data(payload, %{
-        "1" => [
-          %{
-            "amount" => 1,
-            "currency" => "0x0000000000000000000000000000000000000000",
-            "pegged_amount" => 1,
-            "pegged_currency" => "USD",
-            "pegged_subunit_to_unit" => 100,
-            "subunit_to_unit" => 1_000_000_000_000_000_000,
-            "updated_at" => "2019-01-01T10:00:00Z"
-          },
-          %{
-            "amount" => 2,
-            "currency" => "0x0000000000000000000000000000000000000001",
-            "pegged_amount" => 1,
-            "pegged_currency" => "USD",
-            "pegged_subunit_to_unit" => 100,
-            "subunit_to_unit" => 1_000_000_000_000_000_000,
-            "updated_at" => "2019-01-01T10:00:00Z"
-          }
-        ],
-        "2" => [
-          %{
-            "amount" => 2,
-            "currency" => "0x0000000000000000000000000000000000000000",
-            "pegged_amount" => 1,
-            "pegged_currency" => "USD",
-            "pegged_subunit_to_unit" => 100,
-            "subunit_to_unit" => 1_000_000_000_000_000_000,
-            "updated_at" => "2019-01-01T10:00:00Z"
-          }
-        ]
-      })
+      assert_payload_data(payload, expected_result)
+    end
+
+    test "filters the result when given currencies", %{expected_result: %{"1" => [first | _], "2" => all}} do
+      {:ok, payload} = post("fees.all", %{"currencies" => ["0x0000000000000000000000000000000000000000"]})
+
+      assert_payload_data(payload, %{"1" => [first], "2" => all})
+    end
+
+    test "fees.all endpoint does not filter when given empty currencies", %{expected_result: expected_result} do
+      {:ok, payload} = post("fees.all", %{"currencies" => []})
+
+      assert_payload_data(payload, expected_result)
+    end
+
+    test "fees.all endpoint filters the result when given tx_types", %{expected_result: %{"1" => expected_result}} do
+      {:ok, payload} = post("fees.all", %{"tx_types" => [1]})
+
+      assert_payload_data(payload, %{"1" => expected_result})
+    end
+
+    test "fees.all endpoint does not filter when given empty tx_types", %{expected_result: expected_result} do
+      {:ok, payload} = post("fees.all", %{"tx_types" => []})
+
+      assert_payload_data(payload, expected_result)
     end
   end
 
