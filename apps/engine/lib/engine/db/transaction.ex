@@ -22,6 +22,22 @@ defmodule Engine.DB.Transaction do
 
   @type tx_bytes :: binary
 
+  @type t() :: %{
+          block: Block.t(),
+          block_id: pos_integer(),
+          id: pos_integer(),
+          inputs: list(Output.t()),
+          inserted_at: DateTime.t(),
+          kind: :deposit | :transfer,
+          outputs: list(Output.t()),
+          signed_tx: ExPlasma.Transaction.t() | nil,
+          tx_bytes: binary(),
+          tx_hash: <<_::256>>,
+          tx_type: pos_integer(),
+          updated_at: DateTime.t(),
+          witnesses: DateTime.t()
+        }
+
   @deposit :deposit
   @transfer :transfer
 
@@ -89,6 +105,8 @@ defmodule Engine.DB.Transaction do
     |> Validator.validate_inputs()
     |> Validator.validate_statefully(params)
   end
+
+  def insert(changeset), do: Repo.insert(changeset)
 
   defp recovered_to_map(transaction) do
     inputs = Enum.map(transaction.inputs, &Map.from_struct/1)
