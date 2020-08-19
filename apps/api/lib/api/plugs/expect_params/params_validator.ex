@@ -39,8 +39,20 @@ defmodule API.Plugs.ExpectParams.ParamsValidator do
 
   defp validate_format(nil, _format), do: :ok
   defp validate_format("0x" <> _, :hex), do: :ok
+  defp validate_format(value, :non_neg_integer) when is_integer(value) and value > -1, do: :ok
 
-  defp validate_format(value, :hex) do
+  defp validate_format([value], {:list, format}) do
+    validate_format(value, format)
+  end
+
+  defp validate_format([value | tail], {:list, format}) do
+    case validate_format(value, format) do
+      :ok -> validate_format(tail, {:list, format})
+      error -> error
+    end
+  end
+
+  defp validate_format(value, _) do
     {:error, :invalid_param_type, "hex values must be prefixed with 0x, got: '#{value}'"}
   end
 
