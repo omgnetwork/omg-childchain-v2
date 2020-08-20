@@ -40,14 +40,16 @@ defmodule Engine.DB.FeeTest do
     # this test checks that we won't have race conditions
     test "does not insert or update a record if it was already inserted" do
       params = %{term: @term, type: "current_fees"}
+      inserted_at = DateTime.truncate(DateTime.utc_now(), :second)
 
-      {:ok, _fees1} = Fee.insert(params)
+      {:ok, _fees1} = params |> Map.put(:inserted_at, inserted_at) |> Fee.insert()
       {:ok, latest_fees_after_the_first_insert} = Fee.fetch_current_fees()
 
       {:ok, _fees2} = Fee.insert(params)
       {:ok, latest_fees_after_the_second_insert} = Fee.fetch_current_fees()
 
       assert Engine.Repo.aggregate(Fee, :count, :hash) == 1
+      assert latest_fees_after_the_first_insert.inserted_at == inserted_at
       assert latest_fees_after_the_first_insert.inserted_at == latest_fees_after_the_second_insert.inserted_at
     end
 
