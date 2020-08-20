@@ -33,7 +33,7 @@ defmodule API.V1.Controller.Fee do
   @doc """
   Fetches fees.
   """
-  @spec all(map()) :: fees_response() | API.Validator.validation_error_t()
+  @spec all(map()) :: {:ok, fees_response()} | {:error, String.t(), String.t()}
   def all(params) do
     with {:ok, currencies} <- list_to_binary(params["currencies"]),
          {:ok, filtered_fees} <- get_filtered_fees(params["tx_types"], currencies) do

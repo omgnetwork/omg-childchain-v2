@@ -38,10 +38,9 @@ defmodule Engine.Fees.Server do
   end
 
   def init(args) do
-    {:ok, state} =
-      __MODULE__
-      |> Kernel.struct(args)
-      |> update_fee_specs()
+    state = Kernel.struct(__MODULE__, args)
+
+    _ = update_fee_specs(state)
 
     interval = state.fee_fetcher_check_interval_ms
     {:ok, fee_fetcher_check_timer} = :timer.send_interval(interval, self(), :update_fee_specs)
@@ -72,7 +71,7 @@ defmodule Engine.Fees.Server do
   end
 
   def handle_info(:expire_previous_fees, state) do
-    current_fees = current_fees()
+    current_fees = load_current_fees()
 
     merged_fee_specs = Merger.merge_specs(current_fees.term, nil)
 
@@ -115,7 +114,7 @@ defmodule Engine.Fees.Server do
 
     case Fetcher.get_fee_specs(state.fee_fetcher_opts, current_fee_specs.term) do
       {:ok, fee_specs} ->
-        {:ok, _} = save_fees(fee_specs)
+        :ok = save_fees(fee_specs)
         _ = Logger.info("Reloaded fee specs from FeeFetcher")
 
         new_expire_fee_timer = start_expiration_timer(state.expire_fee_timer, state.fee_buffer_duration_ms)
