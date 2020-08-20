@@ -12,6 +12,7 @@ defmodule Engine.DB.Fee do
   alias Engine.Repo
 
   @required_fields [:term, :type]
+  @optional_fields [:inserted_at]
   @allowed_types ["previous_fees", "merged_fees", "current_fees"]
 
   @primary_key false
@@ -25,7 +26,7 @@ defmodule Engine.DB.Fee do
 
   def changeset(struct, params) do
     struct
-    |> cast(params, @required_fields)
+    |> cast(params, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_inclusion(:type, @allowed_types)
     |> put_hash()

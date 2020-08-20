@@ -62,7 +62,7 @@ defmodule API.Plugs.ExpectParams.ParamsValidatorTest do
       expected_params = [%{name: "tx_type", type: :non_neg_integer, required: true}]
       params = %{"tx_type" => 1}
 
-      assert validate(params, expected_params) == {:ok, ^params}
+      assert validate(params, expected_params) == {:ok, params}
     end
   end
 
