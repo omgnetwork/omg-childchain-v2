@@ -5,7 +5,7 @@ defmodule Engine.Repo.Migrations.CreateFees do
     create table(:fees, primary_key: false) do
       add(:hash, :string, primary_key: true)
       add(:type, :string, primary_key: true)
-      add(:term, :binary, null: false)
+      add(:term, :binary)
 
       add(:inserted_at, :utc_datetime, null: false, default: fragment("now()"))
     end
