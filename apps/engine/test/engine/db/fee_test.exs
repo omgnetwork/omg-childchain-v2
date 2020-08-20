@@ -73,9 +73,9 @@ defmodule Engine.DB.FeeTest do
 
       {:ok, _fees1} = Fee.insert(params1)
 
-      Process.sleep(1_000)
+      Process.sleep(2_000)
 
-      params2 = %{term: %{}, type: "current_fees"}
+      params2 = %{term: %{dd: 11}, type: "current_fees"}
 
       {:ok, fees2} = Fee.insert(params2)
       {:ok, latest_fees} = Fee.fetch_current_fees()
