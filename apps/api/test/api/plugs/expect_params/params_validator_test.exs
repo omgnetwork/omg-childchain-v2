@@ -47,22 +47,22 @@ defmodule API.Plugs.ExpectParams.ParamsValidatorTest do
       expected_params = [%{name: "currencies", type: {:list, :hex}, required: true}]
       params = %{"currencies" => ["0x01", "0x02"]}
 
-      assert {:ok, ^params} = validate(params, expected_params)
+      assert validate(params, expected_params) == {:ok, params}
     end
 
     test "invalidates a list of hex values" do
       expected_params = [%{name: "currencies", type: {:list, :hex}, required: true}]
       params = %{"currencies" => ["0x01", 10]}
 
-      assert {:error, :invalid_param_type, "hex values must be prefixed with 0x, got: '10'"} =
-               validate(params, expected_params)
+      assert validate(params, expected_params) ==
+               {:error, :invalid_param_type, "hex values must be prefixed with 0x, got: '10'"}
     end
 
     test "validate non negative integer" do
       expected_params = [%{name: "tx_type", type: :non_neg_integer, required: true}]
       params = %{"tx_type" => 1}
 
-      assert {:ok, ^params} = validate(params, expected_params)
+      assert validate(params, expected_params) == {:ok, ^params}
     end
   end
 

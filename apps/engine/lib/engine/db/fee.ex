@@ -55,8 +55,8 @@ defmodule Engine.DB.Fee do
 
   defp put_hash(changeset) do
     case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{term: term}} ->
-        put_change(changeset, :hash, calculate_hash(term))
+      %Ecto.Changeset{valid?: true, changes: changes} ->
+        put_change(changeset, :hash, calculate_hash(changes[:term]))
 
       _ ->
         changeset
@@ -64,7 +64,7 @@ defmodule Engine.DB.Fee do
   end
 
   defp calculate_hash(term) do
-    string = inspect(term)
+    string = (term && inspect(term)) || ""
 
     :sha256
     |> :crypto.hash(string)

@@ -219,7 +219,7 @@ defmodule API.V1.RouterTest do
     end
   end
 
-  def post(endpoint, data) do
+  defp post(endpoint, data) do
     :post
     |> conn(endpoint, Jason.encode!(data))
     |> put_req_header("content-type", "application/json")
@@ -228,7 +228,7 @@ defmodule API.V1.RouterTest do
     |> Jason.decode()
   end
 
-  def assert_payload_data(payload, data) do
+  defp assert_payload_data(payload, data) do
     assert payload["service_name"] == "childchain"
     assert payload["version"] == "1.0"
     assert payload["data"] == data
