@@ -37,12 +37,18 @@ defmodule Engine.DB.FeeTest do
     end
 
     test "does not insert or updates a record if it was already inserted" do
-      params = %{term: @term, type: "merged_fees"}
+      params = %{term: @term, type: "current_fees"}
 
       {:ok, _fees1} = Fee.insert(params)
+      {:ok, latest_fees_after_the_first_insert} = Fee.fetch_current_fees()
+
+      Process.sleep(2_000)
+
       {:ok, _fees2} = Fee.insert(params)
+      {:ok, latest_fees_after_the_second_insert} = Fee.fetch_current_fees()
 
       assert Engine.Repo.aggregate(Fee, :count, :hash) == 1
+      assert latest_fees_after_the_first_insert.inserted_at == latest_fees_after_the_second_insert.inserted_at
     end
 
     test "does not insert a fee with an unknown type" do
@@ -72,8 +78,9 @@ defmodule Engine.DB.FeeTest do
       params2 = %{term: %{}, type: "current_fees"}
 
       {:ok, fees2} = Fee.insert(params2)
+      {:ok, latest_fees} = Fee.fetch_current_fees()
 
-      assert Fee.fetch_current_fees() == {:ok, fees2}
+      assert latest_fees.hash == fees2.hash
     end
 
     test "return {:error, :not_found} if there is nothing in the table" do

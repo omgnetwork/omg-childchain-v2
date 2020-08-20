@@ -20,7 +20,7 @@ defmodule Engine.DB.Fee do
     field(:type, :string, primary_key: true)
     field(:term, Term)
 
-    timestamps(type: :utc_datetime)
+    field(:inserted_at, :utc_datetime)
   end
 
   def changeset(struct, params) do
