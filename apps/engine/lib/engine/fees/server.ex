@@ -108,11 +108,11 @@ defmodule Engine.Fees.Server do
     {:invalid_fee_source, %{node: Node.self(), reporter: __MODULE__}}
   end
 
-  @spec update_fee_specs(t()) :: :ok | {:ok, t()} | {:error, {atom(), any()}}
+  @spec update_fee_specs(t()) :: :ok | {:ok, map()} | {:error, {atom(), any()}}
   defp update_fee_specs(state) do
     current_fee_specs = load_current_fees()
 
-    case Fetcher.get_fee_specs(state.fee_fetcher_opts, current_fee_specs.term) do
+    case Fetcher.get_fee_specs(state.fee_fetcher_opts, (current_fee_specs && current_fee_specs.term) || %{}) do
       {:ok, fee_specs} ->
         :ok = save_fees(fee_specs)
         _ = Logger.info("Reloaded fee specs from FeeFetcher")
@@ -137,8 +137,8 @@ defmodule Engine.Fees.Server do
   end
 
   defp save_fees(new_fee_specs) do
-    previous_fee_specs = current_fees()
-    merged_fee_specs = Merger.merge_specs(new_fee_specs, previous_fee_specs.term)
+    previous_fee_specs = load_current_fees()
+    merged_fee_specs = Merger.merge_specs(new_fee_specs, previous_fee_specs && previous_fee_specs.term)
 
     Repo.transaction(fn ->
       {:ok, _} = Fee.insert(%{term: previous_fee_specs, type: "previous_fees"})
