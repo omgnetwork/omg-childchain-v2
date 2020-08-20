@@ -27,14 +27,6 @@ defmodule API.V1.Controller.Fee do
     currency_fee_not_supported: %{
       code: "fee:currency_fee_not_supported",
       description: "One or more of the given currencies are not supported as a fee-token."
-    },
-    operation_not_found: %{
-      code: "operation:not_found",
-      description: "Operation cannot be found. Check request URL."
-    },
-    operation_bad_request: %{
-      code: "operation:bad_request",
-      description: "Parameters required by this operation are missing or incorrect."
     }
   }
 

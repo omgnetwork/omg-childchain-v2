@@ -66,7 +66,7 @@ defmodule API.Plugs.ExpectParams.ParamsValidatorTest do
     end
   end
 
-  def validate(params, expected_params \\ @expected_params) do
+  defp validate(params, expected_params \\ @expected_params) do
     ParamsValidator.validate(params, expected_params)
   end
 end
