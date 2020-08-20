@@ -36,7 +36,9 @@ defmodule Engine.DB.FeeTest do
       refute is_nil(fees.hash)
     end
 
-    test "does not insert or updates a record if it was already inserted" do
+    # we may run multiple fee server instances which may insert the same fees
+    # this test checks that we won't have race conditions
+    test "does not insert or update a record if it was already inserted" do
       params = %{term: @term, type: "current_fees"}
 
       {:ok, _fees1} = Fee.insert(params)

@@ -79,7 +79,8 @@ defmodule Engine.Configuration do
     fee_opts = Application.fetch_env!(@app, Engine.Fees)
 
     fee_server_opts = [
-      fee_fetcher_check_interval_ms: Keyword.fetch!(fee_opts, :fee_fetcher_check_interval_ms)
+      fee_fetcher_check_interval_ms: Keyword.fetch!(fee_opts, :fee_fetcher_check_interval_ms),
+      fee_buffer_duration_ms: Keyword.fetch!(fee_opts, :fee_buffer_duration_ms)
     ]
 
     Keyword.merge(fee_server_opts, fee_fetcher_opts: fee_opts)

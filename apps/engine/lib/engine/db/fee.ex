@@ -11,8 +11,8 @@ defmodule Engine.DB.Fee do
 
   alias Engine.Repo
 
-  @required_fields [:term, :type]
-  @optional_fields [:inserted_at]
+  @required_fields [:type]
+  @optional_fields [:term, :inserted_at]
   @allowed_types ["previous_fees", "merged_fees", "current_fees"]
 
   @primary_key false
