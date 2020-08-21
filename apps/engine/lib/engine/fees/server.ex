@@ -116,7 +116,7 @@ defmodule Engine.Fees.Server do
   defp update_fee_specs(state) do
     current_fee_specs = load_current_fees()
 
-    case Fetcher.get_fee_specs(state.fee_fetcher_opts, current_fee_specs[:term]) do
+    case Fetcher.get_fee_specs(state.fee_fetcher_opts, current_fee_specs && current_fee_specs.term) do
       {:ok, fee_specs} ->
         :ok = save_fees(fee_specs)
         _ = Logger.info("Reloaded fee specs from FeeFetcher")
@@ -155,8 +155,8 @@ defmodule Engine.Fees.Server do
     # previous_fees are deleted
     if is_nil(load_previous_fees()) do
       previous_fee_specs = load_current_fees()
-      merged_fee_specs = Merger.merge_specs(new_fee_specs, previous_fee_specs[:term])
-      {:ok, _} = Fee.insert(%{term: previous_fee_specs[:term], type: :previous_fees})
+      merged_fee_specs = Merger.merge_specs(new_fee_specs, previous_fee_specs && previous_fee_specs.term)
+      {:ok, _} = Fee.insert(%{term: previous_fee_specs && previous_fee_specs.term, type: :previous_fees})
       {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: :merged_fees})
     end
 
