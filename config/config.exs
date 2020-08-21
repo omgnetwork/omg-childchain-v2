@@ -109,6 +109,7 @@ config :ex_plasma,
   }
 
 config :api,
-  port: 9656
+  port: 9656,
+  cors_enabled: true
 
 import_config "#{Mix.env()}.exs"

@@ -33,12 +33,5 @@ When you are done editing the different spec files, you need to generate the fin
 In order to do this you need to have the following installed and available:
   - [node.js](https://nodejs.org/en/download/package-manager/)
   - [swagger-cli](https://www.npmjs.com/package/swagger-cli). Install using: `npm install -g swagger-cli`
-  - [openapi-generator](https://github.com/OpenAPITools/openapi-generator). Install using: `https://github.com/OpenAPITools/openapi-generator`
 
-Then you need to run the following commands to generate the final spec.
-
-
-```
-swagger-cli bundle -r -t yaml -o priv/openapi/swagger/openapi_swagger_specs.yaml priv/openapi/swagger/openapi_swagger_specs/swagger.yaml
-priv/openapitools/openapi-generator-cli validate -i priv/openapi/swagger/openapi_swagger_specs.yaml
-```
+Then you can run the make command to generate the full specs: `make generate_v1_api_specs`

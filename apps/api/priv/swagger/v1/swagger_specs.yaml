@@ -15,10 +15,12 @@ tags:
     description: Block related API.
   - name: Transaction
     description: Transaction related API.
+  - name: Fees
+    description: Fees related API.
   - name: Other
     description: Other API.
 servers:
-  - url: 'http://localhost:9656/'
+  - url: 'http://localhost:9656/v1/'
 paths:
   /block.get:
     post:
@@ -88,8 +90,8 @@ paths:
                         hash: '0x2733e50f526ec2fa19a22b31e8ed50f23cd1fdf94c9154ed3a7609a2f1ff981f'
                         transactions:
                           - 0xf8d083015ba98080808080940000...
-        '400':
-          description: Returns an input validation error
+        '500':
+          description: Returns a default server error
           content:
             application/json:
               schema:
@@ -121,17 +123,21 @@ paths:
                         description: The object schema for an error
                         type: object
                         properties:
-                          error:
+                          code:
+                            type: string
+                          description:
                             type: string
                         required:
                           - error
+                          - description
                     required:
                       - data
                     example:
                       success: false
                       data:
                         object: error
-                        error: string
+                        code: string
+                        description: string
   /transaction.submit:
     post:
       tags:
@@ -192,8 +198,8 @@ paths:
                     example:
                       data:
                         tx_hash: '0xbdf562c24ace032176e27621073df58ce1c6f65de3b5932343b70ba03c72132d'
-        '400':
-          description: Returns an input validation error
+        '500':
+          description: Returns a default server error
           content:
             application/json:
               schema:
@@ -225,17 +231,162 @@ paths:
                         description: The object schema for an error
                         type: object
                         properties:
-                          error:
+                          code:
+                            type: string
+                          description:
                             type: string
                         required:
                           - error
+                          - description
                     required:
                       - data
                     example:
                       success: false
                       data:
                         object: error
-                        error: string
+                        code: string
+                        description: string
+  /fees.all:
+    post:
+      tags:
+        - Fees
+      summary: This endpoint retrieves the list of fee tokens currently supported by the childchain and the current amount needed to perform a transaction.
+      operationId: fees_all
+      requestBody:
+        description: 'An optional array of currencies to filter, raises an error if one of the currencies is not supported.'
+        required: false
+        content:
+          application/json:
+            schema:
+              title: FeesAllBodySchema
+              type: object
+              properties:
+                currencies:
+                  type: array
+                  items:
+                    type: string
+                tx_types:
+                  type: array
+                  items:
+                    type: integer
+              example:
+                currencies:
+                  - '0x0000000000000000000000000000000000000000'
+                tx_types:
+                  - 1
+      responses:
+        '200':
+          description: List of all supported fees response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - description: The response schema for a successful operation
+                    type: object
+                    properties:
+                      service_name:
+                        type: string
+                      version:
+                        type: string
+                      success:
+                        type: boolean
+                      data:
+                        type: object
+                    required:
+                      - version
+                      - success
+                      - data
+                      - service_name
+                    example:
+                      service_name: childchain
+                      version: '1.0'
+                      data: {}
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        additionalProperties:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              currency:
+                                type: string
+                              amount:
+                                type: integer
+                                format: int256
+                              subunit_to_unit:
+                                type: integer
+                                format: int256
+                              pegged_currency:
+                                type: string
+                              pegged_amount:
+                                type: integer
+                                format: int256
+                              pegged_subunit_to_unit:
+                                type: integer
+                                format: int256
+                              updated_at:
+                                type: string
+                                format: date-time
+                    example:
+                      data:
+                        '1':
+                          - currency: '0x0000000000000000000000000000000000000000'
+                            amount: 220000000000000
+                            subunit_to_unit: 1000000000000000000
+                            pegged_currency: USD
+                            pegged_amount: 4
+                            pegged_subunit_to_unit: 100
+                            updated_at: '2019-01-01T10:10:10+00:00'
+        '500':
+          description: Returns a default server error
+          content:
+            application/json:
+              schema:
+                description: The response schema for an error
+                allOf:
+                  - description: The response schema for a successful operation
+                    type: object
+                    properties:
+                      service_name:
+                        type: string
+                      version:
+                        type: string
+                      success:
+                        type: boolean
+                      data:
+                        type: object
+                    required:
+                      - version
+                      - success
+                      - data
+                      - service_name
+                    example:
+                      service_name: childchain
+                      version: '1.0'
+                      data: {}
+                  - type: object
+                    properties:
+                      data:
+                        description: The object schema for an error
+                        type: object
+                        properties:
+                          code:
+                            type: string
+                          description:
+                            type: string
+                        required:
+                          - error
+                          - description
+                    required:
+                      - data
+                    example:
+                      success: false
+                      data:
+                        object: error
+                        code: string
+                        description: string
   /health.check:
     get:
       tags:

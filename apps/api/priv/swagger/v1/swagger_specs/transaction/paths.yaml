@@ -13,5 +13,5 @@ transaction.submit:
     responses:
       200:
         $ref: 'responses.yaml#/TransactionSubmitResponse'
-      400:
-        $ref: '../../shared/responses.yaml#/InputValidationError'
+      500:
+        $ref: '../../shared/responses.yaml#/InternalServerError'

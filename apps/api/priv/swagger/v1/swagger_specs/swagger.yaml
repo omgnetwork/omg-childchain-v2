@@ -16,16 +16,20 @@ tags:
     description: Block related API.
   - name: Transaction
     description: Transaction related API.
+  - name: Fees
+    description: Fees related API.
   - name: Other
     description: Other API.
 
 servers:
-  - url: 'http://localhost:9656/'
+  - url: 'http://localhost:9656/v1/'
 
 paths:
   /block.get:
     $ref: 'block/paths.yaml#/block.get'
   /transaction.submit:
     $ref: 'transaction/paths.yaml#/transaction.submit'
+  /fees.all:
+    $ref: 'fees/paths.yaml#/fees.all'
   /health.check:
     $ref: 'other/paths.yaml#/health.check'

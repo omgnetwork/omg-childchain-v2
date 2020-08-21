@@ -59,4 +59,5 @@ ErrorResponseSchema:
         success: false
         data:
           object: error
-          error: string
+          code: string
+          description: string

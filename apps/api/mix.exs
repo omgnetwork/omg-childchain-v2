@@ -26,6 +26,7 @@ defmodule API.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:cors_plug, "~> 2.0"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.0"},
       {:spandex, "~> 3.0.1"},

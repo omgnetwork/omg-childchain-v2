@@ -1,5 +1,5 @@
-InputValidationError:
-  description: Returns an input validation error
+InternalServerError:
+  description: Returns a default server error
   content:
     application/json:
       schema:
