@@ -48,7 +48,7 @@ defmodule API.V1.RouterTest do
         }
       }
 
-      params = %{term: fee_specs, type: "current_fees"}
+      params = %{term: fee_specs, type: :current_fees}
 
       {:ok, _fees} = DbFees.insert(params)
 
