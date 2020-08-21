@@ -20,7 +20,6 @@ services:
     volumes:
       - ./docker/create_databases.sql:/docker-entrypoint-initdb.d/create_databases.sql
     environment:
-      - POSTGRES_MULTIPLE_DATABASES="feefeed","engine_repo","omisego_dev",
       - POSTGRES_USER=omisegodev
       - POSTGRES_PASSWORD=omisegodev
     networks:
