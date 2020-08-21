@@ -64,11 +64,12 @@ defmodule Engine.DB.Fee do
     end
   end
 
-  defp calculate_hash(term) do
-    string = (term && inspect(term)) || ""
+  defp calculate_hash(nil), do: hash("")
+  defp calculate_hash(term), do: term |> inspect() |> hash()
 
+  defp hash(term) do
     :sha256
-    |> :crypto.hash(string)
+    |> :crypto.hash(term)
     |> Base.encode16(case: :lower)
   end
 end
