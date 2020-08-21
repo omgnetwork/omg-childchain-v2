@@ -9,7 +9,21 @@ defmodule Engine.DB.Block do
   import Ecto.Changeset
   import Ecto.Query
 
+  alias Ecto.Changeset
+  alias Ecto.Multi
   alias Engine.DB.Transaction
+  alias Engine.Repo
+  alias ExPlasma.Merkle
+
+  @type t() :: %{
+          transactions: list(Transaction.t()),
+          id: pos_integer(),
+          state: String.t(),
+          number: pos_integer(),
+          hash: <<_::256>>,
+          inserted_at: DateTime.t(),
+          updated_at: DateTime.t()
+        }
 
   schema "blocks" do
     field(:hash, :binary)
@@ -36,17 +50,36 @@ defmodule Engine.DB.Block do
   end
 
   @doc """
+  Get a block by its hash, because of https://github.com/omgnetwork/plasma-contracts/issues/359
+  block hash are not necessarly unique, until this is fixed, we limit the result to the first block we find.
+  If deposit blocks are stored in a different table than plasma blocks, we can have a unique hash enforced at
+  the db level and thus we can drop the limit(1) here.
+  """
+  @spec get_by_hash(binary(), atom() | list(atom())) :: {:ok, t()} | {:error, nil}
+  def get_by_hash(hash, preloads) do
+    hash
+    |> query_by_hash()
+    |> limit(1)
+    |> Repo.one()
+    |> Repo.preload(preloads)
+    |> case do
+      nil -> {:error, nil}
+      block -> {:ok, block}
+    end
+  end
+
+  @doc """
   Forms a pending block record based on the existing pending transactions. This
   attaches free transactions into a new block, awaiting for submission to the contract
   later on.
   """
   @decorate trace(service: :ecto, type: :backend)
   def form() do
-    Ecto.Multi.new()
-    |> Ecto.Multi.insert("new-block", %__MODULE__{})
-    |> Ecto.Multi.run("form-block", &attach_block_to_transactions/2)
-    |> Ecto.Multi.run("hash-block", &generate_block_hash/2)
-    |> Engine.Repo.transaction()
+    Multi.new()
+    |> Multi.insert("new-block", %__MODULE__{})
+    |> Multi.run("form-block", &attach_block_to_transactions/2)
+    |> Multi.run("hash-block", &generate_block_hash/2)
+    |> Repo.transaction()
   end
 
   defp attach_block_to_transactions(repo, %{"new-block" => block}) do
@@ -60,8 +93,8 @@ defmodule Engine.DB.Block do
     transactions_query =
       from(transaction in Transaction, where: transaction.block_id == ^block.id, select: transaction.tx_bytes)
 
-    hash = transactions_query |> Engine.Repo.all() |> ExPlasma.Encoding.merkle_root_hash()
-    changeset = Ecto.Changeset.change(block, hash: hash)
+    hash = transactions_query |> Repo.all() |> Merkle.root_hash()
+    changeset = Changeset.change(block, hash: hash)
     repo.update(changeset)
   end
 end

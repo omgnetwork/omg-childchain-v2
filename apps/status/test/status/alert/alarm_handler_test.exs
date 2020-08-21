@@ -6,7 +6,14 @@ defmodule Status.Alert.AlarmHandlerTest do
   alias Status.Alert.AlarmHandler.Table
 
   setup_all do
-    :ok = Application.start(:sasl)
+    case Application.start(:sasl) do
+      {:error, {:already_started, :sasl}} ->
+        :ok = Application.stop(:sasl)
+        :ok = Application.start(:sasl)
+
+      :ok ->
+        :ok
+    end
 
     on_exit(fn ->
       Application.stop(:sasl)

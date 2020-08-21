@@ -3,6 +3,7 @@ defmodule Engine.Callbacks.ExitTest do
   use Engine.DB.DataCase, async: true
 
   alias Engine.Callbacks.Exit
+  alias Engine.DB.ListenerState
   alias Engine.DB.Output
 
   describe "callback/1" do
@@ -35,5 +36,12 @@ defmodule Engine.Callbacks.ExitTest do
       query = from(o in Output, where: o.position in [^pos1, ^pos2], select: o.state)
       assert ["exited", "exited"] = Repo.all(query)
     end
+  end
+
+  # Check to see if the listener has a given state, like height.
+  #   assert listener_for(:depositor, height: 100)
+  defp listener_for(listener, height: height) do
+    name = "#{listener}"
+    %ListenerState{height: ^height, listener: ^name} = Engine.Repo.get(ListenerState, name)
   end
 end

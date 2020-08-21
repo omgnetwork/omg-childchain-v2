@@ -7,7 +7,15 @@ to_boolean = fn
   _ -> nil
 end
 
+mandatory = fn env, exception ->
+  case System.get_env(env) do
+    nil -> throw(exception)
+    data -> data
+  end
+end
+
 config :engine,
+  finality_margin: String.to_integer(System.get_env("FINALITY_MARGIN") || "10"),
   url: rpc_url,
   network: System.get_env("ETHEREUM_NETWORK"),
   tx_hash_contract: System.get_env("TX_HASH_CONTRACT"),
@@ -20,10 +28,7 @@ config :engine,
   ethereum_stalled_sync_threshold_ms: String.to_integer(System.get_env("ETHEREUM_STALLED_SYNC_THRESHOLD_MS") || "20000")
 
 config :engine, Engine.Repo,
-  database: "engine_repo",
-  username: "omisego_dev",
-  password: "omisego_dev",
-  hostname: System.get_env("DATABASE_URL") || "localhost",
+  url: System.get_env("DATABASE_URL"),
   backoff_type: :stop
 
 config :ethereumex,
@@ -67,13 +72,6 @@ config :status, Status.Metric.Tracer,
 
 config :engine, Engine.Feefeed.Rules.Scheduler,
   interval: String.to_integer(System.get_env("RULES_FETCH_INTERVAL") || "180")
-
-config :engine, Engine.Feefeed.Rules.Source,
-  token: System.get_env("GITHUB_TOKEN"),
-  org: System.get_env("GITHUB_ORGANISATION") || "omisego",
-  repo: System.get_env("GITHUB_REPO"),
-  branch: System.get_env("GITHUB_BRANCH") || "master",
-  filename: System.get_env("GITHUB_FILENAME") || "fee_rules"
 
 config :api,
   port: String.to_integer(System.get_env("PORT") || "9656")

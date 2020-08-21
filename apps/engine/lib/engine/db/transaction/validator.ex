@@ -12,11 +12,6 @@ defmodule Engine.DB.Transaction.Validator do
   alias Engine.DB.Transaction.PaymentV1
   alias Engine.Repo
 
-  @error_messages [
-    cannot_be_zero: "can not be zero",
-    exceeds_maximum: "can not exceed maximum value"
-  ]
-
   @type_validators %{
     1 => PaymentV1.Validator
   }
@@ -24,6 +19,20 @@ defmodule Engine.DB.Transaction.Validator do
   @type accepted_fee_t() :: %{required(<<_::160>>) => list(pos_integer())}
 
   @callback validate(Ecto.Changeset.t(), accepted_fee_t()) :: Ecto.Changeset.t()
+
+  @doc """
+  Validate the transaction bytes with the generic transaction format protocol.
+  See ExPlasma.Transaction.validate/1.
+
+  Returns the changeset unchanged if valid or with an error otherwise.
+  """
+  @spec validate_protocol(Ecto.Changeset.t()) :: Ecto.Changeset.t()
+  def validate_protocol(changeset) do
+    changeset
+    |> get_field(:signed_tx)
+    |> ExPlasma.validate()
+    |> process_protocol_validation_results(changeset)
+  end
 
   @doc """
   Validates that the given changesets inputs are correct. To create a transaction with inputs:
@@ -55,33 +64,6 @@ defmodule Engine.DB.Transaction.Validator do
   end
 
   @doc """
-  Attempts to recover witnesses (addresses) from the given signatures.
-  Maps the list of witnesses to the `:witnesses` key in the changeset if valid,
-  or adds an error to changeset otherwise.
-  """
-  @spec validate_signatures(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  def validate_signatures(changeset) do
-    changeset
-    |> get_field(:raw_tx)
-    |> ExPlasma.Transaction.recover_signatures()
-    |> process_signatures_validation_results(changeset)
-  end
-
-  @doc """
-  Validate the transaction bytes with the generic transaction format protocol.
-  See ExPlasma.Transaction.validate/1.
-
-  Returns the changeset unchanged if valid or with an error otherwise.
-  """
-  @spec validate_protocol(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  def validate_protocol(changeset) do
-    changeset
-    |> get_field(:raw_tx)
-    |> ExPlasma.Transaction.validate()
-    |> process_protocol_validation_results(changeset)
-  end
-
-  @doc """
   Validates the transaction taking into account its state and output/input data.
   This will dispatch the validation depending on the transaction type.
   Refer to @type_validators for the list of validators per transaction type.
@@ -103,14 +85,6 @@ defmodule Engine.DB.Transaction.Validator do
   end
 
   # Private
-  defp process_signatures_validation_results({:ok, addresses}, changeset) do
-    put_change(changeset, :witnesses, addresses)
-  end
-
-  defp process_signatures_validation_results({:error, error}, changeset) do
-    add_error(changeset, :witnesses, "invalid signature: #{inspect(error)}")
-  end
-
   defp get_input_positions(changeset) do
     changeset |> get_field(:inputs) |> Enum.map(&Map.get(&1, :position))
   end
@@ -120,10 +94,11 @@ defmodule Engine.DB.Transaction.Validator do
     where(Output.usable(), [output], output.position in ^positions)
   end
 
-  defp process_protocol_validation_results({:ok, _}, changeset), do: changeset
+  defp process_protocol_validation_results(:ok, changeset), do: changeset
 
   defp process_protocol_validation_results({:error, {field, message}}, changeset) do
-    add_error(changeset, field, @error_messages[message])
+    formatted_message = message |> Atom.to_string() |> String.replace("_", " ") |> String.capitalize()
+    add_error(changeset, field, formatted_message)
   end
 
   defp get_validator(type), do: Map.fetch!(@type_validators, type)

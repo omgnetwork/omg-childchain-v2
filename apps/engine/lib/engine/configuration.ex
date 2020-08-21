@@ -4,25 +4,20 @@ defmodule Engine.Configuration do
   """
   @app :engine
 
-  @spec ethereumex_url() :: String.t()
-  def ethereumex_url() do
-    Application.fetch_env!(:ethereumex, :url)
+  def child_block_interval() do
+    Application.fetch_env!(@app, :child_block_interval)
   end
 
-  def deposit_finality_margin() do
-    10
+  def finality_margin() do
+    Application.fetch_env!(@app, :finality_margin)
   end
 
   def contract_deployment_height() do
-    Application.fetch_env!(:engine, :contract_deployment_height)
+    Application.fetch_env!(@app, :contract_deployment_height)
   end
 
   def metrics_collection_interval() do
     60_000
-  end
-
-  def coordinator_eth_height_check_interval_ms() do
-    8000
   end
 
   def ethereum_events_check_interval_ms() do
@@ -70,13 +65,6 @@ defmodule Engine.Configuration do
 
   def scheduler_interval() do
     Application.fetch_env!(@app, Engine.Feefeed.Rules.Scheduler)[:interval]
-  end
-
-  def source_config() do
-    @app
-    |> Application.fetch_env!(Engine.Feefeed.Rules.Source)
-    |> Enum.into(%{})
-    |> Map.merge(%{vsn: Application.spec(:engine, :vsn)})
   end
 
   def db_fetch_retry_interval() do

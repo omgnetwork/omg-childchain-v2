@@ -120,7 +120,7 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
         true ->
           {:ok, enriched_data} = state.event_interface.get_call_data(decoded_event.root_chain_tx_hash)
 
-          enriched_data_decoded = enriched_data |> Encoding.to_binary() |> Abi.decode_function()
+          enriched_data_decoded = enriched_data |> Encoding.to_binary!() |> Abi.decode_function()
           struct(decoded_event, call_data: enriched_data_decoded)
 
         _ ->

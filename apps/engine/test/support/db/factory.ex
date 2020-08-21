@@ -9,11 +9,10 @@ defmodule Engine.DB.Factory do
   import Ecto.Query
 
   alias Engine.DB.Block
-  alias Engine.DB.FeeRules
-  alias Engine.DB.Fees
   alias Engine.DB.Output
+  alias Engine.DB.PlasmaBlock
   alias Engine.DB.Transaction
-  alias Engine.Feefeed.Rules.Parser
+  alias Engine.Ethereum.RootChain.Event
   alias Engine.Support.TestEntity
   alias ExPlasma.Builder
   alias ExPlasma.Output.Position
@@ -43,6 +42,18 @@ defmodule Engine.DB.Factory do
       |> Map.put(:data, %{
         "tx_hash" => tx_hash,
         "output_index" => index
+      })
+
+    build(:event, params)
+  end
+
+  def in_flight_exit_started_factory(attr \\ %{}) do
+    params =
+      attr
+      |> Map.put(:signature, "InFlightExitStarted(address,bytes32)")
+      |> Map.put(:data, %{
+        "initiator" => Map.get(attr, :initiator, <<1::160>>),
+        "tx_hash" => Map.get(attr, :tx_hash, <<1::256>>)
       })
 
     build(:event, params)
@@ -83,7 +94,7 @@ defmodule Engine.DB.Factory do
     log_index = Map.get(attr, :log_index, 1)
     root_chain_tx_hash = Map.get(attr, :log_index, <<1::160>>)
 
-    %{
+    %Event{
       data: data,
       call_data: call_data,
       eth_height: height,
@@ -108,9 +119,10 @@ defmodule Engine.DB.Factory do
       |> Position.to_map()
 
     tx_bytes =
-      [tx_type: 1]
+      ExPlasma.payment_v1()
       |> Builder.new()
       |> Builder.add_output(Enum.to_list(data))
+      |> Builder.sign!([])
       |> ExPlasma.encode()
 
     output = build(:output, output_id: id, output_data: data, output_type: 1, state: "confirmed")
@@ -141,14 +153,16 @@ defmodule Engine.DB.Factory do
     default_blknum = sequence(:blknum, fn seq -> (seq + 1) * 1000 end)
     insert(:output, %{output_data: data, blknum: Map.get(attr, :blknum, default_blknum), state: "confirmed"})
 
-    [tx_type: 1]
-    |> Builder.new()
-    |> Builder.add_input(blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0)
-    |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
-    |> Builder.sign([priv_encoded])
-    |> ExPlasma.encode()
-    |> Transaction.decode(kind: Transaction.kind_transfer())
-    |> apply_changes()
+    tx_bytes =
+      ExPlasma.payment_v1()
+      |> Builder.new()
+      |> Builder.add_input(blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0)
+      |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+      |> Builder.sign!([priv_encoded])
+      |> ExPlasma.encode()
+
+    {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
+    apply_changes(changeset)
   end
 
   # The "lowest" unit in the hierarchy. This is made to form into transactions
@@ -176,24 +190,20 @@ defmodule Engine.DB.Factory do
   def set_state(%Transaction{outputs: [output]}, state), do: %{output | state: state}
   def set_state(%Output{} = output, state), do: %{output | state: state}
 
-  def fees_factory() do
-    %Fees{
-      fee_rules_uuid: insert(:fee_rules).uuid,
-      data: read_rules_file()
+  def plasma_block_factory(attr \\ %{}) do
+    blknum = Map.get(attr, :blknum, 1000)
+    _child_block_interval = 1000
+    nonce = round(blknum / 1000)
+
+    %PlasmaBlock{
+      hash: :crypto.strong_rand_bytes(32),
+      nonce: nonce,
+      blknum: blknum,
+      tx_hash: :crypto.strong_rand_bytes(64),
+      formed_at_ethereum_height: 1,
+      submitted_at_ethereum_height: Map.get(attr, :submitted_at_ethereum_height, 1),
+      attempts_counter: Map.get(attr, :attempts_counter),
+      gas: 827
     }
-  end
-
-  def fee_rules_factory() do
-    %FeeRules{
-      data: read_rules_file()
-    }
-  end
-
-  @spec read_rules_file() :: map()
-  def read_rules_file() do
-    {:ok, rules} = File.read("test/support/fee_rules.json")
-    {:ok, file_rules} = Parser.decode_and_validate(rules)
-
-    file_rules
   end
 end

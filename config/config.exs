@@ -26,13 +26,20 @@ end
 contracts = parse_contracts.()
 
 config :engine,
+  finality_margin: 10,
   network: "TEST",
   tx_hash_contract: contracts["TX_HASH_CONTRACT"],
   authority_address: contracts["AUTHORITY_ADDRESS"],
   plasma_framework: contracts["CONTRACT_ADDRESS_PLASMA_FRAMEWORK"],
   erc20_vault: contracts["CONTRACT_ADDRESS_ERC20_VAULT"],
   eth_vault: contracts["CONTRACT_ADDRESS_ETH_VAULT"],
-  payment_exit_game: contracts["CONTRACT_ADDRESS_PAYMENT_EXIT_GAME"]
+  payment_exit_game: contracts["CONTRACT_ADDRESS_PAYMENT_EXIT_GAME"],
+  fee_adapter_check_interval_ms: 10_000
+
+config :engine, Engine.Fees,
+  fee_feed_url: "http://localhost:4000/api/v1",
+  fee_change_tolerance_percent: 25,
+  stored_fee_update_interval_minutes: 1
 
 config :engine, Engine.Repo,
   database: "engine_repo",
@@ -92,11 +99,6 @@ config :os_mon,
   system_memory_high_watermark: 1
 
 config :engine, Engine.Feefeed.Rules.Scheduler, interval: 180
-
-config :engine, Engine.Feefeed.Rules.Source,
-  org: "omisego",
-  branch: "master",
-  filename: "fee_rules"
 
 config :ex_plasma,
   eip_712_domain: %{
