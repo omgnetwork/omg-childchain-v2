@@ -72,13 +72,17 @@ defmodule Engine.Fees.Server do
 
   def handle_info(:expire_previous_fees, state) do
     current_fees = load_current_fees()
+    previous_fees = load_previous_fees()
 
-    merged_fee_specs = Merger.merge_specs(current_fees.term, nil)
+    if previous_fees && current_fees &&
+         DateTime.diff(current_fees.inserted_at, previous_fees.inserted_at, :microsecond) > state.fee_buffer_duration_ms do
+      merged_fee_specs = Merger.merge_specs(current_fees.term, nil)
 
-    Repo.transaction(fn ->
-      {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: :merged_fees})
-      {:ok, _} = Fee.insert(%{term: nil, type: :previous_fees})
-    end)
+      Repo.transaction(fn ->
+        {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: :merged_fees})
+        {_, _} = Fee.remove_previous_fees()
+      end)
+    end
 
     _ = Logger.info("Previous fees are now invalid and current fees must be paid")
     {:noreply, state}
@@ -137,14 +141,24 @@ defmodule Engine.Fees.Server do
   end
 
   defp save_fees(new_fee_specs) do
-    previous_fee_specs = load_current_fees()
-    merged_fee_specs = Merger.merge_specs(new_fee_specs, previous_fee_specs[:term])
-
     Repo.transaction(fn ->
-      {:ok, _} = Fee.insert(%{term: previous_fee_specs[:term], type: :previous_fees})
       {:ok, _} = Fee.insert(%{term: new_fee_specs, type: :current_fees})
-      {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: :merged_fees})
+
+      :ok = update_merged_fees(new_fee_specs)
     end)
+
+    :ok
+  end
+
+  defp update_merged_fees(new_fee_specs) do
+    # we will update merged fees only if previouse merged fees are expired, i.e.
+    # previous_fees are deleted
+    if is_nil(load_previous_fees()) do
+      previous_fee_specs = load_current_fees()
+      merged_fee_specs = Merger.merge_specs(new_fee_specs, previous_fee_specs[:term])
+      {:ok, _} = Fee.insert(%{term: previous_fee_specs[:term], type: :previous_fees})
+      {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: :merged_fees})
+    end
 
     :ok
   end
@@ -158,6 +172,13 @@ defmodule Engine.Fees.Server do
 
   defp load_accepted_fees() do
     case Fee.fetch_merged_fees() do
+      {:ok, fees} -> fees
+      _ -> nil
+    end
+  end
+
+  defp load_previous_fees() do
+    case Fee.fetch_previous_fees() do
       {:ok, fees} -> fees
       _ -> nil
     end
