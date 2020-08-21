@@ -2,7 +2,6 @@ defmodule API.V1.Controller.FeeTest do
   use Engine.DB.DataCase, async: true
 
   alias API.V1.Controller.Fee
-  alias Engine.DB.Fee, as: DbFees
 
   setup_all do
     fee_specs = %{
@@ -36,15 +35,15 @@ defmodule API.V1.Controller.FeeTest do
       }
     }
 
-    params = %{term: fee_specs, type: :current_fees}
+    params = [term: fee_specs, type: :current_fees]
 
-    {:ok, _fees} = DbFees.insert(params)
+    _ = insert(:fee, params)
 
     :ok
   end
 
   describe "all/1" do
-    test "it returns fees" do
+    test "returns fees" do
       assert {:ok,
               %{
                 "1" => [

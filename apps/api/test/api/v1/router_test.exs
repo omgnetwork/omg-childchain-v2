@@ -3,7 +3,6 @@ defmodule API.V1.RouterTest do
   use Plug.Test
 
   alias API.V1.Router
-  alias Engine.DB.Fee, as: DbFees
   alias ExPlasma.Encoding
 
   test "sets the api version" do
@@ -50,7 +49,7 @@ defmodule API.V1.RouterTest do
 
       params = %{term: fee_specs, type: :current_fees}
 
-      {:ok, _fees} = DbFees.insert(params)
+      _ = insert(:fee, params)
 
       %{
         expected_result: %{

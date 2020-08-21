@@ -9,6 +9,7 @@ defmodule Engine.DB.Factory do
   import Ecto.Query
 
   alias Engine.DB.Block
+  alias Engine.DB.Fee
   alias Engine.DB.Output
   alias Engine.DB.PlasmaBlock
   alias Engine.DB.Transaction
@@ -204,6 +205,52 @@ defmodule Engine.DB.Factory do
       submitted_at_ethereum_height: Map.get(attr, :submitted_at_ethereum_height, 1),
       attempts_counter: Map.get(attr, :attempts_counter),
       gas: 827
+    }
+  end
+
+  def fee_factory(params \\ %{}) do
+    fees =
+      params[:term] ||
+        %{
+          1 => %{
+            Base.decode16!("0000000000000000000000000000000000000000") => %{
+              amount: 1,
+              subunit_to_unit: 1_000_000_000_000_000_000,
+              pegged_amount: 1,
+              pegged_currency: "USD",
+              pegged_subunit_to_unit: 100,
+              updated_at: DateTime.from_unix!(1_546_336_800)
+            },
+            Base.decode16!("0000000000000000000000000000000000000001") => %{
+              amount: 2,
+              subunit_to_unit: 1_000_000_000_000_000_000,
+              pegged_amount: 1,
+              pegged_currency: "USD",
+              pegged_subunit_to_unit: 100,
+              updated_at: DateTime.from_unix!(1_546_336_800)
+            }
+          },
+          2 => %{
+            Base.decode16!("0000000000000000000000000000000000000000") => %{
+              amount: 2,
+              subunit_to_unit: 1_000_000_000_000_000_000,
+              pegged_amount: 1,
+              pegged_currency: "USD",
+              pegged_subunit_to_unit: 100,
+              updated_at: DateTime.from_unix!(1_546_336_800)
+            }
+          }
+        }
+
+    hash =
+      :sha256
+      |> :crypto.hash(inspect(fees))
+      |> Base.encode16(case: :lower)
+
+    %Fee{
+      type: params[:type] || :current_fees,
+      term: fees,
+      hash: hash
     }
   end
 end
