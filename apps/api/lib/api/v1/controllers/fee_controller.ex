@@ -19,17 +19,6 @@ defmodule API.V1.Controller.Fee do
           required(:updated_at) => DateTime.t()
         }
 
-  @errors %{
-    tx_type_not_supported: %{
-      code: "fee:tx_type_not_supported",
-      description: "One or more of the given transaction types are not supported."
-    },
-    currency_fee_not_supported: %{
-      code: "fee:currency_fee_not_supported",
-      description: "One or more of the given currencies are not supported as a fee-token."
-    }
-  }
-
   @doc """
   Fetches fees.
   """
@@ -71,23 +60,14 @@ defmodule API.V1.Controller.Fee do
   end
 
   defp handle_error({:error, reason}) do
-    error = error_info(reason)
+    error_info(reason)
+  end
 
-    serialize_error(error.code, error.description)
+  defp error_info(reason) when reason in [:tx_type_not_supported, :currency_fee_not_supported] do
+    {:error, reason}
   end
 
   defp error_info(reason) do
-    case Map.get(@errors, reason) do
-      nil -> %{code: "fee:#{inspect(reason)}", description: nil}
-      error -> error
-    end
-  end
-
-  defp serialize_error(code, description) do
-    {
-      :error,
-      code,
-      description
-    }
+    {:error, "#{inspect(reason)}", ""}
   end
 end

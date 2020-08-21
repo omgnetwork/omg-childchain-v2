@@ -123,8 +123,8 @@ defmodule API.V1.RouterTest do
       {:ok, payload} = post("fees.all", %{"currencies" => ["0x0000000000000000000000000000000000000005"]})
 
       assert_payload_data(payload, %{
-        "code" => "fee:currency_fee_not_supported",
-        "description" => "One or more of the given currencies are not supported as a fee-token.",
+        "code" => "currency_fee_not_supported",
+        "description" => "One or more of the given currencies are not supported as a fee-token",
         "object" => "error"
       })
     end
@@ -143,8 +143,8 @@ defmodule API.V1.RouterTest do
       {:ok, payload} = post("fees.all", %{"tx_types" => [99_999]})
 
       assert_payload_data(payload, %{
-        "code" => "fee:tx_type_not_supported",
-        "description" => "One or more of the given transaction types are not supported.",
+        "code" => "tx_type_not_supported",
+        "description" => "One or more of the given transaction types are not supported",
         "object" => "error"
       })
     end
