@@ -153,12 +153,13 @@ defmodule Engine.Fees.Server do
   defp update_merged_fees(new_fee_specs) do
     # we will update merged fees only if previouse merged fees are expired, i.e.
     # previous_fees are deleted
-    if is_nil(load_previous_fees()) do
-      previous_fee_specs = load_current_fees()
-      merged_fee_specs = Merger.merge_specs(new_fee_specs, previous_fee_specs && previous_fee_specs.term)
-      {:ok, _} = Fee.insert(%{term: previous_fee_specs && previous_fee_specs.term, type: :previous_fees})
-      {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: :merged_fees})
-    end
+    _ =
+      if is_nil(load_previous_fees()) do
+        previous_fee_specs = load_current_fees()
+        merged_fee_specs = Merger.merge_specs(new_fee_specs, previous_fee_specs && previous_fee_specs.term)
+        {:ok, _} = Fee.insert(%{term: previous_fee_specs && previous_fee_specs.term, type: :previous_fees})
+        {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: :merged_fees})
+      end
 
     :ok
   end
