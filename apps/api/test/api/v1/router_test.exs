@@ -1,5 +1,5 @@
 defmodule API.V1.RouterTest do
-  use Engine.DB.DataCase, async: false
+  use Engine.DB.DataCase, async: true
   use Plug.Test
 
   alias API.V1.Router
@@ -22,7 +22,7 @@ defmodule API.V1.RouterTest do
           subunit_to_unit: 1_000_000_000_000_000_000,
           pegged_amount: 1,
           pegged_currency: "USD",
-          pegged_subunit_to_unit: 100,
+          pegged_subunit_to_unit: 10,
           updated_at: DateTime.from_unix!(1_546_336_800)
         },
         Base.decode16!("0000000000000000000000000000000000000001") => %{
@@ -40,13 +40,21 @@ defmodule API.V1.RouterTest do
           subunit_to_unit: 1_000_000_000_000_000_000,
           pegged_amount: 1,
           pegged_currency: "USD",
-          pegged_subunit_to_unit: 100,
+          pegged_subunit_to_unit: 10,
           updated_at: DateTime.from_unix!(1_546_336_800)
         }
       }
     }
 
-    params = %{term: fee_specs, type: :current_fees}
+    params = [
+      term: fee_specs,
+      type: :current_fees,
+      hash:
+        :sha256
+        |> :crypto.hash(inspect(fee_specs))
+        |> Base.encode16(case: :lower),
+      inserted_at: DateTime.add(DateTime.utc_now(), 10_000_000, :second)
+    ]
 
     _ = insert(:fee, params)
 
@@ -58,7 +66,7 @@ defmodule API.V1.RouterTest do
             "currency" => "0x0000000000000000000000000000000000000000",
             "pegged_amount" => 1,
             "pegged_currency" => "USD",
-            "pegged_subunit_to_unit" => 100,
+            "pegged_subunit_to_unit" => 10,
             "subunit_to_unit" => 1_000_000_000_000_000_000,
             "updated_at" => "2019-01-01T10:00:00Z"
           },
@@ -78,7 +86,7 @@ defmodule API.V1.RouterTest do
             "currency" => "0x0000000000000000000000000000000000000000",
             "pegged_amount" => 1,
             "pegged_currency" => "USD",
-            "pegged_subunit_to_unit" => 100,
+            "pegged_subunit_to_unit" => 10,
             "subunit_to_unit" => 1_000_000_000_000_000_000,
             "updated_at" => "2019-01-01T10:00:00Z"
           }

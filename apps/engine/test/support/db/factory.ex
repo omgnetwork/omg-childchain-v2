@@ -250,7 +250,8 @@ defmodule Engine.DB.Factory do
     %Fee{
       type: params[:type] || :current_fees,
       term: fees,
-      hash: hash
+      hash: hash,
+      inserted_at: params[:inserted_at]
     }
   end
 end
