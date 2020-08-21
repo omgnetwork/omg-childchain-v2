@@ -1,4 +1,4 @@
-defmodule Term do
+defmodule Ecto.Term do
   @moduledoc """
   An Ecto custom type for terms.
   Saves the term as a binary in the database.

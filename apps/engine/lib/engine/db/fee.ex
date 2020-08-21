@@ -9,16 +9,18 @@ defmodule Engine.DB.Fee do
   import Ecto.Changeset
   import Ecto.Query
 
+  alias Ecto.Atom
+  alias Ecto.Term
   alias Engine.Repo
 
   @required_fields [:type]
   @optional_fields [:term, :inserted_at]
-  @allowed_types ["previous_fees", "merged_fees", "current_fees"]
+  @allowed_types [:previous_fees, :merged_fees, :current_fees]
 
   @primary_key false
   schema "fees" do
     field(:hash, :string, primary_key: true)
-    field(:type, :string, primary_key: true)
+    field(:type, Atom, primary_key: true)
     field(:term, Term)
 
     field(:inserted_at, :utc_datetime)
@@ -38,9 +40,9 @@ defmodule Engine.DB.Fee do
     |> Repo.insert(on_conflict: :nothing)
   end
 
-  def fetch_current_fees(), do: fetch("current_fees")
-  def fetch_merged_fees(), do: fetch("merged_fees")
-  def fetch_previous_fees(), do: fetch("previous_fees")
+  def fetch_current_fees(), do: fetch(:current_fees)
+  def fetch_merged_fees(), do: fetch(:merged_fees)
+  def fetch_previous_fees(), do: fetch(:previous_fees)
 
   defp fetch(type) do
     __MODULE__

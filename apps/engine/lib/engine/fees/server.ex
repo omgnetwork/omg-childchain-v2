@@ -76,8 +76,8 @@ defmodule Engine.Fees.Server do
     merged_fee_specs = Merger.merge_specs(current_fees.term, nil)
 
     Repo.transaction(fn ->
-      {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: "merged_fees"})
-      {:ok, _} = Fee.insert(%{term: nil, type: "previous_fees"})
+      {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: :merged_fees})
+      {:ok, _} = Fee.insert(%{term: nil, type: :previous_fees})
     end)
 
     _ = Logger.info("Previous fees are now invalid and current fees must be paid")
@@ -141,9 +141,9 @@ defmodule Engine.Fees.Server do
     merged_fee_specs = Merger.merge_specs(new_fee_specs, previous_fee_specs && previous_fee_specs.term)
 
     Repo.transaction(fn ->
-      {:ok, _} = Fee.insert(%{term: previous_fee_specs && previous_fee_specs.term, type: "previous_fees"})
-      {:ok, _} = Fee.insert(%{term: new_fee_specs, type: "current_fees"})
-      {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: "merged_fees"})
+      {:ok, _} = Fee.insert(%{term: previous_fee_specs && previous_fee_specs.term, type: :previous_fees})
+      {:ok, _} = Fee.insert(%{term: new_fee_specs, type: :current_fees})
+      {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: :merged_fees})
     end)
 
     :ok

@@ -28,18 +28,19 @@ defmodule Engine.DB.FeeTest do
 
   describe "insert/1" do
     test "inserts a new fees record" do
-      params = %{term: @term, type: "current_fees"}
+      params = %{term: @term, type: :current_fees}
 
       {:ok, fees} = Fee.insert(params)
 
       assert fees.term == @term
+      assert fees.type == :current_fees
       refute is_nil(fees.hash)
     end
 
     # we may run multiple fee server instances which may insert the same fees
     # this test checks that we won't have race conditions
     test "does not insert or update a record if it was already inserted" do
-      params = %{term: @term, type: "current_fees"}
+      params = %{term: @term, type: :current_fees}
       inserted_at = DateTime.truncate(DateTime.utc_now(), :second)
 
       {:ok, _fees1} = params |> Map.put(:inserted_at, inserted_at) |> Fee.insert()
@@ -54,7 +55,7 @@ defmodule Engine.DB.FeeTest do
     end
 
     test "does not insert a fee with an unknown type" do
-      params = %{term: @term, type: "my_fees"}
+      params = %{term: @term, type: :my_fees}
 
       assert {:error, %{errors: errors}} = Fee.insert(params)
 
@@ -63,7 +64,7 @@ defmodule Engine.DB.FeeTest do
                  {"is invalid",
                   [
                     validation: :inclusion,
-                    enum: ["previous_fees", "merged_fees", "current_fees"]
+                    enum: [:previous_fees, :merged_fees, :current_fees]
                   ]}
              ]
     end
@@ -71,13 +72,13 @@ defmodule Engine.DB.FeeTest do
 
   describe "fetch_current_fees/0" do
     test "fetches the latest fees" do
-      params1 = %{term: @term, type: "current_fees"}
+      params1 = %{term: @term, type: :current_fees}
 
       {:ok, _fees1} = Fee.insert(params1)
 
       params2 = %{
         term: %{dd: 11},
-        type: "current_fees",
+        type: :current_fees,
         inserted_at: DateTime.add(DateTime.utc_now(), 10_000_000, :second)
       }
 
