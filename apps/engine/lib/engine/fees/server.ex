@@ -73,6 +73,10 @@ defmodule Engine.Fees.Server do
     {:ok, fees.term}
   end
 
+  # The way this works (in a multi childchain setup) is that insert/1 has on_conflict: nothing.
+  # Which has a conflict on the `hash` and `type` columns on fees. If multiple childchains would
+  # try to insert fees at the same time any subsequent insertion would be ignored.
+  # remove_previous_fees is a delete and we're ignoring "successful" results
   def handle_info(:expire_previous_fees, state) do
     current_fees = load_current_fees()
     previous_fees = load_previous_fees()
