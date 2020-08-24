@@ -49,7 +49,7 @@ defmodule Engine.DB.FeeTest do
       {:ok, _fees2} = Fee.insert(params)
       {:ok, latest_fees_after_the_second_insert} = Fee.fetch_current_fees()
 
-      assert Engine.Repo.aggregate(Fee, :count, [:hash, :type]) == 1
+      assert Engine.Repo.aggregate(Fee, :count, :hash) == 1
       assert latest_fees_after_the_first_insert.inserted_at == inserted_at
       assert latest_fees_after_the_first_insert.inserted_at == latest_fees_after_the_second_insert.inserted_at
     end

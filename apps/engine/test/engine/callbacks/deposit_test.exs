@@ -9,7 +9,7 @@ defmodule Engine.Callbacks.DepositTest do
   alias Engine.DB.Output
   alias Engine.DB.Transaction
 
-  setup_all do
+  setup do
     _ = insert(:fee, type: :merged_fees)
 
     :ok

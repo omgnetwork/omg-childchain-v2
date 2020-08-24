@@ -9,6 +9,12 @@ defmodule Engine.DB.BlockTest do
   alias Engine.Repo
   alias ExPlasma.Merkle
 
+  setup do
+    _ = insert(:fee, type: :merged_fees)
+
+    :ok
+  end
+
   describe "form/0" do
     test "forms a block from the existing pending transactions" do
       _ = insert(:deposit_transaction)

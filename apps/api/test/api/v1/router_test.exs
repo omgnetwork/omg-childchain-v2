@@ -3,6 +3,8 @@ defmodule API.V1.RouterTest do
   use Plug.Test
 
   alias API.V1.Router
+  alias Engine.DB.Fee
+  alias Engine.Repo
   alias ExPlasma.Encoding
 
   setup do
@@ -198,7 +200,9 @@ defmodule API.V1.RouterTest do
 
   describe "transaction.submit" do
     test "decodes a transaction and inserts it" do
+      Repo.delete_all(Fee)
       _ = insert(:fee, hash: "77", term: :no_fees_required, type: :merged_fees)
+
       _ = insert(:deposit_transaction)
       txn = build(:payment_v1_transaction)
       tx_bytes = Encoding.to_hex(txn.tx_bytes)
