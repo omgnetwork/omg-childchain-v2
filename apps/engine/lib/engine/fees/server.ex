@@ -159,10 +159,9 @@ defmodule Engine.Fees.Server do
         Fee.insert(%{term: new_fee_specs, type: :current_fees})
       end)
       |> Multi.run(:update_merged_fees, fn _repo, _changes ->
-        case update_merged_fees(new_fee_specs) do
-          :ok -> {:ok, nil}
-          error -> {:error, error}
-        end
+        :ok = update_merged_fees(new_fee_specs)
+
+        {:ok, nil}
       end)
       |> Repo.transaction()
 
