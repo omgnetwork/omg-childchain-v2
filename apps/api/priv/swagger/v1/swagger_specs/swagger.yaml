@@ -5,11 +5,11 @@ info:
   description: >
     This is the documentation for childchain API.
   contact:
-    name: OmiseGO
-    email: omisego@omisego.co
+    name: OMG Network
+    email: contact@omg.network
   license:
     name: 'Apache 2.0: https://www.apache.org/licenses/LICENSE-2.0'
-    url: 'https://omisego.network/'
+    url: 'https://omg.network/'
 
 tags:
   - name: Block
