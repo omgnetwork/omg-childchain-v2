@@ -5,9 +5,14 @@ defmodule API.V1.Controllere.TransactionTest do
   alias ExPlasma.Builder
   alias ExPlasma.Encoding
 
+  setup do
+    _ = insert(:fee, hash: "55", term: :no_fees_required, type: :merged_fees)
+
+    :ok
+  end
+
   describe "submit/1" do
     test "decodes and inserts a tx_bytes into the DB" do
-      _ = insert(:fee, hash: "55", term: :no_fees_required, type: :merged_fees)
       _ = insert(:deposit_transaction)
       txn = build(:payment_v1_transaction)
       tx_hash = Encoding.to_hex(txn.tx_hash)
