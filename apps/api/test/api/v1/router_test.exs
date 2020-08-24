@@ -3,18 +3,11 @@ defmodule API.V1.RouterTest do
   use Plug.Test
 
   alias API.V1.Router
+  alias Engine.DB.Fee
+  alias Engine.Repo
   alias ExPlasma.Encoding
 
-  test "sets the api version" do
-    conn =
-      :post
-      |> conn("/")
-      |> Router.call(Router.init([]))
-
-    assert conn.assigns[:api_version] == "1.0"
-  end
-
-  setup_all do
+  setup do
     fee_specs = %{
       1 => %{
         Base.decode16!("0000000000000000000000000000000000000000") => %{
@@ -58,6 +51,8 @@ defmodule API.V1.RouterTest do
 
     _ = insert(:fee, params)
 
+    _ = insert(:fee, hash: "11", type: :merged_fees)
+
     %{
       expected_result: %{
         "1" => [
@@ -93,6 +88,15 @@ defmodule API.V1.RouterTest do
         ]
       }
     }
+  end
+
+  test "sets the api version" do
+    conn =
+      :post
+      |> conn("/")
+      |> Router.call(Router.init([]))
+
+    assert conn.assigns[:api_version] == "1.0"
   end
 
   describe "fees.all" do
@@ -196,6 +200,9 @@ defmodule API.V1.RouterTest do
 
   describe "transaction.submit" do
     test "decodes a transaction and inserts it" do
+      Repo.delete_all(Fee)
+      _ = insert(:fee, hash: "77", term: :no_fees_required, type: :merged_fees)
+
       _ = insert(:deposit_transaction)
       txn = build(:payment_v1_transaction)
       tx_bytes = Encoding.to_hex(txn.tx_bytes)

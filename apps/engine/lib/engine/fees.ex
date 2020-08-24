@@ -34,4 +34,5 @@ defmodule Engine.Fees do
   defdelegate filter(fees, tx_types), to: Filter
   defdelegate filter(fees, tx_types, currencies), to: Filter
   defdelegate current_fees(), to: Server
+  defdelegate accepted_fees(), to: Server
 end

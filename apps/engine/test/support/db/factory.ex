@@ -5,9 +5,9 @@ defmodule Engine.DB.Factory do
 
   use ExMachina.Ecto, repo: Engine.Repo
 
-  import Ecto.Changeset
-  import Ecto.Query
+  import Ecto.Query, only: [from: 2]
 
+  alias Ecto.Changeset
   alias Engine.DB.Block
   alias Engine.DB.Fee
   alias Engine.DB.Output
@@ -163,7 +163,7 @@ defmodule Engine.DB.Factory do
       |> ExPlasma.encode()
 
     {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
-    apply_changes(changeset)
+    Changeset.apply_changes(changeset)
   end
 
   # The "lowest" unit in the hierarchy. This is made to form into transactions
@@ -183,7 +183,7 @@ defmodule Engine.DB.Factory do
       output_data: Map.get(attr, :output_data, default_data),
       state: Map.get(attr, :state, "pending")
     })
-    |> apply_changes()
+    |> Changeset.apply_changes()
   end
 
   def spent(%Transaction{outputs: [output]} = txn), do: %{txn | outputs: [%{output | state: "spent"}]}
@@ -208,7 +208,7 @@ defmodule Engine.DB.Factory do
     }
   end
 
-  def fee_factory(params \\ %{}) do
+  def fee_factory(params) do
     fees =
       params[:term] ||
         %{
@@ -250,7 +250,7 @@ defmodule Engine.DB.Factory do
     %Fee{
       type: params[:type] || :current_fees,
       term: fees,
-      hash: hash,
+      hash: params[:hash] || hash,
       inserted_at: params[:inserted_at]
     }
   end
