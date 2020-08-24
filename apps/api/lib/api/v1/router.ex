@@ -16,6 +16,7 @@ defmodule API.V1.Router do
   alias API.Plugs.Responder
   alias API.Plugs.Version
   alias API.V1.Controller.Block
+  alias API.V1.Controller.Fee
   alias API.V1.Controller.Transaction
   alias API.V1.ErrorHandler
 
@@ -25,6 +26,10 @@ defmodule API.V1.Router do
     "GET:health.check" => [],
     "POST:block.get" => [
       %{name: "hash", type: :hex, required: true}
+    ],
+    "POST:fees.all" => [
+      %{name: "currencies", type: {:list, :hex}, required: false},
+      %{name: "tx_types", type: {:list, :non_neg_integer}, required: false}
     ],
     "POST:transaction.submit" => [
       %{name: "transaction", type: :hex, required: true}
@@ -40,7 +45,6 @@ defmodule API.V1.Router do
   # in the pipeline above (ie: missing params). If there is no `:response` key in the conn
   # assigns, this will not do anything.
   plug(Responder)
-
   plug(:match)
   plug(:dispatch)
 
@@ -57,6 +61,11 @@ defmodule API.V1.Router do
 
   post "transaction.submit" do
     data = Transaction.submit(conn.params["transaction"])
+    put_conn_response(conn, data)
+  end
+
+  post "fees.all" do
+    data = Fee.all(conn.params)
     put_conn_response(conn, data)
   end
 
