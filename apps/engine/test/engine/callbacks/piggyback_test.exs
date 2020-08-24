@@ -4,7 +4,7 @@ defmodule Engine.Callbacks.PiggybackTest do
   alias Engine.Callbacks.Piggyback
   alias Engine.DB.ListenerState
 
-  setup_all do
+  setup do
     _ = insert(:fee, hash: "10", term: :no_fees_required, type: :merged_fees)
 
     :ok

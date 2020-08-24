@@ -2,7 +2,6 @@ defmodule Engine.DB.FeeTest do
   use Engine.DB.DataCase, async: true
 
   alias Engine.DB.Fee
-  alias Engine.Repo
 
   @term %{
     1 => %{
@@ -41,7 +40,6 @@ defmodule Engine.DB.FeeTest do
     # we may run multiple fee server instances which may insert the same fees
     # this test checks that we won't have race conditions
     test "does not insert or update a record if it was already inserted" do
-      _ = Repo.delete_all(Fee)
       params = %{term: @term, type: :current_fees}
       inserted_at = DateTime.truncate(DateTime.utc_now(), :second)
 
@@ -51,7 +49,7 @@ defmodule Engine.DB.FeeTest do
       {:ok, _fees2} = Fee.insert(params)
       {:ok, latest_fees_after_the_second_insert} = Fee.fetch_current_fees()
 
-      assert Engine.Repo.aggregate(Fee, :count, :hash) == 1
+      assert Engine.Repo.aggregate(Fee, :count, [:hash, :type]) == 1
       assert latest_fees_after_the_first_insert.inserted_at == inserted_at
       assert latest_fees_after_the_first_insert.inserted_at == latest_fees_after_the_second_insert.inserted_at
     end
