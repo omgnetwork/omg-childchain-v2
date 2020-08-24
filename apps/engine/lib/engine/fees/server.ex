@@ -74,7 +74,8 @@ defmodule Engine.Fees.Server do
     current_fees = load_current_fees()
     previous_fees = load_previous_fees()
 
-   duration = DateTime.diff(current_fees.inserted_at, previous_fees.inserted_at, :microsecond)
+    duration = DateTime.diff(current_fees.inserted_at, previous_fees.inserted_at, :microsecond)
+
     if previous_fees && current_fees && duration > state.fee_buffer_duration_ms do
       merged_fee_specs = Merger.merge_specs(current_fees.term, nil)
 
