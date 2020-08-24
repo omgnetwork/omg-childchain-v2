@@ -24,7 +24,7 @@ These files are grouped under a resource and each resource has 5 spec files. The
 
 Each of these file contain different part of the API definition.
 
-When developing you should modify these files, under the `openapi_swagger_specs/` folders and NOT directly the `openapi_swagger_specs.yaml` which is automatically generated.
+When developing you should modify these files, under the `swagger_specs/` folders and NOT directly the `swagger_specs.yaml` which is automatically generated.
 
 ### Generating the final spec file
 
