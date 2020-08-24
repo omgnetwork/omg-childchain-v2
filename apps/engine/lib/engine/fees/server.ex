@@ -8,6 +8,7 @@ defmodule Engine.Fees.Server do
   """
   use GenServer
 
+  alias Ecto.Multi
   alias Engine.DB.Fee
   alias Engine.Fees
   alias Engine.Fees.Fetcher
@@ -76,9 +77,7 @@ defmodule Engine.Fees.Server do
     current_fees = load_current_fees()
     previous_fees = load_previous_fees()
 
-    duration = DateTime.diff(current_fees.inserted_at, previous_fees.inserted_at, :microsecond)
-
-    if previous_fees && current_fees && duration > state.fee_buffer_duration_ms do
+    if fees_expired?(previous_fees, current_fees, state.fee_buffer_duration_ms) do
       merged_fee_specs = Merger.merge_specs(current_fees.term, nil)
 
       Repo.transaction(fn ->
@@ -136,6 +135,16 @@ defmodule Engine.Fees.Server do
     end
   end
 
+  defp fees_expired?(nil, _current_fees, _fee_buffer_duration_ms), do: false
+
+  defp fees_expired?(_previous_fees, nil, _fee_buffer_duration_ms), do: false
+
+  defp fees_expired?(previous_fees, current_fees, fee_buffer_duration_ms) do
+    duration = DateTime.diff(current_fees.inserted_at, previous_fees.inserted_at, :microsecond)
+
+    duration > fee_buffer_duration_ms
+  end
+
   defp start_expiration_timer(timer, fee_buffer_duration_ms) do
     # If a timer was already started, we cancel it
     _ = if timer != nil, do: Process.cancel_timer(timer)
@@ -144,11 +153,18 @@ defmodule Engine.Fees.Server do
   end
 
   defp save_fees(new_fee_specs) do
-    Repo.transaction(fn ->
-      {:ok, _} = Fee.insert(%{term: new_fee_specs, type: :current_fees})
-
-      :ok = update_merged_fees(new_fee_specs)
-    end)
+    {:ok, _} =
+      Multi.new()
+      |> Multi.run(:insert_current_fees, fn _repo, _changes ->
+        Fee.insert(%{term: new_fee_specs, type: :current_fees})
+      end)
+      |> Multi.run(:update_merged_fees, fn _repo, _changes ->
+        case update_merged_fees(new_fee_specs) do
+          :ok -> {:ok, nil}
+          error -> {:error, error}
+        end
+      end)
+      |> Repo.transaction()
 
     :ok
   end
