@@ -57,7 +57,9 @@ defmodule Engine.Fees.Server do
   """
   @spec accepted_fees() :: {:ok, Fees.typed_merged_fee_t()}
   def accepted_fees() do
-    {:ok, load_accepted_fees()}
+    fees = load_accepted_fees()
+
+    {:ok, fees.term}
   end
 
   @doc """
