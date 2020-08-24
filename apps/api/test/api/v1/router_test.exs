@@ -58,6 +58,8 @@ defmodule API.V1.RouterTest do
 
     _ = insert(:fee, params)
 
+    _ = insert(:fee, hash: "11", type: :merged_fees)
+
     %{
       expected_result: %{
         "1" => [
@@ -196,6 +198,7 @@ defmodule API.V1.RouterTest do
 
   describe "transaction.submit" do
     test "decodes a transaction and inserts it" do
+      _ = insert(:fee, hash: "77", term: :no_fees_required, type: :merged_fees)
       _ = insert(:deposit_transaction)
       txn = build(:payment_v1_transaction)
       tx_bytes = Encoding.to_hex(txn.tx_bytes)

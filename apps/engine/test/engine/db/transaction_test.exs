@@ -8,7 +8,7 @@ defmodule Engine.DB.TransactionTest do
   alias ExPlasma.Builder
 
   setup_all do
-    _ = insert(:fee, type: :merged_fees)
+    _ = insert(:fee, hash: "22", type: :merged_fees)
 
     :ok
   end
