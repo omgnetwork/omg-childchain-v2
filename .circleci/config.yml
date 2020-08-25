@@ -52,7 +52,7 @@ jobs:
       MIX_ENV=test
     steps:
       - checkout
-      - run: docker-compose -f docker-compose.yml -f docker-compose.single-postgres.yml up -d postgres
+      - run: docker-compose -f docker-compose.yml up -d postgres
       - restore_cache:
           key: v5-asdf-install
       - run:
