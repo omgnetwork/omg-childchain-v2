@@ -25,7 +25,7 @@ defmodule Engine.DB.DataCase do
 
       import Ecto
       import Ecto.Changeset
-      import Ecto.Query
+      import Ecto.Query, only: [from: 1, from: 2]
       import Engine.DB.DataCase
       import Engine.DB.Factory
     end
@@ -42,10 +42,10 @@ defmodule Engine.DB.DataCase do
   end
 
   @doc """
-  A helper that transforms changeset errors into a map of messages.	
-      assert {:error, changeset} = Accounts.create_user(%{password: "short"})	
-      assert "password is too short" in errors_on(changeset).password	
-      assert %{password: ["password is too short"]} = errors_on(changeset)	
+  A helper that transforms changeset errors into a map of messages.
+      assert {:error, changeset} = Accounts.create_user(%{password: "short"})
+      assert "password is too short" in errors_on(changeset).password
+      assert %{password: ["password is too short"]} = errors_on(changeset)
   """
   def errors_on(changeset) do
     Changeset.traverse_errors(changeset, fn {message, opts} ->

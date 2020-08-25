@@ -9,22 +9,28 @@ defmodule Engine.DB.Fee do
   import Ecto.Changeset
   import Ecto.Query
 
+  alias Ecto.Atom
+  alias Ecto.Term
   alias Engine.Repo
 
-  @required_fields [:term]
+  @required_fields [:type]
+  @optional_fields [:term, :inserted_at]
+  @allowed_types [:previous_fees, :merged_fees, :current_fees]
 
   @primary_key false
   schema "fees" do
     field(:hash, :string, primary_key: true)
+    field(:type, Atom, primary_key: true)
     field(:term, Term)
 
-    timestamps(type: :utc_datetime)
+    field(:inserted_at, :utc_datetime)
   end
 
   def changeset(struct, params) do
     struct
-    |> cast(params, @required_fields)
+    |> cast(params, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
+    |> validate_inclusion(:type, @allowed_types)
     |> put_hash()
   end
 
@@ -34,9 +40,19 @@ defmodule Engine.DB.Fee do
     |> Repo.insert(on_conflict: :nothing)
   end
 
-  def fetch_latest() do
+  def remove_previous_fees() do
+    query = where(__MODULE__, type: ^:previous_fees)
+
+    Repo.delete_all(query)
+  end
+
+  def fetch_current_fees(), do: fetch(:current_fees)
+  def fetch_merged_fees(), do: fetch(:merged_fees)
+  def fetch_previous_fees(), do: fetch(:previous_fees)
+
+  defp fetch(type) do
     __MODULE__
-    |> select([r], r)
+    |> where([r], r.type == ^type)
     |> order_by([r], desc: r.inserted_at)
     |> limit(1)
     |> Repo.one()
@@ -48,19 +64,20 @@ defmodule Engine.DB.Fee do
 
   defp put_hash(changeset) do
     case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{term: term}} ->
-        put_change(changeset, :hash, calculate_hash(term))
+      %Ecto.Changeset{valid?: true, changes: changes} ->
+        put_change(changeset, :hash, calculate_hash(changes[:term]))
 
       _ ->
         changeset
     end
   end
 
-  defp calculate_hash(term) do
-    string = inspect(term)
+  defp calculate_hash(nil), do: hash("")
+  defp calculate_hash(term), do: term |> inspect() |> hash()
 
+  defp hash(term) do
     :sha256
-    |> :crypto.hash(string)
+    |> :crypto.hash(term)
     |> Base.encode16(case: :lower)
   end
 end
