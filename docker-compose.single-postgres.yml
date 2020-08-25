@@ -5,10 +5,11 @@ services:
     restart: always
     ports:
       - "5432:5432"
+    volumes:
+      - ./docker/create_databases.sql:/docker-entrypoint-initdb.d/create_databases.sql
     environment:
-      POSTGRES_USER: omisego_dev
-      POSTGRES_PASSWORD: omisego_dev
-      POSTGRES_DB: engine_repo
+      - POSTGRES_USER=omisegodev
+      - POSTGRES_PASSWORD=omisegodev
     networks:
       chain_net:
-        ipv4_address: 172.27.0.110
+        ipv4_address: 172.27.0.107
