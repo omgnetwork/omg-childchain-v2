@@ -24,6 +24,7 @@ defmodule Engine.Callbacks.InFlightExitStarted do
     Multi.new()
     |> Callback.update_listener_height(events, listener)
     |> do_callback([], events)
+    |> Engine.Repo.transaction()
   end
 
   defp do_callback(multi, positions, [event | tail]) do
@@ -33,9 +34,6 @@ defmodule Engine.Callbacks.InFlightExitStarted do
 
   defp do_callback(multi, positions, []) do
     query = where(Output.usable(), [output], output.position in ^positions)
-
-    multi
-    |> Multi.update_all(:exiting_outputs, query, set: [state: "exiting", updated_at: NaiveDateTime.utc_now()])
-    |> Engine.Repo.transaction()
+    Multi.update_all(multi, :exiting_outputs, query, set: [state: "exiting", updated_at: NaiveDateTime.utc_now()])
   end
 end

@@ -36,15 +36,11 @@ defmodule Engine.Callbacks.Deposit do
     Multi.new()
     |> Callback.update_listener_height(events, listener)
     |> do_callback(events)
+    |> Engine.Repo.transaction()
   end
 
-  defp do_callback(multi, [event | tail]) do
-    multi |> build_deposit(event) |> do_callback(tail)
-  end
-
-  defp do_callback(multi, []) do
-    Engine.Repo.transaction(multi)
-  end
+  defp do_callback(multi, [event | tail]), do: multi |> build_deposit(event) |> do_callback(tail)
+  defp do_callback(multi, []), do: multi
 
   defp build_deposit(multi, %{} = event) do
     tx_bytes =
