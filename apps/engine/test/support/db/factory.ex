@@ -48,13 +48,16 @@ defmodule Engine.DB.Factory do
     build(:event, params)
   end
 
-  def in_flight_exit_started_factory(attr \\ %{}) do
+  def in_flight_exit_started_event_factory(attr \\ %{}) do
     params =
       attr
       |> Map.put(:signature, "InFlightExitStarted(address,bytes32)")
       |> Map.put(:data, %{
         "initiator" => Map.get(attr, :initiator, <<1::160>>),
         "tx_hash" => Map.get(attr, :tx_hash, <<1::256>>)
+      })
+      |> Map.put(:call_data, %{
+        "inputUtxosPos" => Map.get(attr, :positions, [1_000_000_000])
       })
 
     build(:event, params)
@@ -106,9 +109,7 @@ defmodule Engine.DB.Factory do
   end
 
   def deposit_transaction_factory(attr \\ %{}) do
-    # Pick an available block number.
-    default_blknum = sequence(:blknum, fn seq -> seq + 1 end)
-    blknum = (Engine.Repo.one(from(b in Block, select: b.number)) || default_blknum) + 1
+    blknum = Map.get(attr, :blknum, 1000)
     output_guard = Map.get(attr, :output_guard) || <<1::160>>
     amount = Map.get(attr, :amount, 1)
     token = Map.get(attr, :token, <<0::160>>)
