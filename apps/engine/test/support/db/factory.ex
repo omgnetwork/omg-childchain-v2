@@ -5,8 +5,6 @@ defmodule Engine.DB.Factory do
 
   use ExMachina.Ecto, repo: Engine.Repo
 
-  import Ecto.Query, only: [from: 2]
-
   alias Ecto.Changeset
   alias Engine.DB.Block
   alias Engine.DB.Fee
