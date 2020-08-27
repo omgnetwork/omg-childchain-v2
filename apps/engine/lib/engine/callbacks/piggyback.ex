@@ -25,10 +25,11 @@ defmodule Engine.Callbacks.Piggyback do
     Multi.new()
     |> Callback.update_listener_height(events, listener)
     |> do_callback(events)
+    |> Engine.Repo.transaction()
   end
 
   defp do_callback(multi, [event | tail]), do: multi |> piggyback(event) |> do_callback(tail)
-  defp do_callback(multi, []), do: Engine.Repo.transaction(multi)
+  defp do_callback(multi, []), do: multi
 
   # A `tx_hash` isn't unique, so we just kinda take the `tx_hash` as a short-hand
   # to figure out which `tx_hash` it could possibly be with the given `oindex`.

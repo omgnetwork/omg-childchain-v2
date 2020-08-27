@@ -8,7 +8,7 @@ defmodule Engine.Callbacks.ExitStartedTest do
 
   describe "callback/1" do
     test "marks utxos that are exiting" do
-      %{outputs: [%{position: position}]} = insert(:deposit_transaction)
+      %{outputs: [%{position: position}]} = insert(:deposit_transaction, blknum: 1000)
 
       events = [build(:exit_started_event, position: position, height: 100)]
 
@@ -21,8 +21,8 @@ defmodule Engine.Callbacks.ExitStartedTest do
     end
 
     test "marks multiple utxos as exiting" do
-      %{outputs: [%{position: pos1}]} = insert(:deposit_transaction)
-      %{outputs: [%{position: pos2}]} = insert(:deposit_transaction)
+      %{outputs: [%{position: pos1}]} = insert(:deposit_transaction, blknum: 2000)
+      %{outputs: [%{position: pos2}]} = insert(:deposit_transaction, blknum: 3000)
 
       events = [
         build(:exit_started_event, position: pos1, height: 101),

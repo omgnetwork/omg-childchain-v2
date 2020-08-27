@@ -1,8 +1,8 @@
-defmodule Engine.Callbacks.Exit do
+defmodule Engine.Callbacks.InFlightExitStarted do
   @moduledoc """
   Contains the business logic around recognizing exits on the chain. When a
-  standard exit is detected, we need to ensure the childchain state of Outputs is
-  correct and mark them as `exiting` to prevent them from being used.
+  in flight exit is detected, we need to ensure the childchain state of Outputs is
+  correct and mark the output(the "input") as `exiting` to prevent them from being used.
   """
 
   @behaviour Engine.Callback
@@ -24,18 +24,16 @@ defmodule Engine.Callbacks.Exit do
     Multi.new()
     |> Callback.update_listener_height(events, listener)
     |> do_callback([], events)
+    |> Engine.Repo.transaction()
   end
 
   defp do_callback(multi, positions, [event | tail]) do
-    %{call_data: %{"utxoPos" => position}} = event
-    do_callback(multi, positions ++ [position], tail)
+    %{call_data: %{"inputUtxosPos" => inputs}} = event
+    do_callback(multi, positions ++ inputs, tail)
   end
 
   defp do_callback(multi, positions, []) do
     query = where(Output.usable(), [output], output.position in ^positions)
-
-    multi
-    |> Multi.update_all(:exiting_outputs, query, set: [state: "exited", updated_at: NaiveDateTime.utc_now()])
-    |> Engine.Repo.transaction()
+    Multi.update_all(multi, :exiting_outputs, query, set: [state: "exiting", updated_at: NaiveDateTime.utc_now()])
   end
 end
