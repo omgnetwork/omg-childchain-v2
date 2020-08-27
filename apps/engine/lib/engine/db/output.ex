@@ -70,10 +70,11 @@ defmodule Engine.DB.Output do
 
   # Extract the position from the output id and store it on the table.
   # Used by the Transaction to find outputs quickly.
-  defp extract_position(changeset, %{output_id: id}) do
-    position = Map.get(id || %{}, :position)
+  defp extract_position(changeset, %{output_id: %{position: position}}) do
     put_change(changeset, :position, position)
   end
+
+  defp extract_position(changeset, _), do: put_change(changeset, :position, nil)
 
   # Doing this hacky work around so we don't need to convert to/from binary to hex string for the json column.
   # Instead, we re-encoded as rlp encoded items per specification. This helps us future proof it a bit because
@@ -85,8 +86,12 @@ defmodule Engine.DB.Output do
         changeset
 
       _output_data ->
-        output = struct(%ExPlasma.Output{}, params)
-        put_change(changeset, :output_data, ExPlasma.Output.encode(output))
+        {:ok, output_data} =
+          %ExPlasma.Output{}
+          |> struct(params)
+          |> ExPlasma.Output.encode()
+
+        put_change(changeset, :output_data, output_data)
     end
   end
 
@@ -96,8 +101,12 @@ defmodule Engine.DB.Output do
         changeset
 
       _output_id ->
-        output = struct(%ExPlasma.Output{}, params)
-        put_change(changeset, :output_id, ExPlasma.Output.encode(output, as: :input))
+        {:ok, output_id} =
+          %ExPlasma.Output{}
+          |> struct(params)
+          |> ExPlasma.Output.encode(as: :input)
+
+        put_change(changeset, :output_id, output_id)
     end
   end
 end

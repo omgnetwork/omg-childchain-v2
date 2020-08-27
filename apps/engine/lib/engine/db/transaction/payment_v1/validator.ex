@@ -54,7 +54,7 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
     |> get_field(type)
     |> Enum.map(fn output ->
       output.output_data
-      |> Output.decode()
+      |> Output.decode!()
       |> Map.get(:output_data)
     end)
   end

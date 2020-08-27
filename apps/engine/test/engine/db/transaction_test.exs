@@ -29,7 +29,7 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 0)
         |> Builder.sign!([])
-        |> ExPlasma.encode()
+        |> ExPlasma.encode!()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
 
@@ -45,16 +45,17 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
         |> Builder.sign!([])
-        |> ExPlasma.encode()
+        |> ExPlasma.encode!()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
 
       signed_tx = get_field(changeset, :signed_tx)
+      {:ok, hash} = ExPlasma.hash(signed_tx)
 
       assert get_field(changeset, :tx_type) == 1
       assert get_field(changeset, :kind) == Transaction.kind_transfer()
       assert get_field(changeset, :tx_bytes) == tx_bytes
-      assert get_field(changeset, :tx_hash) == ExPlasma.hash(signed_tx)
+      assert get_field(changeset, :tx_hash) == hash
       assert get_field(changeset, :witnesses) == []
     end
 
@@ -72,13 +73,13 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.add_output(o_1_data)
         |> Builder.add_output(o_2_data)
         |> Builder.sign!([])
-        |> ExPlasma.encode()
+        |> ExPlasma.encode!()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
 
       assert [%Output{output_data: o_1_data_enc}, %Output{output_data: o_2_data_enc}] = get_field(changeset, :outputs)
-      assert ExPlasma.Output.decode(o_1_data_enc).output_data == Enum.into(o_1_data, %{})
-      assert ExPlasma.Output.decode(o_2_data_enc).output_data == Enum.into(o_1_data, %{})
+      assert ExPlasma.Output.decode!(o_1_data_enc).output_data == Enum.into(o_1_data, %{})
+      assert ExPlasma.Output.decode!(o_2_data_enc).output_data == Enum.into(o_1_data, %{})
     end
 
     test "builds the inputs" do
@@ -91,7 +92,7 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.add_input(blknum: input_blknum, txindex: 0, oindex: 0)
         |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 10)
         |> Builder.sign!([])
-        |> ExPlasma.encode()
+        |> ExPlasma.encode!()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
 
@@ -121,7 +122,7 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.add_input(blknum: 2, txindex: 0, oindex: 0)
         |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 20)
         |> Builder.sign!([priv_encoded_1, priv_encoded_2])
-        |> ExPlasma.encode()
+        |> ExPlasma.encode!()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
 

@@ -113,7 +113,7 @@ defmodule Engine.DB.Factory do
     token = Map.get(attr, :token, <<0::160>>)
     data = %{output_guard: output_guard, token: token, amount: amount}
 
-    id =
+    {:ok, id} =
       %{blknum: blknum, txindex: 0, oindex: 0}
       |> Position.pos()
       |> Position.to_map()
@@ -123,13 +123,14 @@ defmodule Engine.DB.Factory do
       |> Builder.new()
       |> Builder.add_output(Enum.to_list(data))
       |> Builder.sign!([])
-      |> ExPlasma.encode()
+      |> ExPlasma.encode!()
 
     output = build(:output, output_id: id, output_data: data, output_type: 1, state: "confirmed")
+    {:ok, hash} = ExPlasma.hash(tx_bytes)
 
     %Transaction{
       tx_bytes: tx_bytes,
-      tx_hash: ExPlasma.hash(tx_bytes),
+      tx_hash: hash,
       outputs: [output],
       block: build(:block, number: blknum)
     }
@@ -159,7 +160,7 @@ defmodule Engine.DB.Factory do
       |> Builder.add_input(blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0)
       |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
       |> Builder.sign!([priv_encoded])
-      |> ExPlasma.encode()
+      |> ExPlasma.encode!()
 
     {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
     Changeset.apply_changes(changeset)
@@ -170,7 +171,7 @@ defmodule Engine.DB.Factory do
     default_data = %{output_guard: <<1::160>>, token: <<0::160>>, amount: 10}
     default_blknum = sequence(:blknum, fn seq -> (seq + 1) * 1000 end)
 
-    default_id =
+    {:ok, default_id} =
       %{blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0}
       |> Position.pos()
       |> Position.to_map()
