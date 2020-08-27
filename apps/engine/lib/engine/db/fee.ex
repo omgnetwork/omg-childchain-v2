@@ -40,6 +40,12 @@ defmodule Engine.DB.Fee do
     |> Repo.insert(on_conflict: :nothing)
   end
 
+  def remove_previous_fees() do
+    query = where(__MODULE__, type: ^:previous_fees)
+
+    Repo.delete_all(query)
+  end
+
   def fetch_current_fees(), do: fetch(:current_fees)
   def fetch_merged_fees(), do: fetch(:merged_fees)
   def fetch_previous_fees(), do: fetch(:previous_fees)

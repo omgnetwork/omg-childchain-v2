@@ -9,6 +9,12 @@ defmodule Engine.Callbacks.DepositTest do
   alias Engine.DB.Output
   alias Engine.DB.Transaction
 
+  setup do
+    _ = insert(:fee, type: :merged_fees)
+
+    :ok
+  end
+
   test "generates a confirmed transaction, block and utxo for the deposit" do
     deposit_event = build(:deposit_event, amount: 1, blknum: 3, depositor: <<1::160>>)
 

@@ -7,6 +7,12 @@ defmodule Engine.DB.TransactionTest do
   alias Engine.Support.TestEntity
   alias ExPlasma.Builder
 
+  setup do
+    _ = insert(:fee, hash: "22", type: :merged_fees)
+
+    :ok
+  end
+
   describe "decode/2" do
     test "decodes tx_bytes and validates for a deposit" do
       %{tx_bytes: tx_bytes} = build(:deposit_transaction, amount: 0)
@@ -93,6 +99,13 @@ defmodule Engine.DB.TransactionTest do
     end
 
     test "is valid when inputs are signed correctly" do
+      _ =
+        insert(:fee,
+          type: :merged_fees,
+          term: :no_fees_required,
+          inserted_at: DateTime.add(DateTime.utc_now(), 10_000_000, :second)
+        )
+
       %{priv_encoded: priv_encoded_1, addr: addr_1} = TestEntity.alice()
       %{priv_encoded: priv_encoded_2, addr: addr_2} = TestEntity.bob()
 

@@ -8,6 +8,7 @@ defmodule Engine.Fees.Server do
   """
   use GenServer
 
+  alias Ecto.Multi
   alias Engine.DB.Fee
   alias Engine.Fees
   alias Engine.Fees.Fetcher
@@ -57,7 +58,9 @@ defmodule Engine.Fees.Server do
   """
   @spec accepted_fees() :: {:ok, Fees.typed_merged_fee_t()}
   def accepted_fees() do
-    {:ok, load_accepted_fees()}
+    fees = load_accepted_fees()
+
+    {:ok, fees.term}
   end
 
   @doc """
@@ -70,15 +73,22 @@ defmodule Engine.Fees.Server do
     {:ok, fees.term}
   end
 
+  # The way this works (in a multi childchain setup) is that insert/1 has on_conflict: nothing.
+  # Which has a conflict on the `hash` and `type` columns on fees. If multiple childchains would
+  # try to insert fees at the same time any subsequent insertion would be ignored.
+  # remove_previous_fees is a delete and we're ignoring "successful" results
   def handle_info(:expire_previous_fees, state) do
     current_fees = load_current_fees()
+    previous_fees = load_previous_fees()
 
-    merged_fee_specs = Merger.merge_specs(current_fees.term, nil)
+    if fees_expired?(previous_fees, current_fees, state.fee_buffer_duration_ms) do
+      merged_fee_specs = Merger.merge_specs(current_fees.term, nil)
 
-    Repo.transaction(fn ->
-      {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: :merged_fees})
-      {:ok, _} = Fee.insert(%{term: nil, type: :previous_fees})
-    end)
+      Repo.transaction(fn ->
+        {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: :merged_fees})
+        {_, _} = Fee.remove_previous_fees()
+      end)
+    end
 
     _ = Logger.info("Previous fees are now invalid and current fees must be paid")
     {:noreply, state}
@@ -112,7 +122,7 @@ defmodule Engine.Fees.Server do
   defp update_fee_specs(state) do
     current_fee_specs = load_current_fees()
 
-    case Fetcher.get_fee_specs(state.fee_fetcher_opts, current_fee_specs[:term]) do
+    case Fetcher.get_fee_specs(state.fee_fetcher_opts, current_fee_specs && current_fee_specs.term) do
       {:ok, fee_specs} ->
         :ok = save_fees(fee_specs)
         _ = Logger.info("Reloaded fee specs from FeeFetcher")
@@ -129,6 +139,16 @@ defmodule Engine.Fees.Server do
     end
   end
 
+  defp fees_expired?(nil, _current_fees, _fee_buffer_duration_ms), do: false
+
+  defp fees_expired?(_previous_fees, nil, _fee_buffer_duration_ms), do: false
+
+  defp fees_expired?(previous_fees, current_fees, fee_buffer_duration_ms) do
+    duration = DateTime.diff(current_fees.inserted_at, previous_fees.inserted_at, :microsecond)
+
+    duration > fee_buffer_duration_ms
+  end
+
   defp start_expiration_timer(timer, fee_buffer_duration_ms) do
     # If a timer was already started, we cancel it
     _ = if timer != nil, do: Process.cancel_timer(timer)
@@ -137,14 +157,31 @@ defmodule Engine.Fees.Server do
   end
 
   defp save_fees(new_fee_specs) do
-    previous_fee_specs = load_current_fees()
-    merged_fee_specs = Merger.merge_specs(new_fee_specs, previous_fee_specs[:term])
+    {:ok, _} =
+      Multi.new()
+      |> Multi.run(:insert_current_fees, fn _repo, _changes ->
+        Fee.insert(%{term: new_fee_specs, type: :current_fees})
+      end)
+      |> Multi.run(:update_merged_fees, fn _repo, _changes ->
+        :ok = update_merged_fees(new_fee_specs)
 
-    Repo.transaction(fn ->
-      {:ok, _} = Fee.insert(%{term: previous_fee_specs[:term], type: :previous_fees})
-      {:ok, _} = Fee.insert(%{term: new_fee_specs, type: :current_fees})
-      {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: :merged_fees})
-    end)
+        {:ok, nil}
+      end)
+      |> Repo.transaction()
+
+    :ok
+  end
+
+  defp update_merged_fees(new_fee_specs) do
+    # we will update merged fees only if previouse merged fees are expired, i.e.
+    # previous_fees are deleted
+    _ =
+      if is_nil(load_previous_fees()) do
+        previous_fee_specs = load_current_fees()
+        merged_fee_specs = Merger.merge_specs(new_fee_specs, previous_fee_specs && previous_fee_specs.term)
+        {:ok, _} = Fee.insert(%{term: previous_fee_specs && previous_fee_specs.term, type: :previous_fees})
+        {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: :merged_fees})
+      end
 
     :ok
   end
@@ -158,6 +195,13 @@ defmodule Engine.Fees.Server do
 
   defp load_accepted_fees() do
     case Fee.fetch_merged_fees() do
+      {:ok, fees} -> fees
+      _ -> nil
+    end
+  end
+
+  defp load_previous_fees() do
+    case Fee.fetch_previous_fees() do
       {:ok, fees} -> fees
       _ -> nil
     end

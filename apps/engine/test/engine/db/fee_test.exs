@@ -92,4 +92,30 @@ defmodule Engine.DB.FeeTest do
       assert Fee.fetch_current_fees() == {:error, :not_found}
     end
   end
+
+  describe "remove_previous_fees/0" do
+    test "removes only previous fees" do
+      params1 = %{term: @term, type: :current_fees}
+
+      {:ok, _fees} = Fee.insert(params1)
+
+      params2 = %{term: @term, type: :previous_fees}
+
+      {:ok, _fees} = Fee.insert(params2)
+
+      {1, nil} = Fee.remove_previous_fees()
+
+      assert {:ok, %Fee{}} = Fee.fetch_current_fees()
+      assert Fee.fetch_previous_fees() == {:error, :not_found}
+    end
+
+    test "calling it twice doesn't break anything" do
+      params2 = %{term: @term, type: :previous_fees}
+
+      {:ok, _fees} = Fee.insert(params2)
+
+      assert {1, nil} = Fee.remove_previous_fees()
+      assert {0, nil} = Fee.remove_previous_fees()
+    end
+  end
 end

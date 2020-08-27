@@ -9,6 +9,8 @@ defmodule API.V1.View.TransactionTest do
 
   describe "serialize/1" do
     test "serialize a transaction" do
+      _ = insert(:fee, hash: "55", term: :no_fees_required, type: :merged_fees)
+
       transaction = build(:payment_v1_transaction)
 
       assert Transaction.serialize_hash(transaction) == %{

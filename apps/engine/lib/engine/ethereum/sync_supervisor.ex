@@ -6,6 +6,7 @@ defmodule Engine.Ethereum.SyncSupervisor do
 
   alias Engine.Callbacks.Deposit
   alias Engine.Callbacks.ExitStarted
+  alias Engine.Callbacks.InFlightExitStarted
   alias Engine.Callbacks.Piggyback
   alias Engine.Configuration
   alias Engine.Ethereum.ChildObserver
@@ -64,19 +65,19 @@ defmodule Engine.Ethereum.SyncSupervisor do
         get_events_callback: &Aggregator.deposit_created/2,
         process_events_callback: &Deposit.callback/2
       ),
-      # EthereumEventListener.prepare_child(
-      #   ets: ListenerStorage.listener_checkin(),
-      #   metrics_collection_interval: metrics_collection_interval,
-      #   contract_deployment_height: contract_deployment_height,
-      #   service_name: :in_flight_exit,
-      #   get_events_callback: &Aggregator.in_flight_exit_started/2,
-      #   process_events_callback: &exit_and_ignore_validities/1
-      # ),
       Listener.prepare_child(
         ets: ListenerStorage.listener_checkin(),
         metrics_collection_interval: metrics_collection_interval,
         contract_deployment_height: contract_deployment_height,
-        service_name: :piggyback,
+        service_name: :in_flight_exiter,
+        get_events_callback: &Aggregator.in_flight_exit_started/2,
+        process_events_callback: &InFlightExitStarted.callback/2
+      ),
+      Listener.prepare_child(
+        ets: ListenerStorage.listener_checkin(),
+        metrics_collection_interval: metrics_collection_interval,
+        contract_deployment_height: contract_deployment_height,
+        service_name: :piggybacker,
         get_events_callback: &Aggregator.in_flight_exit_piggybacked/2,
         process_events_callback: &Piggyback.callback/2
       ),
@@ -84,7 +85,7 @@ defmodule Engine.Ethereum.SyncSupervisor do
         ets: ListenerStorage.listener_checkin(),
         metrics_collection_interval: metrics_collection_interval,
         contract_deployment_height: contract_deployment_height,
-        service_name: :exiter,
+        service_name: :standard_exiter,
         get_events_callback: &Aggregator.exit_started/2,
         process_events_callback: &ExitStarted.callback/2
       ),

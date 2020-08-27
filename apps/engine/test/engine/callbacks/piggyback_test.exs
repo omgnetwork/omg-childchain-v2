@@ -4,6 +4,12 @@ defmodule Engine.Callbacks.PiggybackTest do
   alias Engine.Callbacks.Piggyback
   alias Engine.DB.ListenerState
 
+  setup do
+    _ = insert(:fee, hash: "10", term: :no_fees_required, type: :merged_fees)
+
+    :ok
+  end
+
   test "marks an output as piggybacked" do
     deposit = insert(:deposit_transaction)
     output = hd(deposit.outputs)

@@ -5,9 +5,7 @@ defmodule Engine.DB.Factory do
 
   use ExMachina.Ecto, repo: Engine.Repo
 
-  import Ecto.Changeset
-  import Ecto.Query
-
+  alias Ecto.Changeset
   alias Engine.DB.Block
   alias Engine.DB.Fee
   alias Engine.DB.Output
@@ -48,13 +46,16 @@ defmodule Engine.DB.Factory do
     build(:event, params)
   end
 
-  def in_flight_exit_started_factory(attr \\ %{}) do
+  def in_flight_exit_started_event_factory(attr \\ %{}) do
     params =
       attr
       |> Map.put(:signature, "InFlightExitStarted(address,bytes32)")
       |> Map.put(:data, %{
         "initiator" => Map.get(attr, :initiator, <<1::160>>),
         "tx_hash" => Map.get(attr, :tx_hash, <<1::256>>)
+      })
+      |> Map.put(:call_data, %{
+        "inputUtxosPos" => Map.get(attr, :positions, [1_000_000_000])
       })
 
     build(:event, params)
@@ -106,9 +107,7 @@ defmodule Engine.DB.Factory do
   end
 
   def deposit_transaction_factory(attr \\ %{}) do
-    # Pick an available block number.
-    default_blknum = sequence(:blknum, fn seq -> seq + 1 end)
-    blknum = (Engine.Repo.one(from(b in Block, select: b.number)) || default_blknum) + 1
+    blknum = Map.get(attr, :blknum, 1000)
     output_guard = Map.get(attr, :output_guard) || <<1::160>>
     amount = Map.get(attr, :amount, 1)
     token = Map.get(attr, :token, <<0::160>>)
@@ -163,7 +162,7 @@ defmodule Engine.DB.Factory do
       |> ExPlasma.encode()
 
     {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
-    apply_changes(changeset)
+    Changeset.apply_changes(changeset)
   end
 
   # The "lowest" unit in the hierarchy. This is made to form into transactions
@@ -183,7 +182,7 @@ defmodule Engine.DB.Factory do
       output_data: Map.get(attr, :output_data, default_data),
       state: Map.get(attr, :state, "pending")
     })
-    |> apply_changes()
+    |> Changeset.apply_changes()
   end
 
   def spent(%Transaction{outputs: [output]} = txn), do: %{txn | outputs: [%{output | state: "spent"}]}
@@ -208,7 +207,7 @@ defmodule Engine.DB.Factory do
     }
   end
 
-  def fee_factory(params \\ %{}) do
+  def fee_factory(params) do
     fees =
       params[:term] ||
         %{
@@ -250,7 +249,7 @@ defmodule Engine.DB.Factory do
     %Fee{
       type: params[:type] || :current_fees,
       term: fees,
-      hash: hash,
+      hash: params[:hash] || hash,
       inserted_at: params[:inserted_at]
     }
   end
