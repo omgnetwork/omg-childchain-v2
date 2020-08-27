@@ -10,6 +10,7 @@ defmodule API.V1.Router do
   use Plug.Router
   use Plug.ErrorHandler
 
+  alias API.Configuration
   alias API.Plugs.ExpectParams
   alias API.Plugs.Health
   alias API.Plugs.Responder
@@ -35,6 +36,7 @@ defmodule API.V1.Router do
     ]
   }
 
+  if Configuration.cors_enabled?(), do: plug(CORSPlug, methods: ["GET", "POST"])
   plug(Version, @api_version)
   plug(Plug.Parsers, parsers: [:json], pass: ["application/json"], json_decoder: Jason)
   plug(ExpectParams, @expected_params)

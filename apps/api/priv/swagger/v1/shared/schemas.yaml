@@ -2,7 +2,10 @@ ErrorSchema:
   description: The object schema for an error
   type: object
   properties:
-    error:
+    code:
+      type: string
+    description:
       type: string
   required:
     - error
+    - description

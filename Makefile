@@ -121,8 +121,8 @@ docker-push: docker
 docker-remote-childchain:
 	docker exec -it childchain /app/bin/childchain remote
 
-operator_api_specs:
-	swagger-cli bundle -r -t yaml -o apps/rpc/priv/swagger/operator_api_specs.yaml apps/rpc/priv/swagger/operator_api_specs/swagger.yaml
+generate_v1_api_specs:
+	swagger-cli bundle -r -t yaml -o apps/api/priv/swagger/v1/swagger_specs.yaml apps/api/priv/swagger/v1/swagger_specs/swagger.yaml
 
 ### Cabbage reorg docker logs
 
