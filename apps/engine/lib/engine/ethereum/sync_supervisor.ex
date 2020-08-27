@@ -65,14 +65,14 @@ defmodule Engine.Ethereum.SyncSupervisor do
         get_events_callback: &Aggregator.deposit_created/2,
         process_events_callback: &Deposit.callback/2
       ),
-       EthereumEventListener.prepare_child(
-         ets: ListenerStorage.listener_checkin(),
-         metrics_collection_interval: metrics_collection_interval,
-         contract_deployment_height: contract_deployment_height,
-         service_name: :in_flight_exiter,
-         get_events_callback: &Aggregator.in_flight_exit_started/2,
-         process_events_callback: &InFlightExitStarted.callback/2
-       ),
+      Listener.prepare_child(
+        ets: ListenerStorage.listener_checkin(),
+        metrics_collection_interval: metrics_collection_interval,
+        contract_deployment_height: contract_deployment_height,
+        service_name: :in_flight_exiter,
+        get_events_callback: &Aggregator.in_flight_exit_started/2,
+        process_events_callback: &InFlightExitStarted.callback/2
+      ),
       Listener.prepare_child(
         ets: ListenerStorage.listener_checkin(),
         metrics_collection_interval: metrics_collection_interval,
