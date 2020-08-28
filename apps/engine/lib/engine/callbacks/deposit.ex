@@ -51,7 +51,6 @@ defmodule Engine.Callbacks.Deposit do
         token: event.data["token"],
         amount: event.data["amount"]
       )
-      |> Builder.sign!([])
       |> ExPlasma.encode!()
 
     {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_deposit())
