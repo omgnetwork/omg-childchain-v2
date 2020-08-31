@@ -5,15 +5,16 @@ defmodule Engine.DB.PlasmaBlock do
 
   use Ecto.Schema
   use Spandex.Decorators
-  import Ecto.Query, only: [from: 2, limit: 2]
 
-  require Logger
+  import Ecto.Query, only: [from: 2, limit: 2]
 
   alias Ecto.Changeset
   alias Ecto.Multi
   alias Engine.DB.Transaction
   alias Engine.Repo
   alias ExPlasma.Merkle
+
+  require Logger
 
   schema "plasma_blocks" do
     # Extracted from `output_id`
