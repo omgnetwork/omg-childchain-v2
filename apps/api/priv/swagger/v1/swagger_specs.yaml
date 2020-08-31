@@ -67,6 +67,7 @@ paths:
                       - data
                       - service_name
                     example:
+                      success: true
                       service_name: childchain
                       version: '1.0'
                       data: {}
@@ -114,6 +115,7 @@ paths:
                       - data
                       - service_name
                     example:
+                      success: true
                       service_name: childchain
                       version: '1.0'
                       data: {}
@@ -185,6 +187,7 @@ paths:
                       - data
                       - service_name
                     example:
+                      success: true
                       service_name: childchain
                       version: '1.0'
                       data: {}
@@ -222,6 +225,7 @@ paths:
                       - data
                       - service_name
                     example:
+                      success: true
                       service_name: childchain
                       version: '1.0'
                       data: {}
@@ -298,6 +302,7 @@ paths:
                       - data
                       - service_name
                     example:
+                      success: true
                       service_name: childchain
                       version: '1.0'
                       data: {}
@@ -363,6 +368,7 @@ paths:
                       - data
                       - service_name
                     example:
+                      success: true
                       service_name: childchain
                       version: '1.0'
                       data: {}
@@ -398,3 +404,105 @@ paths:
           description: Childchain is healthy
         '503':
           description: Childchain is not healthy
+  /configuration.get:
+    get:
+      tags:
+        - Configuration
+      summary: Provides configuration values
+      operationId: configuration_get
+      responses:
+        '200':
+          description: Configuration response
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - description: The response schema for a successful operation
+                    type: object
+                    properties:
+                      service_name:
+                        type: string
+                      version:
+                        type: string
+                      success:
+                        type: boolean
+                      data:
+                        type: object
+                    required:
+                      - version
+                      - success
+                      - data
+                      - service_name
+                    example:
+                      success: true
+                      service_name: childchain
+                      version: '1.0'
+                      data: {}
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            deposit_finality_margin:
+                              type: integer
+                              format: int256
+                            contract_semver:
+                              type: string
+                            network:
+                              type: string
+                    example:
+                      data:
+                        deposit_finality_margin: 10
+                        contract_semver: 1.0.4+a69c763
+                        network: MAINNET
+        '500':
+          description: Returns a default server error
+          content:
+            application/json:
+              schema:
+                description: The response schema for an error
+                allOf:
+                  - description: The response schema for a successful operation
+                    type: object
+                    properties:
+                      service_name:
+                        type: string
+                      version:
+                        type: string
+                      success:
+                        type: boolean
+                      data:
+                        type: object
+                    required:
+                      - version
+                      - success
+                      - data
+                      - service_name
+                    example:
+                      success: true
+                      service_name: childchain
+                      version: '1.0'
+                      data: {}
+                  - type: object
+                    properties:
+                      data:
+                        description: The object schema for an error
+                        type: object
+                        properties:
+                          code:
+                            type: string
+                          description:
+                            type: string
+                        required:
+                          - error
+                          - description
+                    required:
+                      - data
+                    example:
+                      success: false
+                      data:
+                        object: error
+                        code: string
+                        description: string
