@@ -85,4 +85,12 @@ defmodule Engine.Configuration do
 
     Keyword.merge(fee_server_opts, fee_fetcher_opts: fee_opts)
   end
+
+  def ethereum_network() do
+    Application.fetch_env!(@app, :network)
+  end
+
+  def contract_semver() do
+    Application.fetch_env!(@app, :contract_semver)
+  end
 end
