@@ -197,7 +197,7 @@ defmodule Engine.DB.Factory do
     nonce = round(blknum / 1000)
 
     %PlasmaBlock{
-      hash: :crypto.strong_rand_bytes(32),
+      hash: Map.get(attr, :hash) || :crypto.strong_rand_bytes(32),
       nonce: nonce,
       blknum: blknum,
       tx_hash: :crypto.strong_rand_bytes(64),
