@@ -16,6 +16,21 @@ defmodule Engine.DB.PlasmaBlock do
 
   require Logger
 
+  @type t() :: %{
+          hash: binary(),
+          nonce: pos_integer(),
+          blknum: pos_integer() | nil,
+          tx_hash: binary() | nil,
+          formed_at_ethereum_height: pos_integer() | nil,
+          id: pos_integer(),
+          submitted_at_ethereum_height: pos_integer() | nil,
+          gas: pos_integer() | nil,
+          attempts_counter: non_neg_integer(),
+          transactions: [Transaction.t()],
+          updated_at: DateTime.t(),
+          inserted_at: DateTime.t()
+        }
+
   schema "plasma_blocks" do
     # Extracted from `output_id`
     field(:hash, :binary)
@@ -70,7 +85,7 @@ defmodule Engine.DB.PlasmaBlock do
   If deposit blocks are stored in a different table than plasma blocks, we can have a unique hash enforced at
   the db level and thus we can drop the limit(1) here.
   """
-  @spec get_by_hash(binary(), atom() | list(atom())) :: {:ok, map()} | {:error, nil}
+  @spec get_by_hash(binary(), atom() | list(atom())) :: {:ok, t()} | {:error, nil}
   def get_by_hash(hash, preloads) do
     hash
     |> query_by_hash()
