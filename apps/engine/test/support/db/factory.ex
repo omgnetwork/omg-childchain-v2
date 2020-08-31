@@ -6,7 +6,6 @@ defmodule Engine.DB.Factory do
   use ExMachina.Ecto, repo: Engine.Repo
 
   alias Ecto.Changeset
-  alias Engine.DB.Block
   alias Engine.DB.Fee
   alias Engine.DB.Output
   alias Engine.DB.PlasmaBlock
@@ -133,14 +132,6 @@ defmodule Engine.DB.Factory do
       tx_hash: hash,
       outputs: [output],
       block: build(:plasma_block, blknum: blknum)
-    }
-  end
-
-  def block_factory(attr \\ %{}) do
-    %Block{
-      state: attr[:state] || "confirmed",
-      hash: attr[:hash] || <<0::256>>,
-      number: attr[:number] || 1
     }
   end
 
