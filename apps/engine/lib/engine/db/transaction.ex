@@ -26,7 +26,7 @@ defmodule Engine.DB.Transaction do
   @type t() :: %{
           block: PlasmaBlock.t(),
           block_id: pos_integer(),
-          deposit_block_nubmer: pos_integer() | nil,
+          deposit_block_number: pos_integer() | nil,
           id: pos_integer(),
           inputs: list(Output.t()),
           inserted_at: DateTime.t(),

@@ -32,6 +32,34 @@ defmodule Engine.DB.PlasmaBlockTest do
       assert {:ok, %{"hash-block" => block}} = PlasmaBlock.form()
       assert block.hash == hash
     end
+
+    test "assigns nonce and blknum" do
+      _ = insert(:payment_v1_transaction)
+
+      assert {:ok, %{"hash-block" => block}} = PlasmaBlock.form()
+      assert block.nonce == 1
+      assert block.blknum == 1_000
+    end
+
+    test "autoincrements nonce and blknum" do
+      assert {:ok, %{"hash-block" => block1}} = PlasmaBlock.form()
+      assert block1.nonce == 1
+      assert block1.blknum == 1_000
+
+      assert {:ok, %{"hash-block" => block2}} = PlasmaBlock.form()
+      assert block2.nonce == 2
+      assert block2.blknum == 2_000
+    end
+  end
+
+  describe "insert/2" do
+    test "fails to insert block when blknum != 1000 * nonce" do
+      assert_raise Ecto.ConstraintError, ~r/block_number_nonce/, fn ->
+        %PlasmaBlock{}
+        |> PlasmaBlock.changeset(%{nonce: 1, blknum: 2000})
+        |> Repo.insert()
+      end
+    end
   end
 
   describe "get_by_hash/2" do
@@ -59,8 +87,8 @@ defmodule Engine.DB.PlasmaBlockTest do
 
     test "returns at most 1 result" do
       # This can be removed when enforcing block hash uniqueness
-      %{hash: hash_1} = insert(:plasma_block, %{hash: "1"})
-      %{hash: hash_2} = insert(:plasma_block, %{hash: "1"})
+      %{hash: hash_1} = insert(:plasma_block, hash: "1", blknum: 2000)
+      %{hash: hash_2} = insert(:plasma_block, hash: "1", blknum: 5000)
       assert hash_1 == hash_2
 
       assert {:ok, %{hash: ^hash_1}} = PlasmaBlock.get_by_hash(hash_1, [])
@@ -122,7 +150,7 @@ defmodule Engine.DB.PlasmaBlockTest do
         )
 
       sql
-      |> Engine.Repo.all()
+      |> Repo.all()
       |> Enum.each(fn block ->
         assert block.submitted_at_ethereum_height == my_current_eth_height
         assert block.attempts_counter == 2
@@ -177,7 +205,7 @@ defmodule Engine.DB.PlasmaBlockTest do
         )
 
       sql
-      |> Engine.Repo.all()
+      |> Repo.all()
       |> Enum.each(fn block ->
         case block.nonce do
           11 ->

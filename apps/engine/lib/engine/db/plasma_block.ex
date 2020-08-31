@@ -6,15 +6,18 @@ defmodule Engine.DB.PlasmaBlock do
   use Ecto.Schema
   use Spandex.Decorators
 
+  import Ecto.Changeset
   import Ecto.Query, only: [from: 2, limit: 2]
 
-  alias Ecto.Changeset
   alias Ecto.Multi
   alias Engine.DB.Transaction
   alias Engine.Repo
   alias ExPlasma.Merkle
 
   require Logger
+
+  @optional_fields [:hash, :tx_hash, :formed_at_ethereum_height, :submitted_at_ethereum_height, :gas, :attempts_counter]
+  @required_fields [:nonce, :blknum]
 
   @type t() :: %{
           hash: binary(),
@@ -50,6 +53,12 @@ defmodule Engine.DB.PlasmaBlock do
     timestamps(type: :utc_datetime)
   end
 
+  def changeset(struct, params) do
+    struct
+    |> cast(params, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
+  end
+
   @spec get_all_and_submit(pos_integer(), pos_integer(), function()) ::
           {:ok, any()}
           | {:error, any()}
@@ -73,7 +82,7 @@ defmodule Engine.DB.PlasmaBlock do
   @decorate trace(service: :ecto, type: :backend)
   def form() do
     Multi.new()
-    |> Multi.insert("new-block", %__MODULE__{})
+    |> Multi.run("new-block", &insert_block/2)
     |> Multi.run("form-block", &attach_block_to_transactions/2)
     |> Multi.run("hash-block", &generate_block_hash/2)
     |> Repo.transaction()
@@ -133,7 +142,7 @@ defmodule Engine.DB.PlasmaBlock do
     case submit.(plasma_block.hash, plasma_block.nonce, gas) do
       :ok ->
         plasma_block
-        |> Ecto.Changeset.change(
+        |> change(
           gas: gas,
           attempts_counter: plasma_block.attempts_counter + 1,
           submitted_at_ethereum_height: new_height
@@ -150,6 +159,24 @@ defmodule Engine.DB.PlasmaBlock do
     end
   end
 
+  defp insert_block(repo, _params) do
+    max_db_nonce = Repo.one(from(block in __MODULE__, select: max(block.nonce)))
+
+    nonce =
+      case max_db_nonce do
+        nil -> 1
+        found_nonce -> found_nonce + 1
+      end
+
+    blknum = nonce * 1_000
+
+    params = %{nonce: nonce, blknum: blknum}
+
+    %__MODULE__{}
+    |> changeset(params)
+    |> repo.insert()
+  end
+
   defp attach_block_to_transactions(repo, %{"new-block" => block}) do
     updates = [block_id: block.id, updated_at: NaiveDateTime.utc_now()]
     {total, _} = repo.update_all(Transaction.pending(), set: updates)
@@ -162,7 +189,7 @@ defmodule Engine.DB.PlasmaBlock do
       from(transaction in Transaction, where: transaction.block_id == ^block.id, select: transaction.tx_bytes)
 
     hash = transactions_query |> Repo.all() |> Merkle.root_hash()
-    changeset = Changeset.change(block, hash: hash)
+    changeset = change(block, hash: hash)
     repo.update(changeset)
   end
 end

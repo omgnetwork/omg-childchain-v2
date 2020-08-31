@@ -6,9 +6,9 @@ defmodule Engine.Repo.Migrations.AddPlasmaBlockTable do
       # keccak hash of transactions
       add(:hash, :binary)
       # transaction order!
-      add(:nonce, :integer)
+      add(:nonce, :integer, null: false)
       # plasma block number
-      add(:blknum, :integer)
+      add(:blknum, :integer, null: false)
       # submitted transaction hash (gets updated with submitted_at_ethereum_height)
       add(:tx_hash, :binary)
       # at which height did we form the block
@@ -21,5 +21,15 @@ defmodule Engine.Repo.Migrations.AddPlasmaBlockTable do
       add(:attempts_counter, :integer, default: 0, null: false)
       timestamps(type: :timestamptz)
     end
+
+    create(unique_index(:plasma_blocks, :blknum))
+
+    create(
+      constraint(
+        :plasma_blocks,
+        :block_number_nonce,
+        check: "blknum = nonce * 1000"
+      )
+    )
   end
 end
