@@ -6,6 +6,7 @@ defmodule Engine.Repo.Migrations.CreateTransactions do
       add(:tx_bytes, :binary)
       add(:tx_hash, :binary)
       add(:tx_type, :integer)
+      add(:deposit_block_number, :integer)
       add(:kind, :string)
 
       add(:block_id, references(:plasma_blocks))
@@ -13,5 +14,6 @@ defmodule Engine.Repo.Migrations.CreateTransactions do
     end
 
     create(index(:transactions, [:block_id]))
+    create(unique_index(:transactions, [:tx_hash, :deposit_block_number]))
   end
 end

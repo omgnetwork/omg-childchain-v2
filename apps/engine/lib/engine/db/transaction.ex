@@ -26,6 +26,7 @@ defmodule Engine.DB.Transaction do
   @type t() :: %{
           block: PlasmaBlock.t(),
           block_id: pos_integer(),
+          deposit_block_nubmer: pos_integer() | nil,
           id: pos_integer(),
           inputs: list(Output.t()),
           inserted_at: DateTime.t(),
@@ -49,6 +50,7 @@ defmodule Engine.DB.Transaction do
     field(:tx_bytes, :binary)
     field(:tx_hash, :binary)
     field(:tx_type, :integer)
+    field(:deposit_block_number, :integer)
     field(:kind, Ecto.Atom)
 
     # Virtual fields used for convenience and validation
@@ -99,7 +101,7 @@ defmodule Engine.DB.Transaction do
     struct
     |> Repo.preload(:inputs)
     |> Repo.preload(:outputs)
-    |> cast(params, [:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type, :kind])
+    |> cast(params, [:deposit_block_number, :witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type, :kind])
     |> validate_required([:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type, :kind])
     |> cast_assoc(:inputs)
     |> cast_assoc(:outputs)
