@@ -88,7 +88,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
         |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
         |> Builder.sign!([])
 
-      changeset = change(%Transaction{}, %{tx_bytes: ExPlasma.encode(signed_tx), signed_tx: signed_tx})
+      changeset = change(%Transaction{}, %{tx_bytes: ExPlasma.encode!(signed_tx), signed_tx: signed_tx})
       validated_changeset = Validator.validate_protocol(changeset)
 
       assert validated_changeset.valid?
@@ -105,7 +105,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
 
       validated_changeset =
         %Transaction{}
-        |> change(%{tx_bytes: ExPlasma.encode(signed_tx), signed_tx: signed_tx})
+        |> change(%{tx_bytes: ExPlasma.encode!(signed_tx), signed_tx: signed_tx})
         |> Validator.validate_protocol()
 
       refute validated_changeset.valid?

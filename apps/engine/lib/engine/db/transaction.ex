@@ -113,7 +113,7 @@ defmodule Engine.DB.Transaction do
   defp recovered_to_map(transaction) do
     inputs = Enum.map(transaction.inputs, &Map.from_struct/1)
     outputs = Enum.map(transaction.outputs, &Map.from_struct/1)
-    tx_hash = ExPlasma.hash(transaction)
+    {:ok, tx_hash} = ExPlasma.hash(transaction)
 
     %{
       signed_tx: transaction,

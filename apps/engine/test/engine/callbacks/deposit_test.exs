@@ -25,7 +25,7 @@ defmodule Engine.Callbacks.DepositTest do
 
     assert %Transaction{outputs: [output]} = hd(block.transactions)
     assert %Output{output_data: data} = output
-    assert %ExPlasma.Output{output_data: %{amount: 1, output_guard: <<1::160>>}} = ExPlasma.Output.decode(data)
+    assert %ExPlasma.Output{output_data: %{amount: 1, output_guard: <<1::160>>}} = ExPlasma.Output.decode!(data)
   end
 
   test "takes multiple deposit events" do

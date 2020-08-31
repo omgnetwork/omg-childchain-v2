@@ -27,7 +27,7 @@ defmodule API.V1.Controllere.TransactionTest do
         |> Builder.new()
         |> Builder.add_output(output_guard: <<0::160>>, token: <<0::160>>, amount: 0)
         |> Builder.sign!([])
-        |> ExPlasma.encode()
+        |> ExPlasma.encode!()
         |> Encoding.to_hex()
 
       assert {:error, changeset} = Transaction.submit(invalid_hex_tx_bytes)
