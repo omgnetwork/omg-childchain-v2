@@ -15,7 +15,7 @@ defmodule Engine.DB.Transaction do
   import Ecto.Changeset, only: [cast: 3, cast_assoc: 2, validate_required: 2]
   import Ecto.Query, only: [from: 2]
 
-  alias Engine.DB.Block
+  alias Engine.DB.PlasmaBlock
   alias Engine.DB.Output
   alias Engine.DB.Transaction.Validator
   alias Engine.Fees
@@ -24,7 +24,7 @@ defmodule Engine.DB.Transaction do
   @type tx_bytes :: binary
 
   @type t() :: %{
-          block: Block.t(),
+          block: PlasmaBlock.t(),
           block_id: pos_integer(),
           id: pos_integer(),
           inputs: list(Output.t()),
@@ -57,7 +57,7 @@ defmodule Engine.DB.Transaction do
     # Avoid calling decode(tx_bytes) multiple times along the validation process
     field(:signed_tx, :map, virtual: true)
 
-    belongs_to(:block, Block)
+    belongs_to(:block, PlasmaBlock)
     has_many(:inputs, Output, foreign_key: :spending_transaction_id)
     has_many(:outputs, Output, foreign_key: :creating_transaction_id)
 

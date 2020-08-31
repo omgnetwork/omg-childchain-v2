@@ -8,7 +8,7 @@ defmodule Engine.Repo.Migrations.CreateTransactions do
       add(:tx_type, :integer)
       add(:kind, :string)
 
-      add(:block_id, references(:blocks))
+      add(:block_id, references(:plasma_blocks))
       timestamps(type: :timestamptz)
     end
 

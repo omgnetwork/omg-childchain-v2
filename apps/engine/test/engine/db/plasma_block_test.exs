@@ -4,6 +4,35 @@ defmodule Engine.DB.PlasmaBlockTest do
 
   alias Ecto.Adapters.SQL.Sandbox
   alias Engine.DB.PlasmaBlock
+  alias Engine.DB.Transaction
+  alias Engine.Repo
+  alias ExPlasma.Merkle
+
+  setup do
+    _ = insert(:fee, type: :merged_fees)
+
+    :ok
+  end
+
+  describe "form/0" do
+    test "forms a block from the existing pending transactions" do
+      _ = insert(:deposit_transaction)
+      _ = insert(:payment_v1_transaction)
+      {:ok, %{"new-block" => block}} = PlasmaBlock.form()
+      transactions = Repo.all(from(t in Transaction, where: t.block_id == ^block.id))
+
+      assert length(transactions) == 1
+    end
+
+    test "generates the block hash" do
+      _ = insert(:deposit_transaction)
+      txn1 = insert(:payment_v1_transaction)
+      hash = Merkle.root_hash([txn1.tx_bytes])
+
+      assert {:ok, %{"hash-block" => block}} = PlasmaBlock.form()
+      assert block.hash == hash
+    end
+  end
 
   test "integration point is not called when there are no blocks to submit" do
     parent = self()

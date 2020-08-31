@@ -4,10 +4,16 @@ defmodule Engine.DB.PlasmaBlock do
   """
 
   use Ecto.Schema
-  # import Ecto.Changeset
+  use Spandex.Decorators
   import Ecto.Query, only: [from: 2]
 
   require Logger
+
+  alias Ecto.Changeset
+  alias Ecto.Multi
+  alias Engine.DB.Transaction
+  alias Engine.Repo
+  alias ExPlasma.Merkle
 
   schema "plasma_blocks" do
     # Extracted from `output_id`
@@ -36,6 +42,20 @@ defmodule Engine.DB.PlasmaBlock do
       compute_gas_and_submit(repo, changeset, new_height, mined_child_block, submit)
     end)
     |> Engine.Repo.transaction()
+  end
+
+  @doc """
+  Forms a pending block record based on the existing pending transactions. This
+  attaches free transactions into a new block, awaiting for submission to the contract
+  later on.
+  """
+  @decorate trace(service: :ecto, type: :backend)
+  def form() do
+    Multi.new()
+    |> Multi.insert("new-block", %__MODULE__{})
+    |> Multi.run("form-block", &attach_block_to_transactions/2)
+    |> Multi.run("hash-block", &generate_block_hash/2)
+    |> Repo.transaction()
   end
 
   defp get_all(repo, _changeset, new_height, mined_child_block) do
@@ -81,5 +101,21 @@ defmodule Engine.DB.PlasmaBlock do
         _ = Logger.error("Block submission stopped at block with nonce #{plasma_block.nonce}. Error: #{inspect(error)}")
         process_submission(repo, [], new_height, mined_child_block, submit)
     end
+  end
+
+  defp attach_block_to_transactions(repo, %{"new-block" => block}) do
+    updates = [block_id: block.id, updated_at: NaiveDateTime.utc_now()]
+    {total, _} = repo.update_all(Transaction.pending(), set: updates)
+
+    {:ok, total}
+  end
+
+  defp generate_block_hash(repo, %{"new-block" => block}) do
+    transactions_query =
+      from(transaction in Transaction, where: transaction.block_id == ^block.id, select: transaction.tx_bytes)
+
+    hash = transactions_query |> Repo.all() |> Merkle.root_hash()
+    changeset = Changeset.change(block, hash: hash)
+    repo.update(changeset)
   end
 end

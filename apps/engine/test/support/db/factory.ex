@@ -132,7 +132,7 @@ defmodule Engine.DB.Factory do
       tx_bytes: tx_bytes,
       tx_hash: hash,
       outputs: [output],
-      block: build(:block, number: blknum)
+      block: build(:plasma_block, blknum: blknum)
     }
   end
 
