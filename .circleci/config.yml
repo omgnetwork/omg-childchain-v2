@@ -349,11 +349,11 @@ workflows:
           requires:
             - build
 
-      - test_docker_compose_release:
+      - test_release:
           requires:
             - build
 
-      - test_docker_compose_reorg:
+      - test_reorg:
           requires:
             - build
 
