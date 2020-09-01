@@ -32,7 +32,8 @@ defmodule Engine.DB.Block do
 
     has_many(:transactions, Transaction)
 
-    timestamps(type: :utc_datetime)
+    field(:inserted_at, :utc_datetime)
+    field(:updated_at, :utc_datetime)
   end
 
   def changeset(struct, params) do

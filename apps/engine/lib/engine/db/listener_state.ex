@@ -14,7 +14,8 @@ defmodule Engine.DB.ListenerState do
   schema "listener_states" do
     field(:height, :integer)
 
-    timestamps(type: :utc_datetime)
+    field(:inserted_at, :utc_datetime)
+    field(:updated_at, :utc_datetime)
   end
 
   @fields [:listener, :height]

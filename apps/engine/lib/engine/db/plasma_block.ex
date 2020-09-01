@@ -20,7 +20,8 @@ defmodule Engine.DB.PlasmaBlock do
     field(:gas, :integer)
     field(:attempts_counter, :integer)
 
-    timestamps(type: :utc_datetime)
+    field(:inserted_at, :utc_datetime)
+    field(:updated_at, :utc_datetime)
   end
 
   @spec get_all_and_submit(pos_integer(), pos_integer(), function()) ::

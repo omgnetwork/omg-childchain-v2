@@ -44,7 +44,8 @@ defmodule Engine.DB.Output do
     belongs_to(:spending_transaction, Engine.DB.Transaction)
     belongs_to(:creating_transaction, Engine.DB.Transaction)
 
-    timestamps(type: :utc_datetime)
+    field(:inserted_at, :utc_datetime)
+    field(:updated_at, :utc_datetime)
   end
 
   @doc """
