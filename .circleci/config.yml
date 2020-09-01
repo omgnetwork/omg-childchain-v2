@@ -64,8 +64,7 @@ jobs:
             asdf update
             asdf plugin-add erlang || asdf plugin-update erlang
             asdf plugin-add elixir || asdf plugin-update elixir
-            asdf install erlang 22.3
-            asdf install elixir 1.10.4-otp-22
+            asdf install
             asdf global elixir 1.10.4-otp-22
             asdf global erlang 22.3
             mix local.rebar --force && mix local.hex --force
