@@ -85,7 +85,7 @@ defmodule Engine.DB.Block do
   def form() do
     Multi.new()
     |> Multi.run("new-block", &insert_block/2)
-    |> Multi.run("form-block", &attach_block_to_transactions/2)
+    |> Multi.run("form-block", &attach_transactions_to_block/2)
     |> Multi.run("hash-block", &generate_block_hash/2)
     |> Repo.transaction()
   end
@@ -169,7 +169,7 @@ defmodule Engine.DB.Block do
 
   defp query_max_nonce(), do: from(block in __MODULE__, select: max(block.nonce))
 
-  defp attach_block_to_transactions(repo, %{"new-block" => block}) do
+  defp attach_transactions_to_block(repo, %{"new-block" => block}) do
     updates = [block_id: block.id, updated_at: NaiveDateTime.utc_now()]
     {total, _} = repo.update_all(Transaction.pending(), set: updates)
 
