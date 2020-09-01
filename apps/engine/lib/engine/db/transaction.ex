@@ -15,8 +15,8 @@ defmodule Engine.DB.Transaction do
   import Ecto.Changeset, only: [cast: 3, cast_assoc: 2, validate_required: 2]
   import Ecto.Query, only: [from: 2]
 
-  alias Engine.DB.Output
   alias Engine.DB.Block
+  alias Engine.DB.Output
   alias Engine.DB.Transaction.Validator
   alias Engine.Fees
   alias Engine.Repo

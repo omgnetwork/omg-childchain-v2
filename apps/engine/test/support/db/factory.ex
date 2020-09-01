@@ -6,9 +6,9 @@ defmodule Engine.DB.Factory do
   use ExMachina.Ecto, repo: Engine.Repo
 
   alias Ecto.Changeset
+  alias Engine.DB.Block
   alias Engine.DB.Fee
   alias Engine.DB.Output
-  alias Engine.DB.Block
   alias Engine.DB.Transaction
   alias Engine.Ethereum.RootChain.Event
   alias Engine.Support.TestEntity
