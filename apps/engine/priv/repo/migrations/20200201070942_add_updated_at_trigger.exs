@@ -2,7 +2,7 @@ defmodule Engine.Repo.Migrations.AddUpdatedAtTrigger do
   use Ecto.Migration
 
   # copied from Diesel initial migration - https://github.com/diesel-rs/diesel
-  # https://github.com/diesel-rs/diesel/blob/master/diesel_cli/src/setup_sql/postgres/initial_setup/up.sql
+  # https://github.com/diesel-rs/diesel/blob/2fa746f8f10b8a1dd0a46bac499ad7eee58de17c/diesel_cli/src/setup_sql/postgres/initial_setup/up.sql
   def up do
     execute("
       CREATE OR REPLACE FUNCTION ecto_manage_updated_at(_tbl regclass) RETURNS VOID AS $$
