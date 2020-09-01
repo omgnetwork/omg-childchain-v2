@@ -16,6 +16,8 @@ defmodule Engine.DB.Block do
 
   require Logger
 
+  @block_number_multiplier 1_000
+
   @optional_fields [:hash, :tx_hash, :formed_at_ethereum_height, :submitted_at_ethereum_height, :gas, :attempts_counter]
   @required_fields [:nonce, :blknum]
 
@@ -148,15 +150,15 @@ defmodule Engine.DB.Block do
   end
 
   defp insert_block(repo, _params) do
-    max_db_nonce = Repo.one(from(block in __MODULE__, select: max(block.nonce)))
-
     nonce =
-      case max_db_nonce do
+      query_max_nonce()
+      |> Repo.one()
+      |> case do
         nil -> 1
         found_nonce -> found_nonce + 1
       end
 
-    blknum = nonce * 1_000
+    blknum = nonce * @block_number_multiplier
 
     params = %{nonce: nonce, blknum: blknum}
 
@@ -164,6 +166,8 @@ defmodule Engine.DB.Block do
     |> changeset(params)
     |> repo.insert()
   end
+
+  defp query_max_nonce(), do: from(block in __MODULE__, select: max(block.nonce))
 
   defp attach_block_to_transactions(repo, %{"new-block" => block}) do
     updates = [block_id: block.id, updated_at: NaiveDateTime.utc_now()]
@@ -173,11 +177,17 @@ defmodule Engine.DB.Block do
   end
 
   defp generate_block_hash(repo, %{"new-block" => block}) do
-    transactions_query =
-      from(transaction in Transaction, where: transaction.block_id == ^block.id, select: transaction.tx_bytes)
+    hash =
+      block.id
+      |> transactions_query()
+      |> Repo.all()
+      |> Merkle.root_hash()
 
-    hash = transactions_query |> Repo.all() |> Merkle.root_hash()
     changeset = change(block, hash: hash)
     repo.update(changeset)
+  end
+
+  defp transactions_query(block_id) do
+    from(transaction in Transaction, where: transaction.block_id == ^block_id, select: transaction.tx_bytes)
   end
 end
