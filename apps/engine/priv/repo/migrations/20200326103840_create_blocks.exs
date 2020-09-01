@@ -7,9 +7,11 @@ defmodule Engine.Repo.Migrations.CreateBlocks do
       add(:number, :integer)
       add(:state, :string)
 
-      timestamps(type: :timestamptz)
+      add(:inserted_at, :utc_datetime, null: false, default: fragment("now_utc()"))
+      add(:updated_at, :utc_datetime, null: false, default: fragment("now_utc()"))
     end
 
     create(unique_index(:blocks, [:number]))
+    execute("SELECT ecto_manage_updated_at('blocks');")
   end
 end

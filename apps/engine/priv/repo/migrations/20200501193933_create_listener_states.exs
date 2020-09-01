@@ -6,7 +6,10 @@ defmodule Engine.Repo.Migrations.CreateListenerStates do
       add(:listener, :string, primary_key: true)
       add(:height, :integer)
 
-      timestamps(type: :timestamptz)
+      add(:inserted_at, :utc_datetime, null: false, default: fragment("now_utc()"))
+      add(:updated_at, :utc_datetime, null: false, default: fragment("now_utc()"))
     end
+
+    execute("SELECT ecto_manage_updated_at('listener_states');")
   end
 end

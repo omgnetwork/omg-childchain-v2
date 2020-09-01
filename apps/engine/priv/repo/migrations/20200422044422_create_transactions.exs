@@ -9,9 +9,11 @@ defmodule Engine.Repo.Migrations.CreateTransactions do
       add(:kind, :string)
 
       add(:block_id, references(:blocks))
-      timestamps(type: :timestamptz)
+      add(:inserted_at, :utc_datetime, null: false, default: fragment("now_utc()"))
+      add(:updated_at, :utc_datetime, null: false, default: fragment("now_utc()"))
     end
 
     create(index(:transactions, [:block_id]))
+    execute("SELECT ecto_manage_updated_at('transactions');")
   end
 end

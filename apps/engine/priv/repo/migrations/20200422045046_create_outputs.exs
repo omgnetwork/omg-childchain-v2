@@ -14,10 +14,12 @@ defmodule Engine.Repo.Migrations.CreateOutputs do
       add(:creating_transaction_id, references(:transactions))
       add(:spending_transaction_id, references(:transactions))
 
-      timestamps(type: :timestamptz)
+      add(:inserted_at, :utc_datetime, null: false, default: fragment("now_utc()"))
+      add(:updated_at, :utc_datetime, null: false, default: fragment("now_utc()"))
     end
 
     create(unique_index(:outputs, [:position]))
     create(index(:outputs, [:creating_transaction_id]))
+    execute("SELECT ecto_manage_updated_at('outputs');")
   end
 end
