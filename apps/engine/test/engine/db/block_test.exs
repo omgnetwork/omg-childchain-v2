@@ -1,9 +1,9 @@
-defmodule Engine.DB.PlasmaBlockTest do
+defmodule Engine.DB.BlockTest do
   use Engine.DB.DataCase, async: true
   import Ecto.Query, only: [from: 2]
 
   alias Ecto.Adapters.SQL.Sandbox
-  alias Engine.DB.PlasmaBlock
+  alias Engine.DB.Block
   alias Engine.DB.Transaction
   alias Engine.Repo
   alias ExPlasma.Merkle
@@ -18,7 +18,7 @@ defmodule Engine.DB.PlasmaBlockTest do
     test "forms a block from the existing pending transactions" do
       _ = insert(:deposit_transaction)
       _ = insert(:payment_v1_transaction)
-      {:ok, %{"new-block" => block}} = PlasmaBlock.form()
+      {:ok, %{"new-block" => block}} = Block.form()
       transactions = Repo.all(from(t in Transaction, where: t.block_id == ^block.id))
 
       assert length(transactions) == 1
@@ -29,24 +29,26 @@ defmodule Engine.DB.PlasmaBlockTest do
       txn1 = insert(:payment_v1_transaction)
       hash = Merkle.root_hash([txn1.tx_bytes])
 
-      assert {:ok, %{"hash-block" => block}} = PlasmaBlock.form()
+      assert {:ok, %{"hash-block" => block}} = Block.form()
       assert block.hash == hash
     end
 
     test "assigns nonce and blknum" do
       _ = insert(:payment_v1_transaction)
 
-      assert {:ok, %{"hash-block" => block}} = PlasmaBlock.form()
+      assert {:ok, %{"hash-block" => block}} = Block.form()
       assert block.nonce == 1
       assert block.blknum == 1_000
     end
 
     test "autoincrements nonce and blknum" do
-      assert {:ok, %{"hash-block" => block1}} = PlasmaBlock.form()
+      assert {:ok, %{"hash-block" => block1}} = Block.form()
       assert block1.nonce == 1
       assert block1.blknum == 1_000
 
-      assert {:ok, %{"hash-block" => block2}} = PlasmaBlock.form()
+      _ = insert(:payment_v1_transaction)
+
+      assert {:ok, %{"hash-block" => block2}} = Block.form()
       assert block2.nonce == 2
       assert block2.blknum == 2_000
     end
@@ -55,8 +57,8 @@ defmodule Engine.DB.PlasmaBlockTest do
   describe "insert/2" do
     test "fails to insert block when blknum != 1000 * nonce" do
       assert_raise Ecto.ConstraintError, ~r/block_number_nonce/, fn ->
-        %PlasmaBlock{}
-        |> PlasmaBlock.changeset(%{nonce: 1, blknum: 2000})
+        %Block{}
+        |> Block.changeset(%{nonce: 1, blknum: 2000})
         |> Repo.insert()
       end
     end
@@ -65,33 +67,31 @@ defmodule Engine.DB.PlasmaBlockTest do
   describe "get_by_hash/2" do
     test "returns the block without preloads" do
       _ = insert(:payment_v1_transaction)
-      {:ok, %{"hash-block" => block}} = PlasmaBlock.form()
+      {:ok, %{"hash-block" => block}} = Block.form()
 
-      assert {:ok, block_result} = PlasmaBlock.get_by_hash(block.hash, [])
+      assert {:ok, block_result} = Block.get_by_hash(block.hash, [])
       refute Ecto.assoc_loaded?(block_result.transactions)
       assert block_result.hash == block.hash
     end
 
     test "returns the block with preloads" do
       %{tx_hash: tx_hash} = insert(:payment_v1_transaction)
-      {:ok, %{"hash-block" => block}} = PlasmaBlock.form()
+      {:ok, %{"hash-block" => block}} = Block.form()
 
-      assert {:ok, block_result} = PlasmaBlock.get_by_hash(block.hash, :transactions)
+      assert {:ok, block_result} = Block.get_by_hash(block.hash, :transactions)
       assert [%{tx_hash: ^tx_hash}] = block_result.transactions
       assert block_result.hash == block.hash
     end
 
     test "returns {:error, nil} if not found" do
-      assert {:error, nil} = PlasmaBlock.get_by_hash(<<0>>, [])
+      assert {:error, nil} = Block.get_by_hash(<<0>>, [])
     end
 
-    test "returns at most 1 result" do
-      # This can be removed when enforcing block hash uniqueness
-      %{hash: hash_1} = insert(:plasma_block, hash: "1", blknum: 2000)
-      %{hash: hash_2} = insert(:plasma_block, hash: "1", blknum: 5000)
-      assert hash_1 == hash_2
-
-      assert {:ok, %{hash: ^hash_1}} = PlasmaBlock.get_by_hash(hash_1, [])
+    test "fails to insert two block with the same hash" do
+      assert_raise Ecto.ConstraintError, ~r/blocks_hash_index/, fn ->
+        _ = insert(:block, hash: "1", blknum: 2000)
+        _ = insert(:block, hash: "1", blknum: 5000)
+      end
     end
   end
 
@@ -102,7 +102,7 @@ defmodule Engine.DB.PlasmaBlockTest do
       Kernel.send(parent, {hash, nonce, gas})
     end
 
-    assert PlasmaBlock.get_all_and_submit(1000, 1000, integration) == {:ok, %{compute_gas_and_submit: [], get_all: []}}
+    assert Block.get_all_and_submit(1000, 1000, integration) == {:ok, %{compute_gas_and_submit: [], get_all: []}}
     refute_receive _
   end
 
@@ -114,7 +114,7 @@ defmodule Engine.DB.PlasmaBlockTest do
       # just insert 10 blocks that were created over 10 eth blocks
       _ =
         Enum.reduce(1..10, {nonce, blknum}, fn index, {nonce, blknum} ->
-          insert(:plasma_block, %{
+          insert(:block, %{
             nonce: nonce,
             blknum: blknum,
             submitted_at_ethereum_height: index,
@@ -137,15 +137,14 @@ defmodule Engine.DB.PlasmaBlockTest do
       my_current_eth_height = 11
       mined_child_block = 7000
 
-      {:ok, %{get_all: blocks}} =
-        PlasmaBlock.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
+      {:ok, %{get_all: blocks}} = Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
 
       assert [%{nonce: 8}, %{nonce: 9}, %{nonce: 10}] = blocks
       # assert that our integration point was called with these blocks
       [8, 9, 10] = receive_all_blocks()
 
       sql =
-        from(plasma_block in PlasmaBlock,
+        from(plasma_block in Block,
           where: plasma_block.nonce == 8 or plasma_block.nonce == 9 or plasma_block.nonce == 10
         )
 
@@ -166,7 +165,7 @@ defmodule Engine.DB.PlasmaBlockTest do
       # just insert 10 blocks that were created over 10 eth blocks
       _ =
         Enum.reduce(1..10, {nonce, blknum}, fn index, {nonce, blknum} ->
-          insert(:plasma_block, %{
+          insert(:block, %{
             nonce: nonce,
             blknum: blknum,
             submitted_at_ethereum_height: index,
@@ -186,20 +185,19 @@ defmodule Engine.DB.PlasmaBlockTest do
 
       # at this height, I'm looking at what was submitted and what wasn't
       # I notice  that blocks with blknum from 1000 to 7000 were mined but above that it needs a resubmission
-      insert(:plasma_block, %{nonce: 11, blknum: 11_000, formed_at_ethereum_height: 11})
+      insert(:block, %{nonce: 11, blknum: 11_000, formed_at_ethereum_height: 11})
 
       my_current_eth_height = 11
       mined_child_block = 7000
 
-      {:ok, %{get_all: blocks}} =
-        PlasmaBlock.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
+      {:ok, %{get_all: blocks}} = Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
 
       assert [%{nonce: 8}, %{nonce: 9}, %{nonce: 10}, %{nonce: 11}] = blocks
       # assert that our integration point was called with these blocks
       [8, 9, 10, 11] = receive_all_blocks()
 
       sql =
-        from(plasma_block in PlasmaBlock,
+        from(plasma_block in Block,
           where:
             plasma_block.nonce == 8 or plasma_block.nonce == 9 or plasma_block.nonce == 10 or plasma_block.nonce == 11
         )
@@ -227,7 +225,7 @@ defmodule Engine.DB.PlasmaBlockTest do
       # just insert 10 blocks that were created over 10 eth blocks
       _ =
         Enum.reduce(1..10, {nonce, blknum}, fn index, {nonce, blknum} ->
-          insert(:plasma_block, %{
+          insert(:block, %{
             nonce: nonce,
             blknum: blknum,
             submitted_at_ethereum_height: index,
@@ -249,8 +247,7 @@ defmodule Engine.DB.PlasmaBlockTest do
       my_current_eth_height = 6
       mined_child_block = 6000
 
-      {:ok, %{get_all: blocks}} =
-        PlasmaBlock.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
+      {:ok, %{get_all: blocks}} = Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
 
       assert [] = blocks
       # assert that our integration point was called with these blocks
@@ -266,7 +263,7 @@ defmodule Engine.DB.PlasmaBlockTest do
 
       # just insert 10 blocks that were created over 10 eth blocks
 
-      insert(:plasma_block, %{
+      insert(:block, %{
         nonce: nonce,
         blknum: blknum,
         submitted_at_ethereum_height: my_current_eth_height,
@@ -285,8 +282,7 @@ defmodule Engine.DB.PlasmaBlockTest do
 
       mined_child_block = 1000
 
-      {:ok, %{get_all: blocks}} =
-        PlasmaBlock.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
+      {:ok, %{get_all: blocks}} = Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
 
       assert [] = blocks
       # assert that our integration point was called with these blocks
@@ -302,7 +298,7 @@ defmodule Engine.DB.PlasmaBlockTest do
       # just insert 10 blocks that were created over 10 eth blocks
       _ =
         Enum.reduce(1..10, {nonce, blknum}, fn index, {nonce, blknum} ->
-          insert(:plasma_block, %{
+          insert(:block, %{
             nonce: nonce,
             blknum: blknum,
             submitted_at_ethereum_height: index,
@@ -322,7 +318,7 @@ defmodule Engine.DB.PlasmaBlockTest do
 
       # at this height, I'm looking at what was submitted and what wasn't
       # I notice  that blocks with blknum from 1000 to 7000 were mined but above that it needs a resubmission
-      insert(:plasma_block, %{nonce: 11, blknum: 11_000, formed_at_ethereum_height: 11})
+      insert(:block, %{nonce: 11, blknum: 11_000, formed_at_ethereum_height: 11})
 
       my_current_eth_height = 11
       mined_child_block = 7000
@@ -333,7 +329,7 @@ defmodule Engine.DB.PlasmaBlockTest do
       |> Task.async_stream(
         fn _ ->
           Sandbox.allow(Engine.Repo, parent, self())
-          PlasmaBlock.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
+          Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
         end,
         timeout: 5000,
         on_timeout: :kill_task,

@@ -2,7 +2,7 @@ defmodule Engine.Repo.Migrations.AddPlasmaBlockTable do
   use Ecto.Migration
 
   def change do
-    create table(:plasma_blocks) do
+    create table(:blocks) do
       # keccak hash of transactions
       add(:hash, :binary)
       # transaction order!
@@ -22,11 +22,12 @@ defmodule Engine.Repo.Migrations.AddPlasmaBlockTable do
       timestamps(type: :timestamptz)
     end
 
-    create(unique_index(:plasma_blocks, :blknum))
+    create(unique_index(:blocks, :blknum))
+    create(unique_index(:blocks, :hash))
 
     create(
       constraint(
-        :plasma_blocks,
+        :blocks,
         :block_number_nonce,
         check: "blknum = nonce * 1000"
       )

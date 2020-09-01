@@ -9,7 +9,7 @@ defmodule Engine.Repo.Migrations.CreateTransactions do
       add(:deposit_block_number, :integer)
       add(:kind, :string)
 
-      add(:block_id, references(:plasma_blocks))
+      add(:block_id, references(:blocks))
       timestamps(type: :timestamptz)
     end
 

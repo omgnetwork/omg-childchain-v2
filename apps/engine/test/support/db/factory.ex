@@ -8,7 +8,7 @@ defmodule Engine.DB.Factory do
   alias Ecto.Changeset
   alias Engine.DB.Fee
   alias Engine.DB.Output
-  alias Engine.DB.PlasmaBlock
+  alias Engine.DB.Block
   alias Engine.DB.Transaction
   alias Engine.Ethereum.RootChain.Event
   alias Engine.Support.TestEntity
@@ -131,7 +131,7 @@ defmodule Engine.DB.Factory do
       tx_bytes: tx_bytes,
       tx_hash: hash,
       outputs: [output],
-      block: build(:plasma_block, blknum: blknum)
+      block: build(:block, blknum: blknum)
     }
   end
 
@@ -182,12 +182,12 @@ defmodule Engine.DB.Factory do
   def set_state(%Transaction{outputs: [output]}, state), do: %{output | state: state}
   def set_state(%Output{} = output, state), do: %{output | state: state}
 
-  def plasma_block_factory(attr \\ %{}) do
+  def block_factory(attr \\ %{}) do
     blknum = Map.get(attr, :blknum, 1000)
     _child_block_interval = 1000
     nonce = round(blknum / 1000)
 
-    %PlasmaBlock{
+    %Block{
       hash: Map.get(attr, :hash) || :crypto.strong_rand_bytes(32),
       nonce: nonce,
       blknum: blknum,

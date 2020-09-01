@@ -1,4 +1,4 @@
-defmodule Engine.DB.PlasmaBlock do
+defmodule Engine.DB.Block do
   @moduledoc """
   Ecto schema for you know what.
   """
@@ -7,7 +7,7 @@ defmodule Engine.DB.PlasmaBlock do
   use Spandex.Decorators
 
   import Ecto.Changeset
-  import Ecto.Query, only: [from: 2, limit: 2]
+  import Ecto.Query, only: [from: 2]
 
   alias Ecto.Multi
   alias Engine.DB.Transaction
@@ -34,7 +34,7 @@ defmodule Engine.DB.PlasmaBlock do
           inserted_at: DateTime.t()
         }
 
-  schema "plasma_blocks" do
+  schema "blocks" do
     # Extracted from `output_id`
     field(:hash, :binary)
     field(:nonce, :integer)
@@ -89,29 +89,17 @@ defmodule Engine.DB.PlasmaBlock do
   end
 
   @doc """
-  Get a block by its hash, because of https://github.com/omgnetwork/plasma-contracts/issues/359
-  block hash are not necessarly unique, until this is fixed, we limit the result to the first block we find.
-  If deposit blocks are stored in a different table than plasma blocks, we can have a unique hash enforced at
-  the db level and thus we can drop the limit(1) here.
+  Get a block by its hash.
   """
   @spec get_by_hash(binary(), atom() | list(atom())) :: {:ok, t()} | {:error, nil}
   def get_by_hash(hash, preloads) do
-    hash
-    |> query_by_hash()
-    |> limit(1)
-    |> Repo.one()
+    __MODULE__
+    |> Repo.get_by(hash: hash)
     |> Repo.preload(preloads)
     |> case do
       nil -> {:error, nil}
       block -> {:ok, block}
     end
-  end
-
-  @doc """
-  Query the most recent block by it's hash, which is not necessarily unique.
-  """
-  def query_by_hash(hash) do
-    from(b in __MODULE__, where: b.hash == ^hash, order_by: b.inserted_at)
   end
 
   defp get_all(repo, _changeset, new_height, mined_child_block) do

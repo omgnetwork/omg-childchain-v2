@@ -9,7 +9,7 @@ defmodule API.V1.View.BlockTest do
 
   describe "serialize/1" do
     test "serialize a block" do
-      block = :plasma_block |> build() |> Engine.Repo.preload(:transactions)
+      block = :block |> build() |> Engine.Repo.preload(:transactions)
 
       assert Block.serialize(block) == %{
                blknum: block.blknum,

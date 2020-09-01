@@ -6,7 +6,7 @@ defmodule API.V1.Controller.Block do
   use Spandex.Decorators
 
   alias API.V1.View
-  alias Engine.DB.PlasmaBlock
+  alias Engine.DB.Block
   alias ExPlasma.Encoding
 
   @type get_by_hash_error() :: {:error, :decoding_error} | {:error, :not_found, String.t()}
@@ -18,7 +18,7 @@ defmodule API.V1.Controller.Block do
   @decorate trace(service: :ecto, type: :backend)
   def get_by_hash(hash) do
     with {:ok, decoded_hash} <- Encoding.to_binary(hash),
-         {:ok, block} <- PlasmaBlock.get_by_hash(decoded_hash, :transactions) do
+         {:ok, block} <- Block.get_by_hash(decoded_hash, :transactions) do
       {:ok, View.Block.serialize(block)}
     else
       {:error, nil} ->
