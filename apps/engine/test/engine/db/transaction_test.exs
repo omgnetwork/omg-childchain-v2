@@ -96,7 +96,8 @@ defmodule Engine.DB.TransactionTest do
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
 
-      assert get_field(changeset, :inputs) == [input]
+      assert changeset |> get_field(:inputs) |> Enum.map(fn input -> %{input | inserted_at: nil, updated_at: nil} end) ==
+               [input]
     end
 
     test "is valid when inputs are signed correctly" do
