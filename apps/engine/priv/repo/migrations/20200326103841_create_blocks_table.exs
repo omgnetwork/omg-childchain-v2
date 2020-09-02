@@ -1,4 +1,4 @@
-defmodule Engine.Repo.Migrations.AddPlasmaBlockTable do
+defmodule Engine.Repo.Migrations.CreateBlocksTable do
   use Ecto.Migration
 
   def change do
