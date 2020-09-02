@@ -48,7 +48,14 @@ config :engine, Engine.Repo,
   password: "omisego_dev",
   hostname: "localhost",
   backoff_type: :stop,
-  pool_size: 4
+  # Have at most `:pool_size` DB connections on standby and serving DB queries.
+  pool_size: String.to_integer(System.get_env("ENGINE_DB_POOL_SIZE") || "10"),
+  # Wait at most `:queue_target` for a connection. If all connections checked out during
+  # a `:queue_interval` takes more than `:queue_target`, then we double the `:queue_target`.
+  # If checking out connections take longer than the new target, a DBConnection.ConnectionError is raised.
+  # See: https://hexdocs.pm/db_connection/DBConnection.html#start_link/2-queue-config
+  queue_target: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_TARGET_MS") || "100"),
+  queue_interval: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_INTERVAL_MS") || "2000")
 
 config :engine, ecto_repos: [Engine.Repo]
 
