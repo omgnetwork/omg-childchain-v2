@@ -1,6 +1,6 @@
 defmodule Engine.DB.Block do
   @moduledoc """
-  Ecto schema for you know what.
+  Ecto schema that represents "Plasma Blocks" that are being submitted from the Childchain to the contracts. This holds metadata information and a reference point to associated transactions that are formed into said Block.
   """
 
   use Ecto.Schema
