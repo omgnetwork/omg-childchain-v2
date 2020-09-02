@@ -43,7 +43,7 @@ defmodule Engine.Callbacks.DepositTest do
 
     assert {:ok, %{"deposit-blknum-1" => _}} = Deposit.callback([event], :depositor)
     assert {:ok, %{"deposit-blknum-1" => _, "deposit-blknum-2" => _}} = Deposit.callback(events, :depositor)
-    assert Repo.one(from(transaction in Transaction, select: count(transaction.tx_hash))) == 2
+    assert Repo.one(from(transaction in Transaction, select: count(transaction.deposit_tx_hash))) == 2
   end
 
   test "three listeners try to commit deposits from different starting heights" do
@@ -68,19 +68,19 @@ defmodule Engine.Callbacks.DepositTest do
 
     assert listener_for(:depositor, height: 405)
 
-    assert Repo.one(from(transaction in Transaction, select: count(transaction.tx_hash))) == 2
+    assert Repo.one(from(transaction in Transaction, select: count(transaction.deposit_tx_hash))) == 2
 
     assert {:ok, %{"deposit-blknum-5" => _}} = Deposit.callback(deposit_events_listener2, :depositor)
 
     assert listener_for(:depositor, height: 406)
 
-    assert Repo.one(from(transaction in Transaction, select: count(transaction.tx_hash))) == 3
+    assert Repo.one(from(transaction in Transaction, select: count(transaction.deposit_tx_hash))) == 3
 
     assert {:ok, _} = Deposit.callback(deposit_events_listener3, :depositor)
 
     assert listener_for(:depositor, height: 406)
 
-    assert Repo.one(from(transaction in Transaction, select: count(transaction.tx_hash))) == 3
+    assert Repo.one(from(transaction in Transaction, select: count(transaction.deposit_tx_hash))) == 3
 
     assert {:ok, _} = Deposit.callback(deposit_events_listener3, :depositor)
 

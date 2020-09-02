@@ -54,11 +54,15 @@ defmodule Engine.Callbacks.Deposit do
 
     {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_deposit())
 
-    changeset_with_block_number = put_change(changeset, :deposit_block_number, event.data["blknum"])
+    changeset_with_block_number =
+      changeset
+      |> put_change(:deposit_block_number, event.data["blknum"])
+      |> put_change(:deposit_tx_hash, changeset.changes.tx_hash)
+      |> put_change(:tx_hash, nil)
 
     Ecto.Multi.insert(multi, "deposit-blknum-#{event.data["blknum"]}", changeset_with_block_number,
       on_conflict: :nothing,
-      conflict_target: [:tx_hash, :deposit_block_number]
+      conflict_target: [:deposit_tx_hash, :deposit_block_number]
     )
   end
 end

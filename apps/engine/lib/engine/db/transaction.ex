@@ -27,6 +27,7 @@ defmodule Engine.DB.Transaction do
           block: Block.t(),
           block_id: pos_integer(),
           deposit_block_number: pos_integer() | nil,
+          deposit_tx_hash: <<_::256>> | nil,
           id: pos_integer(),
           inputs: list(Output.t()),
           inserted_at: DateTime.t(),
@@ -50,6 +51,7 @@ defmodule Engine.DB.Transaction do
     field(:tx_bytes, :binary)
     field(:tx_hash, :binary)
     field(:tx_type, :integer)
+    field(:deposit_tx_hash, :binary)
     field(:deposit_block_number, :integer)
     field(:kind, Ecto.Atom)
 
@@ -101,7 +103,16 @@ defmodule Engine.DB.Transaction do
     struct
     |> Repo.preload(:inputs)
     |> Repo.preload(:outputs)
-    |> cast(params, [:deposit_block_number, :witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type, :kind])
+    |> cast(params, [
+      :deposit_tx_hash,
+      :deposit_block_number,
+      :witnesses,
+      :tx_hash,
+      :signed_tx,
+      :tx_bytes,
+      :tx_type,
+      :kind
+    ])
     |> validate_required([:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type, :kind])
     |> cast_assoc(:inputs)
     |> cast_assoc(:outputs)
