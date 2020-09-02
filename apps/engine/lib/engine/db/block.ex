@@ -36,6 +36,11 @@ defmodule Engine.DB.Block do
           inserted_at: DateTime.t()
         }
 
+  @type transaction_result_t() ::
+          {:ok, any()}
+          | {:error, any()}
+          | {:error, Ecto.Multi.name(), any(), %{required(Ecto.Multi.name()) => any()}}
+
   schema "blocks" do
     # Extracted from `output_id`
     field(:hash, :binary)
@@ -61,10 +66,7 @@ defmodule Engine.DB.Block do
     |> validate_required(@required_fields)
   end
 
-  @spec get_all_and_submit(pos_integer(), pos_integer(), function()) ::
-          {:ok, any()}
-          | {:error, any()}
-          | {:error, Ecto.Multi.name(), any(), %{required(Ecto.Multi.name()) => any()}}
+  @spec get_all_and_submit(pos_integer(), pos_integer(), function()) :: transaction_result_t()
   def get_all_and_submit(new_height, mined_child_block, submit) do
     Ecto.Multi.new()
     |> Ecto.Multi.run(:get_all, fn repo, changeset ->

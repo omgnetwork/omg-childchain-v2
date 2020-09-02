@@ -43,6 +43,8 @@ defmodule Engine.DB.Transaction do
 
   @deposit :deposit
   @transfer :transfer
+  @required_fields [:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type, :kind]
+  @optional_fields [:deposit_tx_hash, :deposit_block_number]
 
   def kind_transfer(), do: @transfer
   def kind_deposit(), do: @deposit
@@ -103,17 +105,8 @@ defmodule Engine.DB.Transaction do
     struct
     |> Repo.preload(:inputs)
     |> Repo.preload(:outputs)
-    |> cast(params, [
-      :deposit_tx_hash,
-      :deposit_block_number,
-      :witnesses,
-      :tx_hash,
-      :signed_tx,
-      :tx_bytes,
-      :tx_type,
-      :kind
-    ])
-    |> validate_required([:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type, :kind])
+    |> cast(params, @optional_fields ++ @required_fields)
+    |> validate_required(@required_fields)
     |> cast_assoc(:inputs)
     |> cast_assoc(:outputs)
     |> Validator.validate_protocol()
