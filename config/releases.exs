@@ -29,7 +29,15 @@ config :engine,
 
 config :engine, Engine.Repo,
   url: System.get_env("DATABASE_URL"),
-  backoff_type: :stop
+  backoff_type: :stop,
+  # Have at most `:pool_size` DB connections on standby and serving DB queries.
+  pool_size: String.to_integer(System.get_env("ENGINE_DB_POOL_SIZE") || "10"),
+  # Wait at most `:queue_target` for a connection. If all connections checked out during
+  # a `:queue_interval` takes more than `:queue_target`, then we double the `:queue_target`.
+  # If checking out connections take longer than the new target, a DBConnection.ConnectionError is raised.
+  # See: https://hexdocs.pm/db_connection/DBConnection.html#start_link/2-queue-config
+  queue_target: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_TARGET_MS") || "100"),
+  queue_interval: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_INTERVAL_MS") || "2000")
 
 config :engine, Engine.Fees,
   fee_feed_url: System.get_env("FEE_FEED_URL") || "http://localhost:4000/api/v1",
