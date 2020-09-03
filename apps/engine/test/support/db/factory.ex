@@ -146,12 +146,13 @@ defmodule Engine.DB.Factory do
     insert(:output, %{output_data: data, blknum: Map.get(attr, :blknum, default_blknum), state: "confirmed"})
 
     tx_bytes =
-      ExPlasma.payment_v1()
-      |> Builder.new()
-      |> Builder.add_input(blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0)
-      |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
-      |> Builder.sign!([priv_encoded])
-      |> ExPlasma.encode!()
+      attr[:tx_bytes] ||
+        ExPlasma.payment_v1()
+        |> Builder.new()
+        |> Builder.add_input(blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0)
+        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+        |> Builder.sign!([priv_encoded])
+        |> ExPlasma.encode!()
 
     {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
     Changeset.apply_changes(changeset)
