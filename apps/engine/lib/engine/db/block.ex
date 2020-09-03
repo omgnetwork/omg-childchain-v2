@@ -181,15 +181,20 @@ defmodule Engine.DB.Block do
   defp generate_block_hash(repo, %{"new-block" => block}) do
     hash =
       block.id
-      |> query_tx_bytes_in_block()
-      |> Repo.all()
+      |> fetch_tx_bytes_in_block()
       |> Merkle.root_hash()
 
     changeset = change(block, hash: hash)
     repo.update(changeset)
   end
 
-  defp query_tx_bytes_in_block(block_id) do
-    from(transaction in Transaction, where: transaction.block_id == ^block_id, select: transaction.tx_bytes)
+  defp fetch_tx_bytes_in_block(block_id) do
+    query = from(transaction in Transaction, where: transaction.block_id == ^block_id)
+
+    query
+    |> Repo.all()
+    |> Enum.map(fn tx ->
+      Transaction.decode_tx_bytes(tx)
+    end)
   end
 end
