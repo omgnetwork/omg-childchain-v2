@@ -101,8 +101,8 @@ defmodule Engine.DB.Transaction do
     end
   end
 
-  @spec decode_tx_bytes(t()) :: binary()
-  def decode_tx_bytes(transaction) do
+  @spec encode_unsigned(t()) :: binary()
+  def encode_unsigned(transaction) do
     {:ok, tx} = ExPlasma.decode(transaction.tx_bytes, signed: false)
 
     ExPlasma.encode!(tx, signed: false)

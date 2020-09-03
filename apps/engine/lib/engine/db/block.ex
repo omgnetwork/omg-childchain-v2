@@ -194,7 +194,7 @@ defmodule Engine.DB.Block do
     query
     |> Repo.all()
     |> Enum.map(fn tx ->
-      Transaction.decode_tx_bytes(tx)
+      Transaction.encode_unsigned(tx)
     end)
   end
 end

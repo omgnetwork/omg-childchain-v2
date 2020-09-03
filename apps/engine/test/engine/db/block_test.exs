@@ -27,7 +27,7 @@ defmodule Engine.DB.BlockTest do
     test "generates the block hash" do
       _ = insert(:deposit_transaction)
       txn1 = insert(:payment_v1_transaction)
-      hash = Merkle.root_hash([Transaction.decode_tx_bytes(txn1)])
+      hash = Merkle.root_hash([Transaction.encode_unsigned(txn1)])
 
       assert {:ok, %{"hash-block" => block}} = Block.form()
       assert block.hash == hash
