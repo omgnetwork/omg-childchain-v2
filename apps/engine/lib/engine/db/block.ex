@@ -68,14 +68,14 @@ defmodule Engine.DB.Block do
 
   @spec get_all_and_submit(pos_integer(), pos_integer(), function()) :: transaction_result_t()
   def get_all_and_submit(new_height, mined_child_block, submit) do
-    Ecto.Multi.new()
-    |> Ecto.Multi.run(:get_all, fn repo, changeset ->
+    Multi.new()
+    |> Multi.run(:get_all, fn repo, changeset ->
       get_all(repo, changeset, new_height, mined_child_block)
     end)
-    |> Ecto.Multi.run(:compute_gas_and_submit, fn repo, changeset ->
+    |> Multi.run(:compute_gas_and_submit, fn repo, changeset ->
       compute_gas_and_submit(repo, changeset, new_height, mined_child_block, submit)
     end)
-    |> Engine.Repo.transaction()
+    |> Repo.transaction()
   end
 
   @doc """
@@ -181,7 +181,7 @@ defmodule Engine.DB.Block do
   defp generate_block_hash(repo, %{"new-block" => block}) do
     hash =
       block.id
-      |> transactions_query()
+      |> query_tx_bytes_in_block()
       |> Repo.all()
       |> Merkle.root_hash()
 
@@ -189,7 +189,7 @@ defmodule Engine.DB.Block do
     repo.update(changeset)
   end
 
-  defp transactions_query(block_id) do
+  defp query_tx_bytes_in_block(block_id) do
     from(transaction in Transaction, where: transaction.block_id == ^block_id, select: transaction.tx_bytes)
   end
 end
