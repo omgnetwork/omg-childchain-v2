@@ -15,6 +15,8 @@ defmodule API.Router do
 
   forward("/v1", to: API.V1.Router)
 
+  forward("/feature-flags", to: FunWithFlags.UI.Router, init_opts: [namespace: "feature-flags"])
+
   match _ do
     conn
     |> assign(:api_version, "-")

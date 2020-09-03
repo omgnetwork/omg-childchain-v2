@@ -120,4 +120,19 @@ config :api,
   port: 9656,
   cors_enabled: true
 
+config :fun_with_flags, :cache,
+  enabled: true,
+  # in seconds
+  ttl: 900
+
+config :fun_with_flags, :persistence,
+  adapter: FunWithFlags.Store.Persistent.Ecto,
+  repo: Engine.Repo,
+  ecto_table_name: "fun_with_flags_toggles"
+
+config :fun_with_flags, :cache_bust_notifications,
+  enabled: true,
+  adapter: FunWithFlags.Notifications.PhoenixPubSub,
+  client: Bus.PubSub
+
 import_config "#{Mix.env()}.exs"

@@ -41,6 +41,8 @@ defmodule Engine.MixProject do
       {:hackney, "1.15.2", override: true},
       {:decorator, "~> 1.2"},
       {:ex_rlp, "~> 0.5.3"},
+      {:fun_with_flags, "~> 1.5.1"},
+      {:phoenix_pubsub, "~> 2.0"},
       # TEST
       {:exvcr, "~> 0.10", only: :test},
       {:ex_machina, "~> 2.4", only: [:test]},

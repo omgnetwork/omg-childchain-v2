@@ -29,6 +29,7 @@ defmodule API.MixProject do
       {:cors_plug, "~> 2.0"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.0"},
+      {:fun_with_flags_ui, "~> 0.7.2"},
       {:spandex, "~> 3.0.1"},
       {:spandex_datadog, "~> 1.0.0"},
       {:spandex_phoenix, "~> 0.4.2"}
