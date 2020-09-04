@@ -6,8 +6,8 @@ defmodule Engine.Ethereum.RootChain.Abi do
   alias Engine.Ethereum.RootChain.AbiFunctionSelector
   alias Engine.Ethereum.RootChain.Event
   alias Engine.Ethereum.RootChain.Fields
-  alias ExPlasma.Encoding
   alias ExPlasma.Crypto
+  alias ExPlasma.Encoding
 
   def decode_function(enriched_data, signature) do
     "0x" <> data = enriched_data
