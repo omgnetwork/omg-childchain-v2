@@ -7,10 +7,11 @@ defmodule Engine.Ethereum.RootChain.Abi do
   alias Engine.Ethereum.RootChain.Event
   alias Engine.Ethereum.RootChain.Fields
   alias ExPlasma.Encoding
+  alias ExPlasma.Crypto
 
   def decode_function(enriched_data, signature) do
     "0x" <> data = enriched_data
-    <<method_id::binary-size(4), _::binary>> = :keccakf1600.hash(:sha3_256, signature)
+    <<method_id::binary-size(4), _::binary>> = Crypto.keccak_hash(signature)
     method_id |> Encoding.to_hex() |> Kernel.<>(data) |> Encoding.to_binary!() |> decode_function()
   end
 
