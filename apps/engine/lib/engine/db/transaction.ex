@@ -53,7 +53,9 @@ defmodule Engine.DB.Transaction do
     field(:tx_bytes, :binary)
     field(:tx_hash, :binary)
     field(:tx_type, :integer)
+    # Stores the hash of the transaction if the transaction was deposit transacton
     field(:deposit_tx_hash, :binary)
+    # Stores the block number of the transaction if the transaction was deposit transacton
     field(:deposit_block_number, :integer)
     field(:kind, Ecto.Atom)
 

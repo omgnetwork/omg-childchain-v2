@@ -44,7 +44,9 @@ defmodule Engine.DB.Block do
   schema "blocks" do
     # Extracted from `output_id`
     field(:hash, :binary)
+    # nonce = max(nonce) + 1
     field(:nonce, :integer)
+    # blknum = nonce * 1000
     field(:blknum, :integer)
     field(:tx_hash, :binary)
     field(:formed_at_ethereum_height, :integer)
