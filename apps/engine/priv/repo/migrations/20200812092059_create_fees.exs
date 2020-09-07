@@ -7,10 +7,15 @@ defmodule Engine.Repo.Migrations.CreateFees do
       add(:type, :string, primary_key: true)
       add(:term, :binary)
 
-      add(:inserted_at, :utc_datetime, null: false, default: fragment("now()"))
+      add(:inserted_at, :utc_datetime, null: false, default: fragment("now_utc()"))
+      add(:updated_at, :utc_datetime, null: false, default: fragment("now_utc()"))
+
+      timestamps(inserted_at: :node_inserted_at, updated_at: :node_updated_at)
     end
 
     create(index(:fees, [:type]))
     create(index(:fees, [:inserted_at]))
+
+    execute("SELECT ecto_manage_updated_at('fees');")
   end
 end

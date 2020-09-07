@@ -31,6 +31,8 @@ defmodule Engine.DB.Output do
           updated_at: DateTime.t()
         }
 
+  @timestamps_opts [inserted_at: :node_inserted_at, updated_at: :node_updated_at]
+
   schema "outputs" do
     # Extracted from `output_id`
     field(:position, :integer)
@@ -44,7 +46,10 @@ defmodule Engine.DB.Output do
     belongs_to(:spending_transaction, Engine.DB.Transaction)
     belongs_to(:creating_transaction, Engine.DB.Transaction)
 
-    timestamps(type: :utc_datetime)
+    field(:inserted_at, :utc_datetime)
+    field(:updated_at, :utc_datetime)
+
+    timestamps()
   end
 
   @doc """
