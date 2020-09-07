@@ -35,6 +35,6 @@ defmodule Engine.Repo.Migrations.CreateBlocksTable do
       )
     )
 
-    execute("SELECT ecto_manage_updated_at('plasma_blocks');")
+    execute("SELECT ecto_manage_updated_at('blocks');")
   end
 end
