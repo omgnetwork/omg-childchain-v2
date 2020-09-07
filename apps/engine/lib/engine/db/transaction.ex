@@ -42,6 +42,8 @@ defmodule Engine.DB.Transaction do
   @deposit :deposit
   @transfer :transfer
 
+  @timestamps_opts [inserted_at: :node_inserted_at, updated_at: :node_updated_at]
+
   def kind_transfer(), do: @transfer
   def kind_deposit(), do: @deposit
 
@@ -63,6 +65,8 @@ defmodule Engine.DB.Transaction do
 
     field(:inserted_at, :utc_datetime)
     field(:updated_at, :utc_datetime)
+
+    timestamps()
   end
 
   @doc """

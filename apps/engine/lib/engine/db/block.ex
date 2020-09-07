@@ -25,6 +25,8 @@ defmodule Engine.DB.Block do
           updated_at: DateTime.t()
         }
 
+  @timestamps_opts [inserted_at: :node_inserted_at, updated_at: :node_updated_at]
+
   schema "blocks" do
     field(:hash, :binary)
     field(:number, :integer)
@@ -34,6 +36,8 @@ defmodule Engine.DB.Block do
 
     field(:inserted_at, :utc_datetime)
     field(:updated_at, :utc_datetime)
+
+    timestamps()
   end
 
   def changeset(struct, params) do

@@ -9,6 +9,8 @@ defmodule Engine.DB.PlasmaBlock do
 
   require Logger
 
+  @timestamps_opts [inserted_at: :node_inserted_at, updated_at: :node_updated_at]
+
   schema "plasma_blocks" do
     # Extracted from `output_id`
     field(:hash, :binary)
@@ -22,6 +24,8 @@ defmodule Engine.DB.PlasmaBlock do
 
     field(:inserted_at, :utc_datetime)
     field(:updated_at, :utc_datetime)
+
+    timestamps()
   end
 
   @spec get_all_and_submit(pos_integer(), pos_integer(), function()) ::

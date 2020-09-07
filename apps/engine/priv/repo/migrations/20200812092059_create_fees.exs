@@ -9,6 +9,8 @@ defmodule Engine.Repo.Migrations.CreateFees do
 
       add(:inserted_at, :utc_datetime, null: false, default: fragment("now_utc()"))
       add(:updated_at, :utc_datetime, null: false, default: fragment("now_utc()"))
+
+      timestamps(inserted_at: :node_inserted_at, updated_at: :node_updated_at)
     end
 
     create(index(:fees, [:type]))

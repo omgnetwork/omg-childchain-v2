@@ -21,6 +21,7 @@ defmodule Engine.Repo.Migrations.AddPlasmaBlockTable do
       add(:attempts_counter, :integer, default: 0, null: false)
       add(:inserted_at, :utc_datetime, null: false, default: fragment("now_utc()"))
       add(:updated_at, :utc_datetime, null: false, default: fragment("now_utc()"))
+      timestamps(inserted_at: :node_inserted_at, updated_at: :node_updated_at)
     end
 
     execute("SELECT ecto_manage_updated_at('plasma_blocks');")
