@@ -84,7 +84,7 @@ defmodule Engine.DB.TransactionTest do
 
     test "builds the inputs" do
       input_blknum = 1
-      input = insert(:output, %{blknum: input_blknum, state: "confirmed"})
+      input = Repo.get(Output, insert(:output, %{blknum: input_blknum, state: "confirmed"}).id)
 
       tx_bytes =
         ExPlasma.payment_v1()

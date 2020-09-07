@@ -18,6 +18,8 @@ defmodule Engine.DB.Fee do
   @optional_fields [:term, :inserted_at]
   @allowed_types [:previous_fees, :merged_fees, :current_fees]
 
+  @timestamps_opts [inserted_at: :node_inserted_at, updated_at: :node_updated_at]
+
   @primary_key false
   schema "fees" do
     field(:hash, :string, primary_key: true)
@@ -25,6 +27,8 @@ defmodule Engine.DB.Fee do
     field(:term, Term)
 
     field(:inserted_at, :utc_datetime)
+
+    timestamps()
   end
 
   def changeset(struct, params) do

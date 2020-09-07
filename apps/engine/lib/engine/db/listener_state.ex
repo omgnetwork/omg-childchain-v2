@@ -10,11 +10,16 @@ defmodule Engine.DB.ListenerState do
   import Ecto.Changeset
   import Ecto.Query
 
+  @timestamps_opts [inserted_at: :node_inserted_at, updated_at: :node_updated_at]
+
   @primary_key {:listener, :string, []}
   schema "listener_states" do
     field(:height, :integer)
 
-    timestamps(type: :utc_datetime)
+    field(:inserted_at, :utc_datetime)
+    field(:updated_at, :utc_datetime)
+
+    timestamps()
   end
 
   @fields [:listener, :height]

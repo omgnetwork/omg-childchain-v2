@@ -40,6 +40,7 @@ defmodule Engine.DB.Block do
           {:ok, any()}
           | {:error, any()}
           | {:error, Ecto.Multi.name(), any(), %{required(Ecto.Multi.name()) => any()}}
+  @timestamps_opts [inserted_at: :node_inserted_at, updated_at: :node_updated_at]
 
   schema "blocks" do
     # Extracted from `output_id`
@@ -59,7 +60,10 @@ defmodule Engine.DB.Block do
       references: :id
     )
 
-    timestamps(type: :utc_datetime)
+    field(:inserted_at, :utc_datetime)
+    field(:updated_at, :utc_datetime)
+
+    timestamps()
   end
 
   def changeset(struct, params) do
