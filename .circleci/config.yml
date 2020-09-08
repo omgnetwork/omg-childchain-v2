@@ -1,5 +1,4 @@
 version: 2.1
-jobs:
 commands:
   add_rust_to_path:
     description: "Add path to PATH env var"
@@ -15,6 +14,7 @@ commands:
           command: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
       - add_rust_to_path
 
+jobs:
   build:
     working_directory: ~/childchain
     docker:
