@@ -11,12 +11,11 @@ defmodule Engine.DB.Block do
 
   alias Ecto.Multi
   alias Engine.DB.Transaction
+  alias Engine.Configuration
   alias Engine.Repo
   alias ExPlasma.Merkle
 
   require Logger
-
-  @block_number_multiplier 1_000
 
   @optional_fields [:hash, :tx_hash, :formed_at_ethereum_height, :submitted_at_ethereum_height, :gas, :attempts_counter]
   @required_fields [:nonce, :blknum]
@@ -166,7 +165,7 @@ defmodule Engine.DB.Block do
         found_nonce -> found_nonce + 1
       end
 
-    blknum = nonce * @block_number_multiplier
+    blknum = nonce * Configuration.child_block_interval()
 
     params = %{nonce: nonce, blknum: blknum}
 
