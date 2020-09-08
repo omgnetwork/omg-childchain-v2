@@ -42,35 +42,71 @@ defmodule Engine.DB.BlockTest do
     end
 
     test "block hash is consistent with childchain v1" do
-      _ =
-        insert(:payment_v1_transaction,
-          tx_bytes:
-            <<248, 185, 248, 67, 184, 65, 225, 143, 118, 248, 69, 70, 150, 211, 27, 212, 109, 246, 228, 220, 32, 48, 90,
-              134, 246, 160, 67, 186, 26, 87, 234, 96, 98, 33, 11, 139, 150, 166, 64, 176, 224, 81, 159, 228, 64, 244,
-              140, 189, 139, 141, 255, 152, 170, 132, 222, 222, 160, 120, 35, 103, 204, 247, 35, 140, 233, 130, 175,
-              209, 32, 187, 28, 1, 225, 160, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              0, 0, 0, 59, 154, 202, 0, 238, 237, 1, 235, 148, 207, 194, 79, 222, 88, 128, 171, 217, 153, 41, 195, 239,
-              138, 178, 227, 16, 72, 173, 118, 35, 148, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100,
-              128, 160, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0>>
-        )
+      alice_priv_key =
+        "0x" <>
+          Base.encode16(
+            <<54, 43, 207, 67, 140, 160, 190, 135, 18, 162, 70, 120, 36, 245, 106, 165, 5, 101, 183, 55, 11, 117, 126,
+              135, 49, 50, 12, 228, 173, 219, 183, 175>>,
+            case: :lower
+          )
 
-      _ =
-        insert(:payment_v1_transaction,
-          tx_bytes:
-            <<248, 185, 248, 67, 184, 65, 181, 227, 188, 30, 83, 62, 160, 62, 242, 77, 70, 64, 236, 81, 220, 1, 159,
-              140, 90, 40, 182, 240, 165, 167, 97, 69, 32, 88, 41, 177, 202, 160, 78, 159, 220, 44, 180, 190, 6, 119,
-              107, 2, 104, 32, 144, 209, 216, 228, 255, 134, 90, 129, 185, 22, 122, 179, 109, 183, 168, 81, 67, 248, 58,
-              139, 28, 1, 225, 160, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-              59, 154, 241, 17, 238, 237, 1, 235, 148, 207, 194, 79, 222, 88, 128, 171, 217, 153, 41, 195, 239, 138,
-              178, 227, 16, 72, 173, 118, 35, 148, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 100, 128,
-              160, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0>>
-        )
+      bob_address = <<207, 194, 79, 222, 88, 128, 171, 217, 153, 41, 195, 239, 138, 178, 227, 16, 72, 173, 118, 35>>
+
+      Enum.each(0..1, fn index ->
+        tx_bytes =
+          ExPlasma.payment_v1()
+          |> ExPlasma.Builder.new()
+          |> ExPlasma.Builder.add_input(blknum: 1, txindex: index, oindex: index)
+          |> ExPlasma.Builder.add_output(
+            output_type: 1,
+            output_data: %{output_guard: bob_address, token: <<0::160>>, amount: 100}
+          )
+          |> ExPlasma.Builder.sign!([alice_priv_key])
+          |> ExPlasma.encode!()
+
+        _ = insert(:payment_v1_transaction, tx_bytes: tx_bytes)
+      end)
 
       assert {:ok, %{"hash-block" => block}} = Block.form()
 
       assert block.hash ==
                <<189, 245, 69, 5, 94, 45, 148, 210, 5, 89, 98, 245, 201, 111, 222, 48, 61, 114, 145, 55, 122, 84, 196,
                  156, 254, 80, 85, 184, 3, 205, 163, 233>>
+    end
+
+    @tag timeout: :infinity
+    @tag :integration
+    test "correctly calculates hash for a lot of transactions" do
+      alice_priv_key =
+        "0x" <>
+          Base.encode16(
+            <<54, 43, 207, 67, 140, 160, 190, 135, 18, 162, 70, 120, 36, 245, 106, 165, 5, 101, 183, 55, 11, 117, 126,
+              135, 49, 50, 12, 228, 173, 219, 183, 175>>,
+            case: :lower
+          )
+
+      bob_address = <<207, 194, 79, 222, 88, 128, 171, 217, 153, 41, 195, 239, 138, 178, 227, 16, 72, 173, 118, 35>>
+
+      Enum.each(1..64_000, fn index ->
+        tx_bytes =
+          ExPlasma.payment_v1()
+          |> ExPlasma.Builder.new()
+          |> ExPlasma.Builder.add_input(blknum: 1, txindex: index, oindex: index)
+          |> ExPlasma.Builder.add_output(
+            output_type: 1,
+            output_data: %{output_guard: bob_address, token: <<0::160>>, amount: 100}
+          )
+          |> ExPlasma.Builder.sign!([alice_priv_key])
+          |> ExPlasma.encode!()
+
+        _ = insert(:transaction, tx_bytes: tx_bytes)
+      end)
+
+      assert {:ok, %{"hash-block" => block}} = Block.form()
+
+      assert block.hash ==
+               <<12, 40, 202, 7, 16, 175, 119, 138, 7, 95, 8, 3, 148, 93, 162, 168, 136, 226, 196, 236, 83, 62, 220, 75,
+                 59, 52, 6, 18, 249, 52, 124, 228>>
     end
 
     test "assigns nonce and blknum" do

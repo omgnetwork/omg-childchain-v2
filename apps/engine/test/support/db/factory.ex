@@ -135,6 +135,16 @@ defmodule Engine.DB.Factory do
     }
   end
 
+  def transaction_factory(params) do
+    tx_bytes = params[:tx_bytes]
+    {:ok, hash} = ExPlasma.hash(tx_bytes)
+
+    %Transaction{
+      tx_bytes: tx_bytes,
+      tx_hash: hash
+    }
+  end
+
   def payment_v1_transaction_factory(attr) do
     entity = TestEntity.alice()
 
