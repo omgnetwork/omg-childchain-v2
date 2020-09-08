@@ -1,5 +1,19 @@
 version: 2.1
 jobs:
+commands:
+  add_rust_to_path:
+    description: "Add path to PATH env var"
+    steps:
+      - run:
+          name: Add rust to PATH env
+          command: echo 'export PATH=~/.cargo/bin/:$PATH' >> $BASH_ENV
+  install_rust:
+    description: "Install Rust"
+    steps:
+      - run:
+          name: Install Rust
+          command: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+      - add_rust_to_path
 
   build:
     working_directory: ~/childchain
@@ -15,10 +29,7 @@ jobs:
       MIX_ENV: test
     steps:
       - checkout
-      - run:
-          name: Install Rust
-          command: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-      - run: echo 'export PATH=~/.cargo/bin/:$PATH' >> $BASH_ENV
+      - install_rust
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
           key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
@@ -43,7 +54,7 @@ jobs:
     environment:
       MIX_ENV=test
     steps:
-      - run: echo 'export PATH=~/.cargo/bin/:$PATH' >> $BASH_ENV
+      - add_rust_to_path
       - checkout
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
@@ -58,10 +69,7 @@ jobs:
       MIX_ENV=test
     steps:
       - checkout
-      - run:
-          name: Install Rust
-          command: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-      - run: echo 'export PATH=~/.cargo/bin/:$PATH' >> $BASH_ENV
+      - install_rust
       - run: docker-compose up -d postgres
       - restore_cache:
           key: v5-asdf-install
@@ -96,10 +104,7 @@ jobs:
     steps:
       - checkout
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - run:
-          name: Install Rust
-          command: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-      - run: echo 'export PATH=~/.cargo/bin/:$PATH' >> $BASH_ENV
+      - install_rust
       - run:
           name: "Pull Submodules"
           command: |
@@ -180,10 +185,7 @@ jobs:
       REORG: true
     steps:
       - checkout
-      - run:
-          name: Install Rust
-          command: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-      - run: echo 'export PATH=~/.cargo/bin/:$PATH' >> $BASH_ENV
+      - install_rust
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run:
           name: "Pull Submodules"
@@ -271,7 +273,7 @@ jobs:
       MIX_ENV=test
     steps:
       - checkout
-      - run: echo 'export PATH=~/.cargo/bin/:$PATH' >> $BASH_ENV
+      - add_rust_to_path
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
           key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
@@ -316,9 +318,7 @@ jobs:
       MIX_ENV=dev
     steps:
       - checkout
-      - run:
-          name: Install Rust
-          command: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+      - install_rust
       - run: echo 'export PATH=~/.cargo/bin/:$PATH' >> $BASH_ENV
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
