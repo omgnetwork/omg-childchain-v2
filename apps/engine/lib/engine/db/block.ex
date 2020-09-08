@@ -10,8 +10,8 @@ defmodule Engine.DB.Block do
   import Ecto.Query, only: [from: 2]
 
   alias Ecto.Multi
-  alias Engine.DB.Transaction
   alias Engine.Configuration
+  alias Engine.DB.Transaction
   alias Engine.Repo
   alias ExPlasma.Merkle
 
