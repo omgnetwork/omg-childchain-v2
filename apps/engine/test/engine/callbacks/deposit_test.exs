@@ -17,7 +17,7 @@ defmodule Engine.Callbacks.DepositTest do
   test "generates a confirmed transaction, block and utxo for the deposit" do
     deposit_event = build(:deposit_event, amount: 1, blknum: 3, depositor: <<1::160>>)
 
-    assert {:ok, %{"deposit-blknum-3" => %Transaction{outputs: [output], deposit_block_number: 3}}} =
+    assert {:ok, %{"deposit-blknum-3" => %Transaction{outputs: [output]}}} =
              Deposit.callback([deposit_event], :depositor)
 
     assert %Output{output_data: data} = output
@@ -32,8 +32,8 @@ defmodule Engine.Callbacks.DepositTest do
 
     assert {:ok,
             %{
-              "deposit-blknum-6" => %Transaction{deposit_block_number: 6},
-              "deposit-blknum-5" => %Transaction{deposit_block_number: 5}
+              "deposit-blknum-6" => %Transaction{},
+              "deposit-blknum-5" => %Transaction{}
             }} = Deposit.callback(events, :depositor)
   end
 
@@ -43,7 +43,7 @@ defmodule Engine.Callbacks.DepositTest do
 
     assert {:ok, %{"deposit-blknum-1" => _}} = Deposit.callback([event], :depositor)
     assert {:ok, %{"deposit-blknum-1" => _, "deposit-blknum-2" => _}} = Deposit.callback(events, :depositor)
-    assert Repo.one(from(transaction in Transaction, select: count(transaction.deposit_tx_hash))) == 2
+    assert Repo.one(from(transaction in Transaction, select: count(transaction))) == 1
   end
 
   test "three listeners try to commit deposits from different starting heights" do
@@ -68,19 +68,19 @@ defmodule Engine.Callbacks.DepositTest do
 
     assert listener_for(:depositor, height: 405)
 
-    assert Repo.one(from(transaction in Transaction, select: count(transaction.deposit_tx_hash))) == 2
+    assert Repo.one(from(transaction in Transaction, select: count(transaction))) == 1
 
     assert {:ok, %{"deposit-blknum-5" => _}} = Deposit.callback(deposit_events_listener2, :depositor)
 
     assert listener_for(:depositor, height: 406)
 
-    assert Repo.one(from(transaction in Transaction, select: count(transaction.deposit_tx_hash))) == 3
+    assert Repo.one(from(transaction in Transaction, select: count(transaction))) == 1
 
     assert {:ok, _} = Deposit.callback(deposit_events_listener3, :depositor)
 
     assert listener_for(:depositor, height: 406)
 
-    assert Repo.one(from(transaction in Transaction, select: count(transaction.deposit_tx_hash))) == 3
+    assert Repo.one(from(transaction in Transaction, select: count(transaction))) == 1
 
     assert {:ok, _} = Deposit.callback(deposit_events_listener3, :depositor)
 

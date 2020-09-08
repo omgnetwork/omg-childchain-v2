@@ -6,8 +6,6 @@ defmodule Engine.Repo.Migrations.CreateTransactions do
       add(:tx_bytes, :binary)
       add(:tx_hash, :binary)
       add(:tx_type, :integer)
-      add(:deposit_tx_hash, :binary)
-      add(:deposit_block_number, :integer)
       add(:kind, :string)
 
       add(:block_id, references(:blocks))
@@ -17,7 +15,7 @@ defmodule Engine.Repo.Migrations.CreateTransactions do
     end
 
     create(index(:transactions, [:block_id]))
-    create(unique_index(:transactions, [:deposit_tx_hash, :deposit_block_number]))
+    create(unique_index(:transactions, [:tx_type, :tx_hash]))
     execute("SELECT ecto_manage_updated_at('transactions');")
   end
 end

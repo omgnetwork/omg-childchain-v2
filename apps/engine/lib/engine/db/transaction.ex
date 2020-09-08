@@ -44,7 +44,7 @@ defmodule Engine.DB.Transaction do
   @deposit :deposit
   @transfer :transfer
   @required_fields [:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type, :kind]
-  @optional_fields [:deposit_tx_hash, :deposit_block_number]
+  @optional_fields []
 
   @timestamps_opts [inserted_at: :node_inserted_at, updated_at: :node_updated_at]
 
@@ -55,10 +55,6 @@ defmodule Engine.DB.Transaction do
     field(:tx_bytes, :binary)
     field(:tx_hash, :binary)
     field(:tx_type, :integer)
-    # Stores the hash of the transaction if the transaction was deposit transacton
-    field(:deposit_tx_hash, :binary)
-    # Stores the block number of the transaction if the transaction was deposit transacton
-    field(:deposit_block_number, :integer)
     field(:kind, Ecto.Atom)
 
     # Virtual fields used for convenience and validation
