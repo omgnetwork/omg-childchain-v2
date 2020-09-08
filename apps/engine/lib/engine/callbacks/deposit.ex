@@ -18,6 +18,8 @@ defmodule Engine.Callbacks.Deposit do
 
   use Spandex.Decorators
 
+  import Ecto.Changeset
+
   alias Ecto.Multi
   alias Engine.Callback
   alias Engine.DB.Transaction
@@ -51,8 +53,10 @@ defmodule Engine.Callbacks.Deposit do
       |> ExPlasma.encode!()
 
     {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_deposit())
+    confirmed_output = changeset |> get_field(:outputs) |> hd()
+    transaction = put_change(changeset, :outputs, [%{confirmed_output | state: "confirmed"}])
 
-    Ecto.Multi.insert(multi, "deposit-blknum-#{event.data["blknum"]}", changeset,
+    Ecto.Multi.insert(multi, "deposit-blknum-#{event.data["blknum"]}", transaction,
       on_conflict: :nothing,
       conflict_target: [:tx_hash, :tx_type]
     )
