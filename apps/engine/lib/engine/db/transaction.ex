@@ -42,6 +42,8 @@ defmodule Engine.DB.Transaction do
   @deposit :deposit
   @transfer :transfer
 
+  @timestamps_opts [inserted_at: :node_inserted_at, updated_at: :node_updated_at]
+
   def kind_transfer(), do: @transfer
   def kind_deposit(), do: @deposit
 
@@ -61,7 +63,10 @@ defmodule Engine.DB.Transaction do
     has_many(:inputs, Output, foreign_key: :spending_transaction_id)
     has_many(:outputs, Output, foreign_key: :creating_transaction_id)
 
-    timestamps(type: :utc_datetime)
+    field(:inserted_at, :utc_datetime)
+    field(:updated_at, :utc_datetime)
+
+    timestamps()
   end
 
   @doc """
