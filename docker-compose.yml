@@ -100,7 +100,7 @@ services:
 
   nginx:
     image: nginx:latest
-    container_name: nginx_geth
+    container_name: nginx
     volumes:
       - ./docker/nginx/geth_nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
