@@ -1,6 +1,6 @@
 version: "3.7"
 services:
-  nginx:
+  nginx_childchain:
     image: nginx:latest
     volumes:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
@@ -98,7 +98,7 @@ services:
         ipv4_address: 172.27.0.101
 
 
-  nginx_geth:
+  nginx:
     image: nginx:latest
     container_name: nginx_geth
     volumes:
@@ -108,7 +108,7 @@ services:
       - 8546:81
       - 443:443
     healthcheck:
-      test: curl nginx_geth:80
+      test: curl nginx:80
       interval: 5s
       timeout: 3s
       retries: 5
