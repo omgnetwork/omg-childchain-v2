@@ -6,9 +6,11 @@ defmodule API.V1.View.Transaction do
   alias ExPlasma.Encoding
 
   @type serialized_hash() :: %{
-          required(:tx_hash) => String.t()
+          required(:tx_hash) => String.t(),
+          required(:object) => String.t()
         }
 
+  @spec serialize_hash(map()) :: serialized_hash()
   def serialize_hash(transaction) do
     %{object: "transaction", tx_hash: Encoding.to_hex(transaction.tx_hash)}
   end

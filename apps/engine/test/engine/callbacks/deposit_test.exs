@@ -4,7 +4,6 @@ defmodule Engine.Callbacks.DepositTest do
   use Engine.DB.DataCase, async: true
 
   alias Engine.Callbacks.Deposit
-  alias Engine.DB.Block
   alias Engine.DB.ListenerState
   alias Engine.DB.Output
   alias Engine.DB.Transaction
@@ -18,12 +17,9 @@ defmodule Engine.Callbacks.DepositTest do
   test "generates a confirmed transaction, block and utxo for the deposit" do
     deposit_event = build(:deposit_event, amount: 1, blknum: 3, depositor: <<1::160>>)
 
-    assert {:ok, %{"deposit-blknum-3" => block}} = Deposit.callback([deposit_event], :depositor)
-    assert %Block{number: 3, state: "confirmed"} = block
+    assert {:ok, %{"deposit-blknum-3" => %Transaction{outputs: [output]}}} =
+             Deposit.callback([deposit_event], :depositor)
 
-    block = Repo.preload(block, :transactions)
-
-    assert %Transaction{outputs: [output]} = hd(block.transactions)
     assert %Output{output_data: data} = output
     assert %ExPlasma.Output{output_data: %{amount: 1, output_guard: <<1::160>>}} = ExPlasma.Output.decode!(data)
   end
@@ -34,10 +30,11 @@ defmodule Engine.Callbacks.DepositTest do
       build(:deposit_event, blknum: 5)
     ]
 
-    assert {:ok, %{"deposit-blknum-6" => block6, "deposit-blknum-5" => block5}} = Deposit.callback(events, :depositor)
-
-    assert %Block{number: 6, state: "confirmed"} = block6
-    assert %Block{number: 5, state: "confirmed"} = block5
+    assert {:ok,
+            %{
+              "deposit-blknum-6" => %Transaction{},
+              "deposit-blknum-5" => %Transaction{}
+            }} = Deposit.callback(events, :depositor)
   end
 
   test "does not re-insert existing deposit events" do
@@ -46,7 +43,7 @@ defmodule Engine.Callbacks.DepositTest do
 
     assert {:ok, %{"deposit-blknum-1" => _}} = Deposit.callback([event], :depositor)
     assert {:ok, %{"deposit-blknum-1" => _, "deposit-blknum-2" => _}} = Deposit.callback(events, :depositor)
-    assert Repo.one(from(b in Engine.DB.Block, select: count(b.id))) == 2
+    assert Repo.one(from(transaction in Transaction, select: count(transaction))) == 1
   end
 
   test "three listeners try to commit deposits from different starting heights" do
@@ -71,19 +68,19 @@ defmodule Engine.Callbacks.DepositTest do
 
     assert listener_for(:depositor, height: 405)
 
-    assert Repo.one(from(b in Engine.DB.Block, select: count(b.id))) == 2
+    assert Repo.one(from(transaction in Transaction, select: count(transaction))) == 1
 
     assert {:ok, %{"deposit-blknum-5" => _}} = Deposit.callback(deposit_events_listener2, :depositor)
 
     assert listener_for(:depositor, height: 406)
 
-    assert Repo.one(from(b in Engine.DB.Block, select: count(b.id))) == 3
+    assert Repo.one(from(transaction in Transaction, select: count(transaction))) == 1
 
     assert {:ok, _} = Deposit.callback(deposit_events_listener3, :depositor)
 
     assert listener_for(:depositor, height: 406)
 
-    assert Repo.one(from(b in Engine.DB.Block, select: count(b.id))) == 3
+    assert Repo.one(from(transaction in Transaction, select: count(transaction))) == 1
 
     assert {:ok, _} = Deposit.callback(deposit_events_listener3, :depositor)
 

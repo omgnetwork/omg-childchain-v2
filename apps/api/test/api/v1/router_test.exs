@@ -166,7 +166,7 @@ defmodule API.V1.RouterTest do
       transaction = insert(:deposit_transaction)
       tx_bytes = Encoding.to_hex(transaction.tx_bytes)
       hash = Encoding.to_hex(transaction.block.hash)
-      number = transaction.block.number
+      number = transaction.block.blknum
       {:ok, payload} = post("block.get", %{hash: hash})
 
       assert_payload_data(payload, %{

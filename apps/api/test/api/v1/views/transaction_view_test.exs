@@ -1,7 +1,4 @@
 defmodule API.V1.View.TransactionTest do
-  @moduledoc """
-  """
-
   use Engine.DB.DataCase, async: true
 
   alias API.V1.View.Transaction

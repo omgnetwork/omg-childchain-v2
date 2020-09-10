@@ -8,13 +8,15 @@ defmodule API.V1.View.Block do
   @type serialized_block() :: %{
           required(:blknum) => pos_integer(),
           required(:hash) => String.t(),
-          required(:transactions) => [String.t()]
+          required(:transactions) => [String.t()],
+          required(:object) => String.t()
         }
 
+  @spec serialize(map()) :: serialized_block()
   def serialize(block) do
     %{
       object: "block",
-      blknum: block.number,
+      blknum: block.blknum,
       hash: Encoding.to_hex(block.hash),
       transactions: Enum.map(block.transactions, &Encoding.to_hex(&1.tx_bytes))
     }

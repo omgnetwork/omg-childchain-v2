@@ -33,3 +33,5 @@ paths:
     $ref: 'fees/paths.yaml#/fees.all'
   /health.check:
     $ref: 'other/paths.yaml#/health.check'
+  /configuration.get:
+    $ref: 'configuration/paths.yaml#/configuration.get'

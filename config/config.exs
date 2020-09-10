@@ -28,6 +28,7 @@ contracts = parse_contracts.()
 config :engine,
   finality_margin: 10,
   network: "TEST",
+  child_block_interval: 1000,
   tx_hash_contract: contracts["TX_HASH_CONTRACT"],
   authority_address: contracts["AUTHORITY_ADDRESS"],
   plasma_framework: contracts["CONTRACT_ADDRESS_PLASMA_FRAMEWORK"],
