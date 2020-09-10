@@ -18,12 +18,10 @@ defmodule Engine.Callbacks.Deposit do
 
   use Spandex.Decorators
 
-  import Ecto.Changeset
-
   alias Ecto.Multi
   alias Engine.Callback
-  alias Engine.DB.Transaction
-  alias ExPlasma.Builder
+  alias Engine.DB.Output
+  alias ExPlasma.Output.Position
 
   @doc """
   Inserts deposit events, recreating the transaction and forming the associated block,
@@ -31,6 +29,8 @@ defmodule Engine.Callbacks.Deposit do
   """
   @impl Callback
   @decorate trace(service: :ecto, type: :backend)
+  def callback([], _listener), do: {:ok, nil}
+
   def callback(events, listener) do
     Multi.new()
     |> Callback.update_listener_height(events, listener)
@@ -41,24 +41,26 @@ defmodule Engine.Callbacks.Deposit do
   defp do_callback(multi, [event | tail]), do: multi |> build_deposit(event) |> do_callback(tail)
   defp do_callback(multi, []), do: multi
 
-  defp build_deposit(multi, %{} = event) do
-    tx_bytes =
-      ExPlasma.payment_v1()
-      |> Builder.new()
-      |> Builder.add_output(
+  defp build_deposit(multi, event) do
+    output_id = %{blknum: event.data["blknum"], txindex: 0, oindex: 0}
+    position = Position.pos(output_id)
+
+    output_params = %{
+      state: "confirmed",
+      output_type: ExPlasma.payment_v1(),
+      output_data: %{
         output_guard: event.data["depositor"],
         token: event.data["token"],
         amount: event.data["amount"]
-      )
-      |> ExPlasma.encode!()
+      },
+      output_id: Map.put(output_id, :position, position)
+    }
 
-    {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_deposit())
-    confirmed_output = changeset |> get_field(:outputs) |> hd()
-    transaction = put_change(changeset, :outputs, [%{confirmed_output | state: "confirmed"}])
+    output = Output.changeset(%Output{}, output_params)
 
-    Ecto.Multi.insert(multi, "deposit-blknum-#{event.data["blknum"]}", transaction,
+    Ecto.Multi.insert(multi, "deposit-output-#{position}", output,
       on_conflict: :nothing,
-      conflict_target: [:tx_hash, :tx_type]
+      conflict_target: :position
     )
   end
 end

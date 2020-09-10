@@ -67,7 +67,7 @@ defmodule Engine.DB.Factory do
       attr
       |> Map.put(:signature, "ExitStarted(address,uint160)")
       |> Map.put(:call_data, %{
-        "utxoPos" => position
+        utxo_pos: position
       })
 
     build(:event, params)
@@ -164,7 +164,7 @@ defmodule Engine.DB.Factory do
         |> Builder.sign!([priv_encoded])
         |> ExPlasma.encode!()
 
-    {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
+    {:ok, changeset} = Transaction.decode(tx_bytes)
     Changeset.apply_changes(changeset)
   end
 

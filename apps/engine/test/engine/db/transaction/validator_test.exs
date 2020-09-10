@@ -123,15 +123,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
         |> change()
         |> Ecto.Changeset.add_error(:some_key, "some message")
 
-      params = %{tx_type: 1, kind: Transaction.kind_transfer()}
-      validated_changeset = Validator.validate_statefully(changeset, params)
-      assert validated_changeset == changeset
-    end
-
-    test "returns the changeset unchanged when it's a deposit" do
-      changeset = change(%Transaction{})
-
-      params = %{tx_type: 1, kind: Transaction.kind_deposit()}
+      params = %{tx_type: 1}
       validated_changeset = Validator.validate_statefully(changeset, params)
       assert validated_changeset == changeset
     end
@@ -165,7 +157,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
         |> put_assoc(:inputs, inputs)
         |> put_assoc(:outputs, outputs)
 
-      params = %{tx_type: 1, kind: Transaction.kind_transfer(), fees: fees}
+      params = %{tx_type: 1, fees: fees}
       validated_changeset = Validator.validate_statefully(changeset, params)
 
       assert validated_changeset.valid?
@@ -196,7 +188,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
         |> put_assoc(:inputs, inputs)
         |> put_assoc(:outputs, outputs)
 
-      params = %{tx_type: 1, kind: Transaction.kind_transfer(), fees: fees}
+      params = %{tx_type: 1, fees: fees}
       validated_changeset = Validator.validate_statefully(changeset, params)
 
       refute validated_changeset.valid?

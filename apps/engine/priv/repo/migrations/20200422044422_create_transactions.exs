@@ -6,7 +6,6 @@ defmodule Engine.Repo.Migrations.CreateTransactions do
       add(:tx_bytes, :binary)
       add(:tx_hash, :binary)
       add(:tx_type, :integer)
-      add(:kind, :string)
 
       add(:block_id, references(:blocks))
       add(:inserted_at, :utc_datetime, null: false, default: fragment("now_utc()"))

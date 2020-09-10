@@ -14,14 +14,6 @@ defmodule Engine.DB.TransactionTest do
   end
 
   describe "decode/2" do
-    test "decodes tx_bytes and validates for a deposit" do
-      %{tx_bytes: tx_bytes} = build(:deposit_transaction, amount: 0)
-      {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_deposit())
-
-      refute changeset.valid?
-      assert assert "Cannot be zero" in errors_on(changeset).amount
-    end
-
     test "decodes tx_bytes and validates for a transfer" do
       tx_bytes =
         ExPlasma.payment_v1()
@@ -31,7 +23,7 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.sign!([])
         |> ExPlasma.encode!()
 
-      assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
+      assert {:ok, changeset} = Transaction.decode(tx_bytes)
 
       refute changeset.valid?
       assert assert "Cannot be zero" in errors_on(changeset).amount
@@ -47,13 +39,12 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.sign!([])
         |> ExPlasma.encode!()
 
-      assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
+      assert {:ok, changeset} = Transaction.decode(tx_bytes)
 
       signed_tx = get_field(changeset, :signed_tx)
       {:ok, hash} = ExPlasma.hash(signed_tx)
 
       assert get_field(changeset, :tx_type) == 1
-      assert get_field(changeset, :kind) == Transaction.kind_transfer()
       assert get_field(changeset, :tx_bytes) == tx_bytes
       assert get_field(changeset, :tx_hash) == hash
       assert get_field(changeset, :witnesses) == []
@@ -75,7 +66,7 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.sign!([])
         |> ExPlasma.encode!()
 
-      assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
+      assert {:ok, changeset} = Transaction.decode(tx_bytes)
 
       assert [%Output{output_data: o_1_data_enc}, %Output{output_data: o_2_data_enc}] = get_field(changeset, :outputs)
       assert ExPlasma.Output.decode!(o_1_data_enc).output_data == Enum.into(o_1_data, %{})
@@ -94,7 +85,7 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.sign!([])
         |> ExPlasma.encode!()
 
-      assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
+      assert {:ok, changeset} = Transaction.decode(tx_bytes)
 
       assert get_field(changeset, :inputs) == [input]
     end
@@ -124,7 +115,7 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.sign!([priv_encoded_1, priv_encoded_2])
         |> ExPlasma.encode!()
 
-      assert {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
+      assert {:ok, changeset} = Transaction.decode(tx_bytes)
 
       assert changeset.valid?
     end

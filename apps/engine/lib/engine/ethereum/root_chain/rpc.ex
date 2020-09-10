@@ -15,7 +15,7 @@ defmodule Engine.Ethereum.RootChain.Rpc do
   @moduledoc """
    Does RPC calls for enriching event functions or bare events polling to plasma contracts.
 
-    The reason why these public functions allow opts is that if we 
+    The reason why these public functions allow opts is that if we
     let [url: "asdf"] through to Ethereumex, the request will be sent to that URL.
 
     This will allow us to run integration tests concurrently!
@@ -32,6 +32,10 @@ defmodule Engine.Ethereum.RootChain.Rpc do
   @spec transaction_receipt(String.t(), keyword()) :: {:ok, map()} | {:error, map() | binary() | atom()}
   def transaction_receipt(tx_hash, opts) do
     Ethereumex.HttpClient.eth_get_transaction_receipt(tx_hash, opts)
+  end
+
+  def transaction_by_hash(tx_hash, opts) do
+    Ethereumex.HttpClient.eth_get_transaction_by_hash(tx_hash, opts)
   end
 
   @spec call_contract(String.t(), String.t(), any(), keyword()) :: {:ok, binary()} | {:error, map() | binary() | atom()}

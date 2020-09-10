@@ -22,7 +22,7 @@ defmodule Engine.DB.Output do
           id: pos_integer(),
           inserted_at: DateTime.t(),
           output_data: binary() | nil,
-          output_id: pos_integer() | nil,
+          output_id: binary() | nil,
           output_type: pos_integer(),
           position: pos_integer() | nil,
           spending_transaction: Transaction.t() | nil,

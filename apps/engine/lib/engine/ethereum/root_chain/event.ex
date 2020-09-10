@@ -57,6 +57,15 @@ defmodule Engine.Ethereum.RootChain.Event do
     get_ethereum_logs(block_from, block_to, [keccak_event_signature], [contract], opts)
   end
 
+  def get_call_data(root_chain_txhash) do
+    {:ok, %{"input" => input}} =
+      root_chain_txhash
+      |> Encoding.to_hex()
+      |> Rpc.transaction_by_hash([])
+
+    {:ok, input}
+  end
+
   @doc """
   Event definition via event selectors in ABI
   """

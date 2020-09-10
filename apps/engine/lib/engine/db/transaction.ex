@@ -29,7 +29,6 @@ defmodule Engine.DB.Transaction do
           id: pos_integer(),
           inputs: list(Output.t()),
           inserted_at: DateTime.t(),
-          kind: :deposit | :transfer,
           outputs: list(Output.t()),
           signed_tx: ExPlasma.Transaction.t() | nil,
           tx_bytes: binary(),
@@ -39,21 +38,15 @@ defmodule Engine.DB.Transaction do
           witnesses: DateTime.t()
         }
 
-  @deposit :deposit
-  @transfer :transfer
-  @required_fields [:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type, :kind]
+  @required_fields [:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type]
   @optional_fields []
 
   @timestamps_opts [inserted_at: :node_inserted_at, updated_at: :node_updated_at]
-
-  def kind_transfer(), do: @transfer
-  def kind_deposit(), do: @deposit
 
   schema "transactions" do
     field(:tx_bytes, :binary)
     field(:tx_hash, :binary)
     field(:tx_type, :integer)
-    field(:kind, Ecto.Atom)
 
     # Virtual fields used for convenience and validation
     # Avoid decoding/parsing signatures mutiple times along validation process
@@ -85,8 +78,8 @@ defmodule Engine.DB.Transaction do
   The main action of the system. Takes tx_bytes and forms the appropriate
   associations for the transaction and outputs and runs the changeset.
   """
-  @spec decode(tx_bytes, atom()) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
-  def decode(tx_bytes, kind) do
+  @spec decode(tx_bytes) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
+  def decode(tx_bytes) do
     with {:ok, decoded} <- ExPlasma.decode(tx_bytes),
          {:ok, recovered} <- ExPlasma.Transaction.with_witnesses(decoded) do
       {:ok, fees} = Fees.accepted_fees()
@@ -95,7 +88,6 @@ defmodule Engine.DB.Transaction do
         recovered
         |> recovered_to_map()
         |> Map.put(:fees, fees)
-        |> Map.put(:kind, kind)
         |> Map.put(:tx_bytes, tx_bytes)
 
       {:ok, changeset(%__MODULE__{}, params)}

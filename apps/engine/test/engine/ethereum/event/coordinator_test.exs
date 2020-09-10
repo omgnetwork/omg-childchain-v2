@@ -22,25 +22,25 @@ defmodule Engine.Ethereum.Event.CoordinatorTest do
 
     # start - only depositor and getter allowed to move
     assert %{sync_height: 9, root_chain_height: 9} = Core.get_synced_info(state, pid[:depositor])
-    assert %{sync_height: 0, root_chain_height: 9} = Core.get_synced_info(state, pid[:exiter])
-    assert %{sync_height: 0, root_chain_height: 9} = Core.get_synced_info(state, pid[:in_flight_exit])
+    assert %{sync_height: 0, root_chain_height: 9} = Core.get_synced_info(state, pid[:standard_exiter])
+    assert %{sync_height: 0, root_chain_height: 9} = Core.get_synced_info(state, pid[:in_flight_exiter])
 
     # depositor advances
     assert {:ok, state} = Core.check_in(state, pid[:depositor], 10, :depositor)
-    assert %{sync_height: 9, root_chain_height: 9} = Core.get_synced_info(state, pid[:exiter])
-    assert %{sync_height: 9, root_chain_height: 9} = Core.get_synced_info(state, pid[:in_flight_exit])
+    assert %{sync_height: 9, root_chain_height: 9} = Core.get_synced_info(state, pid[:standard_exiter])
+    assert %{sync_height: 9, root_chain_height: 9} = Core.get_synced_info(state, pid[:in_flight_exiter])
 
     # in_flight_exit advances
-    assert %{sync_height: 0, root_chain_height: 9} = Core.get_synced_info(state, pid[:piggyback])
-    assert {:ok, state} = Core.check_in(state, pid[:in_flight_exit], 10, :in_flight_exit)
-    assert %{sync_height: 9, root_chain_height: 9} = Core.get_synced_info(state, pid[:piggyback])
+    assert %{sync_height: 0, root_chain_height: 9} = Core.get_synced_info(state, pid[:piggybacker])
+    assert {:ok, state} = Core.check_in(state, pid[:in_flight_exiter], 10, :in_flight_exiter)
+    assert %{sync_height: 9, root_chain_height: 9} = Core.get_synced_info(state, pid[:piggybacker])
 
     # root chain advances
     assert {:ok, state} = Core.update_root_chain_height(state, 100)
     assert %{sync_height: 99, root_chain_height: 99} = Core.get_synced_info(state, pid[:depositor])
-    assert %{sync_height: 10, root_chain_height: 99} = Core.get_synced_info(state, pid[:exiter])
-    assert %{sync_height: 10, root_chain_height: 99} = Core.get_synced_info(state, pid[:in_flight_exit])
-    assert %{sync_height: 10, root_chain_height: 99} = Core.get_synced_info(state, pid[:piggyback])
+    assert %{sync_height: 10, root_chain_height: 99} = Core.get_synced_info(state, pid[:standard_exiter])
+    assert %{sync_height: 10, root_chain_height: 99} = Core.get_synced_info(state, pid[:in_flight_exiter])
+    assert %{sync_height: 10, root_chain_height: 99} = Core.get_synced_info(state, pid[:piggybacker])
   end
 
   defp initial_check_in(state, services, pid) do

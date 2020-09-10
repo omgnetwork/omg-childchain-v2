@@ -86,12 +86,8 @@ defmodule EventTest do
 
   defp deposit_transaction(amount_in_wei, address, currency) do
     address
+    |> Encoding.to_binary!()
     |> Deposit.new(currency, amount_in_wei)
-    |> get_data_for_rlp()
-    |> ExRLP.encode()
-  end
-
-  defp get_data_for_rlp(deposit) do
-    [ExPlasma.payment_v1(), deposit.inputs, deposit.outputs, 0, deposit.metadata]
+    |> ExPlasma.encode!(signed: false)
   end
 end

@@ -20,6 +20,8 @@ defmodule Engine.Callbacks.InFlightExitStarted do
   """
   @impl Callback
   @decorate trace(service: :ecto, type: :backend)
+  def callback([], _listener), do: {:ok, nil}
+
   def callback(events, listener) do
     Multi.new()
     |> Callback.update_listener_height(events, listener)
