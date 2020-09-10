@@ -16,6 +16,7 @@ BaseResponseSchema:
     - data
     - service_name
   example:
+    success: true
     service_name: childchain
     version: '1.0'
     data: {}

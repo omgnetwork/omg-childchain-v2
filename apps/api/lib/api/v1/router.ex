@@ -16,6 +16,7 @@ defmodule API.V1.Router do
   alias API.Plugs.Responder
   alias API.Plugs.Version
   alias API.V1.Controller.Block
+  alias API.V1.Controller.Configuration, as: ConfigurationController
   alias API.V1.Controller.Fee
   alias API.V1.Controller.Transaction
   alias API.V1.ErrorHandler
@@ -24,6 +25,7 @@ defmodule API.V1.Router do
 
   @expected_params %{
     "GET:health.check" => [],
+    "GET:configuration.get" => [],
     "POST:block.get" => [
       %{name: "hash", type: :hex, required: true}
     ],
@@ -52,6 +54,11 @@ defmodule API.V1.Router do
     conn
     |> Health.call(%{})
     |> put_conn_response({:ok, %{}})
+  end
+
+  get "configuration.get" do
+    data = ConfigurationController.get()
+    put_conn_response(conn, data)
   end
 
   post "block.get" do

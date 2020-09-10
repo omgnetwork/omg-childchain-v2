@@ -1,7 +1,4 @@
 defmodule API.V1.View.BlockTest do
-  @moduledoc """
-  """
-
   use Engine.DB.DataCase, async: true
 
   alias API.V1.View.Block
