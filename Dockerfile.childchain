@@ -30,6 +30,14 @@ RUN apk add --update --no-cache --virtual .childchain-runtime \
         libressl-dev \
         lksctp-tools
 
+# ex_keccak
+ENV RUST_VERSION="1.46.0"
+
+RUN apk add curl && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+RUN echo 'export PATH=~/.cargo/bin/:$PATH' >> $BASH_ENV
+RUN rustup toolchain install ${RUST_VERSION}
+RUN rustup default ${RUST_VERSION}
+
 #libsecp256k1
 RUN apk add --no-cache gmp-dev
 
