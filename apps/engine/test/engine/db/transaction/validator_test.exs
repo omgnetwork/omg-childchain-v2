@@ -1,6 +1,7 @@
 defmodule Engine.DB.Transaction.ValidatorTest do
   use Engine.DB.DataCase, async: true
 
+  alias Engine.DB.Output, as: DbOutput
   alias Engine.DB.Transaction
   alias Engine.DB.Transaction.Validator
   alias Engine.Repo
@@ -10,16 +11,16 @@ defmodule Engine.DB.Transaction.ValidatorTest do
   describe "validate_inputs/1" do
     test "associate inputs if all inputs are usable in the correct order" do
       i_1 = build_input(3000, 0, 0)
-      i_1_in_db = insert(:output, Map.put(i_1, :state, "confirmed"))
+      i_1_in_db = Repo.get(DbOutput, insert(:output, Map.put(i_1, :state, "confirmed")).id)
 
       i_2 = build_input(4000, 0, 0)
-      i_2_in_db = insert(:output, Map.put(i_2, :state, "confirmed"))
+      i_2_in_db = Repo.get(DbOutput, insert(:output, Map.put(i_2, :state, "confirmed")).id)
 
       i_3 = build_input(2000, 0, 0)
-      i_3_in_db = insert(:output, Map.put(i_3, :state, "confirmed"))
+      i_3_in_db = Repo.get(DbOutput, insert(:output, Map.put(i_3, :state, "confirmed")).id)
 
       i_4 = build_input(1, 0, 0)
-      i_4_in_db = insert(:output, Map.put(i_4, :state, "confirmed"))
+      i_4_in_db = Repo.get(DbOutput, insert(:output, Map.put(i_4, :state, "confirmed")).id)
 
       changeset =
         [i_3, i_2, i_4, i_1]
@@ -27,7 +28,9 @@ defmodule Engine.DB.Transaction.ValidatorTest do
         |> Validator.validate_inputs()
 
       assert changeset.valid?
-      assert get_field(changeset, :inputs) == [i_3_in_db, i_2_in_db, i_4_in_db, i_1_in_db]
+
+      assert get_field(changeset, :inputs) ==
+               [i_3_in_db, i_2_in_db, i_4_in_db, i_1_in_db]
     end
 
     test "returns an error if inputs don't exist" do
