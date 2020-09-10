@@ -57,9 +57,9 @@ defmodule Engine.Ethereum.RootChain.Event do
     get_ethereum_logs(block_from, block_to, [keccak_event_signature], [contract], opts)
   end
 
-  def get_call_data(root_chain_txhash) do
+  def get_call_data(root_chain_tx_hash) do
     {:ok, %{"input" => input}} =
-      root_chain_txhash
+      root_chain_tx_hash
       |> Encoding.to_hex()
       |> Rpc.transaction_by_hash([])
 
