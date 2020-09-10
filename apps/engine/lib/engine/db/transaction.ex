@@ -41,6 +41,8 @@ defmodule Engine.DB.Transaction do
 
   @deposit :deposit
   @transfer :transfer
+  @required_fields [:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type, :kind]
+  @optional_fields []
 
   @timestamps_opts [inserted_at: :node_inserted_at, updated_at: :node_updated_at]
 
@@ -100,12 +102,19 @@ defmodule Engine.DB.Transaction do
     end
   end
 
+  @spec encode_unsigned(t()) :: binary()
+  def encode_unsigned(transaction) do
+    {:ok, tx} = ExPlasma.decode(transaction.tx_bytes, signed: false)
+
+    ExPlasma.encode!(tx, signed: false)
+  end
+
   def changeset(struct, params) do
     struct
     |> Repo.preload(:inputs)
     |> Repo.preload(:outputs)
-    |> cast(params, [:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type, :kind])
-    |> validate_required([:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type, :kind])
+    |> cast(params, @optional_fields ++ @required_fields)
+    |> validate_required(@required_fields)
     |> cast_assoc(:inputs)
     |> cast_assoc(:outputs)
     |> Validator.validate_protocol()

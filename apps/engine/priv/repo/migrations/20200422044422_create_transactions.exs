@@ -15,6 +15,7 @@ defmodule Engine.Repo.Migrations.CreateTransactions do
     end
 
     create(index(:transactions, [:block_id]))
+    create(unique_index(:transactions, [:tx_type, :tx_hash]))
     execute("SELECT ecto_manage_updated_at('transactions');")
   end
 end
