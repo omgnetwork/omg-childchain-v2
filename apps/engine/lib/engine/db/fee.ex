@@ -5,6 +5,7 @@ defmodule Engine.DB.Fee do
   """
 
   use Ecto.Schema
+  use Spandex.Decorators
 
   import Ecto.Changeset
   import Ecto.Query
@@ -38,20 +39,27 @@ defmodule Engine.DB.Fee do
     |> put_hash()
   end
 
+  @decorate trace(service: :ecto, type: :backend)
   def insert(params) do
     %__MODULE__{}
     |> changeset(params)
     |> Repo.insert(on_conflict: :nothing)
   end
 
+  @decorate trace(service: :ecto, type: :backend)
   def remove_previous_fees() do
     query = where(__MODULE__, type: ^:previous_fees)
 
     Repo.delete_all(query)
   end
 
+  @decorate trace(service: :ecto, type: :backend)
   def fetch_current_fees(), do: fetch(:current_fees)
+
+  @decorate trace(service: :ecto, type: :backend)
   def fetch_merged_fees(), do: fetch(:merged_fees)
+
+  @decorate trace(service: :ecto, type: :backend)
   def fetch_previous_fees(), do: fetch(:previous_fees)
 
   defp fetch(type) do

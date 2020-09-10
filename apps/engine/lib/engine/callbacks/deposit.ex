@@ -22,7 +22,6 @@ defmodule Engine.Callbacks.Deposit do
 
   alias Ecto.Multi
   alias Engine.Callback
-  alias Engine.DB.Block
   alias Engine.DB.Transaction
   alias ExPlasma.Builder
 
@@ -54,19 +53,12 @@ defmodule Engine.Callbacks.Deposit do
       |> ExPlasma.encode!()
 
     {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_deposit())
-
     confirmed_output = changeset |> get_field(:outputs) |> hd()
-
     transaction = put_change(changeset, :outputs, [%{confirmed_output | state: "confirmed"}])
 
-    insertion =
-      %Block{}
-      |> Block.changeset(%{number: event.data["blknum"], state: "confirmed"})
-      |> put_change(:transactions, [transaction])
-
-    Ecto.Multi.insert(multi, "deposit-blknum-#{event.data["blknum"]}", insertion,
+    Ecto.Multi.insert(multi, "deposit-blknum-#{event.data["blknum"]}", transaction,
       on_conflict: :nothing,
-      conflict_target: :number
+      conflict_target: [:tx_hash, :tx_type]
     )
   end
 end

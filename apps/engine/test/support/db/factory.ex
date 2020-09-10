@@ -9,7 +9,6 @@ defmodule Engine.DB.Factory do
   alias Engine.DB.Block
   alias Engine.DB.Fee
   alias Engine.DB.Output
-  alias Engine.DB.PlasmaBlock
   alias Engine.DB.Transaction
   alias Engine.Ethereum.RootChain.Event
   alias Engine.Support.TestEntity
@@ -132,15 +131,17 @@ defmodule Engine.DB.Factory do
       tx_bytes: tx_bytes,
       tx_hash: hash,
       outputs: [output],
-      block: build(:block, number: blknum)
+      block: build(:block, blknum: blknum)
     }
   end
 
-  def block_factory(attr \\ %{}) do
-    %Block{
-      state: attr[:state] || "confirmed",
-      hash: attr[:hash] || <<0::256>>,
-      number: attr[:number] || 1
+  def transaction_factory(params) do
+    tx_bytes = params[:tx_bytes]
+    {:ok, hash} = ExPlasma.hash(tx_bytes)
+
+    %Transaction{
+      tx_bytes: tx_bytes,
+      tx_hash: hash
     }
   end
 
@@ -155,12 +156,13 @@ defmodule Engine.DB.Factory do
     insert(:output, %{output_data: data, blknum: Map.get(attr, :blknum, default_blknum), state: "confirmed"})
 
     tx_bytes =
-      ExPlasma.payment_v1()
-      |> Builder.new()
-      |> Builder.add_input(blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0)
-      |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
-      |> Builder.sign!([priv_encoded])
-      |> ExPlasma.encode!()
+      attr[:tx_bytes] ||
+        ExPlasma.payment_v1()
+        |> Builder.new()
+        |> Builder.add_input(blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0)
+        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+        |> Builder.sign!([priv_encoded])
+        |> ExPlasma.encode!()
 
     {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_transfer())
     Changeset.apply_changes(changeset)
@@ -191,13 +193,13 @@ defmodule Engine.DB.Factory do
   def set_state(%Transaction{outputs: [output]}, state), do: %{output | state: state}
   def set_state(%Output{} = output, state), do: %{output | state: state}
 
-  def plasma_block_factory(attr \\ %{}) do
+  def block_factory(attr \\ %{}) do
     blknum = Map.get(attr, :blknum, 1000)
     _child_block_interval = 1000
     nonce = round(blknum / 1000)
 
-    %PlasmaBlock{
-      hash: :crypto.strong_rand_bytes(32),
+    %Block{
+      hash: Map.get(attr, :hash) || :crypto.strong_rand_bytes(32),
       nonce: nonce,
       blknum: blknum,
       tx_hash: :crypto.strong_rand_bytes(64),

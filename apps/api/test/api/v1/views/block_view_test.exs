@@ -9,7 +9,7 @@ defmodule API.V1.View.BlockTest do
       block = :block |> build() |> Engine.Repo.preload(:transactions)
 
       assert Block.serialize(block) == %{
-               blknum: block.number,
+               blknum: block.blknum,
                hash: Encoding.to_hex(block.hash),
                transactions: Enum.map(block.transactions, &Encoding.to_hex(&1.tx_bytes)),
                object: "block"
