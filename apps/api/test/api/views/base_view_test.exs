@@ -10,7 +10,7 @@ defmodule API.View.BaseTest do
     test "serializes data, success and version" do
       assert Base.serialize(%{some: "data"}, true, "1.2.3") == %{
                data: %{some: "data"},
-               service_name: "childchain",
+               service_name: "child_chain",
                success: true,
                version: "1.2.3"
              }

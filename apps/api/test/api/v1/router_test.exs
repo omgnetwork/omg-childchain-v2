@@ -172,8 +172,7 @@ defmodule API.V1.RouterTest do
       assert_payload_data(payload, %{
         "blknum" => number,
         "hash" => hash,
-        "transactions" => [tx_bytes],
-        "object" => "block"
+        "transactions" => [tx_bytes]
       })
     end
 
@@ -209,7 +208,7 @@ defmodule API.V1.RouterTest do
       tx_hash = Encoding.to_hex(txn.tx_hash)
       {:ok, payload} = post("transaction.submit", %{transaction: tx_bytes})
 
-      assert_payload_data(payload, %{"tx_hash" => tx_hash, "object" => "transaction"})
+      assert_payload_data(payload, %{"tx_hash" => tx_hash})
     end
 
     test "that it returns an error if missing transaction params" do
@@ -243,7 +242,7 @@ defmodule API.V1.RouterTest do
   end
 
   defp assert_payload_data(payload, data) do
-    assert payload["service_name"] == "childchain"
+    assert payload["service_name"] == "child_chain"
     assert payload["version"] == "1.0"
     assert payload["data"] == data
   end

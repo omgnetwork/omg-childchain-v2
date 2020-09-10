@@ -10,7 +10,7 @@ defmodule API.View.ErrorTest do
     test "serializes a code and description" do
       assert Error.serialize(:code, "description", "1.0") == %{
                data: %{code: :code, description: "description", object: "error"},
-               service_name: "childchain",
+               service_name: "child_chain",
                success: false,
                version: "1.0"
              }

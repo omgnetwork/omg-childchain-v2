@@ -10,7 +10,7 @@ defmodule API.View.SuccessTest do
     test "serializes data" do
       assert Success.serialize(%{some: :data}, "1.0") == %{
                data: %{some: :data},
-               service_name: "childchain",
+               service_name: "child_chain",
                success: true,
                version: "1.0"
              }

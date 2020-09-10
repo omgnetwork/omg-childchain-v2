@@ -30,8 +30,7 @@ defmodule API.V1.Controller.ConfigurationTest do
                 %{
                   deposit_finality_margin: 123,
                   contract_semver: "some_contract_semver",
-                  network: "some_network",
-                  object: "configuration"
+                  network: "some_network"
                 }}
     end
   end

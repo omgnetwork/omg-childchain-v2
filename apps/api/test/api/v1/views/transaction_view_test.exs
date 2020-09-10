@@ -11,8 +11,7 @@ defmodule API.V1.View.TransactionTest do
       transaction = build(:payment_v1_transaction)
 
       assert Transaction.serialize_hash(transaction) == %{
-               tx_hash: Encoding.to_hex(transaction.tx_hash),
-               object: "transaction"
+               tx_hash: Encoding.to_hex(transaction.tx_hash)
              }
     end
   end

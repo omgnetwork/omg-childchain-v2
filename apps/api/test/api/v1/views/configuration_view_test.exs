@@ -12,7 +12,6 @@ defmodule API.V1.View.ConfigurationTest do
       }
 
       assert Configuration.serialize(configuration) == %{
-               object: "configuration",
                deposit_finality_margin: configuration.finality_margin,
                contract_semver: configuration.contract_semver,
                network: configuration.ethereum_network

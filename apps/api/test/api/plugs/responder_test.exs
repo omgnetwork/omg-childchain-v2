@@ -20,7 +20,7 @@ defmodule API.Plugs.ResponderTest do
 
       assert Jason.decode!(body) == %{
                "data" => %{"code" => "some_code", "description" => "some_description", "object" => "error"},
-               "service_name" => "childchain",
+               "service_name" => "child_chain",
                "success" => false,
                "version" => "1.0"
              }
@@ -40,7 +40,7 @@ defmodule API.Plugs.ResponderTest do
                  "description" => "Invalid hex encoded binary",
                  "object" => "error"
                },
-               "service_name" => "childchain",
+               "service_name" => "child_chain",
                "success" => false,
                "version" => "1.0"
              }
@@ -60,7 +60,7 @@ defmodule API.Plugs.ResponderTest do
                  "description" => "",
                  "object" => "error"
                },
-               "service_name" => "childchain",
+               "service_name" => "child_chain",
                "success" => false,
                "version" => "1.0"
              }
@@ -78,7 +78,7 @@ defmodule API.Plugs.ResponderTest do
 
       assert Jason.decode!(body) == %{
                "data" => %{"some" => "data"},
-               "service_name" => "childchain",
+               "service_name" => "child_chain",
                "success" => true,
                "version" => "1.0"
              }

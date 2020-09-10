@@ -18,7 +18,7 @@ defmodule API.RouterTest do
                "description" => "The given operation is invalid",
                "object" => "error"
              },
-             "service_name" => "childchain",
+             "service_name" => "child_chain",
              "success" => false,
              "version" => "-"
            }
