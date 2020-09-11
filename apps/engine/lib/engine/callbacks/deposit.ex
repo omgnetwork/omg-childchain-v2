@@ -42,8 +42,7 @@ defmodule Engine.Callbacks.Deposit do
   defp do_callback(multi, []), do: multi
 
   defp build_deposit(multi, event) do
-    output_id = %{blknum: event.data["blknum"], txindex: 0, oindex: 0}
-    position = Position.pos(output_id)
+    output_id = Position.new(event.data["blknum"], 0, 0)
 
     output_params = %{
       state: "confirmed",
@@ -53,12 +52,12 @@ defmodule Engine.Callbacks.Deposit do
         token: event.data["token"],
         amount: event.data["amount"]
       },
-      output_id: Map.put(output_id, :position, position)
+      output_id: output_id
     }
 
     output = Output.changeset(%Output{}, output_params)
 
-    Ecto.Multi.insert(multi, "deposit-output-#{position}", output,
+    Ecto.Multi.insert(multi, "deposit-output-#{output_id.position}", output,
       on_conflict: :nothing,
       conflict_target: :position
     )

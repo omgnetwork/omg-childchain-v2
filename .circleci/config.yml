@@ -298,7 +298,7 @@ jobs:
             _counter=$(grep -ri --exclude-dir=./priv/cabbage "child_chain" . | grep -vi -e "child_chain_api" -e "child_chain_url" | grep -c "child_chain")
             echo "Current occurrences of child_chain:"
             echo $_counter
-            if [ $_counter -gt 3 ]; then
+            if [ $_counter -gt 12 ]; then
               echo "Have you been naughty or nice? Find out if Santa knows."
               exit 1
             fi
