@@ -82,10 +82,10 @@ jobs:
             asdf update
             asdf plugin-add erlang || asdf plugin-update erlang
             asdf plugin-add elixir || asdf plugin-update elixir
-            asdf install erlang 23.0.2
+            asdf install erlang 23.0.3
             asdf install elixir 1.10.4-otp-23
             asdf global elixir 1.10.4-otp-23
-            asdf global erlang 23.0.2
+            asdf global erlang 23.0.3
             mix local.rebar --force && mix local.hex --force
           no_output_timeout: 2400
       - save_cache:

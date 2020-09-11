@@ -30,14 +30,13 @@ RUN apk add --update --no-cache --virtual .childchain-runtime \
         libressl-dev \
         lksctp-tools
 
+# ex_keccak
+RUN apk add --no-cache rust=1.39.0-r0 cargo=1.39.0-r0
+
 #libsecp256k1
 RUN apk add --no-cache gmp-dev
 
 COPY rootfs /
-
-# ex_keccak
-RUN apk add curl && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-ENV PATH=~/.cargo/bin/:$PATH
 
 # USER directive is not being used here since privileges are dropped via
 # s6-setuigid in /entrypoint. s6-overlay is required to be run as root.
