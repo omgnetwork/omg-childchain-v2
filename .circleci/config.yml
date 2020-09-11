@@ -72,7 +72,7 @@ jobs:
       - install_rust
       - run: docker-compose up -d postgres
       - restore_cache:
-          key: v5-asdf-install
+          key: v6-asdf-install
       - run:
           name: Install Erlang and Elixir
           command: |
@@ -88,7 +88,7 @@ jobs:
             mix local.rebar --force && mix local.hex --force
           no_output_timeout: 2400
       - save_cache:
-          key: v5-asdf-install
+          key: v6-asdf-install
           paths:
             - ~/.asdf
             - ~/.asdf-vm
