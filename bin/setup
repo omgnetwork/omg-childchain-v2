@@ -1,0 +1,46 @@
+#!/usr/bin/env sh
+
+fancy_echo() {
+  local fmt="$1"; shift
+
+  # shellcheck disable=SC2059
+  printf "\\n$fmt\\n" "$@"
+}
+
+install_linux_rust() {
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+  if [ $? -ne 0 ]; then
+    fancy_echo "Rust installation failed"
+    exit 1
+  fi
+}
+
+install_rust() {
+  local sys=`uname -s`
+  case $sys in
+    Linux*)
+      install_linux_rust
+      ;;
+    Darwin*)
+      brew install rust
+      ;;
+    *)
+      fancy_echo "Unknown system"
+      exit 1
+      ;;
+  esac
+}
+
+if ! command -v rustc > /dev/null; then
+  fancy_echo "It looks like you don't have Rust installed. We'll install that for you."
+  install_rust
+fi
+
+fancy_echo "Installing elixir dependencies."
+mix local.hex --force
+mix local.rebar --force
+
+mix deps.get
+
+fancy_echo "You're all set!"
