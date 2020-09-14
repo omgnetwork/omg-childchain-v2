@@ -67,7 +67,7 @@ defmodule Engine.DB.Transaction do
   @doc """
   Query all transactions that have not been formed into a block.
   """
-  def pending(), do: from(t in __MODULE__, where: is_nil(t.block_id))
+  def query_pending(), do: from(t in __MODULE__, where: is_nil(t.block_id))
 
   @doc """
   Find transactions by the tx_hash.

@@ -14,7 +14,7 @@ defmodule Engine.DB.TransactionTest do
   end
 
   describe "decode/2" do
-    test "decodes tx_bytes and validates for a transfer" do
+    test "decodes tx_bytes and validates" do
       tx_bytes =
         ExPlasma.payment_v1()
         |> Builder.new()
@@ -121,13 +121,28 @@ defmodule Engine.DB.TransactionTest do
     end
   end
 
-  describe "pending/0" do
+  describe "query_pending/0" do
     test "get all pending transactions" do
+      block = insert(:block)
+      insert(:payment_v1_transaction)
+      insert(:payment_v1_transaction)
+
+      :payment_v1_transaction
+      |> insert()
+      |> change(block_id: block.id)
+      |> Engine.Repo.update()
+
+      pending_tx = Transaction.query_pending() |> Engine.Repo.all()
+      assert Enum.count(pending_tx) == 2
     end
   end
 
   describe "query_by_tx_hash/0" do
     test "get transaction matching the hash" do
+      %{tx_hash: tx_hash} = insert(:payment_v1_transaction)
+      _t_2 = insert(:payment_v1_transaction)
+
+      assert %{tx_hash: ^tx_hash} = tx_hash |> Transaction.query_by_tx_hash() |> Engine.Repo.one()
     end
   end
 end

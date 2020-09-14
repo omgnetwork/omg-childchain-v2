@@ -178,7 +178,7 @@ defmodule Engine.DB.Block do
 
   defp attach_transactions_to_block(repo, %{"new-block" => block}) do
     updates = [block_id: block.id, updated_at: NaiveDateTime.utc_now()]
-    {total, _} = repo.update_all(Transaction.pending(), set: updates)
+    {total, _} = repo.update_all(Transaction.query_pending(), set: updates)
 
     {:ok, total}
   end
