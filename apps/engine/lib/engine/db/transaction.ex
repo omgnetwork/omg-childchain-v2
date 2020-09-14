@@ -72,7 +72,7 @@ defmodule Engine.DB.Transaction do
   @doc """
   Find transactions by the tx_hash.
   """
-  def find_by_tx_hash(tx_hash), do: from(t in __MODULE__, where: t.tx_hash == ^tx_hash)
+  def query_by_tx_hash(tx_hash), do: from(t in __MODULE__, where: t.tx_hash == ^tx_hash)
 
   @doc """
   The main action of the system. Takes tx_bytes and forms the appropriate

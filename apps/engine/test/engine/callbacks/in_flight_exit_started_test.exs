@@ -8,7 +8,7 @@ defmodule Engine.Callbacks.InFlightExitStartedTest do
 
   describe "callback/1" do
     test "marks input that is exiting" do
-      %{outputs: [%{position: position}]} = insert(:deposit_transaction, blknum: 1000)
+      %{position: position} = insert(:deposit_output, blknum: 1)
 
       events = [build(:in_flight_exit_started_event, positions: [position], height: 100)]
 
@@ -16,12 +16,12 @@ defmodule Engine.Callbacks.InFlightExitStartedTest do
       assert listener_for(:in_flight_exit_started, height: 100)
 
       query = from(o in Output, where: o.position == ^position, select: o.state)
-      assert "exiting" = Repo.one(query)
+      assert Repo.one(query) == "exiting"
     end
 
     test "marks multiple inputs in a single IFE that are exiting" do
-      %{outputs: [%{position: pos1}]} = insert(:deposit_transaction, blknum: 1000)
-      %{outputs: [%{position: pos2}]} = insert(:deposit_transaction, blknum: 2000)
+      %{position: pos1} = insert(:deposit_output, blknum: 1)
+      %{position: pos2} = insert(:deposit_output, blknum: 2)
 
       events = [build(:in_flight_exit_started_event, positions: [pos1, pos2], height: 101)]
 
@@ -30,26 +30,30 @@ defmodule Engine.Callbacks.InFlightExitStartedTest do
       assert listener_for(:in_flight_exit_started, height: 101)
 
       query = from(o in Output, where: o.position in [^pos1, ^pos2], select: o.state)
-      assert ["exiting", "exiting"] = Repo.all(query)
+      assert Repo.all(query) == ["exiting", "exiting"]
     end
 
     test "marks multiple IFEs as exiting" do
-      %{outputs: [%{position: pos1}]} = insert(:deposit_transaction, blknum: 4000)
-      %{outputs: [%{position: pos2}]} = insert(:deposit_transaction, blknum: 5000)
-      %{outputs: [%{position: pos3}]} = insert(:deposit_transaction, blknum: 6000)
-      %{outputs: [%{position: pos4}]} = insert(:deposit_transaction, blknum: 7000)
+      %{position: pos1} = insert(:deposit_output, blknum: 4)
+      %{position: pos2} = insert(:deposit_output, blknum: 5)
+      %{position: pos3} = insert(:deposit_output, blknum: 6)
+      %{position: pos4} = insert(:deposit_output, blknum: 7)
 
       events = [
         build(:in_flight_exit_started_event, positions: [pos1, pos2], height: 101),
         build(:in_flight_exit_started_event, positions: [pos3, pos4], height: 102)
       ]
 
-      assert {:ok, %{exiting_outputs: {4, nil}}} = InFlightExitStarted.callback(events, :exit_started)
+      assert {:ok, %{exiting_outputs: {4, nil}}} = InFlightExitStarted.callback(events, :in_flight_exit_started)
 
-      assert listener_for(:exit_started, height: 102)
+      assert listener_for(:in_flight_exit_started, height: 102)
 
       query = from(o in Output, where: o.position in [^pos1, ^pos2, ^pos3, ^pos4], select: o.state)
-      assert ["exiting", "exiting", "exiting", "exiting"] = Repo.all(query)
+      assert Repo.all(query) == ["exiting", "exiting", "exiting", "exiting"]
+    end
+
+    test "returns {:ok, :noop} when no event given" do
+      assert InFlightExitStarted.callback([], :in_flight_exit_started) == {:ok, :noop}
     end
   end
 

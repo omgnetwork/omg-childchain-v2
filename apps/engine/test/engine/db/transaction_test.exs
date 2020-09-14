@@ -126,7 +126,7 @@ defmodule Engine.DB.TransactionTest do
     end
   end
 
-  describe "find_by_tx_hash/0" do
+  describe "query_by_tx_hash/0" do
     test "get transaction matching the hash" do
     end
   end

@@ -1,8 +1,7 @@
 defmodule Engine.Callbacks.Deposit do
   @moduledoc """
   Contains the business logic of persisting a deposit event and creating the
-  appropriate block, transaction and UTXO. For context, a deposit is made
-  into its own 'plasma block':
+  appropriate UTXO.
 
   When you deposit into the network, you send a 'deposit' transaction to the
   contract directly. Upon success, the contract generates a block just for that
@@ -21,21 +20,22 @@ defmodule Engine.Callbacks.Deposit do
   alias Ecto.Multi
   alias Engine.Callback
   alias Engine.DB.Output
+  alias Engine.Repo
   alias ExPlasma.Output.Position
 
   @doc """
-  Inserts deposit events, recreating the transaction and forming the associated block,
-  transaction, and UTXOs. This will wrap all the build deposits into one DB transaction.
+  Inserts deposit events, forming the associated UTXOs.
+  This will wrap all the build deposits into one DB transaction.
   """
   @impl Callback
   @decorate trace(service: :ecto, type: :backend)
-  def callback([], _listener), do: {:ok, nil}
+  def callback([], _listener), do: {:ok, :noop}
 
   def callback(events, listener) do
     Multi.new()
     |> Callback.update_listener_height(events, listener)
     |> do_callback(events)
-    |> Engine.Repo.transaction()
+    |> Repo.transaction()
   end
 
   defp do_callback(multi, [event | tail]), do: multi |> build_deposit(event) |> do_callback(tail)

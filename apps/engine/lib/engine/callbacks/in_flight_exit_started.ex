@@ -20,7 +20,7 @@ defmodule Engine.Callbacks.InFlightExitStarted do
   """
   @impl Callback
   @decorate trace(service: :ecto, type: :backend)
-  def callback([], _listener), do: {:ok, nil}
+  def callback([], _listener), do: {:ok, :noop}
 
   def callback(events, listener) do
     Multi.new()
@@ -30,7 +30,7 @@ defmodule Engine.Callbacks.InFlightExitStarted do
   end
 
   defp do_callback(multi, positions, [event | tail]) do
-    %{call_data: %{"inputUtxosPos" => inputs}} = event
+    %{call_data: %{input_utxos_pos: inputs}} = event
     do_callback(multi, positions ++ inputs, tail)
   end
 

@@ -20,7 +20,7 @@ defmodule Engine.Callbacks.ExitStarted do
   """
   @impl Callback
   @decorate trace(service: :ecto, type: :backend)
-  def callback([], _listener), do: {:ok, nil}
+  def callback([], _listener), do: {:ok, :noop}
 
   def callback(events, listener) do
     Multi.new()

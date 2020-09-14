@@ -6,9 +6,9 @@ defmodule Engine.Callbacks.ExitStartedTest do
   alias Engine.DB.ListenerState
   alias Engine.DB.Output
 
-  describe "callback/1" do
+  describe "callback/2" do
     test "marks utxos that are exiting" do
-      %{outputs: [%{position: position}]} = insert(:deposit_transaction, blknum: 1000)
+      %{position: position} = insert(:deposit_output, blknum: 1)
 
       events = [build(:exit_started_event, position: position, height: 100)]
 
@@ -17,12 +17,12 @@ defmodule Engine.Callbacks.ExitStartedTest do
       assert listener_for(:exit_started, height: 100)
 
       query = from(o in Output, where: o.position == ^position, select: o.state)
-      assert "exiting" = Repo.one(query)
+      assert Repo.one(query) == "exiting"
     end
 
     test "marks multiple utxos as exiting" do
-      %{outputs: [%{position: pos1}]} = insert(:deposit_transaction, blknum: 2000)
-      %{outputs: [%{position: pos2}]} = insert(:deposit_transaction, blknum: 3000)
+      %{position: pos1} = insert(:deposit_output, blknum: 2)
+      %{position: pos2} = insert(:deposit_output, blknum: 3)
 
       events = [
         build(:exit_started_event, position: pos1, height: 101),
@@ -34,7 +34,11 @@ defmodule Engine.Callbacks.ExitStartedTest do
       assert listener_for(:exit_started, height: 102)
 
       query = from(o in Output, where: o.position in [^pos1, ^pos2], select: o.state)
-      assert ["exiting", "exiting"] = Repo.all(query)
+      assert Repo.all(query) == ["exiting", "exiting"]
+    end
+
+    test "returns {:ok, :noop} when no event given" do
+      assert ExitStarted.callback([], :exit_started) == {:ok, :noop}
     end
   end
 

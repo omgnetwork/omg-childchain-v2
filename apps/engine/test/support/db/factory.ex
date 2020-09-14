@@ -54,7 +54,7 @@ defmodule Engine.DB.Factory do
         "tx_hash" => Map.get(attr, :tx_hash, <<1::256>>)
       })
       |> Map.put(:call_data, %{
-        "inputUtxosPos" => Map.get(attr, :positions, [1_000_000_000])
+        input_utxos_pos: Map.get(attr, :positions, [1_000_000_000])
       })
 
     build(:event, params)
@@ -105,34 +105,28 @@ defmodule Engine.DB.Factory do
     }
   end
 
-  def deposit_transaction_factory(attr \\ %{}) do
-    blknum = Map.get(attr, :blknum, 1000)
+  def deposit_output_factory(attr \\ %{}) do
+    blknum = Map.get(attr, :blknum, 1)
     output_guard = Map.get(attr, :output_guard) || <<1::160>>
     amount = Map.get(attr, :amount, 1)
     token = Map.get(attr, :token, <<0::160>>)
-    data = %{output_guard: output_guard, token: token, amount: amount}
 
-    {:ok, id} =
-      %{blknum: blknum, txindex: 0, oindex: 0}
-      |> Position.pos()
-      |> Position.to_map()
+    output_id = Position.new(blknum, 0, 0)
 
-    tx_bytes =
-      ExPlasma.payment_v1()
-      |> Builder.new()
-      |> Builder.add_output(Enum.to_list(data))
-      |> Builder.sign!([])
-      |> ExPlasma.encode!()
-
-    output = build(:output, output_id: id, output_data: data, output_type: 1, state: "confirmed")
-    {:ok, hash} = ExPlasma.hash(tx_bytes)
-
-    %Transaction{
-      tx_bytes: tx_bytes,
-      tx_hash: hash,
-      outputs: [output],
-      block: build(:block, blknum: blknum)
+    output_params = %{
+      state: "confirmed",
+      output_type: ExPlasma.payment_v1(),
+      output_data: %{
+        output_guard: output_guard,
+        token: token,
+        amount: amount
+      },
+      output_id: output_id
     }
+
+    %Output{}
+    |> Output.changeset(output_params)
+    |> Changeset.apply_changes()
   end
 
   def transaction_factory(params) do

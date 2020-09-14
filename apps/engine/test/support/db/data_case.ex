@@ -25,7 +25,7 @@ defmodule Engine.DB.DataCase do
 
       import Ecto
       import Ecto.Changeset
-      import Ecto.Query, only: [from: 1, from: 2]
+      import Ecto.Query, only: [from: 1, from: 2, order_by: 2, select: 2]
       import Engine.DB.DataCase
       import Engine.DB.Factory
     end
