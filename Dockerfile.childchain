@@ -33,9 +33,6 @@ RUN apk add --update --no-cache --virtual .childchain-runtime \
 # ex_keccak
 RUN apk add --no-cache rust=1.39.0-r0 cargo=1.39.0-r0
 
-#libsecp256k1
-RUN apk add --no-cache gmp-dev
-
 COPY rootfs /
 
 # USER directive is not being used here since privileges are dropped via
