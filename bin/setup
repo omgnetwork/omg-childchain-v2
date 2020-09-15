@@ -23,8 +23,6 @@ install_asdf() {
     fi
 }
 
-add
-
 if ! asdf > /dev/null; then
   fancy_echo "It looks like you don't have asdf installed. We'll install that for you."
   install_asdf
