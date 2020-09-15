@@ -7,35 +7,35 @@ fancy_echo() {
   printf "\\n$fmt\\n" "$@"
 }
 
-install_linux_rust() {
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+install_asdf() {
+    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.8.0
 
-  if [ $? -ne 0 ]; then
-    fancy_echo "Rust installation failed"
-    exit 1
-  fi
+    if [ -f ~/.zshrc ]; then
+       echo 'source ~/.asdf-vm/asdf.sh' >> ~/.zshrc
+    fi
+
+    if [ -f ~/.bashrc ]; then
+        echo 'source ~/.asdf-vm/asdf.sh' >> ~/.bashrc
+    fi
+
+    if [ -f ~/.bash_profile ]; then
+        echo 'source ~/.asdf-vm/asdf.sh' >> ~/.bash_profile
+    fi
 }
 
-install_rust() {
-  local sys=`uname -s`
-  case $sys in
-    Linux*)
-      install_linux_rust
-      ;;
-    Darwin*)
-      brew install rust
-      ;;
-    *)
-      fancy_echo "Unknown system"
-      exit 1
-      ;;
-  esac
-}
+add
 
-if ! command -v rustc > /dev/null; then
-  fancy_echo "It looks like you don't have Rust installed. We'll install that for you."
-  install_rust
+if ! asdf > /dev/null; then
+  fancy_echo "It looks like you don't have asdf installed. We'll install that for you."
+  install_asdf
 fi
+
+asdf plugin-add erlang || asdf plugin-update erlang
+asdf plugin-add elixir || asdf plugin-update elixir
+asdf plugin-add rust || asdf plugin-update rust
+
+fancy_echo "Installing elixir, erlang and rust."
+asdf install
 
 fancy_echo "Installing elixir dependencies."
 mix local.hex --force
