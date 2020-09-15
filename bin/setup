@@ -1,0 +1,44 @@
+#!/usr/bin/env sh
+
+fancy_echo() {
+  local fmt="$1"; shift
+
+  # shellcheck disable=SC2059
+  printf "\\n$fmt\\n" "$@"
+}
+
+install_asdf() {
+    git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.8.0
+
+    if [ -f ~/.zshrc ]; then
+       echo 'source ~/.asdf-vm/asdf.sh' >> ~/.zshrc
+    fi
+
+    if [ -f ~/.bashrc ]; then
+        echo 'source ~/.asdf-vm/asdf.sh' >> ~/.bashrc
+    fi
+
+    if [ -f ~/.bash_profile ]; then
+        echo 'source ~/.asdf-vm/asdf.sh' >> ~/.bash_profile
+    fi
+}
+
+if ! asdf > /dev/null; then
+  fancy_echo "It looks like you don't have asdf installed. We'll install that for you."
+  install_asdf
+fi
+
+asdf plugin-add erlang || asdf plugin-update erlang
+asdf plugin-add elixir || asdf plugin-update elixir
+asdf plugin-add rust || asdf plugin-update rust
+
+fancy_echo "Installing elixir, erlang and rust."
+asdf install
+
+fancy_echo "Installing elixir dependencies."
+mix local.hex --force
+mix local.rebar --force
+
+mix deps.get
+
+fancy_echo "You're all set!"
