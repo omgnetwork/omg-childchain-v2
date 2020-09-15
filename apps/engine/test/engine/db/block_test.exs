@@ -16,7 +16,6 @@ defmodule Engine.DB.BlockTest do
 
   describe "form/0" do
     test "forms a block from the existing pending transactions" do
-      _ = insert(:deposit_transaction)
       _ = insert(:payment_v1_transaction)
       {:ok, %{"new-block" => block}} = Block.form()
       transactions = Repo.all(from(t in Transaction, where: t.block_id == ^block.id))
@@ -25,7 +24,6 @@ defmodule Engine.DB.BlockTest do
     end
 
     test "generates the block hash" do
-      _ = insert(:deposit_transaction)
       txn1 = insert(:payment_v1_transaction)
       hash = Merkle.root_hash([Transaction.encode_unsigned(txn1)])
 

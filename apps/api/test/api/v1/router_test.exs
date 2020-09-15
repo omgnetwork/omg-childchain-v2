@@ -3,7 +3,9 @@ defmodule API.V1.RouterTest do
   use Plug.Test
 
   alias API.V1.Router
+  alias Engine.DB.Block
   alias Engine.DB.Fee
+  alias Engine.DB.Transaction
   alias Engine.Repo
   alias ExPlasma.Encoding
 
@@ -163,7 +165,10 @@ defmodule API.V1.RouterTest do
 
   describe "block.get" do
     test "that it returns a block" do
-      transaction = insert(:deposit_transaction)
+      %{id: id} = insert(:payment_v1_transaction)
+      Block.form()
+      transaction = Transaction |> Repo.get(id) |> Repo.preload(:block)
+
       tx_bytes = Encoding.to_hex(transaction.tx_bytes)
       hash = Encoding.to_hex(transaction.block.hash)
       number = transaction.block.blknum
@@ -202,7 +207,6 @@ defmodule API.V1.RouterTest do
       Repo.delete_all(Fee)
       _ = insert(:fee, hash: "77", term: :no_fees_required, type: :merged_fees)
 
-      _ = insert(:deposit_transaction)
       txn = build(:payment_v1_transaction)
       tx_bytes = Encoding.to_hex(txn.tx_bytes)
       tx_hash = Encoding.to_hex(txn.tx_hash)

@@ -132,7 +132,7 @@ defmodule Engine.DB.TransactionTest do
       |> change(block_id: block.id)
       |> Engine.Repo.update()
 
-      pending_tx = Transaction.query_pending() |> Engine.Repo.all()
+      pending_tx = Engine.Repo.all(Transaction.query_pending())
       assert Enum.count(pending_tx) == 2
     end
   end
@@ -140,7 +140,7 @@ defmodule Engine.DB.TransactionTest do
   describe "query_by_tx_hash/0" do
     test "get transaction matching the hash" do
       %{tx_hash: tx_hash} = insert(:payment_v1_transaction)
-      _t_2 = insert(:payment_v1_transaction)
+      insert(:payment_v1_transaction)
 
       assert %{tx_hash: ^tx_hash} = tx_hash |> Transaction.query_by_tx_hash() |> Engine.Repo.one()
     end

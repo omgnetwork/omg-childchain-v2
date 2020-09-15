@@ -13,7 +13,6 @@ defmodule API.V1.Controllere.TransactionTest do
 
   describe "submit/1" do
     test "decodes and inserts a tx_bytes into the DB" do
-      _ = insert(:deposit_transaction)
       txn = build(:payment_v1_transaction)
       tx_hash = Encoding.to_hex(txn.tx_hash)
       tx_bytes = Encoding.to_hex(txn.tx_bytes)
