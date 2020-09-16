@@ -1,4 +1,4 @@
-defmodule API.V1.Controller.Transaction do
+defmodule API.V1.Controller.TransactionController do
   @moduledoc """
   Contains transaction related API functions.
   """

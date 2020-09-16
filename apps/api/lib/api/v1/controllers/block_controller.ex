@@ -1,4 +1,4 @@
-defmodule API.V1.Controller.Block do
+defmodule API.V1.Controller.BlockController do
   @moduledoc """
   Contains block related API functions.
   """

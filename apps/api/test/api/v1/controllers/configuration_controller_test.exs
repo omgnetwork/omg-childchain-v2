@@ -1,7 +1,7 @@
-defmodule API.V1.Controller.ConfigurationTest do
+defmodule API.V1.Controller.ConfigurationControllerTest do
   use ExUnit.Case, async: false
 
-  alias API.V1.Controller.Configuration
+  alias API.V1.Controller.ConfigurationController
 
   @app :engine
 
@@ -25,7 +25,7 @@ defmodule API.V1.Controller.ConfigurationTest do
     end
 
     test "returns configuration successfuly" do
-      assert Configuration.get() ==
+      assert ConfigurationController.get() ==
                {:ok,
                 %{
                   deposit_finality_margin: 123,

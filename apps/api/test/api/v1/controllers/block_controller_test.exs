@@ -1,7 +1,7 @@
-defmodule API.V1.Controller.BlockTest do
+defmodule API.V1.Controller.BlockControllerTest do
   use Engine.DB.DataCase, async: true
 
-  alias API.V1.Controller.Block, as: BlockController
+  alias API.V1.Controller.BlockController
   alias Engine.DB.Block
   alias Engine.DB.Transaction
   alias ExPlasma.Encoding

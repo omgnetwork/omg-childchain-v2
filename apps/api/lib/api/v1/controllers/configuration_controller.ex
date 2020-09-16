@@ -1,4 +1,4 @@
-defmodule API.V1.Controller.Configuration do
+defmodule API.V1.Controller.ConfigurationController do
   @moduledoc """
   Contains configuration related API functions.
   """

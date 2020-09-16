@@ -1,7 +1,7 @@
-defmodule API.V1.Controller.FeeTest do
+defmodule API.V1.Controller.FeeControllerTest do
   use Engine.DB.DataCase, async: true
 
-  alias API.V1.Controller.Fee
+  alias API.V1.Controller.FeeController
 
   setup_all do
     fee_specs = %{
@@ -44,7 +44,7 @@ defmodule API.V1.Controller.FeeTest do
 
   describe "all/1" do
     test "returns fees" do
-      assert Fee.all(%{}) ==
+      assert FeeController.all(%{}) ==
                {:ok,
                 %{
                   "1" => [
@@ -82,7 +82,7 @@ defmodule API.V1.Controller.FeeTest do
     end
 
     test "filters fees" do
-      assert Fee.all(%{"tx_types" => [1]}) == {
+      assert FeeController.all(%{"tx_types" => [1]}) == {
                :ok,
                %{
                  "1" => [

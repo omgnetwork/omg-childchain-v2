@@ -1,4 +1,4 @@
-defmodule API.V1.Controller.Fee do
+defmodule API.V1.Controller.FeeController do
   @moduledoc """
   Fetches fees and returns data for the API response.
   """
