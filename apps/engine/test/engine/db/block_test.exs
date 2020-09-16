@@ -157,8 +157,8 @@ defmodule Engine.DB.BlockTest do
       assert block_result.hash == block.hash
     end
 
-    test "returns {:error, nil} if not found" do
-      assert {:error, nil} = Block.get_by_hash(<<0>>, [])
+    test "returns {:error, :no_block_matching_hash} if not found" do
+      assert {:error, :no_block_matching_hash} = Block.get_by_hash(<<0>>, [])
     end
 
     test "fails to insert two block with the same hash" do

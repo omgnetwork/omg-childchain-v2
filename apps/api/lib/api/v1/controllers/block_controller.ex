@@ -9,7 +9,7 @@ defmodule API.V1.Controller.BlockController do
   alias Engine.DB.Block
   alias ExPlasma.Encoding
 
-  @type get_by_hash_error() :: {:error, :decoding_error} | {:error, :not_found, String.t()}
+  @type get_by_hash_error() :: {:error, :decoding_error} | {:error, :no_block_matching_hash}
 
   @doc """
   Fetches a block by the given hash from the params.
@@ -20,12 +20,6 @@ defmodule API.V1.Controller.BlockController do
     with {:ok, decoded_hash} <- Encoding.to_binary(hash),
          {:ok, block} <- Block.get_by_hash(decoded_hash, :transactions) do
       {:ok, BlockView.serialize(block)}
-    else
-      {:error, nil} ->
-        {:error, :not_found, "No block matching the given hash"}
-
-      {:error, :decoding_error} = error ->
-        error
     end
   end
 end

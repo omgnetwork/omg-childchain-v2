@@ -13,7 +13,8 @@ defmodule API.ErrorEnhancer do
     malformed_body: "Body is not a valid JSON.",
     request_too_large: "Request is too large",
     currency_fee_not_supported: "One or more of the given currencies are not supported as a fee-token",
-    tx_type_not_supported: "One or more of the given transaction types are not supported"
+    tx_type_not_supported: "One or more of the given transaction types are not supported",
+    no_block_matching_hash: "No block matching the given hash"
   }
 
   def enhance({:error, %Ecto.Changeset{} = changeset}) do

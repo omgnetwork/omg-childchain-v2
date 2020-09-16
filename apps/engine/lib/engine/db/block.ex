@@ -112,13 +112,13 @@ defmodule Engine.DB.Block do
   @doc """
   Get a block by its hash.
   """
-  @spec get_by_hash(binary(), atom() | list(atom())) :: {:ok, t()} | {:error, nil}
+  @spec get_by_hash(binary(), atom() | list(atom())) :: {:ok, t()} | {:error, :no_block_matching_hash}
   def get_by_hash(hash, preloads) do
     __MODULE__
     |> Repo.get_by(hash: hash)
     |> Repo.preload(preloads)
     |> case do
-      nil -> {:error, nil}
+      nil -> {:error, :no_block_matching_hash}
       block -> {:ok, block}
     end
   end

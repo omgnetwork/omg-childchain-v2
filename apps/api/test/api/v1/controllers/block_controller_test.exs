@@ -20,8 +20,8 @@ defmodule API.V1.Controller.BlockControllerTest do
                {:ok, %{blknum: transaction.block.blknum, hash: hash, transactions: hex_tx_bytes}}
     end
 
-    test "it returns `not_found` for missing blocks" do
-      assert BlockController.get_by_hash("0x123456") == {:error, :not_found, "No block matching the given hash"}
+    test "it returns `no_block_matching_hash` for missing blocks" do
+      assert BlockController.get_by_hash("0x123456") == {:error, :no_block_matching_hash}
     end
   end
 end
