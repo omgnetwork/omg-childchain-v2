@@ -76,7 +76,7 @@ defmodule Engine.Configuration do
   """
   @spec fee_server_opts() :: no_return | Keyword.t()
   def fee_server_opts() do
-    fee_opts = Application.fetch_env!(@app, Engine.Fees)
+    fee_opts = Application.fetch_env!(@app, Engine.Fee)
 
     fee_server_opts = [
       fee_fetcher_check_interval_ms: Keyword.fetch!(fee_opts, :fee_fetcher_check_interval_ms),

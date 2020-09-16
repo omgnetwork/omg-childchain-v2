@@ -1,7 +1,7 @@
-defmodule Engine.Fees.Fetcher.Updater.MergerTest do
+defmodule Engine.Fee.Fetcher.Updater.MergerTest do
   @moduledoc false
   use ExUnit.Case, async: true
-  alias Engine.Fees.Fetcher.Updater.Merger
+  alias Engine.Fee.Fetcher.Updater.Merger
 
   doctest Merger
 

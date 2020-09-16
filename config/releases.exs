@@ -39,7 +39,7 @@ config :engine, Engine.Repo,
   queue_target: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_TARGET_MS") || "100"),
   queue_interval: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_INTERVAL_MS") || "2000")
 
-config :engine, Engine.Fees,
+config :engine, Engine.Fee,
   fee_feed_url: System.get_env("FEE_FEED_URL") || "http://localhost:4000/api/v1",
   fee_change_tolerance_percent: String.to_integer(System.get_env("FEE_CHANGE_TOLERANCE_PERCENT") || "25"),
   stored_fee_update_interval_minutes: String.to_integer(System.get_env("STORED_FEE_UPDATE_INTERVAL_MINUTES") || "1")

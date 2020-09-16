@@ -36,7 +36,7 @@ config :engine,
   eth_vault: contracts["CONTRACT_ADDRESS_ETH_VAULT"],
   payment_exit_game: contracts["CONTRACT_ADDRESS_PAYMENT_EXIT_GAME"]
 
-config :engine, Engine.Fees,
+config :engine, Engine.Fee,
   fee_feed_url: "http://localhost:4000/api/v1/fees",
   fee_change_tolerance_percent: 25,
   stored_fee_update_interval_minutes: 1,

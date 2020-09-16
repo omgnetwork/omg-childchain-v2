@@ -31,7 +31,7 @@ defmodule Engine.DB.Transaction do
   alias Engine.DB.Block
   alias Engine.DB.Output
   alias Engine.DB.Transaction.Validator
-  alias Engine.Fees
+  alias Engine.Fee
   alias Engine.Repo
 
   @type tx_bytes :: binary
@@ -95,7 +95,7 @@ defmodule Engine.DB.Transaction do
   def decode(tx_bytes) do
     with {:ok, decoded} <- ExPlasma.decode(tx_bytes),
          {:ok, recovered} <- ExPlasma.Transaction.with_witnesses(decoded) do
-      {:ok, fees} = Fees.accepted_fees()
+      {:ok, fees} = Fee.accepted_fees()
 
       params =
         recovered

@@ -4,7 +4,7 @@ defmodule API.V1.Controller.FeeController do
   """
 
   alias API.V1.View.FeeView
-  alias Engine.Fees
+  alias Engine.Fee
   alias ExPlasma.Encoding
 
   @type fees_response() :: %{non_neg_integer() => fee_type()}
@@ -33,11 +33,11 @@ defmodule API.V1.Controller.FeeController do
   end
 
   @spec get_filtered_fees(list(pos_integer()), list(String.t()) | nil) ::
-          {:ok, Fees.full_fee_t()} | {:error, :currency_fee_not_supported}
+          {:ok, Fee.full_fee_t()} | {:error, :currency_fee_not_supported}
   defp get_filtered_fees(tx_types, currencies) do
-    {:ok, fees} = Fees.current_fees()
+    {:ok, fees} = Fee.current_fees()
 
-    Fees.filter(fees, tx_types, currencies)
+    Fee.filter(fees, tx_types, currencies)
   end
 
   defp list_to_binary(list, acc \\ [])

@@ -1,10 +1,10 @@
-defmodule Engine.Fees.FetcherTest do
+defmodule Engine.Fee.FetcherTest do
   @moduledoc false
 
   use ExUnit.Case, async: true
 
-  alias Engine.Fees.Fetcher
-  alias Engine.Fees.Fetcher.Client.Parser
+  alias Engine.Fee.Fetcher
+  alias Engine.Fee.Fetcher.Client.Parser
   alias FakeServer.Response
 
   @eth <<0::160>>

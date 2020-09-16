@@ -1,18 +1,18 @@
-defmodule Engine.Fees.Fetcher do
+defmodule Engine.Fee.Fetcher do
   @moduledoc """
   Adapter pulls actual fees prices from fee feed.
   """
 
-  alias Engine.Fees.Fetcher.Client
-  alias Engine.Fees.Fetcher.Updater
+  alias Engine.Fee.Fetcher.Client
+  alias Engine.Fee.Fetcher.Updater
 
   @doc """
   Pulls the fee specification from fees feed. Feed updates fee prices based on Ethereum's gas price.
   """
-  @spec get_fee_specs(Keyword.t(), Engine.Fees.full_fee_t()) ::
+  @spec get_fee_specs(Keyword.t(), Engine.Fee.full_fee_t()) ::
           :ok
           | {:error, {:malformed_response, any()} | {:server_error, any()} | {:unsuccessful_response, any()}}
-          | {:ok, Engine.Fees.full_fee_t()}
+          | {:ok, Engine.Fee.full_fee_t()}
   def get_fee_specs(opts, actual_fee_specs) do
     fee_feed_url = Keyword.fetch!(opts, :fee_feed_url)
 
