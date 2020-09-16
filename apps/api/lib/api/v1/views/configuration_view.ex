@@ -1,4 +1,4 @@
-defmodule API.V1.View.Configuration do
+defmodule API.V1.View.ConfigurationView do
   @moduledoc """
   Contain functions that serialize the configuration
   """

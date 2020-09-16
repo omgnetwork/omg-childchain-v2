@@ -1,4 +1,4 @@
-defmodule API.V1.View.Transaction do
+defmodule API.V1.View.TransactionView do
   @moduledoc """
   Contain functions that serialize transactions into different format
   """

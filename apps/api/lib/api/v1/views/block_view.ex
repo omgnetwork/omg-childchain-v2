@@ -1,4 +1,4 @@
-defmodule API.V1.View.Block do
+defmodule API.V1.View.BlockView do
   @moduledoc """
   Contain functions that serialize blocks into different format
   """

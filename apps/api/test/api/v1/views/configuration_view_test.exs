@@ -1,7 +1,7 @@
-defmodule API.V1.View.ConfigurationTest do
+defmodule API.V1.View.ConfigurationViewTest do
   use ExUnit.Case, async: true
 
-  alias API.V1.View.Configuration
+  alias API.V1.View.ConfigurationView
 
   describe "serialize/1" do
     test "serialize a configuration" do
@@ -11,7 +11,7 @@ defmodule API.V1.View.ConfigurationTest do
         ethereum_network: "ethereum_network"
       }
 
-      assert Configuration.serialize(configuration) == %{
+      assert ConfigurationView.serialize(configuration) == %{
                deposit_finality_margin: configuration.finality_margin,
                contract_semver: configuration.contract_semver,
                network: configuration.ethereum_network

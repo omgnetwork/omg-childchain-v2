@@ -3,7 +3,7 @@ defmodule API.V1.Controller.FeeController do
   Fetches fees and returns data for the API response.
   """
 
-  alias API.V1.View.Fee
+  alias API.V1.View.FeeView
   alias Engine.Fees
   alias ExPlasma.Encoding
 
@@ -26,7 +26,7 @@ defmodule API.V1.Controller.FeeController do
   def all(params) do
     with {:ok, currencies} <- list_to_binary(params["currencies"]),
          {:ok, filtered_fees} <- get_filtered_fees(params["tx_types"], currencies) do
-      {:ok, Fee.serialize(filtered_fees)}
+      {:ok, FeeView.serialize(filtered_fees)}
     else
       error -> handle_error(error)
     end
