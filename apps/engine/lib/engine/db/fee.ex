@@ -1,7 +1,18 @@
 defmodule Engine.DB.Fee do
   @moduledoc """
-  This module represents computed fees and how they
-  are stored in the database.
+  This module represents computed fees and how they are stored in the database.
+
+  The schema contains the following fields:
+
+  - hash: The sha256 hash of the `term`
+  - type:
+      - previous_fees: Fees that are still valid for a short period of time after being updated.
+        This is to improve the UX by still accepting transactions that was built with a fee that changed just before the submission.
+
+      - merged_fees: A merged map of current and previous fees that is used to validate the output amount of a transaction.
+
+      - current_fees: The currently valid fees.
+  - term: The Map of fees per token
   """
 
   use Ecto.Schema

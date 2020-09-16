@@ -9,6 +9,19 @@ defmodule Engine.DB.Transaction do
 
   More information is contained in the `tx_bytes`. However, to keep the Childchain _lean_, we extract
   data onto the record as needed.
+
+  The schema contains the following fields:
+
+  - tx_bytes: The signed bytes submited by users
+  - tx_hash: The keccak hash of the transaction
+  - tx_type: The type of the transaction, this is an integer. ie: `1` for payment v1 transactions, `3` for fee transactions
+
+  Virtual fields used for convenience and validation:
+
+  - witnesses: Avoid decoding/parsing signatures mutiple times along validation process
+  - signed_tx: Avoid calling decode(tx_bytes) multiple times along the validation process
+
+  Note that with the current implementation, fields virtual fields are not populated when loading record from the DB
   """
 
   use Ecto.Schema

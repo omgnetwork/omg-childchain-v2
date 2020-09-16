@@ -5,9 +5,7 @@ defmodule API.V1.View.TransactionView do
 
   alias ExPlasma.Encoding
 
-  @type serialized_hash() :: %{
-          required(:tx_hash) => String.t()
-        }
+  @type serialized_hash() :: %{required(:tx_hash) => String.t()}
 
   @spec serialize_hash(map()) :: serialized_hash()
   def serialize_hash(transaction) do

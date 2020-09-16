@@ -1,6 +1,18 @@
 defmodule Engine.DB.Block do
   @moduledoc """
-  Ecto schema that represents "Plasma Blocks" that are being submitted from the Childchain to the contracts. This holds metadata information and a reference point to associated transactions that are formed into said Block.
+  Ecto schema that represents "Plasma Blocks" that are being submitted from the Childchain to the contracts.
+  This holds metadata information and a reference point to associated transactions that are formed into said Block.
+
+  The schema contains the following fields:
+
+  - hash: Is generated when finalizing a block, it is the result of the merkle root hash of all unsigned tx_bytes of transactions it contains
+  - nonce: The nonce of the transaction on the rootchain
+  - blknum: The plasma block number, it's increased by 1000 for each new block
+  - tx_hash: The hash of the transaction containing the the block submission on the rootchain
+  - formed_at_ethereum_height: The rootchain height at wish the block was formed
+  - submitted_at_ethereum_height: The rootchain height at wish the block was submitted
+  - gas: The gas price used for the submission
+  - attempts_counter: The number of submission attempts
   """
 
   use Ecto.Schema
