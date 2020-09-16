@@ -5,7 +5,7 @@ defmodule API.V1.Controller.BlockController do
 
   use Spandex.Decorators
 
-  alias API.V1.View
+  alias API.V1.View.BlockView
   alias Engine.DB.Block
   alias ExPlasma.Encoding
 
@@ -14,12 +14,12 @@ defmodule API.V1.Controller.BlockController do
   @doc """
   Fetches a block by the given hash from the params.
   """
-  @spec get_by_hash(String.t()) :: {:ok, View.Block.serialized_block()} | get_by_hash_error()
+  @spec get_by_hash(String.t()) :: {:ok, BlockView.serialized_block()} | get_by_hash_error()
   @decorate trace(service: :ecto, type: :backend)
   def get_by_hash(hash) do
     with {:ok, decoded_hash} <- Encoding.to_binary(hash),
          {:ok, block} <- Block.get_by_hash(decoded_hash, :transactions) do
-      {:ok, View.Block.serialize(block)}
+      {:ok, BlockView.serialize(block)}
     else
       {:error, nil} ->
         {:error, :not_found, "No block matching the given hash"}
