@@ -9,7 +9,7 @@ defmodule Engine.Ethereum.Supervisor do
   alias Engine.Ethereum.Height
   alias Engine.Ethereum.HeightObserver
   alias Engine.Ethereum.RootChain.Rpc
-  alias Engine.Fees.Server, as: FeesServer
+  alias Engine.Fee.Server, as: FeeServer
   alias Status.Alert.Alarm
   require Logger
 
@@ -24,7 +24,7 @@ defmodule Engine.Ethereum.Supervisor do
     url = Configuration.url()
 
     children = [
-      {FeesServer, fee_server_opts},
+      {FeeServer, fee_server_opts},
       {Height, []},
       {HeightObserver,
        [

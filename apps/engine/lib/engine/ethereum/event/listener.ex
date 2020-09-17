@@ -62,7 +62,7 @@ defmodule Engine.Ethereum.Event.Listener do
   end
 
   @doc """
-  Reads the status of listening (till which Ethereum height were the events processed) from the `OMG.DB` and initializes
+  Reads the status of listening (till which Ethereum height were the events processed) from the storage and initializes
   the logic `Listener.Core` with it. Does an initial `Coordinator.check_in` with the
   Ethereum height it last stopped on. Next, it continues to monitor and fetch the events as usual.
   """
@@ -157,7 +157,7 @@ defmodule Engine.Ethereum.Event.Listener do
       |> Core.get_events(sync_guide.sync_height)
 
     # process_events_callback sorts persistence!
-    :ok = callbacks.process_events_callback.(events, state.service_name)
+    {:ok, _} = callbacks.process_events_callback.(events, state.service_name)
     :ok = :telemetry.execute([:process, __MODULE__], %{events: events}, new_state)
     :ok = publish_events(events)
     :ok = Storage.update_synced_height(new_state.service_name, height_to_check_in, new_state.ets)

@@ -1,8 +1,7 @@
 defmodule Engine.Callbacks.Deposit do
   @moduledoc """
   Contains the business logic of persisting a deposit event and creating the
-  appropriate block, transaction and UTXO. For context, a deposit is made
-  into its own 'plasma block':
+  appropriate UTXO.
 
   When you deposit into the network, you send a 'deposit' transaction to the
   contract directly. Upon success, the contract generates a block just for that
@@ -18,47 +17,49 @@ defmodule Engine.Callbacks.Deposit do
 
   use Spandex.Decorators
 
-  import Ecto.Changeset
-
   alias Ecto.Multi
   alias Engine.Callback
-  alias Engine.DB.Transaction
-  alias ExPlasma.Builder
+  alias Engine.DB.Output
+  alias Engine.Repo
+  alias ExPlasma.Output.Position
 
   @doc """
-  Inserts deposit events, recreating the transaction and forming the associated block,
-  transaction, and UTXOs. This will wrap all the build deposits into one DB transaction.
+  Inserts deposit events, forming the associated UTXOs.
+  This will wrap all the build deposits into one DB transaction.
   """
   @impl Callback
   @decorate trace(service: :ecto, type: :backend)
+  def callback([], _listener), do: {:ok, :noop}
+
   def callback(events, listener) do
     Multi.new()
     |> Callback.update_listener_height(events, listener)
     |> do_callback(events)
-    |> Engine.Repo.transaction()
+    |> Repo.transaction()
   end
 
   defp do_callback(multi, [event | tail]), do: multi |> build_deposit(event) |> do_callback(tail)
   defp do_callback(multi, []), do: multi
 
-  defp build_deposit(multi, %{} = event) do
-    tx_bytes =
-      ExPlasma.payment_v1()
-      |> Builder.new()
-      |> Builder.add_output(
+  defp build_deposit(multi, event) do
+    output_id = Position.new(event.data["blknum"], 0, 0)
+
+    output_params = %{
+      state: "confirmed",
+      output_type: ExPlasma.payment_v1(),
+      output_data: %{
         output_guard: event.data["depositor"],
         token: event.data["token"],
         amount: event.data["amount"]
-      )
-      |> ExPlasma.encode!()
+      },
+      output_id: output_id
+    }
 
-    {:ok, changeset} = Transaction.decode(tx_bytes, Transaction.kind_deposit())
-    confirmed_output = changeset |> get_field(:outputs) |> hd()
-    transaction = put_change(changeset, :outputs, [%{confirmed_output | state: "confirmed"}])
+    output = Output.changeset(%Output{}, output_params)
 
-    Ecto.Multi.insert(multi, "deposit-blknum-#{event.data["blknum"]}", transaction,
+    Ecto.Multi.insert(multi, "deposit-output-#{output_id.position}", output,
       on_conflict: :nothing,
-      conflict_target: [:tx_hash, :tx_type]
+      conflict_target: :position
     )
   end
 end

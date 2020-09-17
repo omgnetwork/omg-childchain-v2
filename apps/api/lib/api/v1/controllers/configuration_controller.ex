@@ -1,17 +1,17 @@
-defmodule API.V1.Controller.Configuration do
+defmodule API.V1.Controller.ConfigurationController do
   @moduledoc """
   Contains configuration related API functions.
   """
 
   use Spandex.Decorators
 
-  alias API.V1.View
+  alias API.V1.View.ConfigurationView
   alias Engine.Configuration
 
   @doc """
   Returns the current configuration.
   """
-  @spec get() :: {:ok, View.Configuration.serialized()}
+  @spec get() :: {:ok, ConfigurationView.serialized()}
   @decorate trace(service: :ecto, type: :backend)
   def get() do
     configuration = %{
@@ -20,6 +20,6 @@ defmodule API.V1.Controller.Configuration do
       ethereum_network: Configuration.ethereum_network()
     }
 
-    {:ok, View.Configuration.serialize(configuration)}
+    {:ok, ConfigurationView.serialize(configuration)}
   end
 end

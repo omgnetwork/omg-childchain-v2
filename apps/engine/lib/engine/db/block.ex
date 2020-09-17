@@ -1,6 +1,18 @@
 defmodule Engine.DB.Block do
   @moduledoc """
-  Ecto schema that represents "Plasma Blocks" that are being submitted from the Childchain to the contracts. This holds metadata information and a reference point to associated transactions that are formed into said Block.
+  Ecto schema that represents "Plasma Blocks" that are being submitted from the Childchain to the contracts.
+  This holds metadata information and a reference point to associated transactions that are formed into said Block.
+
+  The schema contains the following fields:
+
+  - hash: Is generated when finalizing a block, it is the result of the merkle root hash of all unsigned tx_bytes of transactions it contains
+  - nonce: The nonce of the transaction on the rootchain
+  - blknum: The plasma block number, it's increased by 1000 for each new block
+  - tx_hash: The hash of the transaction containing the the block submission on the rootchain
+  - formed_at_ethereum_height: The rootchain height at wish the block was formed
+  - submitted_at_ethereum_height: The rootchain height at wish the block was submitted
+  - gas: The gas price used for the submission
+  - attempts_counter: The number of submission attempts
   """
 
   use Ecto.Schema
@@ -100,13 +112,13 @@ defmodule Engine.DB.Block do
   @doc """
   Get a block by its hash.
   """
-  @spec get_by_hash(binary(), atom() | list(atom())) :: {:ok, t()} | {:error, nil}
+  @spec get_by_hash(binary(), atom() | list(atom())) :: {:ok, t()} | {:error, :no_block_matching_hash}
   def get_by_hash(hash, preloads) do
     __MODULE__
     |> Repo.get_by(hash: hash)
     |> Repo.preload(preloads)
     |> case do
-      nil -> {:error, nil}
+      nil -> {:error, :no_block_matching_hash}
       block -> {:ok, block}
     end
   end
@@ -178,7 +190,7 @@ defmodule Engine.DB.Block do
 
   defp attach_transactions_to_block(repo, %{"new-block" => block}) do
     updates = [block_id: block.id, updated_at: NaiveDateTime.utc_now()]
-    {total, _} = repo.update_all(Transaction.pending(), set: updates)
+    {total, _} = repo.update_all(Transaction.query_pending(), set: updates)
 
     {:ok, total}
   end

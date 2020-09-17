@@ -3,7 +3,7 @@ defmodule API.View.Base do
 
   def serialize(data, success, version) do
     %{
-      service_name: "childchain",
+      service_name: "child_chain",
       version: version,
       data: data,
       success: success

@@ -20,6 +20,8 @@ defmodule Engine.Callbacks.ExitStarted do
   """
   @impl Callback
   @decorate trace(service: :ecto, type: :backend)
+  def callback([], _listener), do: {:ok, :noop}
+
   def callback(events, listener) do
     Multi.new()
     |> Callback.update_listener_height(events, listener)
@@ -28,7 +30,7 @@ defmodule Engine.Callbacks.ExitStarted do
   end
 
   defp do_callback(multi, positions, [event | tail]) do
-    %{call_data: %{"utxoPos" => position}} = event
+    %{call_data: %{utxo_pos: position}} = event
     do_callback(multi, positions ++ [position], tail)
   end
 

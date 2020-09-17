@@ -7,6 +7,19 @@ defmodule Engine.DB.Output do
 
   * Being formed into a block via the transaction. At this point we should have all the information available to
   create a full Output position for this.
+
+  The schema contains the following fields:
+
+  - position: The integer posision of the Output. It is calculated as follow:
+    block number * block offset (defaults: `1000000000`) + transaction position * transaction offset (defaults to `10000`) + index of the UTXO in the list of outputs of the transaction
+  - output_type: The integer representing the output type, ie: `1` for payment v1, `2` for fees.
+  - output_data: The binary encoded output data, for payment v1 and fees, this is the RLP encoded binary of the output type, owner, token and amount.
+  - output_id: The binary encoded output id, this is the result of the encoding of the position
+  - state: The current output state:
+      - "pending": the default state when creating an output
+      - "confirmed": the output is confirmed on the rootchain
+      - "exiting": the output is beeing exited
+      - "piggybacked": the output is a part of an IFE and has been piggybacked
   """
 
   use Ecto.Schema
@@ -22,7 +35,7 @@ defmodule Engine.DB.Output do
           id: pos_integer(),
           inserted_at: DateTime.t(),
           output_data: binary() | nil,
-          output_id: pos_integer() | nil,
+          output_id: binary() | nil,
           output_type: pos_integer(),
           position: pos_integer() | nil,
           spending_transaction: Transaction.t() | nil,

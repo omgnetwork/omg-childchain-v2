@@ -10,7 +10,7 @@ defmodule Engine.Callback do
 
   @type events :: list(Event.t())
   @type listener :: atom()
-  @type response :: {:ok, map()} | {:error, :atom, any(), any()}
+  @type response :: {:ok, map() | :noop} | {:error, :atom, any(), any()}
 
   @callback callback(events(), listener()) :: response()
 

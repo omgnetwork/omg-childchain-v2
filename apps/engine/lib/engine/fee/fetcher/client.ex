@@ -1,9 +1,9 @@
-defmodule Engine.Fees.Fetcher.Client do
+defmodule Engine.Fee.Fetcher.Client do
   @moduledoc """
   Provides functions to communicate with Child Chain API
   """
 
-  alias Engine.Fees.Fetcher.Client.Parser
+  alias Engine.Fee.Fetcher.Client.Parser
 
   require Logger
 

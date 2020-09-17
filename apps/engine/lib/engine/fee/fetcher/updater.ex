@@ -1,27 +1,27 @@
-defmodule Engine.Fees.Fetcher.Updater do
+defmodule Engine.Fee.Fetcher.Updater do
   @moduledoc """
   Decides whether fees will be updated from the fetched fees from the feed.
   """
 
-  alias Engine.Fees
-  alias Engine.Fees.Fetcher.Updater.Merger
+  alias Engine.Fee
+  alias Engine.Fee.Fetcher.Updater.Merger
 
-  @type can_update_result_t :: {:ok, Fees.full_fee_t()} | :no_changes
+  @type can_update_result_t :: {:ok, Fee.full_fee_t()} | :no_changes
 
   # Internal data structure resulted from merge `stored_fees` and `fetched_fees` by tx type.
   # See `merge_specs_by_tx_type/2`
-  @typep maybe_unpaired_fee_specs_merge_t :: %{non_neg_integer() => Fees.fee_t() | {Fees.fee_t(), Fees.fee_t()}}
+  @typep maybe_unpaired_fee_specs_merge_t :: %{non_neg_integer() => Fee.fee_t() | {Fee.fee_t(), Fee.fee_t()}}
 
   # As above but fully paired, which means `stored_fees` and `fetched_fees` support the same tx types
-  @typep paired_fee_specs_merge_t :: %{non_neg_integer() => {Fees.fee_t(), Fees.fee_t()}}
+  @typep paired_fee_specs_merge_t :: %{non_neg_integer() => {Fee.fee_t(), Fee.fee_t()}}
 
   @doc """
   Newly fetched fees will be effective as long as the amount change on any token is significant
   or the time passed from previous update exceeds the update interval.
   """
   @spec can_update(
-          stored_fees :: Fees.full_fee_t() | nil,
-          fetched_fees :: Fees.full_fee_t(),
+          stored_fees :: Fee.full_fee_t() | nil,
+          fetched_fees :: Fee.full_fee_t(),
           tolerance_percent :: pos_integer()
         ) :: can_update_result_t()
   def can_update(fee_spec, fee_spec, _tolerance_percent), do: :no_changes
@@ -41,7 +41,7 @@ defmodule Engine.Fees.Fetcher.Updater do
     end
   end
 
-  @spec merge_specs_by_tx_type(Fees.full_fee_t(), Fees.full_fee_t()) :: maybe_unpaired_fee_specs_merge_t()
+  @spec merge_specs_by_tx_type(Fee.full_fee_t(), Fee.full_fee_t()) :: maybe_unpaired_fee_specs_merge_t()
   defp merge_specs_by_tx_type(stored_specs, fetched_specs) do
     Map.merge(stored_specs, fetched_specs, fn _t, stored_fees, fetched_fees -> {stored_fees, fetched_fees} end)
   end
@@ -63,7 +63,7 @@ defmodule Engine.Fees.Fetcher.Updater do
     Enum.any?(merged_specs, &merge_pair_differs_on_token?/1)
   end
 
-  @spec merge_pair_differs_on_token?({non_neg_integer(), {Fees.fee_t(), Fees.fee_t()}}) :: boolean()
+  @spec merge_pair_differs_on_token?({non_neg_integer(), {Fee.fee_t(), Fee.fee_t()}}) :: boolean()
   defp merge_pair_differs_on_token?({_type, {stored_fees, fetched_fees}}) do
     not MapSet.equal?(
       stored_fees |> Map.keys() |> MapSet.new(),
@@ -75,7 +75,7 @@ defmodule Engine.Fees.Fetcher.Updater do
   #  - token amount difference exceeds the tolerance level,
   #  - there is missing token in any of specs, so token support was either added or removed
   #    in the update.
-  @spec is_change_significant?(list(Fees.merged_fee_t()), non_neg_integer()) :: boolean()
+  @spec is_change_significant?(list(Fee.merged_fee_t()), non_neg_integer()) :: boolean()
   defp is_change_significant?(token_amounts, tolerance_percent) do
     tolerance_rate = tolerance_percent / 100
 

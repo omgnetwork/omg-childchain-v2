@@ -1,11 +1,11 @@
-defmodule Engine.Fees.FilterTest do
+defmodule Engine.Fee.FilterTest do
   @moduledoc false
 
   use ExUnit.Case, async: true
 
-  alias Engine.Fees.Filter
+  alias Engine.Fee.Filter
 
-  doctest Engine.Fees.Filter
+  doctest Engine.Fee.Filter
 
   @eth <<0::160>>
   @not_eth_1 <<1::size(160)>>

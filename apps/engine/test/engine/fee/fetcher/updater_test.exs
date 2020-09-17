@@ -1,8 +1,8 @@
-defmodule Engine.Fees.Fetcher.UpdaterTest do
+defmodule Engine.Fee.Fetcher.UpdaterTest do
   @moduledoc false
 
   use ExUnit.Case, async: true
-  alias Engine.Fees.Fetcher.Updater
+  alias Engine.Fee.Fetcher.Updater
 
   doctest Updater
 

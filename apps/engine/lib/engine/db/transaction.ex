@@ -9,6 +9,19 @@ defmodule Engine.DB.Transaction do
 
   More information is contained in the `tx_bytes`. However, to keep the Childchain _lean_, we extract
   data onto the record as needed.
+
+  The schema contains the following fields:
+
+  - tx_bytes: The signed bytes submited by users
+  - tx_hash: The keccak hash of the transaction
+  - tx_type: The type of the transaction, this is an integer. ie: `1` for payment v1 transactions, `3` for fee transactions
+
+  Virtual fields used for convenience and validation:
+
+  - witnesses: Avoid decoding/parsing signatures mutiple times along validation process
+  - signed_tx: Avoid calling decode(tx_bytes) multiple times along the validation process
+
+  Note that with the current implementation, fields virtual fields are not populated when loading record from the DB
   """
 
   use Ecto.Schema
@@ -18,7 +31,7 @@ defmodule Engine.DB.Transaction do
   alias Engine.DB.Block
   alias Engine.DB.Output
   alias Engine.DB.Transaction.Validator
-  alias Engine.Fees
+  alias Engine.Fee
   alias Engine.Repo
 
   @type tx_bytes :: binary
@@ -29,7 +42,6 @@ defmodule Engine.DB.Transaction do
           id: pos_integer(),
           inputs: list(Output.t()),
           inserted_at: DateTime.t(),
-          kind: :deposit | :transfer,
           outputs: list(Output.t()),
           signed_tx: ExPlasma.Transaction.t() | nil,
           tx_bytes: binary(),
@@ -39,21 +51,15 @@ defmodule Engine.DB.Transaction do
           witnesses: DateTime.t()
         }
 
-  @deposit :deposit
-  @transfer :transfer
-  @required_fields [:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type, :kind]
+  @required_fields [:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type]
   @optional_fields []
 
   @timestamps_opts [inserted_at: :node_inserted_at, updated_at: :node_updated_at]
-
-  def kind_transfer(), do: @transfer
-  def kind_deposit(), do: @deposit
 
   schema "transactions" do
     field(:tx_bytes, :binary)
     field(:tx_hash, :binary)
     field(:tx_type, :integer)
-    field(:kind, Ecto.Atom)
 
     # Virtual fields used for convenience and validation
     # Avoid decoding/parsing signatures mutiple times along validation process
@@ -74,28 +80,27 @@ defmodule Engine.DB.Transaction do
   @doc """
   Query all transactions that have not been formed into a block.
   """
-  def pending(), do: from(t in __MODULE__, where: is_nil(t.block_id))
+  def query_pending(), do: from(t in __MODULE__, where: is_nil(t.block_id))
 
   @doc """
   Find transactions by the tx_hash.
   """
-  def find_by_tx_hash(tx_hash), do: from(t in __MODULE__, where: t.tx_hash == ^tx_hash)
+  def query_by_tx_hash(tx_hash), do: from(t in __MODULE__, where: t.tx_hash == ^tx_hash)
 
   @doc """
   The main action of the system. Takes tx_bytes and forms the appropriate
   associations for the transaction and outputs and runs the changeset.
   """
-  @spec decode(tx_bytes, atom()) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
-  def decode(tx_bytes, kind) do
+  @spec decode(tx_bytes) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
+  def decode(tx_bytes) do
     with {:ok, decoded} <- ExPlasma.decode(tx_bytes),
          {:ok, recovered} <- ExPlasma.Transaction.with_witnesses(decoded) do
-      {:ok, fees} = Fees.accepted_fees()
+      {:ok, fees} = Fee.accepted_fees()
 
       params =
         recovered
         |> recovered_to_map()
         |> Map.put(:fees, fees)
-        |> Map.put(:kind, kind)
         |> Map.put(:tx_bytes, tx_bytes)
 
       {:ok, changeset(%__MODULE__{}, params)}

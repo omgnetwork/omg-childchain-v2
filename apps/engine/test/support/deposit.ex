@@ -1,23 +1,11 @@
 defmodule Deposit do
   @moduledoc false
-  alias ExPlasma.Encoding
 
-  @zero_metadata <<0::256>>
-  @output_type ExPlasma.payment_v1()
+  alias ExPlasma.Builder
+  alias ExPlasma.Transaction.Type.PaymentV1
 
-  defstruct [:inputs, :outputs, metadata: @zero_metadata]
-
-  @type t() :: %__MODULE__{
-          inputs: list(),
-          outputs: list(),
-          metadata: binary()
-        }
-
-  def new(owner, currency, amount) do
-    outputs = [
-      [@output_type, [Encoding.to_binary!(owner), currency, amount]]
-    ]
-
-    %__MODULE__{inputs: [], outputs: outputs, metadata: @zero_metadata}
+  def new(owner, token, amount) do
+    output = PaymentV1.new_output(owner, token, amount)
+    Builder.new(ExPlasma.payment_v1(), outputs: [output])
   end
 end

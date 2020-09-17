@@ -1,18 +1,18 @@
-defmodule Engine.Fees.Server do
+defmodule Engine.Fee.Server do
   @moduledoc """
   Maintains current fee rates and tokens in which fees may be paid.
 
   Periodically updates fees information from an external source.
 
-  Fee's file parsing and rules of transaction's fee validation are in `OMG.Fees`
+  Fee's file parsing and rules of transaction's fee validation are in `OMG.Fee`
   """
   use GenServer
 
   alias Ecto.Multi
-  alias Engine.DB.Fee
-  alias Engine.Fees
-  alias Engine.Fees.Fetcher
-  alias Engine.Fees.Fetcher.Updater.Merger
+  alias Engine.DB.Fee, as: FeeDB
+  alias Engine.Fee
+  alias Engine.Fee.Fetcher
+  alias Engine.Fee.Fetcher.Updater.Merger
   alias Engine.Repo
   alias Status.Alert.Alarm
 
@@ -56,7 +56,7 @@ defmodule Engine.Fees.Server do
   Returns a list of amounts that are accepted as a fee for each token/type.
   These amounts include the currently supported fees plus the buffered ones.
   """
-  @spec accepted_fees() :: {:ok, Fees.typed_merged_fee_t()}
+  @spec accepted_fees() :: {:ok, Fee.typed_merged_fee_t()}
   def accepted_fees() do
     fees = load_accepted_fees()
 
@@ -66,7 +66,7 @@ defmodule Engine.Fees.Server do
   @doc """
   Returns currently accepted tokens and amounts in which transaction fees are collected for each transaction type
   """
-  @spec current_fees() :: {:ok, Fees.full_fee_t()}
+  @spec current_fees() :: {:ok, Fee.full_fee_t()}
   def current_fees() do
     fees = load_current_fees()
 
@@ -85,8 +85,8 @@ defmodule Engine.Fees.Server do
       merged_fee_specs = Merger.merge_specs(current_fees.term, nil)
 
       Repo.transaction(fn ->
-        {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: :merged_fees})
-        {_, _} = Fee.remove_previous_fees()
+        {:ok, _} = FeeDB.insert(%{term: merged_fee_specs, type: :merged_fees})
+        {_, _} = FeeDB.remove_previous_fees()
       end)
     end
 
@@ -113,7 +113,7 @@ defmodule Engine.Fees.Server do
     {:noreply, new_state}
   end
 
-  @spec invalid_fee_source() :: {:invalid_fee_source, %{:node => atom(), :reporter => Engine.Fees.Server}}
+  @spec invalid_fee_source() :: {:invalid_fee_source, %{:node => atom(), :reporter => Engine.Fee.Server}}
   defp invalid_fee_source() do
     {:invalid_fee_source, %{node: Node.self(), reporter: __MODULE__}}
   end
@@ -160,7 +160,7 @@ defmodule Engine.Fees.Server do
     {:ok, _} =
       Multi.new()
       |> Multi.run(:insert_current_fees, fn _repo, _changes ->
-        Fee.insert(%{term: new_fee_specs, type: :current_fees})
+        FeeDB.insert(%{term: new_fee_specs, type: :current_fees})
       end)
       |> Multi.run(:update_merged_fees, fn _repo, _changes ->
         :ok = update_merged_fees(new_fee_specs)
@@ -179,29 +179,29 @@ defmodule Engine.Fees.Server do
       if is_nil(load_previous_fees()) do
         previous_fee_specs = load_current_fees()
         merged_fee_specs = Merger.merge_specs(new_fee_specs, previous_fee_specs && previous_fee_specs.term)
-        {:ok, _} = Fee.insert(%{term: previous_fee_specs && previous_fee_specs.term, type: :previous_fees})
-        {:ok, _} = Fee.insert(%{term: merged_fee_specs, type: :merged_fees})
+        {:ok, _} = FeeDB.insert(%{term: previous_fee_specs && previous_fee_specs.term, type: :previous_fees})
+        {:ok, _} = FeeDB.insert(%{term: merged_fee_specs, type: :merged_fees})
       end
 
     :ok
   end
 
   defp load_current_fees() do
-    case Fee.fetch_current_fees() do
+    case FeeDB.fetch_current_fees() do
       {:ok, fees} -> fees
       _ -> nil
     end
   end
 
   defp load_accepted_fees() do
-    case Fee.fetch_merged_fees() do
+    case FeeDB.fetch_merged_fees() do
       {:ok, fees} -> fees
       _ -> nil
     end
   end
 
   defp load_previous_fees() do
-    case Fee.fetch_previous_fees() do
+    case FeeDB.fetch_previous_fees() do
       {:ok, fees} -> fees
       _ -> nil
     end

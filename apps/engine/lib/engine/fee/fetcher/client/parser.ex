@@ -1,9 +1,9 @@
-defmodule Engine.Fees.Fetcher.Client.Parser do
+defmodule Engine.Fee.Fetcher.Client.Parser do
   @moduledoc """
   Transaction's fee validation functions
   """
 
-  alias Engine.Fees.Fetcher.Client.Parser.SingleSpecParser
+  alias Engine.Fee.Fetcher.Client.Parser.SingleSpecParser
 
   require Logger
 
@@ -26,7 +26,7 @@ defmodule Engine.Fees.Fetcher.Client.Parser do
   Parses provided json string to token-fee map and returns the map together with possible parsing errors
   """
   @spec parse(binary() | map() | list()) ::
-          {:ok, Engine.Fees.full_fee_t()}
+          {:ok, Engine.Fee.full_fee_t()}
           | {:error, list({:error, parsing_error(), any(), non_neg_integer() | nil})}
   def parse(fee_spec_json) when is_binary(fee_spec_json) do
     case Jason.decode(fee_spec_json) do

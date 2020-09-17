@@ -1,16 +1,16 @@
-defmodule Engine.Fees.Fetcher.Updater.Merger do
+defmodule Engine.Fee.Fetcher.Updater.Merger do
   @moduledoc """
   Handles the parsing, formatting and merging of previous and current fees
   """
 
-  alias Engine.Fees
+  alias Engine.Fee
 
   @doc """
   Merges a current and previous server fee specs into a formatted map
 
   ## Examples
 
-      iex> Engine.Fees.Fetcher.Updater.Merger.merge_specs(
+      iex> Engine.Fee.Fetcher.Updater.Merger.merge_specs(
       ...>   %{
       ...>     1 => %{
       ...>       "eth" => %{
@@ -52,7 +52,7 @@ defmodule Engine.Fees.Fetcher.Updater.Merger do
       }
 
   """
-  @spec merge_specs(Fees.full_fee_t(), Fees.full_fee_t() | nil) :: Fees.typed_merged_fee_t()
+  @spec merge_specs(Fee.full_fee_t(), Fee.full_fee_t() | nil) :: Fee.typed_merged_fee_t()
   def merge_specs(current_specs, nil), do: remove_unused_fields(current_specs)
 
   def merge_specs(current_specs, previous_specs) do

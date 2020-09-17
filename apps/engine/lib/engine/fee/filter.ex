@@ -1,9 +1,9 @@
-defmodule Engine.Fees.Filter do
+defmodule Engine.Fee.Filter do
   @moduledoc """
   Filtering of fees.
   """
 
-  alias Engine.Fees
+  alias Engine.Fee
 
   @doc ~S"""
   Returns a filtered map of fees given a list of transaction types and currencies.
@@ -11,7 +11,7 @@ defmodule Engine.Fees.Filter do
 
   ## Examples
 
-      iex> Engine.Fees.Filter.filter(
+      iex> Engine.Fee.Filter.filter(
       ...>   %{
       ...>     1 => %{
       ...>       "eth" => %{
@@ -72,8 +72,8 @@ defmodule Engine.Fees.Filter do
       }
 
   """
-  @spec filter(Fees.full_fee_t(), list(non_neg_integer()), list(String.t()) | nil) ::
-          {:ok, Fees.full_fee_t()} | {:error, :currency_fee_not_supported} | {:error, :tx_type_not_supported}
+  @spec filter(Fee.full_fee_t(), list(non_neg_integer()), list(String.t()) | nil) ::
+          {:ok, Fee.full_fee_t()} | {:error, :currency_fee_not_supported} | {:error, :tx_type_not_supported}
   # empty list = no filter
   def filter(fees, []), do: {:ok, fees}
   def filter(fees, nil), do: {:ok, fees}

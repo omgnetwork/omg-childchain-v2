@@ -72,7 +72,7 @@ jobs:
       - install_rust
       - run: docker-compose up -d postgres
       - restore_cache:
-          key: v5-asdf-install
+          key: v6-asdf-install
       - run:
           name: Install Erlang and Elixir
           command: |
@@ -82,14 +82,13 @@ jobs:
             asdf update
             asdf plugin-add erlang || asdf plugin-update erlang
             asdf plugin-add elixir || asdf plugin-update elixir
-            asdf install erlang 23.0.3
-            asdf install elixir 1.10.4-otp-23
+            asdf install
             asdf global elixir 1.10.4-otp-23
             asdf global erlang 23.0.3
             mix local.rebar --force && mix local.hex --force
           no_output_timeout: 2400
       - save_cache:
-          key: v5-asdf-install
+          key: v6-asdf-install
           paths:
             - ~/.asdf
             - ~/.asdf-vm
@@ -298,7 +297,7 @@ jobs:
             _counter=$(grep -ri --exclude-dir=./priv/cabbage "child_chain" . | grep -vi -e "child_chain_api" -e "child_chain_url" | grep -c "child_chain")
             echo "Current occurrences of child_chain:"
             echo $_counter
-            if [ $_counter -gt 3 ]; then
+            if [ $_counter -gt 12 ]; then
               echo "Have you been naughty or nice? Find out if Santa knows."
               exit 1
             fi

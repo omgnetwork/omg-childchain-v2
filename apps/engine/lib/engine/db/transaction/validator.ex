@@ -77,11 +77,8 @@ defmodule Engine.DB.Transaction.Validator do
   # We can't perform statefull validation if there are errors in the changeset
   def validate_statefully(%Ecto.Changeset{valid?: false} = changeset, _params), do: changeset
 
-  # Deposit don't need to be validated as we're building them internally from contract events
-  def validate_statefully(changeset, %{kind: :deposit}), do: changeset
-
-  def validate_statefully(changeset, %{tx_type: tx_type, fees: fees}) do
-    get_validator(tx_type).validate(changeset, fees)
+  def validate_statefully(changeset, params) do
+    get_validator(params.tx_type).validate(changeset, params.fees)
   end
 
   # Private

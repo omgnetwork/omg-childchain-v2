@@ -3,7 +3,9 @@ defmodule API.V1.RouterTest do
   use Plug.Test
 
   alias API.V1.Router
+  alias Engine.DB.Block
   alias Engine.DB.Fee
+  alias Engine.DB.Transaction
   alias Engine.Repo
   alias ExPlasma.Encoding
 
@@ -163,7 +165,10 @@ defmodule API.V1.RouterTest do
 
   describe "block.get" do
     test "that it returns a block" do
-      transaction = insert(:deposit_transaction)
+      %{id: id} = insert(:payment_v1_transaction)
+      Block.form()
+      transaction = Transaction |> Repo.get(id) |> Repo.preload(:block)
+
       tx_bytes = Encoding.to_hex(transaction.tx_bytes)
       hash = Encoding.to_hex(transaction.block.hash)
       number = transaction.block.blknum
@@ -172,8 +177,7 @@ defmodule API.V1.RouterTest do
       assert_payload_data(payload, %{
         "blknum" => number,
         "hash" => hash,
-        "transactions" => [tx_bytes],
-        "object" => "block"
+        "transactions" => [tx_bytes]
       })
     end
 
@@ -203,13 +207,12 @@ defmodule API.V1.RouterTest do
       Repo.delete_all(Fee)
       _ = insert(:fee, hash: "77", term: :no_fees_required, type: :merged_fees)
 
-      _ = insert(:deposit_transaction)
       txn = build(:payment_v1_transaction)
       tx_bytes = Encoding.to_hex(txn.tx_bytes)
       tx_hash = Encoding.to_hex(txn.tx_hash)
       {:ok, payload} = post("transaction.submit", %{transaction: tx_bytes})
 
-      assert_payload_data(payload, %{"tx_hash" => tx_hash, "object" => "transaction"})
+      assert_payload_data(payload, %{"tx_hash" => tx_hash})
     end
 
     test "that it returns an error if missing transaction params" do
@@ -243,7 +246,7 @@ defmodule API.V1.RouterTest do
   end
 
   defp assert_payload_data(payload, data) do
-    assert payload["service_name"] == "childchain"
+    assert payload["service_name"] == "child_chain"
     assert payload["version"] == "1.0"
     assert payload["data"] == data
   end

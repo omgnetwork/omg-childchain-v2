@@ -1,4 +1,4 @@
-defmodule API.V1.View.Fee do
+defmodule API.V1.View.FeeView do
   @moduledoc """
   Contain functions that serialize fees into different format
   """

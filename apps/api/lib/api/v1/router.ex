@@ -15,10 +15,10 @@ defmodule API.V1.Router do
   alias API.Plugs.Health
   alias API.Plugs.Responder
   alias API.Plugs.Version
-  alias API.V1.Controller.Block
-  alias API.V1.Controller.Configuration, as: ConfigurationController
-  alias API.V1.Controller.Fee
-  alias API.V1.Controller.Transaction
+  alias API.V1.Controller.BlockController
+  alias API.V1.Controller.ConfigurationController
+  alias API.V1.Controller.FeeController
+  alias API.V1.Controller.TransactionController
   alias API.V1.ErrorHandler
 
   @api_version "1.0"
@@ -62,17 +62,17 @@ defmodule API.V1.Router do
   end
 
   post "block.get" do
-    data = Block.get_by_hash(conn.params["hash"])
+    data = BlockController.get_by_hash(conn.params["hash"])
     put_conn_response(conn, data)
   end
 
   post "transaction.submit" do
-    data = Transaction.submit(conn.params["transaction"])
+    data = TransactionController.submit(conn.params["transaction"])
     put_conn_response(conn, data)
   end
 
   post "fees.all" do
-    data = Fee.all(conn.params)
+    data = FeeController.all(conn.params)
     put_conn_response(conn, data)
   end
 

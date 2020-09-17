@@ -1,10 +1,10 @@
-defmodule API.V1.Controller.Fee do
+defmodule API.V1.Controller.FeeController do
   @moduledoc """
   Fetches fees and returns data for the API response.
   """
 
-  alias API.V1.View.Fee
-  alias Engine.Fees
+  alias API.V1.View.FeeView
+  alias Engine.Fee
   alias ExPlasma.Encoding
 
   @type fees_response() :: %{non_neg_integer() => fee_type()}
@@ -26,18 +26,18 @@ defmodule API.V1.Controller.Fee do
   def all(params) do
     with {:ok, currencies} <- list_to_binary(params["currencies"]),
          {:ok, filtered_fees} <- get_filtered_fees(params["tx_types"], currencies) do
-      {:ok, Fee.serialize(filtered_fees)}
+      {:ok, FeeView.serialize(filtered_fees)}
     else
       error -> handle_error(error)
     end
   end
 
   @spec get_filtered_fees(list(pos_integer()), list(String.t()) | nil) ::
-          {:ok, Fees.full_fee_t()} | {:error, :currency_fee_not_supported}
+          {:ok, Fee.full_fee_t()} | {:error, :currency_fee_not_supported}
   defp get_filtered_fees(tx_types, currencies) do
-    {:ok, fees} = Fees.current_fees()
+    {:ok, fees} = Fee.current_fees()
 
-    Fees.filter(fees, tx_types, currencies)
+    Fee.filter(fees, tx_types, currencies)
   end
 
   defp list_to_binary(list, acc \\ [])

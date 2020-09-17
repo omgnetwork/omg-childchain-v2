@@ -9,7 +9,7 @@ defmodule Engine.Callbacks.Piggyback do
 
   use Spandex.Decorators
 
-  import Ecto.Changeset, only: [change: 2, get_field: 2]
+  import Ecto.Changeset, only: [change: 2]
 
   alias Ecto.Multi
   alias Engine.Callback
@@ -21,6 +21,8 @@ defmodule Engine.Callbacks.Piggyback do
   """
   @impl Callback
   @decorate trace(service: :ecto, type: :backend)
+  def callback([], _listener), do: {:ok, :noop}
+
   def callback(events, listener) do
     Multi.new()
     |> Callback.update_listener_height(events, listener)
@@ -31,9 +33,7 @@ defmodule Engine.Callbacks.Piggyback do
   defp do_callback(multi, [event | tail]), do: multi |> piggyback(event) |> do_callback(tail)
   defp do_callback(multi, []), do: multi
 
-  # A `tx_hash` isn't unique, so we just kinda take the `tx_hash` as a short-hand
-  # to figure out which `tx_hash` it could possibly be with the given `oindex`.
-  # Additionally, in the old system, 'spent' outputs were just removed from the system.
+  # In the old system, 'spent' outputs were just removed from the system.
   # For us, we keep track of the history to some degree(e.g state change).
   #
   # See: https://github.com/omisego/elixir-omg/blob/8189b812b4b3cf9256111bd812235fb342a6fd50/apps/omg/lib/omg/state/utxo_set.ex#L81
@@ -46,26 +46,21 @@ defmodule Engine.Callbacks.Piggyback do
   end
 
   defp do_piggyback(multi, type, index, tx_hash) do
-    transaction =
-      tx_hash
-      |> Transaction.find_by_tx_hash()
-      |> Engine.Repo.one()
-      |> Engine.Repo.preload(type)
-
-    case transaction do
-      nil ->
-        multi
-
-      transaction ->
-        case transaction |> Map.get(type) |> Enum.at(index) do
-          %Output{state: "confirmed"} = output ->
-            changeset = change(output, state: "piggybacked")
-            position = get_field(changeset, :position)
-            Multi.update(multi, "piggyback-#{type}-#{position}", changeset)
-
-          _ ->
-            multi
-        end
-    end
+    tx_hash
+    |> Transaction.query_by_tx_hash()
+    |> Engine.Repo.one()
+    |> Engine.Repo.preload(type)
+    |> get_output(type, index)
+    |> set_as_piggybacked(multi, tx_hash, type)
   end
+
+  defp get_output(nil, _type, _index), do: nil
+  defp get_output(transaction, type, index), do: transaction |> Map.get(type) |> Enum.at(index)
+
+  defp set_as_piggybacked(%Output{state: "confirmed"} = output, multi, tx_hash, type) do
+    changeset = change(output, state: "piggybacked")
+    Multi.update(multi, "piggyback-#{tx_hash}-#{type}-#{output.position}", changeset)
+  end
+
+  defp set_as_piggybacked(_, multi, _tx_hash, _type), do: multi
 end

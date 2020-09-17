@@ -1,10 +1,10 @@
-defmodule Engine.Fees do
+defmodule Engine.Fee do
   @moduledoc """
   Transaction's fee validation functions.
   """
 
-  alias Engine.Fees.Filter
-  alias Engine.Fees.Server
+  alias Engine.Fee.Filter
+  alias Engine.Fee.Server
 
   @typedoc "A map of token addresses to a single fee spec"
   @type fee_t() :: %{address_t() => fee_spec_t()}
