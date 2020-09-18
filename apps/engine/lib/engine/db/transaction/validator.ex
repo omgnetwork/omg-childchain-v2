@@ -46,7 +46,7 @@ defmodule Engine.DB.Transaction.Validator do
   @spec validate_inputs(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   def validate_inputs(changeset) do
     given_input_positions = get_input_positions(changeset)
-    usable_inputs = given_input_positions |> usable_outputs_for() |> Repo.all()
+    usable_inputs = given_input_positions |> Output.usable_for_positions() |> Repo.all()
     usable_input_positions = Enum.map(usable_inputs, & &1.position)
 
     case given_input_positions -- usable_input_positions do
@@ -84,11 +84,6 @@ defmodule Engine.DB.Transaction.Validator do
   # Private
   defp get_input_positions(changeset) do
     changeset |> get_field(:inputs) |> Enum.map(&Map.get(&1, :position))
-  end
-
-  # Return all confirmed outputs that have the given positions.
-  defp usable_outputs_for(positions) do
-    where(Output.usable(), [output], output.position in ^positions)
   end
 
   defp process_protocol_validation_results(:ok, changeset), do: changeset

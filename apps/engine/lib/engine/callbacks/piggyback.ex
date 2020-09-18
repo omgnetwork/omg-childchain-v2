@@ -58,7 +58,7 @@ defmodule Engine.Callbacks.Piggyback do
   defp get_output(transaction, type, index), do: transaction |> Map.get(type) |> Enum.at(index)
 
   defp set_as_piggybacked(%Output{state: "confirmed"} = output, multi, tx_hash, type) do
-    changeset = change(output, state: "piggybacked")
+    changeset = Output.piggyback(output)
     Multi.update(multi, "piggyback-#{tx_hash}-#{type}-#{output.position}", changeset)
   end
 

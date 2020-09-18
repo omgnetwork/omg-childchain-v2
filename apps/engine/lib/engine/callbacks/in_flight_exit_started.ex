@@ -34,8 +34,5 @@ defmodule Engine.Callbacks.InFlightExitStarted do
     do_callback(multi, positions ++ inputs, tail)
   end
 
-  defp do_callback(multi, positions, []) do
-    query = where(Output.usable(), [output], output.position in ^positions)
-    Multi.update_all(multi, :exiting_outputs, query, set: [state: "exiting", updated_at: NaiveDateTime.utc_now()])
-  end
+  defp do_callback(multi, positions, []), do: Output.exit(multi, positions)
 end

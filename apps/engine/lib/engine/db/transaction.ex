@@ -25,7 +25,7 @@ defmodule Engine.DB.Transaction do
   """
 
   use Ecto.Schema
-  import Ecto.Changeset, only: [cast: 3, cast_assoc: 2, validate_required: 2]
+  import Ecto.Changeset, only: [cast: 3, cast_assoc: 3, validate_required: 2]
   import Ecto.Query, only: [from: 2]
 
   alias Engine.DB.Block
@@ -120,8 +120,8 @@ defmodule Engine.DB.Transaction do
     |> Repo.preload(:outputs)
     |> cast(params, @optional_fields ++ @required_fields)
     |> validate_required(@required_fields)
-    |> cast_assoc(:inputs)
-    |> cast_assoc(:outputs)
+    # |> cast_assoc(:inputs)
+    |> cast_assoc(:outputs, with: &Output.new/2)
     |> Validator.validate_protocol()
     |> Validator.validate_inputs()
     |> Validator.validate_statefully(params)
