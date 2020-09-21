@@ -41,9 +41,10 @@ defmodule Engine.Callbacks.Deposit do
   defp do_callback(multi, []), do: multi
 
   defp build_deposit(multi, event) do
-    output_changeset = Output.deposit(event.data["blknum"], event.data["depositor"], event.data["token"], event.data["amount"])
-    position = Ecto.Changeset.get_field(output_changeset, :position)
-    Ecto.Multi.insert(multi, "deposit-output-#{position}", output_changeset,
+    deposit_blknum = event.data["blknum"]
+    changeset = Output.deposit(deposit_blknum, event.data["depositor"], event.data["token"], event.data["amount"])
+
+    Multi.insert(multi, "deposit-#{deposit_blknum}", changeset,
       on_conflict: :nothing,
       conflict_target: :position
     )

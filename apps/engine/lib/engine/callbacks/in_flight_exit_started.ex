@@ -9,8 +9,6 @@ defmodule Engine.Callbacks.InFlightExitStarted do
 
   use Spandex.Decorators
 
-  import Ecto.Query
-
   alias Ecto.Multi
   alias Engine.Callback
   alias Engine.DB.Output

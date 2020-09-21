@@ -9,8 +9,6 @@ defmodule Engine.Callbacks.Piggyback do
 
   use Spandex.Decorators
 
-  import Ecto.Changeset, only: [change: 2]
-
   alias Ecto.Multi
   alias Engine.Callback
   alias Engine.DB.Output
@@ -47,9 +45,7 @@ defmodule Engine.Callbacks.Piggyback do
 
   defp do_piggyback(multi, type, index, tx_hash) do
     tx_hash
-    |> Transaction.query_by_tx_hash()
-    |> Engine.Repo.one()
-    |> Engine.Repo.preload(type)
+    |> Transaction.get_by(type)
     |> get_output(type, index)
     |> set_as_piggybacked(multi, tx_hash, type)
   end

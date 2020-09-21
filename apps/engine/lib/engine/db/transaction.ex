@@ -87,6 +87,12 @@ defmodule Engine.DB.Transaction do
   """
   def query_by_tx_hash(tx_hash), do: from(t in __MODULE__, where: t.tx_hash == ^tx_hash)
 
+  def get_by(field, preloads) do
+    __MODULE__
+    |> Repo.get_by(field)
+    |> Repo.preload(preloads)
+  end
+
   @doc """
   The main action of the system. Takes tx_bytes and forms the appropriate
   associations for the transaction and outputs and runs the changeset.
@@ -94,9 +100,8 @@ defmodule Engine.DB.Transaction do
   @spec decode(tx_bytes) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
   def decode(tx_bytes) do
     with {:ok, decoded} <- ExPlasma.decode(tx_bytes),
-         {:ok, recovered} <- ExPlasma.Transaction.with_witnesses(decoded) do
-      {:ok, fees} = Fee.accepted_fees()
-
+         {:ok, recovered} <- ExPlasma.Transaction.with_witnesses(decoded),
+         {:ok, fees} <- load_fees(recovered.tx_type) do
       params =
         recovered
         |> recovered_to_map()
@@ -116,18 +121,23 @@ defmodule Engine.DB.Transaction do
 
   def changeset(struct, params) do
     struct
-    |> Repo.preload(:inputs)
-    |> Repo.preload(:outputs)
     |> cast(params, @optional_fields ++ @required_fields)
     |> validate_required(@required_fields)
-    # |> cast_assoc(:inputs)
-    |> cast_assoc(:outputs, with: &Output.new/2)
     |> Validator.validate_protocol()
-    |> Validator.validate_inputs()
+    |> Validator.associate_inputs(params)
+    |> cast_assoc(:outputs, with: &Output.new/2)
     |> Validator.validate_statefully(params)
   end
 
   def insert(changeset), do: Repo.insert(changeset)
+
+  defp load_fees(type) do
+    {:ok, all_fees} = Fee.accepted_fees()
+    case Map.get(all_fees, type) do
+      nil -> {:error, :invalid_transaction_type}
+      fees_for_type -> {:ok, fees_for_type}
+    end
+  end
 
   defp recovered_to_map(transaction) do
     inputs = Enum.map(transaction.inputs, &Map.from_struct/1)

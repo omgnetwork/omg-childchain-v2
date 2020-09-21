@@ -5,8 +5,7 @@ defmodule Engine.DB.Transaction.Validator do
   their insertion in the DB.
   """
 
-  import Ecto.Changeset, only: [get_field: 2, add_error: 3, put_change: 3]
-  import Ecto.Query, only: [where: 3]
+  import Ecto.Changeset, only: [get_field: 2, add_error: 3, put_assoc: 3]
 
   alias Engine.DB.Output
   alias Engine.DB.Transaction.PaymentV1
@@ -35,28 +34,30 @@ defmodule Engine.DB.Transaction.Validator do
   end
 
   @doc """
-  Validates that the given changesets inputs are correct. To create a transaction with inputs:
+  Validates that the given input positions are correct. To create a transaction with inputs:
     * The position for the input must exist.
     * The position for the input must not have been spent.
 
-  If so, associate the records to this transaction.
+  If so, loads and associate the records to this transaction keeping the order and setting their state to :spent.
 
   Returns the changeset with associated input or an error.
   """
-  @spec validate_inputs(Ecto.Changeset.t()) :: Ecto.Changeset.t()
-  def validate_inputs(changeset) do
-    given_input_positions = get_input_positions(changeset)
-    usable_inputs = given_input_positions |> Output.usable_for_positions() |> Repo.all()
+  @spec associate_inputs(Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
+  def associate_inputs(changeset, params) do
+    given_input_positions = Enum.map(params.inputs, &(&1.output_id.position))
+    usable_inputs = given_input_positions |> Output.Query.usable_for_positions() |> Repo.all()
     usable_input_positions = Enum.map(usable_inputs, & &1.position)
 
     case given_input_positions -- usable_input_positions do
       [] ->
-        sorted_usable_inputs =
+        ordered_spent_inputs =
           Enum.map(given_input_positions, fn given_input_position ->
-            Enum.find(usable_inputs, &(&1.position == given_input_position))
+            usable_inputs
+            |> Enum.find(&(&1.position == given_input_position))
+            |> Output.spend()
           end)
 
-        put_change(changeset, :inputs, sorted_usable_inputs)
+        put_assoc(changeset, :inputs, ordered_spent_inputs)
 
       missing_inputs ->
         add_error(changeset, :inputs, "inputs #{inspect(missing_inputs)} are missing, spent, or not yet available")
@@ -82,10 +83,6 @@ defmodule Engine.DB.Transaction.Validator do
   end
 
   # Private
-  defp get_input_positions(changeset) do
-    changeset |> get_field(:inputs) |> Enum.map(&Map.get(&1, :position))
-  end
-
   defp process_protocol_validation_results(:ok, changeset), do: changeset
 
   defp process_protocol_validation_results({:error, {field, message}}, changeset) do
