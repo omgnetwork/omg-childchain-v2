@@ -1,39 +1,61 @@
 defmodule Engine.DB.BlockTest do
-  use Engine.DB.DataCase, async: true
+  use Engine.DB.DataCase, async: false
   import Ecto.Query, only: [from: 2]
 
   alias Ecto.Adapters.SQL.Sandbox
   alias Engine.DB.Block
   alias Engine.DB.Transaction
+  alias Engine.DB.Transaction.TransactionQuery
   alias Engine.Repo
   alias ExPlasma.Merkle
 
   describe "form/0" do
-    test "forms a block from the existing pending transactions" do
-      _ = insert(:payment_v1_transaction)
-      {:ok, %{"new-block" => block}} = Block.form()
-      transactions = Repo.all(from(t in Transaction, where: t.block_id == ^block.id))
-
-      assert length(transactions) == 1
+    setup do
+      block = insert(:block)
+      {:ok, %{block: block}}
     end
 
-    test "generates the block hash" do
-      txn1 = insert(:payment_v1_transaction)
-      hash = Merkle.root_hash([Transaction.encode_unsigned(txn1)])
+    test "forms a block with all transaction associated with it", %{block: forming_block} do
+      pending_block = insert(:block, %{state: :pending_submission})
+      other_block_tx = insert(:payment_v1_transaction, %{block: pending_block})
+      _ = insert(:payment_v1_transaction, %{block: forming_block, tx_index: 0})
+      _ = insert(:payment_v1_transaction, %{block: forming_block, tx_index: 1})
+      _ = insert(:payment_v1_transaction, %{block: forming_block, tx_index: 2})
 
-      assert {:ok, %{"hash-block" => block}} = Block.form()
+      {:ok, %{block_for_submission: block}} = Block.form()
+
+      transactions = Repo.all(TransactionQuery.fetch_transactions_from_block(block.id))
+
+      assert length(transactions) == 3
+      assert block.state == :pending_submission
+      refute Enum.any?(transactions, fn tx -> tx.id == other_block_tx.id end)
+    end
+
+    test "does not fail when called multiple times", %{block: forming_block} do
+      _ = insert(:payment_v1_transaction, %{block: forming_block})
+      {:ok, %{block_for_submission: block1}} = Block.form()
+      {:ok, %{block_for_submission: block2}} = Block.form()
+
+      refute block1.id == block2.id
+    end
+
+    test "generates the block hash", %{block: forming_block} do
+      tx = insert(:payment_v1_transaction, %{block: forming_block})
+      hash = Merkle.root_hash([Transaction.encode_unsigned(tx)])
+
+      assert {:ok, %{block_for_submission: block}} = Block.form()
       assert block.hash == hash
     end
 
     test "correctly generates block hash for empty txs list" do
-      assert {:ok, %{"hash-block" => block}} = Block.form()
+      assert {:ok, %{block_for_submission: block}} = Block.form()
 
       assert block.hash ==
                <<246, 9, 190, 253, 254, 144, 102, 254, 20, 231, 67, 179, 98, 62, 174, 135, 143, 188, 70, 128, 5, 96,
                  136, 22, 131, 44, 157, 70, 15, 42, 149, 210>>
     end
 
-    test "block hash is consistent with childchain v1" do
+    test "block hash is consistent with childchain v1", %{block: block} do
       alice_priv_key =
         "0x" <>
           Base.encode16(
@@ -56,19 +78,19 @@ defmodule Engine.DB.BlockTest do
           |> ExPlasma.Builder.sign!([alice_priv_key])
           |> ExPlasma.encode!()
 
-        _ = insert(:payment_v1_transaction, tx_bytes: tx_bytes)
+        _ = insert(:payment_v1_transaction, %{block: block, tx_index: index, tx_bytes: tx_bytes})
       end)
 
-      assert {:ok, %{"hash-block" => block}} = Block.form()
+      assert {:ok, %{block_for_submission: block_for_submission}} = Block.form()
 
-      assert block.hash ==
+      assert block_for_submission.hash ==
                <<189, 245, 69, 5, 94, 45, 148, 210, 5, 89, 98, 245, 201, 111, 222, 48, 61, 114, 145, 55, 122, 84, 196,
                  156, 254, 80, 85, 184, 3, 205, 163, 233>>
     end
 
     @tag timeout: :infinity
     @tag :integration
-    test "correctly calculates hash for a lot of transactions" do
+    test "correctly calculates hash for a lot of transactions", %{block: block} do
       alice_priv_key =
         "0x" <>
           Base.encode16(
@@ -79,46 +101,44 @@ defmodule Engine.DB.BlockTest do
 
       bob_address = <<207, 194, 79, 222, 88, 128, 171, 217, 153, 41, 195, 239, 138, 178, 227, 16, 72, 173, 118, 35>>
 
-      Enum.each(1..64_000, fn index ->
-        tx_bytes =
-          ExPlasma.payment_v1()
-          |> ExPlasma.Builder.new()
-          |> ExPlasma.Builder.add_input(blknum: 1, txindex: index, oindex: index)
-          |> ExPlasma.Builder.add_output(
-            output_type: 1,
-            output_data: %{output_guard: bob_address, token: <<0::160>>, amount: 100}
-          )
-          |> ExPlasma.Builder.sign!([alice_priv_key])
-          |> ExPlasma.encode!()
+      _ =
+        Enum.each(1..64_000, fn index ->
+          tx_bytes =
+            ExPlasma.payment_v1()
+            |> ExPlasma.Builder.new()
+            |> ExPlasma.Builder.add_input(blknum: 1, txindex: index, oindex: index)
+            |> ExPlasma.Builder.add_output(
+              output_type: 1,
+              output_data: %{output_guard: bob_address, token: <<0::160>>, amount: 100}
+            )
+            |> ExPlasma.Builder.sign!([alice_priv_key])
+            |> ExPlasma.encode!()
 
-        _ = insert(:payment_v1_transaction, tx_bytes: tx_bytes)
-      end)
+          _ = insert(:payment_v1_transaction, %{block: block, tx_index: index, tx_bytes: tx_bytes})
+        end)
 
-      assert {:ok, %{"hash-block" => block}} = Block.form()
+      assert {:ok, %{block_for_submission: block_for_submission}} = Block.form()
 
-      assert block.hash ==
+      assert block_for_submission.hash ==
                <<12, 40, 202, 7, 16, 175, 119, 138, 7, 95, 8, 3, 148, 93, 162, 168, 136, 226, 196, 236, 83, 62, 220, 75,
                  59, 52, 6, 18, 249, 52, 124, 228>>
     end
 
-    test "assigns nonce and blknum" do
-      _ = insert(:payment_v1_transaction)
+    test "autoincrements nonce and blknum", %{block: block} do
+      assert {:ok, %{block_for_submission: block1, new_forming_block: block2}} = Block.form()
+      assert block1.nonce == block.nonce
+      assert block1.blknum == block.blknum
 
-      assert {:ok, %{"hash-block" => block}} = Block.form()
-      assert block.nonce == 1
-      assert block.blknum == 1_000
+      assert block2.nonce == block1.nonce + 1
+      assert block2.blknum == block1.blknum + 1_000
     end
 
-    test "autoincrements nonce and blknum" do
-      assert {:ok, %{"hash-block" => block1}} = Block.form()
-      assert block1.nonce == 1
-      assert block1.blknum == 1_000
+    test "inserts a new forming block", %{block: block} do
+      _ = insert(:payment_v1_transaction, %{block: block})
 
-      _ = insert(:payment_v1_transaction)
-
-      assert {:ok, %{"hash-block" => block2}} = Block.form()
-      assert block2.nonce == 2
-      assert block2.blknum == 2_000
+      assert {:ok, %{block_for_submission: block, new_forming_block: new_block}} = Block.form()
+      assert new_block.state == Block.state_forming()
+      assert new_block.blknum > block.blknum
     end
   end
 
@@ -126,7 +146,7 @@ defmodule Engine.DB.BlockTest do
     test "fails to insert block when blknum != 1000 * nonce" do
       assert_raise Ecto.ConstraintError, ~r/block_number_nonce/, fn ->
         %Block{}
-        |> Block.changeset(%{nonce: 1, blknum: 2000})
+        |> Block.BlockChangeset.new_block_changeset(%{nonce: 1, blknum: 2000, state: :forming})
         |> Repo.insert()
       end
     end
@@ -134,8 +154,9 @@ defmodule Engine.DB.BlockTest do
 
   describe "get_by_hash/2" do
     test "returns the block without preloads" do
-      _ = insert(:payment_v1_transaction)
-      {:ok, %{"hash-block" => block}} = Block.form()
+      _ = insert(:block)
+
+      {:ok, %{block_for_submission: block}} = Block.form()
 
       assert {:ok, block_result} = Block.get_by_hash(block.hash, [])
       refute Ecto.assoc_loaded?(block_result.transactions)
@@ -143,8 +164,7 @@ defmodule Engine.DB.BlockTest do
     end
 
     test "returns the block with preloads" do
-      %{tx_hash: tx_hash} = insert(:payment_v1_transaction)
-      {:ok, %{"hash-block" => block}} = Block.form()
+      %{tx_hash: tx_hash, block: block} = insert(:payment_v1_transaction, %{block: insert(:block)})
 
       assert {:ok, block_result} = Block.get_by_hash(block.hash, :transactions)
       assert [%{tx_hash: ^tx_hash}] = block_result.transactions
@@ -185,6 +205,12 @@ defmodule Engine.DB.BlockTest do
           insert(:block, %{
             nonce: nonce,
             blknum: blknum,
+            state:
+              if index < 8 do
+                :confirmed
+              else
+                :pending_submission
+              end,
             submitted_at_ethereum_height: index,
             formed_at_ethereum_height: index,
             attempts_counter: 1
@@ -236,6 +262,12 @@ defmodule Engine.DB.BlockTest do
           insert(:block, %{
             nonce: nonce,
             blknum: blknum,
+            state:
+              if index < 8 do
+                :confirmed
+              else
+                :pending_submission
+              end,
             submitted_at_ethereum_height: index,
             formed_at_ethereum_height: index,
             attempts_counter: 1
@@ -296,6 +328,12 @@ defmodule Engine.DB.BlockTest do
           insert(:block, %{
             nonce: nonce,
             blknum: blknum,
+            state:
+              if index < 8 do
+                :confirmed
+              else
+                :pending_submission
+              end,
             submitted_at_ethereum_height: index,
             formed_at_ethereum_height: index
           })
@@ -329,11 +367,12 @@ defmodule Engine.DB.BlockTest do
       blknum = 2000
       my_current_eth_height = 6
 
-      # just insert 10 blocks that were created over 10 eth blocks
+      # just insert a block
 
       insert(:block, %{
         nonce: nonce,
         blknum: blknum,
+        state: :submitted,
         submitted_at_ethereum_height: my_current_eth_height,
         formed_at_ethereum_height: my_current_eth_height
       })
@@ -369,6 +408,7 @@ defmodule Engine.DB.BlockTest do
           insert(:block, %{
             nonce: nonce,
             blknum: blknum,
+            state: :confirmed,
             submitted_at_ethereum_height: index,
             formed_at_ethereum_height: index,
             attempts_counter: 1

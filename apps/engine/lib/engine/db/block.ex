@@ -2,9 +2,7 @@ defmodule Engine.DB.Block do
   @moduledoc """
   Ecto schema that represents "Plasma Blocks" that are being submitted from the Childchain to the contracts.
   This holds metadata information and a reference point to associated transactions that are formed into said Block.
-
   The schema contains the following fields:
-
   - hash: Is generated when finalizing a block, it is the result of the merkle root hash of all unsigned tx_bytes of transactions it contains
   - nonce: The nonce of the transaction on the rootchain
   - blknum: The plasma block number, it's increased by 1000 for each new block
@@ -13,27 +11,33 @@ defmodule Engine.DB.Block do
   - submitted_at_ethereum_height: The rootchain height at wish the block was submitted
   - gas: The gas price used for the submission
   - attempts_counter: The number of submission attempts
+  - state:
+      - :forming - block accepts transactions, at most one forming block is allowed in the database
+      - :finalizing - block does not accept transactions, awaits for calculating hash
+      - :pending_submission - block no longer accepts for transaction and is waiting for being submitted to the root chain
+      - :submitted - block was submitted to the root chain
+      - :confirmed - block is confirmed on the root chain
   """
 
   use Ecto.Schema
   use Spandex.Decorators
 
-  import Ecto.Changeset
-  import Ecto.Query, only: [from: 2]
-
+  alias __MODULE__.BlockChangeset
+  alias __MODULE__.BlockQuery
   alias Ecto.Multi
   alias Engine.Configuration
   alias Engine.DB.Transaction
+  alias Engine.DB.Transaction.TransactionQuery
   alias Engine.Repo
   alias ExPlasma.Merkle
 
   require Logger
 
-  @optional_fields [:hash, :tx_hash, :formed_at_ethereum_height, :submitted_at_ethereum_height, :gas, :attempts_counter]
-  @required_fields [:nonce, :blknum]
+  @max_transaction_in_block 65_000
 
   @type t() :: %{
           hash: binary(),
+          state: :forming | :finalizing | :pending_submission | :submitted | :confirmed,
           nonce: pos_integer(),
           blknum: pos_integer() | nil,
           tx_hash: binary() | nil,
@@ -54,8 +58,8 @@ defmodule Engine.DB.Block do
   @timestamps_opts [inserted_at: :node_inserted_at, updated_at: :node_updated_at]
 
   schema "blocks" do
-    # Extracted from `output_id`
     field(:hash, :binary)
+    field(:state, Ecto.Atom)
     # nonce = max(nonce) + 1
     field(:nonce, :integer)
     # blknum = nonce * 1000
@@ -77,11 +81,15 @@ defmodule Engine.DB.Block do
     timestamps()
   end
 
-  def changeset(struct, params) do
-    struct
-    |> cast(params, @required_fields ++ @optional_fields)
-    |> validate_required(@required_fields)
-  end
+  def state_forming(), do: :forming
+
+  def state_finalizing(), do: :finalizing
+
+  def state_pending_submission(), do: :pending_submission
+
+  def state_submitted(), do: :submitted
+
+  def state_confirmed(), do: :confirmed
 
   @spec get_all_and_submit(pos_integer(), pos_integer(), function()) :: transaction_result_t()
   def get_all_and_submit(new_height, mined_child_block, submit) do
@@ -96,16 +104,14 @@ defmodule Engine.DB.Block do
   end
 
   @doc """
-  Forms a pending block record based on the existing pending transactions. This
-  attaches free transactions into a new block, awaiting for submission to the contract
-  later on.
+  Forms a block awaiting submission.
   """
   @decorate trace(service: :ecto, type: :backend)
   def form() do
     Multi.new()
-    |> Multi.run("new-block", &insert_block/2)
-    |> Multi.run("form-block", &attach_transactions_to_block/2)
-    |> Multi.run("hash-block", &generate_block_hash/2)
+    |> Multi.run(:block, &get_forming_block_for_update/2)
+    |> Multi.run(:block_for_submission, &prepare_for_submission/2)
+    |> Multi.run(:new_forming_block, &insert_block/2)
     |> Repo.transaction()
   end
 
@@ -123,15 +129,35 @@ defmodule Engine.DB.Block do
     end
   end
 
-  defp get_all(repo, _changeset, new_height, mined_child_block) do
-    query =
-      from(p in __MODULE__,
-        where:
-          (p.submitted_at_ethereum_height < ^new_height or is_nil(p.submitted_at_ethereum_height)) and
-            p.blknum > ^mined_child_block,
-        order_by: [asc: :nonce]
-      )
+  def get_forming_block_for_update(repo, _params) do
+    # we expect forming block to always exists in the database when this is called
+    block = repo.one(BlockQuery.select_forming_block_for_update())
 
+    case block do
+      nil -> get_or_insert_forming_block(repo, %{})
+      _ -> {:ok, block}
+    end
+  end
+
+  def get_block_and_tx_index_for_transaction(repo, params) do
+    %{current_forming_block: block} = params
+    # this is safe as long as we lock on currently forming block
+    last_tx_index = repo.one(TransactionQuery.select_max_tx_index_for_block(block.id)) || -1
+
+    # basic version, checking transaction limit is postponed until we get transction fees implemented
+    case last_tx_index >= @max_transaction_in_block do
+      true ->
+        {:ok, _} = finalize_block(repo, block)
+        {:ok, new_forming_block} = insert_block(repo, %{})
+        {:ok, %{block: new_forming_block, next_tx_index: 0}}
+
+      false ->
+        {:ok, %{block: block, next_tx_index: last_tx_index + 1}}
+    end
+  end
+
+  defp get_all(repo, _changeset, new_height, mined_child_block) do
+    query = BlockQuery.get_all(new_height, mined_child_block)
     {:ok, repo.all(query)}
   end
 
@@ -151,11 +177,11 @@ defmodule Engine.DB.Block do
     case submit.(plasma_block.hash, plasma_block.nonce, gas) do
       :ok ->
         plasma_block
-        |> change(
-          gas: gas,
+        |> BlockChangeset.submitted(%{
           attempts_counter: plasma_block.attempts_counter + 1,
+          gas: gas,
           submitted_at_ethereum_height: new_height
-        )
+        })
         |> repo.update!([])
 
         process_submission(repo, plasma_blocks, new_height, mined_child_block, submit)
@@ -168,9 +194,9 @@ defmodule Engine.DB.Block do
     end
   end
 
-  defp insert_block(repo, _params) do
+  defp insert_block(repo, _) do
     nonce =
-      query_max_nonce()
+      BlockQuery.select_max_nonce()
       |> Repo.one()
       |> case do
         nil -> 1
@@ -179,39 +205,44 @@ defmodule Engine.DB.Block do
 
     blknum = nonce * Configuration.child_block_interval()
 
-    params = %{nonce: nonce, blknum: blknum}
+    params = %{state: :forming, nonce: nonce, blknum: blknum}
 
     %__MODULE__{}
-    |> changeset(params)
-    |> repo.insert()
+    |> BlockChangeset.new_block_changeset(params)
+    |> repo.insert(on_conflict: :nothing)
   end
 
-  defp query_max_nonce(), do: from(block in __MODULE__, select: max(block.nonce))
+  defp prepare_for_submission(repo, params) do
+    block = params.block
 
-  defp attach_transactions_to_block(repo, %{"new-block" => block}) do
-    updates = [block_id: block.id, updated_at: NaiveDateTime.utc_now()]
-    {total, _} = repo.update_all(Transaction.query_pending(), set: updates)
-
-    {:ok, total}
-  end
-
-  defp generate_block_hash(repo, %{"new-block" => block}) do
     hash =
       block.id
       |> fetch_tx_bytes_in_block()
       |> Merkle.root_hash()
 
-    changeset = change(block, hash: hash)
-    repo.update(changeset)
+    block
+    |> BlockChangeset.prepare_for_submission(%{hash: hash})
+    |> repo.update()
+  end
+
+  defp finalize_block(repo, block) do
+    block
+    |> BlockChangeset.finalize()
+    |> repo.update()
   end
 
   defp fetch_tx_bytes_in_block(block_id) do
-    query = from(transaction in Transaction, where: transaction.block_id == ^block_id)
+    query = TransactionQuery.fetch_transactions_from_block(block_id)
 
     query
     |> Repo.all()
     |> Enum.map(fn tx ->
       Transaction.encode_unsigned(tx)
     end)
+  end
+
+  defp get_or_insert_forming_block(repo, params) do
+    {:ok, _} = insert_block(repo, params)
+    {:ok, repo.one(BlockQuery.select_forming_block_for_update())}
   end
 end

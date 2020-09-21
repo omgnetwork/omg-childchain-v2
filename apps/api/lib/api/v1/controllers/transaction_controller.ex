@@ -1,6 +1,6 @@
 defmodule API.V1.Controller.TransactionController do
   @moduledoc """
-  Contains transaction related API functions.
+  Transactions related API functions.
   """
 
   use Spandex.Decorators
@@ -12,13 +12,12 @@ defmodule API.V1.Controller.TransactionController do
   @doc """
   Validate and insert the tx_bytes.
   """
-  @spec submit(String.t()) :: {:ok, TransactionView.serialized_hash()} | {:error, atom() | Ecto.Changeset.t()}
+  @spec submit(String.t()) :: {:ok, TransactionView.serialized_transaction()} | {:error, atom() | Ecto.Changeset.t()}
   @decorate trace(service: :ecto, type: :backend)
   def submit(hex_tx_bytes) do
-    with {:ok, binary} <- Encoding.to_binary(hex_tx_bytes),
-         {:ok, changeset} <- Transaction.decode(binary),
-         {:ok, transaction} <- Transaction.insert(changeset) do
-      {:ok, TransactionView.serialize_hash(transaction)}
+    with {:ok, tx_bytes} <- Encoding.to_binary(hex_tx_bytes),
+         {:ok, %{transaction: transaction}} <- Transaction.insert(tx_bytes) do
+      {:ok, TransactionView.serialize(transaction)}
     end
   end
 end

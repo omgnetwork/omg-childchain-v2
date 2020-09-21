@@ -37,7 +37,7 @@ defmodule Engine.DB.Output.OutputChangesetTest do
   end
 
   describe "new/2" do
-    test "generates a changeset for a new ouutput with output data and state" do
+    test "generates a changeset for a new output with output data and state" do
       params = %{
         state: :pending,
         output_type: ExPlasma.payment_v1(),

@@ -5,6 +5,8 @@ defmodule Engine.Repo.Migrations.CreateBlocksTable do
     create table(:blocks) do
       # keccak hash of transactions
       add(:hash, :binary)
+      # blocks state: forming, finalizing, pending_submission, submitted, confirmed
+      add(:state, :string, null: false)
       # transaction order!
       add(:nonce, :integer, null: false)
       # plasma block number
@@ -26,6 +28,7 @@ defmodule Engine.Repo.Migrations.CreateBlocksTable do
 
     create(unique_index(:blocks, :blknum))
     create(unique_index(:blocks, :hash))
+    create(unique_index(:blocks, [:state], where: "state = 'forming'", name: :single_forming_block_index))
 
     create(
       constraint(

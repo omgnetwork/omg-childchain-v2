@@ -1,6 +1,6 @@
 defmodule Engine.DB.Output.OutputQuery do
   @moduledoc """
-  Contains queries related to outputs
+  Queries related to outputs
   """
 
   import Ecto.Query, only: [from: 2]
