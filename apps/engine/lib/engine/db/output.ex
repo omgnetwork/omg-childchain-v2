@@ -49,7 +49,8 @@ defmodule Engine.DB.Output do
   @timestamps_opts [inserted_at: :node_inserted_at, updated_at: :node_updated_at]
 
   @states [:pending, :confirmed, :spent, :exiting, :piggybacked]
-  def states, do: @states
+
+  def states(), do: @states
 
   schema "outputs" do
     field(:output_id, :binary)
@@ -69,6 +70,11 @@ defmodule Engine.DB.Output do
     timestamps()
   end
 
+  @doc """
+  Generates an output changeset corresponding to a deposit output being inserted.
+  The output state is `:confirmed`.
+  """
+  @spec deposit(pos_integer(), <<_::160>>, <<_::160>>, pos_integer()) :: Ecto.Changeset.t()
   def deposit(blknum, depositor, token, amount) do
     params = %{
       state: :confirmed,
@@ -84,19 +90,37 @@ defmodule Engine.DB.Output do
     Changeset.deposit_changeset(%__MODULE__{}, params)
   end
 
+  @doc """
+  Generates an output changeset corresponding to a new output being inserted.
+  The output state is `:pending`.
+  """
+  @spec new(%__MODULE__{}, map()) :: Ecto.Changeset.t()
   def new(struct, params) do
-    IO.inspect(params)
-    Changeset.new_changeset(struct, Map.put(params, :state, :pending)) |> IO.inspect()
+    Changeset.new_changeset(struct, Map.put(params, :state, :pending))
   end
 
+  @doc """
+  Generates an output changeset corresponding to an output being spent.
+  The output state is `:spent`.
+  """
+  @spec spend(%__MODULE__{}) :: Ecto.Changeset.t()
   def spend(struct) do
     Changeset.state_changeset(struct, %{state: :spent})
   end
 
+  @doc """
+  Generates an output changeset corresponding to an output being piggybacked.
+  The output state is `:piggybacked`.
+  """
+  @spec piggyback(%__MODULE__{}) :: Ecto.Changeset.t()
   def piggyback(output) do
     Changeset.state_changeset(output, %{state: :piggybacked})
   end
 
+  @doc """
+  Updates the given multi by setting all outputs found at the given `positions` to an `:exiting` state.
+  """
+  @spec exit(Multi.t(), list(pos_integer())) :: Multi.t()
   def exit(multi, positions) do
     query = Query.usable_for_positions(positions)
     Multi.update_all(multi, :exiting_outputs, query, set: [state: :exiting, updated_at: NaiveDateTime.utc_now()])

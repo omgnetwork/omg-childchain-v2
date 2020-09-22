@@ -1,5 +1,6 @@
 defmodule Engine.DB.Output.Query do
   @moduledoc """
+  Contains query related to outputss
   """
 
   import Ecto.Query, only: [from: 2]
@@ -7,7 +8,7 @@ defmodule Engine.DB.Output.Query do
   alias Engine.DB.Output
 
   @doc """
-  Return all confirmed outputs that have the given positions.
+  Return all `:confirmed` outputs without a spending transaction that have the given positions.
   """
   def usable_for_positions(positions) do
     Output |> usable() |> by_position(positions)

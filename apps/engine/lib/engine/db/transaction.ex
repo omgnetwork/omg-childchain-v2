@@ -133,6 +133,7 @@ defmodule Engine.DB.Transaction do
 
   defp load_fees(type) do
     {:ok, all_fees} = Fee.accepted_fees()
+
     case Map.get(all_fees, type) do
       nil -> {:error, :invalid_transaction_type}
       fees_for_type -> {:ok, fees_for_type}

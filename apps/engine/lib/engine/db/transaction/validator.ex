@@ -44,7 +44,7 @@ defmodule Engine.DB.Transaction.Validator do
   """
   @spec associate_inputs(Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def associate_inputs(changeset, params) do
-    given_input_positions = Enum.map(params.inputs, &(&1.output_id.position))
+    given_input_positions = Enum.map(params.inputs, & &1.output_id.position)
     usable_inputs = given_input_positions |> Output.Query.usable_for_positions() |> Repo.all()
     usable_input_positions = Enum.map(usable_inputs, & &1.position)
 
