@@ -16,16 +16,16 @@ defmodule Engine.DB.Output do
   - output_data: The binary encoded output data, for payment v1 and fees, this is the RLP encoded binary of the output type, owner, token and amount.
   - output_id: The binary encoded output id, this is the result of the encoding of the position
   - state: The current output state:
-      - "pending": the default state when creating an output
-      - "confirmed": the output is confirmed on the rootchain
-      - "exiting": the output is beeing exited
-      - "piggybacked": the output is a part of an IFE and has been piggybacked
+      - :pending - the default state when creating an output
+      - :confirmed - the output is confirmed on the rootchain
+      - :exiting - the output is beeing exited
+      - :piggybacked - the output is a part of an IFE and has been piggybacked
   """
 
   use Ecto.Schema
 
-  alias __MODULE__.Changeset
-  alias __MODULE__.Query
+  alias __MODULE__.OutputChangeset
+  alias __MODULE__.OutputQuery
   alias Ecto.Atom
   alias Ecto.Multi
   alias Engine.DB.Transaction
@@ -87,7 +87,7 @@ defmodule Engine.DB.Output do
       output_id: Position.new(blknum, 0, 0)
     }
 
-    Changeset.deposit_changeset(%__MODULE__{}, params)
+    OutputChangeset.deposit(%__MODULE__{}, params)
   end
 
   @doc """
@@ -96,16 +96,16 @@ defmodule Engine.DB.Output do
   """
   @spec new(%__MODULE__{}, map()) :: Ecto.Changeset.t()
   def new(struct, params) do
-    Changeset.new_changeset(struct, Map.put(params, :state, :pending))
+    OutputChangeset.new(struct, Map.put(params, :state, :pending))
   end
 
   @doc """
   Generates an output changeset corresponding to an output being spent.
   The output state is `:spent`.
   """
-  @spec spend(%__MODULE__{}) :: Ecto.Changeset.t()
-  def spend(struct) do
-    Changeset.state_changeset(struct, %{state: :spent})
+  @spec spend(%__MODULE__{}, map()) :: Ecto.Changeset.t()
+  def spend(struct, _params) do
+    OutputChangeset.state(struct, %{state: :spent})
   end
 
   @doc """
@@ -114,7 +114,7 @@ defmodule Engine.DB.Output do
   """
   @spec piggyback(%__MODULE__{}) :: Ecto.Changeset.t()
   def piggyback(output) do
-    Changeset.state_changeset(output, %{state: :piggybacked})
+    OutputChangeset.state(output, %{state: :piggybacked})
   end
 
   @doc """
@@ -122,7 +122,7 @@ defmodule Engine.DB.Output do
   """
   @spec exit(Multi.t(), list(pos_integer())) :: Multi.t()
   def exit(multi, positions) do
-    query = Query.usable_for_positions(positions)
+    query = OutputQuery.usable_for_positions(positions)
     Multi.update_all(multi, :exiting_outputs, query, set: [state: :exiting, updated_at: NaiveDateTime.utc_now()])
   end
 end

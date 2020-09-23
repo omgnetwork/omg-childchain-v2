@@ -8,77 +8,66 @@ defmodule Engine.DB.Transaction.ValidatorTest do
   alias ExPlasma.Builder
   alias ExPlasma.Output
 
-  describe "validate_inputs/1" do
+  describe "associate_inputs/2" do
     test "associate inputs if all inputs are usable in the correct order" do
-      i_1 = build_input(3000, 0, 0)
-      i_1_in_db = Repo.get(DbOutput, insert(:output, Map.put(i_1, :state, "confirmed")).id)
+      %{output_id: output_id_1} = insert(:deposit_output)
+      %{output_id: %{position: i_1_position}} = i_1 = build_input(output_id_1)
 
-      i_2 = build_input(4000, 0, 0)
-      i_2_in_db = Repo.get(DbOutput, insert(:output, Map.put(i_2, :state, "confirmed")).id)
+      %{output_id: output_id_2} = insert(:deposit_output)
+      %{output_id: %{position: i_2_position}} = i_2 = build_input(output_id_2)
 
-      i_3 = build_input(2000, 0, 0)
-      i_3_in_db = Repo.get(DbOutput, insert(:output, Map.put(i_3, :state, "confirmed")).id)
+      %{output_id: output_id_3} = insert(:deposit_output)
+      %{output_id: %{position: i_3_position}} = i_3 = build_input(output_id_3)
 
-      i_4 = build_input(1, 0, 0)
-      i_4_in_db = Repo.get(DbOutput, insert(:output, Map.put(i_4, :state, "confirmed")).id)
+      %{output_id: output_id_4} = insert(:deposit_output)
+      %{output_id: %{position: i_4_position}} = i_4 = build_input(output_id_4)
 
       changeset =
-        [i_3, i_2, i_4, i_1]
-        |> build_changeset_with_inputs()
-        |> Validator.validate_inputs()
+        %Transaction{}
+        |> change(%{})
+        |> Validator.associate_inputs(%{inputs: [i_3, i_2, i_4, i_1]})
 
       assert changeset.valid?
 
-      assert get_field(changeset, :inputs) ==
-               [i_3_in_db, i_2_in_db, i_4_in_db, i_1_in_db]
+      assert [
+               %{position: ^i_3_position},
+               %{position: ^i_2_position},
+               %{position: ^i_4_position},
+               %{position: ^i_1_position}
+             ] = get_field(changeset, :inputs)
     end
 
     test "returns an error if inputs don't exist" do
-      i_1 = build_input(1, 0, 0)
-      i_2 = build_input(2, 0, 0)
-      i_3 = build_input(3, 0, 0)
-
-      insert(:output, Map.put(i_1, :state, "confirmed"))
+      %{output_id: output_id_1} = insert(:deposit_output)
+      i_1 = build_input(output_id_1)
+      %{output_id: %{position: i_2_position}} = i_2 = build_input(2, 0, 0)
+      %{output_id: %{position: i_3_position}} = i_3 = build_input(3, 0, 0)
 
       changeset =
-        [i_1, i_2, i_3]
-        |> build_changeset_with_inputs()
-        |> Validator.validate_inputs()
+        %Transaction{}
+        |> change(%{})
+        |> Validator.associate_inputs(%{inputs: [i_1, i_2, i_3]})
 
       refute changeset.valid?
-      assert {"inputs [2000000000, 3000000000] are missing, spent, or not yet available", _} = changeset.errors[:inputs]
+
+      assert changeset.errors[:inputs] ==
+               {"inputs [#{i_2_position}, #{i_3_position}] are missing, spent, or not yet available", []}
     end
 
     test "returns an error if inputs are spent" do
-      i_1 = build_input(1, 0, 0)
-      i_2 = build_input(2, 0, 0)
+      %{output_id: output_id_1} = insert(:deposit_output)
+      %{output_id: output_id_2, state: :spent} = insert(:deposit_output) |> DbOutput.spend(%{}) |> Repo.update!()
 
-      insert(:output, Map.put(i_1, :state, "confirmed"))
-      insert(:output, Map.put(i_2, :state, "spent"))
-
-      changeset =
-        [i_1, i_2]
-        |> build_changeset_with_inputs()
-        |> Validator.validate_inputs()
-
-      refute changeset.valid?
-      assert {"inputs [2000000000] are missing, spent, or not yet available", _} = changeset.errors[:inputs]
-    end
-
-    test "returns an error if inputs are pending" do
-      i_1 = build_input(1, 0, 0)
-      i_2 = build_input(2, 0, 0)
-
-      insert(:output, Map.put(i_1, :state, "confirmed"))
-      insert(:output, Map.put(i_2, :state, "pending"))
+      i_1 = build_input(output_id_1)
+      %{output_id: %{position: i_2_position}} = i_2 = build_input(output_id_2)
 
       changeset =
-        [i_1, i_2]
-        |> build_changeset_with_inputs()
-        |> Validator.validate_inputs()
+        %Transaction{}
+        |> change(%{})
+        |> Validator.associate_inputs(%{inputs: [i_1, i_2]})
 
       refute changeset.valid?
-      assert {"inputs [2000000000] are missing, spent, or not yet available", _} = changeset.errors[:inputs]
+      assert changeset.errors[:inputs] == {"inputs [#{i_2_position}] are missing, spent, or not yet available", []}
     end
   end
 
@@ -196,17 +185,11 @@ defmodule Engine.DB.Transaction.ValidatorTest do
     end
   end
 
-  defp build_input(blknum, oindex, txindex) do
-    map = %{blknum: blknum, oindex: oindex, txindex: txindex}
-    output_id = Map.put(map, :position, Output.Position.pos(map))
+  defp build_input(blknum, txindex, oindex) do
+    output_id = Output.Position.new(blknum, txindex, oindex)
 
     Map.from_struct(%Output{output_id: output_id})
   end
 
-  defp build_changeset_with_inputs(inputs) do
-    %Transaction{}
-    |> Repo.preload(:inputs)
-    |> cast(%{inputs: inputs}, [])
-    |> cast_assoc(:inputs)
-  end
+  defp build_input(output_id), do: output_id |> Output.decode_id!() |> Map.from_struct()
 end

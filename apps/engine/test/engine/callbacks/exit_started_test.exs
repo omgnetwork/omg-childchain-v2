@@ -17,7 +17,7 @@ defmodule Engine.Callbacks.ExitStartedTest do
       assert listener_for(:exit_started, height: 100)
 
       query = from(o in Output, where: o.position == ^position, select: o.state)
-      assert Repo.one(query) == "exiting"
+      assert Repo.one(query) == :exiting
     end
 
     test "marks multiple utxos as exiting" do
@@ -34,7 +34,7 @@ defmodule Engine.Callbacks.ExitStartedTest do
       assert listener_for(:exit_started, height: 102)
 
       query = from(o in Output, where: o.position in [^pos1, ^pos2], select: o.state)
-      assert Repo.all(query) == ["exiting", "exiting"]
+      assert Repo.all(query) == [:exiting, :exiting]
     end
 
     test "returns {:ok, :noop} when no event given" do

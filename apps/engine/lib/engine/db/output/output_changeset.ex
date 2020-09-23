@@ -1,4 +1,4 @@
-defmodule Engine.DB.Output.Changeset do
+defmodule Engine.DB.Output.OutputChangeset do
   @moduledoc """
   Contains changesets related to outputs
   """
@@ -16,11 +16,11 @@ defmodule Engine.DB.Output.Changeset do
   - output_type
   - state (should be :confirmed)
   """
-  def deposit_changeset(output, params) do
+  def deposit(output, params) do
     output
-    |> state_changeset(params)
-    |> input_position_changeset(params)
-    |> output_data_changeset(params)
+    |> state(params)
+    |> input_position(params)
+    |> output_data(params)
   end
 
   @doc """
@@ -30,10 +30,10 @@ defmodule Engine.DB.Output.Changeset do
   - output_type
   - state (should be :pending)
   """
-  def new_changeset(output, params) do
+  def new(output, params) do
     output
-    |> state_changeset(params)
-    |> output_data_changeset(params)
+    |> state(params)
+    |> output_data(params)
   end
 
   @doc """
@@ -41,21 +41,21 @@ defmodule Engine.DB.Output.Changeset do
   This updates:
   - state (should be :pending)
   """
-  def state_changeset(output, params) do
+  def state(output, params) do
     output
     |> cast(params, [:state])
     |> validate_required([:state])
     |> validate_inclusion(:state, Output.states())
   end
 
-  defp output_data_changeset(output, params) do
+  defp output_data(output, params) do
     output
     |> cast(params, [:output_type])
     |> put_output_data(params)
     |> validate_required([:output_type, :output_data])
   end
 
-  defp input_position_changeset(output, params) do
+  defp input_position(output, params) do
     output
     |> put_position(params)
     |> put_output_id(params)

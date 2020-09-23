@@ -52,7 +52,7 @@ defmodule Engine.DB.TransactionTest do
 
     test "builds the outputs" do
       input_blknum = 1
-      insert(:output, %{blknum: input_blknum, state: "confirmed"})
+      insert(:deposit_output, %{blknum: input_blknum})
 
       o_1_data = [token: <<0::160>>, amount: 10, output_guard: <<1::160>>]
       o_2_data = [token: <<0::160>>, amount: 10, output_guard: <<1::160>>]
@@ -75,7 +75,7 @@ defmodule Engine.DB.TransactionTest do
 
     test "builds the inputs" do
       input_blknum = 1
-      input = Repo.get(Output, insert(:output, %{blknum: input_blknum, state: "confirmed"}).id)
+      assert %{id: id, state: :confirmed} = insert(:deposit_output, %{blknum: input_blknum})
 
       tx_bytes =
         ExPlasma.payment_v1()
@@ -87,7 +87,9 @@ defmodule Engine.DB.TransactionTest do
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes)
 
-      assert get_field(changeset, :inputs) == [input]
+      assert [spent_input] = get_field(changeset, :inputs)
+      assert spent_input.id == id
+      assert spent_input.state == :spent
     end
 
     test "is valid when inputs are signed correctly" do
@@ -101,10 +103,8 @@ defmodule Engine.DB.TransactionTest do
       %{priv_encoded: priv_encoded_1, addr: addr_1} = TestEntity.alice()
       %{priv_encoded: priv_encoded_2, addr: addr_2} = TestEntity.bob()
 
-      data_1 = %{output_guard: addr_1, token: <<0::160>>, amount: 10}
-      data_2 = %{output_guard: addr_2, token: <<0::160>>, amount: 10}
-      insert(:output, %{output_data: data_1, blknum: 1, state: "confirmed"})
-      insert(:output, %{output_data: data_2, blknum: 2, state: "confirmed"})
+      insert(:deposit_output, %{output_guard: addr_1, token: <<0::160>>, amount: 10, blknum: 1})
+      insert(:deposit_output, %{output_guard: addr_2, token: <<0::160>>, amount: 10, blknum: 2})
 
       tx_bytes =
         ExPlasma.payment_v1()
@@ -116,7 +116,6 @@ defmodule Engine.DB.TransactionTest do
         |> ExPlasma.encode!()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes)
-
       assert changeset.valid?
     end
   end

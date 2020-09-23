@@ -16,7 +16,7 @@ defmodule Engine.Callbacks.InFlightExitStartedTest do
       assert listener_for(:in_flight_exit_started, height: 100)
 
       query = from(o in Output, where: o.position == ^position, select: o.state)
-      assert Repo.one(query) == "exiting"
+      assert Repo.one(query) == :exiting
     end
 
     test "marks multiple inputs in a single IFE that are exiting" do
@@ -30,7 +30,7 @@ defmodule Engine.Callbacks.InFlightExitStartedTest do
       assert listener_for(:in_flight_exit_started, height: 101)
 
       query = from(o in Output, where: o.position in [^pos1, ^pos2], select: o.state)
-      assert Repo.all(query) == ["exiting", "exiting"]
+      assert Repo.all(query) == [:exiting, :exiting]
     end
 
     test "marks multiple IFEs as exiting" do
@@ -49,7 +49,7 @@ defmodule Engine.Callbacks.InFlightExitStartedTest do
       assert listener_for(:in_flight_exit_started, height: 102)
 
       query = from(o in Output, where: o.position in [^pos1, ^pos2, ^pos3, ^pos4], select: o.state)
-      assert Repo.all(query) == ["exiting", "exiting", "exiting", "exiting"]
+      assert Repo.all(query) == [:exiting, :exiting, :exiting, :exiting]
     end
 
     test "returns {:ok, :noop} when no event given" do

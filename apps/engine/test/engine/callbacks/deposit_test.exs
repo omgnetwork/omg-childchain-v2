@@ -22,7 +22,7 @@ defmodule Engine.Callbacks.DepositTest do
 
       deposit_event = build(:deposit_event, token: token, amount: amount, blknum: blknum, depositor: depositor)
 
-      assert {:ok, %{"deposit-output-3000000000" => %Output{} = output}} = Deposit.callback([deposit_event], :depositor)
+      assert {:ok, %{"deposit-3" => %Output{} = output}} = Deposit.callback([deposit_event], :depositor)
 
       assert ExPlasma.Output.decode!(output.output_data) == %ExPlasma.Output{
                output_data: %{amount: amount, token: token, output_guard: depositor},
@@ -42,8 +42,8 @@ defmodule Engine.Callbacks.DepositTest do
 
       assert {:ok,
               %{
-                "deposit-output-6000000000" => %Output{},
-                "deposit-output-5000000000" => %Output{}
+                "deposit-6" => %Output{},
+                "deposit-5" => %Output{}
               }} = Deposit.callback(events, :depositor)
     end
 
@@ -51,10 +51,9 @@ defmodule Engine.Callbacks.DepositTest do
       event = build(:deposit_event, blknum: 1)
       events = [event, build(:deposit_event, blknum: 2)]
 
-      assert {:ok, %{"deposit-output-1000000000" => _}} = Deposit.callback([event], :depositor)
+      assert {:ok, %{"deposit-1" => _}} = Deposit.callback([event], :depositor)
 
-      assert {:ok, %{"deposit-output-1000000000" => _, "deposit-output-2000000000" => _}} =
-               Deposit.callback(events, :depositor)
+      assert {:ok, %{"deposit-1" => _, "deposit-2" => _}} = Deposit.callback(events, :depositor)
 
       deposit_outputs = all_sorted_outputs()
 
@@ -80,8 +79,7 @@ defmodule Engine.Callbacks.DepositTest do
         build(:deposit_event, blknum: 5, height: 406)
       ]
 
-      assert {:ok, %{"deposit-output-3000000000" => _, "deposit-output-4000000000" => _}} =
-               Deposit.callback(deposit_events_listener1, :depositor)
+      assert {:ok, %{"deposit-3" => _, "deposit-4" => _}} = Deposit.callback(deposit_events_listener1, :depositor)
 
       assert listener_for(:depositor, height: 405)
 
@@ -91,7 +89,7 @@ defmodule Engine.Callbacks.DepositTest do
       assert Enum.at(deposit_outputs_1, 0).position == 3_000_000_000
       assert Enum.at(deposit_outputs_1, 1).position == 4_000_000_000
 
-      assert {:ok, %{"deposit-output-5000000000" => _}} = Deposit.callback(deposit_events_listener2, :depositor)
+      assert {:ok, %{"deposit-5" => _}} = Deposit.callback(deposit_events_listener2, :depositor)
 
       assert listener_for(:depositor, height: 406)
 

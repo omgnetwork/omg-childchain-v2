@@ -106,27 +106,41 @@ defmodule Engine.DB.Factory do
   end
 
   def deposit_output_factory(attr \\ %{}) do
-    blknum = Map.get(attr, :blknum, 1)
-    output_guard = Map.get(attr, :output_guard) || <<1::160>>
+    entity = TestEntity.alice()
+
+    default_blknum = sequence(:blknum, fn seq -> seq + 1 end)
+
+    blknum = Map.get(attr, :blknum, default_blknum)
+    output_guard = Map.get(attr, :output_guard, entity.addr)
     amount = Map.get(attr, :amount, 1)
     token = Map.get(attr, :token, <<0::160>>)
 
+    {:ok, encoded_output_data} =
+      %ExPlasma.Output{}
+      |> struct(%{
+        output_type: ExPlasma.payment_v1(),
+        output_data: %{
+          output_guard: output_guard,
+          token: token,
+          amount: amount
+        }
+      })
+      |> ExPlasma.Output.encode()
+
     output_id = Position.new(blknum, 0, 0)
 
-    output_params = %{
-      state: "confirmed",
-      output_type: ExPlasma.payment_v1(),
-      output_data: %{
-        output_guard: output_guard,
-        token: token,
-        amount: amount
-      },
-      output_id: output_id
-    }
+    {:ok, encoded_output_id} =
+      %ExPlasma.Output{}
+      |> struct(%{output_id: output_id})
+      |> ExPlasma.Output.encode(as: :input)
 
-    %Output{}
-    |> Output.changeset(output_params)
-    |> Changeset.apply_changes()
+    %Output{
+      state: :confirmed,
+      output_type: ExPlasma.payment_v1(),
+      output_data: encoded_output_data,
+      output_id: encoded_output_id,
+      position: output_id.position
+    }
   end
 
   def transaction_factory(params) do
@@ -139,50 +153,60 @@ defmodule Engine.DB.Factory do
     }
   end
 
-  def payment_v1_transaction_factory(attr) do
+  def payment_v1_transaction_factory(_attr) do
     entity = TestEntity.alice()
 
-    priv_encoded = Map.get(attr, :priv_encoded, entity.priv_encoded)
-    addr = Map.get(attr, :addr, entity.addr)
-
-    data = %{output_guard: addr, token: <<0::160>>, amount: 1}
-    default_blknum = sequence(:blknum, fn seq -> (seq + 1) * 1000 end)
-    insert(:output, %{output_data: data, blknum: Map.get(attr, :blknum, default_blknum), state: "confirmed"})
+    %{output_id: output_id} = input = :deposit_output |> build() |> set_state(:spent)
+    %{output_data: output_data} = output = build(:output)
 
     tx_bytes =
-      attr[:tx_bytes] ||
-        ExPlasma.payment_v1()
-        |> Builder.new()
-        |> Builder.add_input(blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
-        |> Builder.sign!([priv_encoded])
-        |> ExPlasma.encode!()
+      ExPlasma.payment_v1()
+      |> Builder.new(%{inputs: [ExPlasma.Output.decode_id!(output_id)], outputs: [ExPlasma.Output.decode!(output_data)]})
+      |> Builder.sign!([entity.priv_encoded])
+      |> ExPlasma.encode!()
 
-    {:ok, changeset} = Transaction.decode(tx_bytes)
-    Changeset.apply_changes(changeset)
+    {:ok, tx_hash} = ExPlasma.Transaction.hash(tx_bytes)
+
+    %Transaction{
+      inputs: [input],
+      outputs: [output],
+      tx_bytes: tx_bytes,
+      tx_hash: tx_hash,
+      tx_type: ExPlasma.payment_v1(),
+      inserted_at: DateTime.utc_now(),
+      updated_at: DateTime.utc_now()
+    }
   end
 
   # The "lowest" unit in the hierarchy. This is made to form into transactions
   def output_factory(attr \\ %{}) do
-    default_data = %{output_guard: <<1::160>>, token: <<0::160>>, amount: 10}
+    default_data = %{
+      output_guard: Map.get(attr, :output_guard, <<1::160>>),
+      token: Map.get(attr, :token, <<0::160>>),
+      amount: Map.get(attr, :amount, 10)
+    }
+
     default_blknum = sequence(:blknum, fn seq -> (seq + 1) * 1000 end)
+    default_txindex = sequence(:txindex, fn seq -> seq + 1 end)
+    default_oindex = sequence(:oindex, fn seq -> seq + 1 end)
 
-    {:ok, default_id} =
-      %{blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0}
-      |> Position.pos()
-      |> Position.to_map()
+    default_id =
+      Position.new(
+        Map.get(attr, :blknum, default_blknum),
+        Map.get(attr, :txindex, default_txindex),
+        Map.get(attr, :oindex, default_oindex)
+      )
 
-    %Output{}
-    |> Output.changeset(%{
+    params = %{
       output_type: Map.get(attr, :output_type, 1),
       output_id: Map.get(attr, :output_id, default_id),
-      output_data: Map.get(attr, :output_data, default_data),
-      state: Map.get(attr, :state, "pending")
-    })
+      output_data: Map.get(attr, :output_data, default_data)
+    }
+
+    %Output{}
+    |> Output.new(params)
     |> Changeset.apply_changes()
   end
-
-  def spent(%Transaction{outputs: [output]} = txn), do: %{txn | outputs: [%{output | state: "spent"}]}
 
   def set_state(%Transaction{outputs: [output]}, state), do: %{output | state: state}
   def set_state(%Output{} = output, state), do: %{output | state: state}

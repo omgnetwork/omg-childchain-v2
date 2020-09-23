@@ -45,7 +45,7 @@ defmodule Engine.DB.Transaction.Validator do
   @spec associate_inputs(Ecto.Changeset.t(), map()) :: Ecto.Changeset.t()
   def associate_inputs(changeset, params) do
     given_input_positions = Enum.map(params.inputs, & &1.output_id.position)
-    usable_inputs = given_input_positions |> Output.Query.usable_for_positions() |> Repo.all()
+    usable_inputs = given_input_positions |> Output.OutputQuery.usable_for_positions() |> Repo.all()
     usable_input_positions = Enum.map(usable_inputs, & &1.position)
 
     case given_input_positions -- usable_input_positions do
@@ -54,7 +54,7 @@ defmodule Engine.DB.Transaction.Validator do
           Enum.map(given_input_positions, fn given_input_position ->
             usable_inputs
             |> Enum.find(&(&1.position == given_input_position))
-            |> Output.spend()
+            |> Output.spend(%{})
           end)
 
         put_assoc(changeset, :inputs, ordered_spent_inputs)

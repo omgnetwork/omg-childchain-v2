@@ -132,11 +132,9 @@ defmodule Engine.DB.Transaction do
   def insert(changeset), do: Repo.insert(changeset)
 
   defp load_fees(type) do
-    {:ok, all_fees} = Fee.accepted_fees()
-
-    case Map.get(all_fees, type) do
-      nil -> {:error, :invalid_transaction_type}
-      fees_for_type -> {:ok, fees_for_type}
+    with {:ok, all_fees} when is_map(all_fees) <- Fee.accepted_fees(),
+         fees_for_type <- Map.get(all_fees, type, {:error, :invalid_transaction_type}) do
+      {:ok, fees_for_type}
     end
   end
 
