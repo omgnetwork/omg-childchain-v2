@@ -91,7 +91,6 @@ defmodule Engine.DB.Transaction do
   Query a transaction by the given `field`.
   Also preload given `preloads`
   """
-  @spec get_by(keyword(), list(:atom) | :atom) :: __MODULE__
   def get_by(field, preloads) do
     __MODULE__
     |> Repo.get_by(field)
