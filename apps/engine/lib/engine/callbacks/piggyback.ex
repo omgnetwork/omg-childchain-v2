@@ -41,10 +41,6 @@ defmodule Engine.Callbacks.Piggyback do
   defp piggyback(multi, %{data: %{"input_index" => _index}}), do: multi
 
   defp piggyback(multi, %{data: %{"output_index" => index, "tx_hash" => tx_hash}}) do
-    do_piggyback(multi, index, tx_hash)
-  end
-
-  defp do_piggyback(multi, index, tx_hash) do
     [tx_hash: tx_hash]
     |> Transaction.get_by(:outputs)
     |> get_output(index)
