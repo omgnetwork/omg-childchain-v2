@@ -7,7 +7,7 @@ defmodule API.V1.Controllere.TransactionControllerTest do
   alias ExPlasma.Encoding
 
   setup do
-    _ = insert(:fee, hash: "55", term: :no_fees_required, type: :merged_fees)
+    insert(:merged_fee)
 
     :ok
   end
@@ -17,7 +17,7 @@ defmodule API.V1.Controllere.TransactionControllerTest do
       entity = TestEntity.alice()
 
       %{output_id: output_id} = insert(:deposit_output, amount: 10, output_guard: entity.addr)
-      %{output_data: output_data} = build(:output, output_guard: entity.addr, amount: 10)
+      %{output_data: output_data} = build(:output, output_guard: entity.addr, amount: 9)
 
       transaction =
         Builder.new(ExPlasma.payment_v1(), %{
@@ -36,7 +36,7 @@ defmodule API.V1.Controllere.TransactionControllerTest do
       assert TransactionController.submit(tx_bytes) == {:ok, %{tx_hash: Encoding.to_hex(tx_hash)}}
     end
 
-    test "it raises an error if the tranasaction is invalid" do
+    test "it raises an error if the transaction is invalid" do
       invalid_hex_tx_bytes =
         ExPlasma.payment_v1()
         |> Builder.new()

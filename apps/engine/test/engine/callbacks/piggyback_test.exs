@@ -6,12 +6,6 @@ defmodule Engine.Callbacks.PiggybackTest do
   alias Engine.DB.Output
   alias Engine.Repo
 
-  setup do
-    _ = insert(:fee, hash: "10", term: :no_fees_required, type: :merged_fees)
-
-    :ok
-  end
-
   describe "callback/2" do
     test "marks an output as piggybacked" do
       %{outputs: [output]} = transaction = insert(:payment_v1_transaction)

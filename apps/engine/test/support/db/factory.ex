@@ -190,77 +190,59 @@ defmodule Engine.DB.Factory do
     default_txindex = sequence(:txindex, fn seq -> seq + 1 end)
     default_oindex = sequence(:oindex, fn seq -> seq + 1 end)
 
-    default_id =
+    default_output_id =
       Position.new(
         Map.get(attr, :blknum, default_blknum),
         Map.get(attr, :txindex, default_txindex),
         Map.get(attr, :oindex, default_oindex)
       )
 
-    params = %{
-      output_type: Map.get(attr, :output_type, 1),
-      output_id: Map.get(attr, :output_id, default_id),
-      output_data: Map.get(attr, :output_data, default_data)
-    }
+    {:ok, encoded_output_data} =
+      %ExPlasma.Output{}
+      |> struct(%{
+        output_type: Map.get(attr, :output_type, 1),
+        output_data: Map.get(attr, :output_data, default_data)
+      })
+      |> ExPlasma.Output.encode()
 
-    %Output{}
-    |> Output.new(params)
-    |> Changeset.apply_changes()
+    {:ok, encoded_output_id} =
+      %ExPlasma.Output{}
+      |> struct(%{output_id: Map.get(attr, :output_id, default_output_id)})
+      |> ExPlasma.Output.encode(as: :input)
+
+    %Output{
+      state: :pending,
+      output_type: ExPlasma.payment_v1(),
+      output_data: encoded_output_data,
+      output_id: encoded_output_id,
+      position: default_output_id.position
+    }
   end
 
   def set_state(%Transaction{outputs: [output]}, state), do: %{output | state: state}
   def set_state(%Output{} = output, state), do: %{output | state: state}
 
-  def block_factory(attr \\ %{}) do
-    blknum = Map.get(attr, :blknum, 1000)
-    _child_block_interval = 1000
-    nonce = round(blknum / 1000)
-
+  def block_factory() do
     %Block{
-      hash: Map.get(attr, :hash) || :crypto.strong_rand_bytes(32),
-      nonce: nonce,
-      blknum: blknum,
+      hash: :crypto.strong_rand_bytes(32),
+      nonce: 1,
+      blknum: 1000,
       tx_hash: :crypto.strong_rand_bytes(64),
       formed_at_ethereum_height: 1,
-      submitted_at_ethereum_height: Map.get(attr, :submitted_at_ethereum_height, 1),
-      attempts_counter: Map.get(attr, :attempts_counter),
+      submitted_at_ethereum_height: 1,
+      attempts_counter: 0,
       gas: 827
     }
   end
 
-  def fee_factory(params) do
-    fees =
-      params[:term] ||
-        %{
-          1 => %{
-            Base.decode16!("0000000000000000000000000000000000000000") => %{
-              amount: 1,
-              subunit_to_unit: 1_000_000_000_000_000_000,
-              pegged_amount: 1,
-              pegged_currency: "USD",
-              pegged_subunit_to_unit: 100,
-              updated_at: DateTime.from_unix!(1_546_336_800)
-            },
-            Base.decode16!("0000000000000000000000000000000000000001") => %{
-              amount: 2,
-              subunit_to_unit: 1_000_000_000_000_000_000,
-              pegged_amount: 1,
-              pegged_currency: "USD",
-              pegged_subunit_to_unit: 100,
-              updated_at: DateTime.from_unix!(1_546_336_800)
-            }
-          },
-          2 => %{
-            Base.decode16!("0000000000000000000000000000000000000000") => %{
-              amount: 2,
-              subunit_to_unit: 1_000_000_000_000_000_000,
-              pegged_amount: 1,
-              pegged_currency: "USD",
-              pegged_subunit_to_unit: 100,
-              updated_at: DateTime.from_unix!(1_546_336_800)
-            }
-          }
-        }
+  def merged_fee_factory() do
+    fees = %{
+      1 => %{
+        Base.decode16!("0000000000000000000000000000000000000000") => [1, 2],
+        Base.decode16!("0000000000000000000000000000000000000001") => [1]
+      },
+      2 => %{Base.decode16!("0000000000000000000000000000000000000000") => [1]}
+    }
 
     hash =
       :sha256
@@ -268,10 +250,55 @@ defmodule Engine.DB.Factory do
       |> Base.encode16(case: :lower)
 
     %Fee{
-      type: params[:type] || :current_fees,
+      type: :merged_fees,
       term: fees,
-      hash: params[:hash] || hash,
-      inserted_at: params[:inserted_at]
+      hash: hash,
+      inserted_at: DateTime.utc_now()
+    }
+  end
+
+  def current_fee_factory() do
+    fees = %{
+      1 => %{
+        Base.decode16!("0000000000000000000000000000000000000000") => %{
+          amount: 1,
+          subunit_to_unit: 1_000_000_000_000_000_000,
+          pegged_amount: 1,
+          pegged_currency: "USD",
+          pegged_subunit_to_unit: 100,
+          updated_at: DateTime.from_unix!(1_546_336_800)
+        },
+        Base.decode16!("0000000000000000000000000000000000000001") => %{
+          amount: 2,
+          subunit_to_unit: 1_000_000_000_000_000_000,
+          pegged_amount: 1,
+          pegged_currency: "USD",
+          pegged_subunit_to_unit: 100,
+          updated_at: DateTime.from_unix!(1_546_336_800)
+        }
+      },
+      2 => %{
+        Base.decode16!("0000000000000000000000000000000000000000") => %{
+          amount: 2,
+          subunit_to_unit: 1_000_000_000_000_000_000,
+          pegged_amount: 1,
+          pegged_currency: "USD",
+          pegged_subunit_to_unit: 100,
+          updated_at: DateTime.from_unix!(1_546_336_800)
+        }
+      }
+    }
+
+    hash =
+      :sha256
+      |> :crypto.hash(inspect(fees))
+      |> Base.encode16(case: :lower)
+
+    %Fee{
+      type: :current_fees,
+      term: fees,
+      hash: hash,
+      inserted_at: DateTime.utc_now()
     }
   end
 end

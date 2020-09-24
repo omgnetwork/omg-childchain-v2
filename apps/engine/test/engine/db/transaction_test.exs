@@ -8,7 +8,7 @@ defmodule Engine.DB.TransactionTest do
   alias ExPlasma.Builder
 
   setup do
-    _ = insert(:fee, hash: "22", type: :merged_fees)
+    _ = insert(:merged_fee)
 
     :ok
   end
@@ -93,13 +93,6 @@ defmodule Engine.DB.TransactionTest do
     end
 
     test "is valid when inputs are signed correctly" do
-      _ =
-        insert(:fee,
-          type: :merged_fees,
-          term: :no_fees_required,
-          inserted_at: DateTime.add(DateTime.utc_now(), 10_000_000, :second)
-        )
-
       %{priv_encoded: priv_encoded_1, addr: addr_1} = TestEntity.alice()
       %{priv_encoded: priv_encoded_2, addr: addr_2} = TestEntity.bob()
 
@@ -111,7 +104,7 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.new()
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> Builder.add_input(blknum: 2, txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 20)
+        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 19)
         |> Builder.sign!([priv_encoded_1, priv_encoded_2])
         |> ExPlasma.encode!()
 

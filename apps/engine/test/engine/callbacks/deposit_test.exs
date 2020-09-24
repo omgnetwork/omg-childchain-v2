@@ -7,12 +7,6 @@ defmodule Engine.Callbacks.DepositTest do
   alias Engine.DB.ListenerState
   alias Engine.DB.Output
 
-  setup do
-    _ = insert(:fee, type: :merged_fees)
-
-    :ok
-  end
-
   describe "callback/2" do
     test "generates a confirmed output for the deposit" do
       token = <<0::160>>

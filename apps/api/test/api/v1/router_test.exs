@@ -4,7 +4,6 @@ defmodule API.V1.RouterTest do
 
   alias API.V1.Router
   alias Engine.DB.Block
-  alias Engine.DB.Fee
   alias Engine.DB.Transaction
   alias Engine.Repo
   alias Engine.Support.TestEntity
@@ -12,50 +11,7 @@ defmodule API.V1.RouterTest do
   alias ExPlasma.Encoding
 
   setup do
-    fee_specs = %{
-      1 => %{
-        Base.decode16!("0000000000000000000000000000000000000000") => %{
-          amount: 1,
-          subunit_to_unit: 1_000_000_000_000_000_000,
-          pegged_amount: 1,
-          pegged_currency: "USD",
-          pegged_subunit_to_unit: 10,
-          updated_at: DateTime.from_unix!(1_546_336_800)
-        },
-        Base.decode16!("0000000000000000000000000000000000000001") => %{
-          amount: 2,
-          subunit_to_unit: 1_000_000_000_000_000_000,
-          pegged_amount: 1,
-          pegged_currency: "USD",
-          pegged_subunit_to_unit: 10,
-          updated_at: DateTime.from_unix!(1_546_336_800)
-        }
-      },
-      2 => %{
-        Base.decode16!("0000000000000000000000000000000000000000") => %{
-          amount: 2,
-          subunit_to_unit: 1_000_000_000_000_000_000,
-          pegged_amount: 1,
-          pegged_currency: "USD",
-          pegged_subunit_to_unit: 10,
-          updated_at: DateTime.from_unix!(1_546_336_800)
-        }
-      }
-    }
-
-    params = [
-      term: fee_specs,
-      type: :current_fees,
-      hash:
-        :sha256
-        |> :crypto.hash(inspect(fee_specs))
-        |> Base.encode16(case: :lower),
-      inserted_at: DateTime.add(DateTime.utc_now(), 10_000_000, :second)
-    ]
-
-    _ = insert(:fee, params)
-
-    _ = insert(:fee, hash: "11", type: :merged_fees)
+    _ = insert(:current_fee)
 
     %{
       expected_result: %{
@@ -65,7 +21,7 @@ defmodule API.V1.RouterTest do
             "currency" => "0x0000000000000000000000000000000000000000",
             "pegged_amount" => 1,
             "pegged_currency" => "USD",
-            "pegged_subunit_to_unit" => 10,
+            "pegged_subunit_to_unit" => 100,
             "subunit_to_unit" => 1_000_000_000_000_000_000,
             "updated_at" => "2019-01-01T10:00:00Z"
           },
@@ -74,7 +30,7 @@ defmodule API.V1.RouterTest do
             "currency" => "0x0000000000000000000000000000000000000001",
             "pegged_amount" => 1,
             "pegged_currency" => "USD",
-            "pegged_subunit_to_unit" => 10,
+            "pegged_subunit_to_unit" => 100,
             "subunit_to_unit" => 1_000_000_000_000_000_000,
             "updated_at" => "2019-01-01T10:00:00Z"
           }
@@ -85,7 +41,7 @@ defmodule API.V1.RouterTest do
             "currency" => "0x0000000000000000000000000000000000000000",
             "pegged_amount" => 1,
             "pegged_currency" => "USD",
-            "pegged_subunit_to_unit" => 10,
+            "pegged_subunit_to_unit" => 100,
             "subunit_to_unit" => 1_000_000_000_000_000_000,
             "updated_at" => "2019-01-01T10:00:00Z"
           }
@@ -206,12 +162,11 @@ defmodule API.V1.RouterTest do
 
   describe "transaction.submit" do
     test "decodes a transaction and inserts it" do
-      Repo.delete_all(Fee)
-      _ = insert(:fee, hash: "77", term: :no_fees_required, type: :merged_fees)
+      insert(:merged_fee)
 
       entity = TestEntity.alice()
       %{output_id: output_id} = insert(:deposit_output, amount: 10, output_guard: entity.addr)
-      %{output_data: output_data} = build(:output, output_guard: entity.addr, amount: 10)
+      %{output_data: output_data} = build(:output, output_guard: entity.addr, amount: 9)
 
       transaction =
         Builder.new(ExPlasma.payment_v1(), %{

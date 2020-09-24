@@ -173,7 +173,7 @@ defmodule Engine.Fee.Server do
   end
 
   defp update_merged_fees(new_fee_specs) do
-    # we will update merged fees only if previouse merged fees are expired, i.e.
+    # we will update merged fees only if previous merged fees are expired, i.e.
     # previous_fees are deleted
     _ =
       if is_nil(load_previous_fees()) do
