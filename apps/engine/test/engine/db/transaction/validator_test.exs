@@ -56,7 +56,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
 
     test "returns an error if inputs are spent" do
       %{output_id: output_id_1} = insert(:deposit_output)
-      %{output_id: output_id_2, state: :spent} = insert(:deposit_output) |> DbOutput.spend(%{}) |> Repo.update!()
+      %{output_id: output_id_2, state: :spent} = :deposit_output |> insert() |> DbOutput.spend(%{}) |> Repo.update!()
 
       i_1 = build_input(output_id_1)
       %{output_id: %{position: i_2_position}} = i_2 = build_input(output_id_2)

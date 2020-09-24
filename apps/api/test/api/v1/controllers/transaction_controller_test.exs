@@ -2,6 +2,7 @@ defmodule API.V1.Controllere.TransactionControllerTest do
   use Engine.DB.DataCase, async: true
 
   alias API.V1.Controller.TransactionController
+  alias Engine.Support.TestEntity
   alias ExPlasma.Builder
   alias ExPlasma.Encoding
 
@@ -13,11 +14,26 @@ defmodule API.V1.Controllere.TransactionControllerTest do
 
   describe "submit/1" do
     test "decodes and inserts a tx_bytes into the DB" do
-      txn = build(:payment_v1_transaction)
-      tx_hash = Encoding.to_hex(txn.tx_hash)
-      tx_bytes = Encoding.to_hex(txn.tx_bytes)
+      entity = TestEntity.alice()
 
-      assert TransactionController.submit(tx_bytes) == {:ok, %{tx_hash: tx_hash}}
+      %{output_id: output_id} = insert(:deposit_output, amount: 10, output_guard: entity.addr)
+      %{output_data: output_data} = build(:output, output_guard: entity.addr, amount: 10)
+
+      transaction =
+        Builder.new(ExPlasma.payment_v1(), %{
+          inputs: [ExPlasma.Output.decode_id!(output_id)],
+          outputs: [ExPlasma.Output.decode!(output_data)]
+        })
+
+      tx_bytes =
+        transaction
+        |> Builder.sign!([entity.priv_encoded])
+        |> ExPlasma.encode!()
+        |> Encoding.to_hex()
+
+      {:ok, tx_hash} = ExPlasma.Transaction.hash(transaction)
+
+      assert TransactionController.submit(tx_bytes) == {:ok, %{tx_hash: Encoding.to_hex(tx_hash)}}
     end
 
     test "it raises an error if the tranasaction is invalid" do

@@ -7,6 +7,8 @@ defmodule API.V1.RouterTest do
   alias Engine.DB.Fee
   alias Engine.DB.Transaction
   alias Engine.Repo
+  alias Engine.Support.TestEntity
+  alias ExPlasma.Builder
   alias ExPlasma.Encoding
 
   setup do
@@ -207,12 +209,26 @@ defmodule API.V1.RouterTest do
       Repo.delete_all(Fee)
       _ = insert(:fee, hash: "77", term: :no_fees_required, type: :merged_fees)
 
-      txn = build(:payment_v1_transaction)
-      tx_bytes = Encoding.to_hex(txn.tx_bytes)
-      tx_hash = Encoding.to_hex(txn.tx_hash)
-      {:ok, payload} = post("transaction.submit", %{transaction: tx_bytes})
+      entity = TestEntity.alice()
+      %{output_id: output_id} = insert(:deposit_output, amount: 10, output_guard: entity.addr)
+      %{output_data: output_data} = build(:output, output_guard: entity.addr, amount: 10)
 
-      assert_payload_data(payload, %{"tx_hash" => tx_hash})
+      transaction =
+        Builder.new(ExPlasma.payment_v1(), %{
+          inputs: [ExPlasma.Output.decode_id!(output_id)],
+          outputs: [ExPlasma.Output.decode!(output_data)]
+        })
+
+      tx_bytes =
+        transaction
+        |> Builder.sign!([entity.priv_encoded])
+        |> ExPlasma.encode!()
+
+      {:ok, tx_hash} = ExPlasma.Transaction.hash(transaction)
+
+      {:ok, payload} = post("transaction.submit", %{transaction: Encoding.to_hex(tx_bytes)})
+
+      assert_payload_data(payload, %{"tx_hash" => Encoding.to_hex(tx_hash)})
     end
 
     test "that it returns an error if missing transaction params" do

@@ -153,7 +153,7 @@ defmodule Engine.DB.Factory do
     }
   end
 
-  def payment_v1_transaction_factory(_attr) do
+  def payment_v1_transaction_factory() do
     entity = TestEntity.alice()
 
     %{output_id: output_id} = input = :deposit_output |> build() |> set_state(:spent)
