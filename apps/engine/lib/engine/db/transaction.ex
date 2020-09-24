@@ -87,6 +87,11 @@ defmodule Engine.DB.Transaction do
   """
   def query_by_tx_hash(tx_hash), do: from(t in __MODULE__, where: t.tx_hash == ^tx_hash)
 
+  @doc """
+  Query a transaction by the given `field`.
+  Also preload given `preloads`
+  """
+  @spec get_by(keyword(), list(:atom) | :atom) :: __MODULE__
   def get_by(field, preloads) do
     __MODULE__
     |> Repo.get_by(field)

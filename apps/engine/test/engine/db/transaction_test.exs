@@ -113,6 +113,18 @@ defmodule Engine.DB.TransactionTest do
     end
   end
 
+  describe "get_by/2" do
+    test "returns the transaction given a query and preloads" do
+      %{id: id_1, inputs: [%{id: input_id}]} = insert(:payment_v1_transaction)
+      %{tx_hash: tx_hash_2} = insert(:payment_v1_transaction)
+
+      assert %{id: ^id_1, inputs: [%{id: ^input_id}]} = Transaction.get_by([id: id_1], :inputs)
+
+      assert %{tx_hash: ^tx_hash_2, inputs: %Ecto.Association.NotLoaded{}} =
+               Transaction.get_by([tx_hash: tx_hash_2], [])
+    end
+  end
+
   describe "query_pending/0" do
     test "get all pending transactions" do
       block = insert(:block)
