@@ -14,21 +14,6 @@ defmodule Engine.DB.Factory do
   alias ExPlasma.Builder
   alias ExPlasma.Output.Position
 
-  def input_piggyback_event_factory(attr \\ %{}) do
-    tx_hash = Map.get(attr, :tx_hash, <<1::256>>)
-    index = Map.get(attr, :input_index, 0)
-
-    params =
-      attr
-      |> Map.put(:signature, "InFlightExitInputPiggybacked(address,bytes32,uint16)")
-      |> Map.put(:data, %{
-        "tx_hash" => tx_hash,
-        "input_index" => index
-      })
-
-    build(:event, params)
-  end
-
   def output_piggyback_event_factory(attr \\ %{}) do
     tx_hash = Map.get(attr, :tx_hash, <<1::256>>)
     index = Map.get(attr, :output_index, 0)
@@ -142,16 +127,6 @@ defmodule Engine.DB.Factory do
     }
   end
 
-  def transaction_factory(params) do
-    tx_bytes = params[:tx_bytes]
-    {:ok, hash} = ExPlasma.hash(tx_bytes)
-
-    %Transaction{
-      tx_bytes: tx_bytes,
-      tx_hash: hash
-    }
-  end
-
   def payment_v1_transaction_factory() do
     entity = TestEntity.alice()
 
@@ -217,9 +192,6 @@ defmodule Engine.DB.Factory do
       position: default_output_id.position
     }
   end
-
-  def set_state(%Transaction{outputs: [output]}, state), do: %{output | state: state}
-  def set_state(%Output{} = output, state), do: %{output | state: state}
 
   def block_factory() do
     %Block{
@@ -300,4 +272,6 @@ defmodule Engine.DB.Factory do
       inserted_at: DateTime.utc_now()
     }
   end
+
+  defp set_state(%Output{} = output, state), do: %{output | state: state}
 end

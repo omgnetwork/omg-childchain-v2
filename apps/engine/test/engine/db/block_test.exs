@@ -91,7 +91,7 @@ defmodule Engine.DB.BlockTest do
           |> ExPlasma.Builder.sign!([alice_priv_key])
           |> ExPlasma.encode!()
 
-        _ = insert(:transaction, tx_bytes: tx_bytes)
+        _ = insert(:payment_v1_transaction, tx_bytes: tx_bytes)
       end)
 
       assert {:ok, %{"hash-block" => block}} = Block.form()
