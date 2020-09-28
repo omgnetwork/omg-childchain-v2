@@ -110,14 +110,6 @@ defmodule Engine.Ethereum.RootChain.Event do
     build_types_string(types, string <> build_type(type) <> ",")
   end
 
-  defp build_types_string([type | [] = types], string) do
-    build_types_string(types, string <> build_type(type) <> ")")
-  end
-
-  defp build_types_string([type | types], string) do
-    build_types_string(types, string <> build_type(type) <> ",")
-  end
-
   defp build_type({base, number}) when is_integer(number) do
     "#{base}" <> "#{number}"
   end
