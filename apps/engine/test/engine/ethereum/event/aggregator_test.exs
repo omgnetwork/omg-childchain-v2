@@ -219,9 +219,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
       deposit_created_2 = deposit_created_log_decoded(from_block + 1)
 
-      exit_started_log =
-        to_block
-        |> exit_started_log_decoded()
+      exit_started_log = exit_started_log_decoded(to_block)
 
       in_flight_exit_output_piggybacked_log = in_flight_exit_output_piggybacked_log_decoded(from_block)
 

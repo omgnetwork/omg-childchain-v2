@@ -24,16 +24,16 @@ defmodule ContractTest do
       engine_setup = [
         ethereumex: [url: "not used because env var"],
         engine: [
-          rpc_url: "http://localhost:#{port}",
+          rpc_url: "http://localhost:36652",
           authority_address: "0xc0f780dfc35075979b0def588d999225b7ecc56f",
           plasma_framework: "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f",
-          eth_vault: "0x4e3aeff70f022a6d4cc5947423887e7152826cf7",
-          erc20_vault: "0x135505d9f4ea773dd977de3b2b108f2dae67b63a",
-          payment_exit_game: "0x89afce326e7da55647d22e24336c6a2816c99f6b",
+          eth_vault: "0xacfcf2770708f4b2d67efde9099fec883590c55f",
+          erc20_vault: "0x23764956b3fc5f3d86586b1422ca528559a07161",
+          payment_exit_game: "0x32a74e03df3cc8c5abf69f4628af9ef36bc22d1a",
           min_exit_period_seconds: 20,
-          contract_semver: "1.0.4+a69c763",
+          contract_semver: "2.0.0+8468675",
           child_block_interval: 1000,
-          contract_deployment_height: 67
+          contract_deployment_height: 78
         ]
       ]
 
