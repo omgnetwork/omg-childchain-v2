@@ -7,7 +7,6 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
   alias Engine.Ethereum.Event.Aggregator.Storage.Write
   alias Engine.Ethereum.RootChain.Abi
   alias Engine.Ethereum.RootChain.Event
-  alias ExPlasma.Encoding
 
   require Logger
 
