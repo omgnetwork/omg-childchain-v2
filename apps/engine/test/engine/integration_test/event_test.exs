@@ -45,7 +45,6 @@ defmodule EventTest do
              event_signature: "DepositCreated(address,uint256,address,uint256)",
              log_index: 0,
              root_chain_tx_hash: deposit.root_chain_tx_hash,
-             call_data: nil,
              data: %{
                "amount" => 1_000_000,
                "blknum" => 1,
