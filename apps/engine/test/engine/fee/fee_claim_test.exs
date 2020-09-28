@@ -4,6 +4,7 @@ defmodule Engine.Fee.FeeClaimTest do
   use Engine.DB.DataCase, async: true
 
   alias Engine.Fee.FeeClaim
+  alias ExPlasma.Transaction.Type.Fee, as: ExPlasmaFee
 
   @alice <<1::160>>
   @bob <<2::160>>
@@ -83,8 +84,8 @@ defmodule Engine.Fee.FeeClaimTest do
                 outputs: [fee_output_2]
               }} = ExPlasma.decode(fee_tx_2)
 
-      assert {:ok, ^fee_nonce_1} = ExPlasma.Transaction.Type.Fee.build_nonce(%{blknum: block.blknum, token: @eth})
-      assert {:ok, ^fee_nonce_2} = ExPlasma.Transaction.Type.Fee.build_nonce(%{blknum: block.blknum, token: @token_1})
+      assert {:ok, ^fee_nonce_1} = ExPlasmaFee.build_nonce(%{blknum: block.blknum, token: @eth})
+      assert {:ok, ^fee_nonce_2} = ExPlasmaFee.build_nonce(%{blknum: block.blknum, token: @token_1})
 
       assert %{
                output_data: %{
