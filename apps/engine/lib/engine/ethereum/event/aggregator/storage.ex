@@ -87,7 +87,6 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
   defp retrieve_and_store_logs(from_block, to_block, state) do
     from_block
     |> get_events(to_block, state)
-    |> enrich_events_with_call_data(state)
     |> Write.logs(from_block, to_block, state)
   end
 
@@ -104,28 +103,5 @@ defmodule Engine.Ethereum.Event.Aggregator.Storage do
 
     # we now return events!
     Enum.map(logs, &Abi.decode_log(&1, state.keccak_signatures_pair))
-  end
-
-  # we get the logs from RPC and we cross check with the event definition if we need to enrich them
-  @spec enrich_events_with_call_data(list(Event.t()), Aggregator.t()) :: list(Event.t())
-  defp enrich_events_with_call_data(decoded_events, state) do
-    events = state.events
-
-    Enum.map(decoded_events, fn decoded_event ->
-      decoded_log_signature = decoded_event.event_signature
-
-      event_definition = Enum.find(events, fn event -> Keyword.fetch!(event, :signature) == decoded_log_signature end)
-
-      case Keyword.fetch!(event_definition, :enrich) do
-        true ->
-          {:ok, enriched_data} = state.event_interface.get_call_data(decoded_event.root_chain_tx_hash)
-
-          enriched_data_decoded = enriched_data |> Encoding.to_binary!() |> Abi.decode_function()
-          struct(decoded_event, call_data: enriched_data_decoded)
-
-        _ ->
-          decoded_event
-      end
-    end)
   end
 end

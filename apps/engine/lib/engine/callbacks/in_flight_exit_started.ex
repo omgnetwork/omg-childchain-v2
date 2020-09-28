@@ -30,7 +30,7 @@ defmodule Engine.Callbacks.InFlightExitStarted do
   end
 
   defp do_callback(multi, positions, [event | tail]) do
-    %{call_data: %{input_utxos_pos: inputs}} = event
+    %{data: %{"input_utxos_pos" => inputs}} = event
     do_callback(multi, positions ++ inputs, tail)
   end
 

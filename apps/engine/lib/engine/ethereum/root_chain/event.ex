@@ -8,13 +8,12 @@ defmodule Engine.Ethereum.RootChain.Event do
   alias ExPlasma.Crypto
   alias ExPlasma.Encoding
 
-  defstruct [:event_signature, :data, :call_data, :eth_height, :root_chain_tx_hash, :log_index]
+  defstruct [:event_signature, :data, :eth_height, :root_chain_tx_hash, :log_index]
 
   @type t() :: %__MODULE__{
           event_signature: binary(),
           log_index: non_neg_integer(),
           data: map(),
-          call_data: map() | nil,
           eth_height: non_neg_integer(),
           root_chain_tx_hash: binary()
         }
