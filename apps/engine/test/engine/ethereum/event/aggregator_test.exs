@@ -4,7 +4,6 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
   alias Engine.Ethereum.Event.Aggregator
   alias Engine.Ethereum.Event.Aggregator.Storage, as: AggregatorStorage
   alias Engine.Ethereum.RootChain.Abi
-  alias ExPlasma.Encoding
 
   setup %{test: name} do
     {:ok, _} =
@@ -117,10 +116,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
       deposit_created_2 = deposit_created_log_decoded(from_block + 1)
 
-      exit_started_log =
-        to_block
-        |> exit_started_log_decoded()
-        |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary!() |> Abi.decode_function())
+      exit_started_log = exit_started_log_decoded(to_block)
 
       in_flight_exit_output_piggybacked_log = in_flight_exit_output_piggybacked_log_decoded(from_block)
 
@@ -349,10 +345,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
       deposit_created_2 = deposit_created_log(from_block + 1)
 
-      exit_started_log =
-        to_block
-        |> exit_started_log_decoded()
-        |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary!() |> Abi.decode_function())
+      exit_started_log = exit_started_log_decoded(to_block)
 
       in_flight_exit_output_piggybacked_log = in_flight_exit_output_piggybacked_log_decoded(from_block)
 
