@@ -44,7 +44,7 @@ defmodule API.V1.Controller.FeeControllerTest do
                 }}
     end
 
-    test "filters fees" do
+    test "filters fees by tx_types" do
       insert(:current_fee)
 
       assert FeeController.all(%{"tx_types" => [1]}) == {
@@ -70,6 +70,28 @@ defmodule API.V1.Controller.FeeControllerTest do
                      updated_at: ~U[2019-01-01 10:00:00Z]
                    }
                  ]
+               }
+             }
+    end
+
+    test "filters fees by currency" do
+      insert(:current_fee)
+
+      assert FeeController.all(%{"currencies" => ["0x0000000000000000000000000000000000000001"]}) == {
+               :ok,
+               %{
+                 "1" => [
+                   %{
+                     amount: 2,
+                     currency: "0x0000000000000000000000000000000000000001",
+                     pegged_amount: 1,
+                     pegged_currency: "USD",
+                     pegged_subunit_to_unit: 100,
+                     subunit_to_unit: 1_000_000_000_000_000_000,
+                     updated_at: ~U[2019-01-01 10:00:00Z]
+                   }
+                 ],
+                 "2" => []
                }
              }
     end

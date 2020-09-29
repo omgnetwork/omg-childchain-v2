@@ -38,7 +38,7 @@ defmodule Engine.DB.Transaction.Validator do
     * The position for the input must exist.
     * The position for the input must not have been spent.
 
-  If so, loads and associate the records to this transaction keeping the order and setting their state to :spent.
+  If so, loads and associates the records to this transaction keeping the order and setting their state to :spent.
 
   Returns the changeset with associated input or an error.
   """
