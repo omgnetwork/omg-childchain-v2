@@ -19,7 +19,7 @@ defmodule Engine.DB.Output.OutputChangeset do
   def deposit(output, params) do
     output
     |> state(params)
-    |> input_position(params)
+    |> output_position(params)
     |> output_data(params)
   end
 
@@ -55,7 +55,7 @@ defmodule Engine.DB.Output.OutputChangeset do
     |> validate_required([:output_type, :output_data])
   end
 
-  defp input_position(output, params) do
+  defp output_position(output, params) do
     output
     |> put_position(params)
     |> put_output_id(params)

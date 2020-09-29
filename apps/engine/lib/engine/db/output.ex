@@ -19,7 +19,7 @@ defmodule Engine.DB.Output do
       - :pending - the default state when creating an output
       - :confirmed - the output is confirmed on the rootchain
       - :spent - the output is spent by a transaction
-      - :exiting - the output is beeing exited
+      - :exiting - the output is being exited
       - :piggybacked - the output is a part of an IFE and has been piggybacked
   """
 
