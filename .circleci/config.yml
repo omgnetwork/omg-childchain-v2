@@ -370,13 +370,13 @@ workflows:
           requires:
             - build
 
-      - test_docker_compose_release:
-          requires:
-            - build
+      # - test_docker_compose_release:
+      #     requires:
+      #       - build
 
-      - test_docker_compose_reorg:
-          requires:
-            - build
+      # - test_docker_compose_reorg:
+      #     requires:
+      #       - build
 
       - credo:
           requires:
