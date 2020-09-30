@@ -8,7 +8,6 @@ defmodule API.V1.Controller.BlockControllerTest do
 
   describe "get_by_hash/1" do
     test "it returns a matching block" do
-      _ = insert(:fee, hash: "22", type: :merged_fees)
       %{id: id} = insert(:payment_v1_transaction)
       Block.form()
       transaction = Transaction |> Repo.get(id) |> Repo.preload(:block)

@@ -21,7 +21,6 @@ defmodule Engine.Callbacks.Deposit do
   alias Engine.Callback
   alias Engine.DB.Output
   alias Engine.Repo
-  alias ExPlasma.Output.Position
 
   @doc """
   Inserts deposit events, forming the associated UTXOs.
@@ -42,22 +41,10 @@ defmodule Engine.Callbacks.Deposit do
   defp do_callback(multi, []), do: multi
 
   defp build_deposit(multi, event) do
-    output_id = Position.new(event.data["blknum"], 0, 0)
+    deposit_blknum = event.data["blknum"]
+    changeset = Output.deposit(deposit_blknum, event.data["depositor"], event.data["token"], event.data["amount"])
 
-    output_params = %{
-      state: "confirmed",
-      output_type: ExPlasma.payment_v1(),
-      output_data: %{
-        output_guard: event.data["depositor"],
-        token: event.data["token"],
-        amount: event.data["amount"]
-      },
-      output_id: output_id
-    }
-
-    output = Output.changeset(%Output{}, output_params)
-
-    Ecto.Multi.insert(multi, "deposit-output-#{output_id.position}", output,
+    Multi.insert(multi, "deposit-#{deposit_blknum}", changeset,
       on_conflict: :nothing,
       conflict_target: :position
     )

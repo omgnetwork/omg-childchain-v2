@@ -25,7 +25,7 @@ defmodule Engine.DB.Transaction do
   """
 
   use Ecto.Schema
-  import Ecto.Changeset, only: [cast: 3, cast_assoc: 2, validate_required: 2]
+  import Ecto.Changeset, only: [cast: 3, cast_assoc: 3, validate_required: 2]
   import Ecto.Query, only: [from: 2]
 
   alias Engine.DB.Block
@@ -88,15 +88,24 @@ defmodule Engine.DB.Transaction do
   def query_by_tx_hash(tx_hash), do: from(t in __MODULE__, where: t.tx_hash == ^tx_hash)
 
   @doc """
+  Query a transaction by the given `field`.
+  Also preload given `preloads`
+  """
+  def get_by(field, preloads) do
+    __MODULE__
+    |> Repo.get_by(field)
+    |> Repo.preload(preloads)
+  end
+
+  @doc """
   The main action of the system. Takes tx_bytes and forms the appropriate
   associations for the transaction and outputs and runs the changeset.
   """
   @spec decode(tx_bytes) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
   def decode(tx_bytes) do
     with {:ok, decoded} <- ExPlasma.decode(tx_bytes),
-         {:ok, recovered} <- ExPlasma.Transaction.with_witnesses(decoded) do
-      {:ok, fees} = Fee.accepted_fees()
-
+         {:ok, recovered} <- ExPlasma.Transaction.with_witnesses(decoded),
+         {:ok, fees} <- load_fees(recovered.tx_type) do
       params =
         recovered
         |> recovered_to_map()
@@ -116,18 +125,22 @@ defmodule Engine.DB.Transaction do
 
   def changeset(struct, params) do
     struct
-    |> Repo.preload(:inputs)
-    |> Repo.preload(:outputs)
     |> cast(params, @optional_fields ++ @required_fields)
     |> validate_required(@required_fields)
-    |> cast_assoc(:inputs)
-    |> cast_assoc(:outputs)
     |> Validator.validate_protocol()
-    |> Validator.validate_inputs()
+    |> Validator.associate_inputs(params)
+    |> cast_assoc(:outputs, with: &Output.new/2)
     |> Validator.validate_statefully(params)
   end
 
   def insert(changeset), do: Repo.insert(changeset)
+
+  defp load_fees(type) do
+    with {:ok, all_fees} when is_map(all_fees) <- Fee.accepted_fees(),
+         fees_for_type <- Map.get(all_fees, type, {:error, :invalid_transaction_type}) do
+      {:ok, fees_for_type}
+    end
+  end
 
   defp recovered_to_map(transaction) do
     inputs = Enum.map(transaction.inputs, &Map.from_struct/1)

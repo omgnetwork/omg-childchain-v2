@@ -5,7 +5,6 @@ defmodule Engine.DB.Factory do
 
   use ExMachina.Ecto, repo: Engine.Repo
 
-  alias Ecto.Changeset
   alias Engine.DB.Block
   alias Engine.DB.Fee
   alias Engine.DB.Output
@@ -14,21 +13,6 @@ defmodule Engine.DB.Factory do
   alias Engine.Support.TestEntity
   alias ExPlasma.Builder
   alias ExPlasma.Output.Position
-
-  def input_piggyback_event_factory(attr \\ %{}) do
-    tx_hash = Map.get(attr, :tx_hash, <<1::256>>)
-    index = Map.get(attr, :input_index, 0)
-
-    params =
-      attr
-      |> Map.put(:signature, "InFlightExitInputPiggybacked(address,bytes32,uint16)")
-      |> Map.put(:data, %{
-        "tx_hash" => tx_hash,
-        "input_index" => index
-      })
-
-    build(:event, params)
-  end
 
   def output_piggyback_event_factory(attr \\ %{}) do
     tx_hash = Map.get(attr, :tx_hash, <<1::256>>)
@@ -106,137 +90,130 @@ defmodule Engine.DB.Factory do
   end
 
   def deposit_output_factory(attr \\ %{}) do
-    blknum = Map.get(attr, :blknum, 1)
-    output_guard = Map.get(attr, :output_guard) || <<1::160>>
+    entity = TestEntity.alice()
+
+    default_blknum = sequence(:blknum, fn seq -> seq + 1 end)
+
+    blknum = Map.get(attr, :blknum, default_blknum)
+    output_guard = Map.get(attr, :output_guard, entity.addr)
     amount = Map.get(attr, :amount, 1)
     token = Map.get(attr, :token, <<0::160>>)
 
+    {:ok, encoded_output_data} =
+      %ExPlasma.Output{}
+      |> struct(%{
+        output_type: ExPlasma.payment_v1(),
+        output_data: %{
+          output_guard: output_guard,
+          token: token,
+          amount: amount
+        }
+      })
+      |> ExPlasma.Output.encode()
+
     output_id = Position.new(blknum, 0, 0)
 
-    output_params = %{
-      state: "confirmed",
+    {:ok, encoded_output_id} =
+      %ExPlasma.Output{}
+      |> struct(%{output_id: output_id})
+      |> ExPlasma.Output.encode(as: :input)
+
+    %Output{
+      state: :confirmed,
       output_type: ExPlasma.payment_v1(),
-      output_data: %{
-        output_guard: output_guard,
-        token: token,
-        amount: amount
-      },
-      output_id: output_id
-    }
-
-    %Output{}
-    |> Output.changeset(output_params)
-    |> Changeset.apply_changes()
-  end
-
-  def transaction_factory(params) do
-    tx_bytes = params[:tx_bytes]
-    {:ok, hash} = ExPlasma.hash(tx_bytes)
-
-    %Transaction{
-      tx_bytes: tx_bytes,
-      tx_hash: hash
+      output_data: encoded_output_data,
+      output_id: encoded_output_id,
+      position: output_id.position
     }
   end
 
-  def payment_v1_transaction_factory(attr) do
+  def payment_v1_transaction_factory() do
     entity = TestEntity.alice()
 
-    priv_encoded = Map.get(attr, :priv_encoded, entity.priv_encoded)
-    addr = Map.get(attr, :addr, entity.addr)
-
-    data = %{output_guard: addr, token: <<0::160>>, amount: 1}
-    default_blknum = sequence(:blknum, fn seq -> (seq + 1) * 1000 end)
-    insert(:output, %{output_data: data, blknum: Map.get(attr, :blknum, default_blknum), state: "confirmed"})
+    %{output_id: output_id} = input = :deposit_output |> build() |> set_state(:spent)
+    %{output_data: output_data} = output = build(:output)
 
     tx_bytes =
-      attr[:tx_bytes] ||
-        ExPlasma.payment_v1()
-        |> Builder.new()
-        |> Builder.add_input(blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
-        |> Builder.sign!([priv_encoded])
-        |> ExPlasma.encode!()
+      ExPlasma.payment_v1()
+      |> Builder.new(%{inputs: [ExPlasma.Output.decode_id!(output_id)], outputs: [ExPlasma.Output.decode!(output_data)]})
+      |> Builder.sign!([entity.priv_encoded])
+      |> ExPlasma.encode!()
 
-    {:ok, changeset} = Transaction.decode(tx_bytes)
-    Changeset.apply_changes(changeset)
+    {:ok, tx_hash} = ExPlasma.Transaction.hash(tx_bytes)
+
+    %Transaction{
+      inputs: [input],
+      outputs: [output],
+      tx_bytes: tx_bytes,
+      tx_hash: tx_hash,
+      tx_type: ExPlasma.payment_v1(),
+      inserted_at: DateTime.utc_now(),
+      updated_at: DateTime.utc_now()
+    }
   end
 
   # The "lowest" unit in the hierarchy. This is made to form into transactions
   def output_factory(attr \\ %{}) do
-    default_data = %{output_guard: <<1::160>>, token: <<0::160>>, amount: 10}
+    default_data = %{
+      output_guard: Map.get(attr, :output_guard, <<1::160>>),
+      token: Map.get(attr, :token, <<0::160>>),
+      amount: Map.get(attr, :amount, 10)
+    }
+
     default_blknum = sequence(:blknum, fn seq -> (seq + 1) * 1000 end)
+    default_txindex = sequence(:txindex, fn seq -> seq + 1 end)
+    default_oindex = sequence(:oindex, fn seq -> seq + 1 end)
 
-    {:ok, default_id} =
-      %{blknum: Map.get(attr, :blknum, default_blknum), txindex: 0, oindex: 0}
-      |> Position.pos()
-      |> Position.to_map()
+    default_output_id =
+      Position.new(
+        Map.get(attr, :blknum, default_blknum),
+        Map.get(attr, :txindex, default_txindex),
+        Map.get(attr, :oindex, default_oindex)
+      )
 
-    %Output{}
-    |> Output.changeset(%{
-      output_type: Map.get(attr, :output_type, 1),
-      output_id: Map.get(attr, :output_id, default_id),
-      output_data: Map.get(attr, :output_data, default_data),
-      state: Map.get(attr, :state, "pending")
-    })
-    |> Changeset.apply_changes()
+    {:ok, encoded_output_data} =
+      %ExPlasma.Output{}
+      |> struct(%{
+        output_type: Map.get(attr, :output_type, 1),
+        output_data: Map.get(attr, :output_data, default_data)
+      })
+      |> ExPlasma.Output.encode()
+
+    {:ok, encoded_output_id} =
+      %ExPlasma.Output{}
+      |> struct(%{output_id: Map.get(attr, :output_id, default_output_id)})
+      |> ExPlasma.Output.encode(as: :input)
+
+    %Output{
+      state: :pending,
+      output_type: ExPlasma.payment_v1(),
+      output_data: encoded_output_data,
+      output_id: encoded_output_id,
+      position: default_output_id.position
+    }
   end
 
-  def spent(%Transaction{outputs: [output]} = txn), do: %{txn | outputs: [%{output | state: "spent"}]}
-
-  def set_state(%Transaction{outputs: [output]}, state), do: %{output | state: state}
-  def set_state(%Output{} = output, state), do: %{output | state: state}
-
-  def block_factory(attr \\ %{}) do
-    blknum = Map.get(attr, :blknum, 1000)
-    _child_block_interval = 1000
-    nonce = round(blknum / 1000)
-
+  def block_factory() do
     %Block{
-      hash: Map.get(attr, :hash) || :crypto.strong_rand_bytes(32),
-      nonce: nonce,
-      blknum: blknum,
+      hash: :crypto.strong_rand_bytes(32),
+      nonce: 1,
+      blknum: 1000,
       tx_hash: :crypto.strong_rand_bytes(64),
       formed_at_ethereum_height: 1,
-      submitted_at_ethereum_height: Map.get(attr, :submitted_at_ethereum_height, 1),
-      attempts_counter: Map.get(attr, :attempts_counter),
+      submitted_at_ethereum_height: 1,
+      attempts_counter: 0,
       gas: 827
     }
   end
 
-  def fee_factory(params) do
-    fees =
-      params[:term] ||
-        %{
-          1 => %{
-            Base.decode16!("0000000000000000000000000000000000000000") => %{
-              amount: 1,
-              subunit_to_unit: 1_000_000_000_000_000_000,
-              pegged_amount: 1,
-              pegged_currency: "USD",
-              pegged_subunit_to_unit: 100,
-              updated_at: DateTime.from_unix!(1_546_336_800)
-            },
-            Base.decode16!("0000000000000000000000000000000000000001") => %{
-              amount: 2,
-              subunit_to_unit: 1_000_000_000_000_000_000,
-              pegged_amount: 1,
-              pegged_currency: "USD",
-              pegged_subunit_to_unit: 100,
-              updated_at: DateTime.from_unix!(1_546_336_800)
-            }
-          },
-          2 => %{
-            Base.decode16!("0000000000000000000000000000000000000000") => %{
-              amount: 2,
-              subunit_to_unit: 1_000_000_000_000_000_000,
-              pegged_amount: 1,
-              pegged_currency: "USD",
-              pegged_subunit_to_unit: 100,
-              updated_at: DateTime.from_unix!(1_546_336_800)
-            }
-          }
-        }
+  def merged_fee_factory() do
+    fees = %{
+      1 => %{
+        Base.decode16!("0000000000000000000000000000000000000000") => [1, 2],
+        Base.decode16!("0000000000000000000000000000000000000001") => [1]
+      },
+      2 => %{Base.decode16!("0000000000000000000000000000000000000000") => [1]}
+    }
 
     hash =
       :sha256
@@ -244,10 +221,57 @@ defmodule Engine.DB.Factory do
       |> Base.encode16(case: :lower)
 
     %Fee{
-      type: params[:type] || :current_fees,
+      type: :merged_fees,
       term: fees,
-      hash: params[:hash] || hash,
-      inserted_at: params[:inserted_at]
+      hash: hash,
+      inserted_at: DateTime.utc_now()
     }
   end
+
+  def current_fee_factory() do
+    fees = %{
+      1 => %{
+        Base.decode16!("0000000000000000000000000000000000000000") => %{
+          amount: 1,
+          subunit_to_unit: 1_000_000_000_000_000_000,
+          pegged_amount: 1,
+          pegged_currency: "USD",
+          pegged_subunit_to_unit: 100,
+          updated_at: DateTime.from_unix!(1_546_336_800)
+        },
+        Base.decode16!("0000000000000000000000000000000000000001") => %{
+          amount: 2,
+          subunit_to_unit: 1_000_000_000_000_000_000,
+          pegged_amount: 1,
+          pegged_currency: "USD",
+          pegged_subunit_to_unit: 100,
+          updated_at: DateTime.from_unix!(1_546_336_800)
+        }
+      },
+      2 => %{
+        Base.decode16!("0000000000000000000000000000000000000000") => %{
+          amount: 2,
+          subunit_to_unit: 1_000_000_000_000_000_000,
+          pegged_amount: 1,
+          pegged_currency: "USD",
+          pegged_subunit_to_unit: 100,
+          updated_at: DateTime.from_unix!(1_546_336_800)
+        }
+      }
+    }
+
+    hash =
+      :sha256
+      |> :crypto.hash(inspect(fees))
+      |> Base.encode16(case: :lower)
+
+    %Fee{
+      type: :current_fees,
+      term: fees,
+      hash: hash,
+      inserted_at: DateTime.utc_now()
+    }
+  end
+
+  defp set_state(%Output{} = output, state), do: %{output | state: state}
 end

@@ -8,12 +8,6 @@ defmodule Engine.DB.BlockTest do
   alias Engine.Repo
   alias ExPlasma.Merkle
 
-  setup do
-    _ = insert(:fee, type: :merged_fees)
-
-    :ok
-  end
-
   describe "form/0" do
     test "forms a block from the existing pending transactions" do
       _ = insert(:payment_v1_transaction)
@@ -97,7 +91,7 @@ defmodule Engine.DB.BlockTest do
           |> ExPlasma.Builder.sign!([alice_priv_key])
           |> ExPlasma.encode!()
 
-        _ = insert(:transaction, tx_bytes: tx_bytes)
+        _ = insert(:payment_v1_transaction, tx_bytes: tx_bytes)
       end)
 
       assert {:ok, %{"hash-block" => block}} = Block.form()
@@ -163,8 +157,8 @@ defmodule Engine.DB.BlockTest do
 
     test "fails to insert two block with the same hash" do
       assert_raise Ecto.ConstraintError, ~r/blocks_hash_index/, fn ->
-        _ = insert(:block, hash: "1", blknum: 2000)
-        _ = insert(:block, hash: "1", blknum: 5000)
+        _ = insert(:block, hash: "1", blknum: 2000, nonce: 2)
+        _ = insert(:block, hash: "1", blknum: 5000, nonce: 5)
       end
     end
   end
