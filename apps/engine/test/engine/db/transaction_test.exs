@@ -8,7 +8,7 @@ defmodule Engine.DB.TransactionTest do
   alias ExPlasma.Builder
 
   setup do
-    _ = insert(:fee, hash: "22", type: :merged_fees)
+    _ = insert(:merged_fee)
 
     :ok
   end
@@ -52,7 +52,7 @@ defmodule Engine.DB.TransactionTest do
 
     test "builds the outputs" do
       input_blknum = 1
-      insert(:output, %{blknum: input_blknum, state: "confirmed"})
+      insert(:deposit_output, %{blknum: input_blknum})
 
       o_1_data = [token: <<0::160>>, amount: 10, output_guard: <<1::160>>]
       o_2_data = [token: <<0::160>>, amount: 10, output_guard: <<1::160>>]
@@ -75,7 +75,7 @@ defmodule Engine.DB.TransactionTest do
 
     test "builds the inputs" do
       input_blknum = 1
-      input = Repo.get(Output, insert(:output, %{blknum: input_blknum, state: "confirmed"}).id)
+      assert %{id: id, state: :confirmed} = insert(:deposit_output, %{blknum: input_blknum})
 
       tx_bytes =
         ExPlasma.payment_v1()
@@ -87,37 +87,41 @@ defmodule Engine.DB.TransactionTest do
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes)
 
-      assert get_field(changeset, :inputs) == [input]
+      assert [spent_input] = get_field(changeset, :inputs)
+      assert spent_input.id == id
+      assert spent_input.state == :spent
     end
 
     test "is valid when inputs are signed correctly" do
-      _ =
-        insert(:fee,
-          type: :merged_fees,
-          term: :no_fees_required,
-          inserted_at: DateTime.add(DateTime.utc_now(), 10_000_000, :second)
-        )
-
       %{priv_encoded: priv_encoded_1, addr: addr_1} = TestEntity.alice()
       %{priv_encoded: priv_encoded_2, addr: addr_2} = TestEntity.bob()
 
-      data_1 = %{output_guard: addr_1, token: <<0::160>>, amount: 10}
-      data_2 = %{output_guard: addr_2, token: <<0::160>>, amount: 10}
-      insert(:output, %{output_data: data_1, blknum: 1, state: "confirmed"})
-      insert(:output, %{output_data: data_2, blknum: 2, state: "confirmed"})
+      insert(:deposit_output, %{output_guard: addr_1, token: <<0::160>>, amount: 10, blknum: 1})
+      insert(:deposit_output, %{output_guard: addr_2, token: <<0::160>>, amount: 10, blknum: 2})
 
       tx_bytes =
         ExPlasma.payment_v1()
         |> Builder.new()
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> Builder.add_input(blknum: 2, txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 20)
+        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 19)
         |> Builder.sign!([priv_encoded_1, priv_encoded_2])
         |> ExPlasma.encode!()
 
       assert {:ok, changeset} = Transaction.decode(tx_bytes)
-
       assert changeset.valid?
+    end
+  end
+
+  describe "get_by/2" do
+    test "returns the transaction given a query and preloads" do
+      %{id: id_1, inputs: [%{id: input_id}]} = insert(:payment_v1_transaction)
+      %{tx_hash: tx_hash_2} = insert(:payment_v1_transaction)
+
+      assert %{id: ^id_1, inputs: [%{id: ^input_id}]} = Transaction.get_by([id: id_1], :inputs)
+
+      assert %{tx_hash: ^tx_hash_2, inputs: %Ecto.Association.NotLoaded{}} =
+               Transaction.get_by([tx_hash: tx_hash_2], [])
     end
   end
 

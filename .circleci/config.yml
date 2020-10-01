@@ -304,7 +304,7 @@ jobs:
             _counter=$(grep -ri "child-chain" . | grep -c "child-chain")
             echo "Current occurrences of child-chain:"
             echo $_counter
-            if [ $_counter -gt 3 ]; then
+            if [ $_counter -gt 4 ]; then
               echo "Have you been naughty or nice? Find out if Santa knows."
               exit 1
             fi

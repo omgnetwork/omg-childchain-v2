@@ -16,18 +16,21 @@ defmodule Engine.DB.Output do
   - output_data: The binary encoded output data, for payment v1 and fees, this is the RLP encoded binary of the output type, owner, token and amount.
   - output_id: The binary encoded output id, this is the result of the encoding of the position
   - state: The current output state:
-      - "pending": the default state when creating an output
-      - "confirmed": the output is confirmed on the rootchain
-      - "exiting": the output is beeing exited
-      - "piggybacked": the output is a part of an IFE and has been piggybacked
+      - :pending - the default state when creating an output
+      - :confirmed - the output is confirmed on the rootchain
+      - :spent - the output is spent by a transaction
+      - :exiting - the output is being exited
+      - :piggybacked - the output is a part of an IFE and has been piggybacked
   """
 
   use Ecto.Schema
 
-  import Ecto.Changeset
-  import Ecto.Query, only: [from: 2]
-
+  alias __MODULE__.OutputChangeset
+  alias __MODULE__.OutputQuery
+  alias Ecto.Atom
+  alias Ecto.Multi
   alias Engine.DB.Transaction
+  alias ExPlasma.Output.Position
 
   @type t() :: %{
           creating_transaction: Transaction.t(),
@@ -46,15 +49,18 @@ defmodule Engine.DB.Output do
 
   @timestamps_opts [inserted_at: :node_inserted_at, updated_at: :node_updated_at]
 
+  @states [:pending, :confirmed, :spent, :exiting, :piggybacked]
+
+  def states(), do: @states
+
   schema "outputs" do
-    # Extracted from `output_id`
+    field(:output_id, :binary)
     field(:position, :integer)
 
     field(:output_type, :integer)
     field(:output_data, :binary)
-    field(:output_id, :binary)
 
-    field(:state, :string, default: "pending")
+    field(:state, Atom)
 
     belongs_to(:spending_transaction, Engine.DB.Transaction)
     belongs_to(:creating_transaction, Engine.DB.Transaction)
@@ -66,65 +72,58 @@ defmodule Engine.DB.Output do
   end
 
   @doc """
-  Default changset. Generates the Output and ensures
-  that it meets the state-less validations.
+  Generates an output changeset corresponding to a deposit output being inserted.
+  The output state is `:confirmed`.
   """
-  def changeset(struct, params) do
-    struct
-    |> cast(params, [:state, :output_type])
-    |> extract_position(params)
-    |> encode_output_data(params)
-    |> encode_output_id(params)
+  @spec deposit(pos_integer(), <<_::160>>, <<_::160>>, pos_integer()) :: Ecto.Changeset.t()
+  def deposit(blknum, depositor, token, amount) do
+    params = %{
+      state: :confirmed,
+      output_type: ExPlasma.payment_v1(),
+      output_data: %{
+        output_guard: depositor,
+        token: token,
+        amount: amount
+      },
+      output_id: Position.new(blknum, 0, 0)
+    }
+
+    OutputChangeset.deposit(%__MODULE__{}, params)
   end
 
   @doc """
-  Query to return all usable outputs.
+  Generates an output changeset corresponding to a new output being inserted.
+  The output state is `:pending`.
   """
-  def usable() do
-    from(o in __MODULE__,
-      where: is_nil(o.spending_transaction_id) and o.state == "confirmed"
-    )
+  @spec new(%__MODULE__{}, map()) :: Ecto.Changeset.t()
+  def new(struct, params) do
+    OutputChangeset.new(struct, Map.put(params, :state, :pending))
   end
 
-  # Extract the position from the output id and store it on the table.
-  # Used by the Transaction to find outputs quickly.
-  defp extract_position(changeset, %{output_id: %{position: position}}) do
-    put_change(changeset, :position, position)
+  @doc """
+  Generates an output changeset corresponding to an output being spent.
+  The output state is `:spent`.
+  """
+  @spec spend(%__MODULE__{}, map()) :: Ecto.Changeset.t()
+  def spend(struct, _params) do
+    OutputChangeset.state(struct, %{state: :spent})
   end
 
-  defp extract_position(changeset, _), do: put_change(changeset, :position, nil)
-
-  # Doing this hacky work around so we don't need to convert to/from binary to hex string for the json column.
-  # Instead, we re-encoded as rlp encoded items per specification. This helps us future proof it a bit because
-  # we don't necessarily know what the future output data looks like yet. If there's data we need, we can
-  # at a later time pull them out and turn them into columns.
-  defp encode_output_data(changeset, params) do
-    case Map.get(params, :output_data) do
-      nil ->
-        changeset
-
-      _output_data ->
-        {:ok, output_data} =
-          %ExPlasma.Output{}
-          |> struct(params)
-          |> ExPlasma.Output.encode()
-
-        put_change(changeset, :output_data, output_data)
-    end
+  @doc """
+  Generates an output changeset corresponding to an output being piggybacked.
+  The output state is `:piggybacked`.
+  """
+  @spec piggyback(%__MODULE__{}) :: Ecto.Changeset.t()
+  def piggyback(output) do
+    OutputChangeset.state(output, %{state: :piggybacked})
   end
 
-  defp encode_output_id(changeset, params) do
-    case Map.get(params, :output_id) do
-      nil ->
-        changeset
-
-      _output_id ->
-        {:ok, output_id} =
-          %ExPlasma.Output{}
-          |> struct(params)
-          |> ExPlasma.Output.encode(as: :input)
-
-        put_change(changeset, :output_id, output_id)
-    end
+  @doc """
+  Updates the given multi by setting all outputs found at the given `positions` to an `:exiting` state.
+  """
+  @spec exit(Multi.t(), list(pos_integer())) :: Multi.t()
+  def exit(multi, positions) do
+    query = OutputQuery.usable_for_positions(positions)
+    Multi.update_all(multi, :exiting_outputs, query, set: [state: :exiting, updated_at: NaiveDateTime.utc_now()])
   end
 end
