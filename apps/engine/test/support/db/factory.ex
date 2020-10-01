@@ -35,10 +35,8 @@ defmodule Engine.DB.Factory do
       |> Map.put(:signature, "InFlightExitStarted(address,bytes32)")
       |> Map.put(:data, %{
         "initiator" => Map.get(attr, :initiator, <<1::160>>),
-        "tx_hash" => Map.get(attr, :tx_hash, <<1::256>>)
-      })
-      |> Map.put(:call_data, %{
-        input_utxos_pos: Map.get(attr, :positions, [1_000_000_000])
+        "tx_hash" => Map.get(attr, :tx_hash, <<1::256>>),
+        "input_utxos_pos" => Map.get(attr, :positions, [1_000_000_000])
       })
 
     build(:event, params)
@@ -50,8 +48,8 @@ defmodule Engine.DB.Factory do
     params =
       attr
       |> Map.put(:signature, "ExitStarted(address,uint160)")
-      |> Map.put(:call_data, %{
-        utxo_pos: position
+      |> Map.put(:data, %{
+        "utxo_pos" => position
       })
 
     build(:event, params)
@@ -74,14 +72,12 @@ defmodule Engine.DB.Factory do
   def event_factory(attr \\ %{}) do
     signature = Map.get(attr, :signature, "FooCalled()")
     data = Map.get(attr, :data, attr)
-    call_data = Map.get(attr, :call_data, attr)
     height = Map.get(attr, :height, 100)
     log_index = Map.get(attr, :log_index, 1)
     root_chain_tx_hash = Map.get(attr, :log_index, <<1::160>>)
 
     %Event{
       data: data,
-      call_data: call_data,
       eth_height: height,
       event_signature: signature,
       log_index: log_index,
