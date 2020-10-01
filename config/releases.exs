@@ -25,7 +25,8 @@ config :engine,
   eth_vault: nil,
   payment_exit_game: nil,
   ethereum_events_check_interval_ms: String.to_integer(System.get_env("ETHEREUM_EVENTS_CHECK_INTERVAL_MS") || "8000"),
-  ethereum_stalled_sync_threshold_ms: String.to_integer(System.get_env("ETHEREUM_STALLED_SYNC_THRESHOLD_MS") || "20000"),
+  ethereum_stalled_sync_threshold_ms:
+    String.to_integer(System.get_env("ETHEREUM_STALLED_SYNC_THRESHOLD_MS") || "20000"),
   fee_claimer_address: System.get_env("FEE_CLAIMER_ADDRESS")
 
 config :engine, Engine.Repo,

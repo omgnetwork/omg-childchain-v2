@@ -17,38 +17,6 @@ defmodule Engine.Ethereum.RootChain.AbiFunctionSelector do
 
   We define Solidity Function selectors that help us decode returned values from function calls
   """
-  def start_standard_exit() do
-    %ABI.FunctionSelector{
-      function: "startStandardExit",
-      input_names: ["utxoPos", "rlpOutputTx", "outputTxInclusionProof"],
-      inputs_indexed: nil,
-      method_id: <<112, 224, 20, 98>>,
-      returns: [],
-      type: :function,
-      types: [tuple: [{:uint, 256}, :bytes, :bytes]]
-    }
-  end
-
-  def start_in_flight_exit() do
-    %ABI.FunctionSelector{
-      function: "startInFlightExit",
-      input_names: ["inFlightTx", "inputTxs", "inputUtxosPos", "inputTxsInclusionProofs", "inFlightTxWitnesses"],
-      inputs_indexed: nil,
-      method_id: <<90, 82, 133, 20>>,
-      returns: [],
-      type: :function,
-      types: [
-        tuple: [
-          :bytes,
-          {:array, :bytes},
-          {:array, {:uint, 256}},
-          {:array, :bytes},
-          {:array, :bytes}
-        ]
-      ]
-    }
-  end
-
   # min_exit_period/0, get_version/0, exit_games/0, vaults/0 are
   # victims of unfortinate bug: https://github.com/poanetwork/ex_abi/issues/25
   # All these selectors were intially pulled in with

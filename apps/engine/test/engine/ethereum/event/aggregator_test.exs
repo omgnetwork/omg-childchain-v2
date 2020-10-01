@@ -4,7 +4,6 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
   alias Engine.Ethereum.Event.Aggregator
   alias Engine.Ethereum.Event.Aggregator.Storage, as: AggregatorStorage
   alias Engine.Ethereum.RootChain.Abi
-  alias ExPlasma.Encoding
 
   setup %{test: name} do
     {:ok, _} =
@@ -15,11 +14,11 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
          contracts: [],
          ets: AggregatorStorage.events_bucket(name),
          events: [
-           [name: :deposit_created, enrich: false],
-           [name: :exit_started, enrich: true],
-           [name: :in_flight_exit_input_piggybacked, enrich: false],
-           [name: :in_flight_exit_output_piggybacked, enrich: false],
-           [name: :in_flight_exit_started, enrich: true]
+           [name: :deposit_created],
+           [name: :exit_started],
+           [name: :in_flight_exit_input_piggybacked],
+           [name: :in_flight_exit_output_piggybacked],
+           [name: :in_flight_exit_started]
          ]}
       )
 
@@ -52,40 +51,29 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
     test "that events are correctly initialized ", %{aggregator: aggregator} do
       assert aggregator |> :sys.get_state() |> Map.get(:events) == [
                [
-                 signature: "InFlightExitStarted(address,bytes32)",
-                 name: :in_flight_exit_started,
-                 enrich: true
+                 signature: "InFlightExitStarted(address,bytes32,bytes,uint256[],bytes[])",
+                 name: :in_flight_exit_started
                ],
                [
                  signature: "InFlightExitOutputPiggybacked(address,bytes32,uint16)",
-                 name: :in_flight_exit_output_piggybacked,
-                 enrich: false
+                 name: :in_flight_exit_output_piggybacked
                ],
                [
                  signature: "InFlightExitInputPiggybacked(address,bytes32,uint16)",
-                 name: :in_flight_exit_input_piggybacked,
-                 enrich: false
+                 name: :in_flight_exit_input_piggybacked
                ],
-               [
-                 signature: "ExitStarted(address,uint160)",
-                 name: :exit_started,
-                 enrich: true
-               ],
-               [
-                 signature: "DepositCreated(address,uint256,address,uint256)",
-                 name: :deposit_created,
-                 enrich: false
-               ]
+               [signature: "ExitStarted(address,uint168,uint256)", name: :exit_started],
+               [signature: "DepositCreated(address,uint256,address,uint256)", name: :deposit_created]
              ]
     end
 
     test "that signatures are correctly initialized ", %{aggregator: aggregator} do
       assert aggregator |> :sys.get_state() |> Map.get(:event_signatures) |> Enum.sort() ==
                Enum.sort([
-                 "InFlightExitStarted(address,bytes32)",
+                 "InFlightExitStarted(address,bytes32,bytes,uint256[],bytes[])",
                  "InFlightExitOutputPiggybacked(address,bytes32,uint16)",
                  "InFlightExitInputPiggybacked(address,bytes32,uint16)",
-                 "ExitStarted(address,uint160)",
+                 "ExitStarted(address,uint168,uint256)",
                  "DepositCreated(address,uint256,address,uint256)"
                ])
     end
@@ -128,10 +116,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
       deposit_created_2 = deposit_created_log_decoded(from_block + 1)
 
-      exit_started_log =
-        to_block
-        |> exit_started_log_decoded()
-        |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary!() |> Abi.decode_function())
+      exit_started_log = exit_started_log_decoded(to_block)
 
       in_flight_exit_output_piggybacked_log = in_flight_exit_output_piggybacked_log_decoded(from_block)
 
@@ -230,10 +215,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
       deposit_created_2 = deposit_created_log_decoded(from_block + 1)
 
-      exit_started_log =
-        to_block
-        |> exit_started_log_decoded()
-        |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary!() |> Abi.decode_function())
+      exit_started_log = exit_started_log_decoded(to_block)
 
       in_flight_exit_output_piggybacked_log = in_flight_exit_output_piggybacked_log_decoded(from_block)
 
@@ -302,10 +284,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       assert Aggregator.deposit_created(aggregator, from_block, to_block) ==
                {:ok, [deposit_created]}
 
-      exit_started_log =
-        to_block
-        |> exit_started_log_decoded()
-        |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary!() |> Abi.decode_function())
+      exit_started_log = exit_started_log_decoded(to_block)
 
       assert Aggregator.exit_started(aggregator, from_block, to_block) == {:ok, [exit_started_log]}
 
@@ -366,10 +345,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
       deposit_created_2 = deposit_created_log(from_block + 1)
 
-      exit_started_log =
-        to_block
-        |> exit_started_log_decoded()
-        |> Map.put(:call_data, start_standard_exit_log() |> Encoding.to_binary!() |> Abi.decode_function())
+      exit_started_log = exit_started_log_decoded(to_block)
 
       in_flight_exit_output_piggybacked_log = in_flight_exit_output_piggybacked_log_decoded(from_block)
 
@@ -460,11 +436,12 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       "address" => "0x92ce4d7773c57d96210c46a07b89acf725057f21",
       "blockHash" => "0x1bee6f75c74ceeb4817dc160e2fb56dd1337a9fc2980a2b013252cf1e620f246",
       "blockNumber" => "0x" <> Integer.to_string(block_number, 16),
-      "data" => "0x000000000000000000000000002b191e750d8d4d3dcad14a9c8e5a5cf0c81761",
+      "data" =>
+        "0x000000000000000000000000002b191e750d8d4d3dcad14a9c8e5a5cf0c81761000000000000000000000000000000000000000000000000000001d1e4e4ea00",
       "logIndex" => "0x1",
       "removed" => false,
       "topics" => [
-        "0xdd6f755cba05d0a420007aef6afc05e4889ab424505e2e440ecd1c434ba7082e",
+        "0xe0ffc2e7d623cb04e12318e11dd2c9df46dbfba8ac0c429dd49885f35785cf63",
         "0x00000000000000000000000008858124b3b880c68b360fd319cc61da27545e9a"
       ],
       "transactionHash" => "0x4a8248b88a17b2be4c6086a1984622de1a60dda3c9dd9ece1ef97ed18efa028c",
@@ -545,7 +522,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       "0xa93c0e9b202feaf554acf6ef1185b898c9f214da16e51740b06b5f7487b018e5" =>
         "InFlightExitInputPiggybacked(address,bytes32,uint16)",
       "0xd5f1fe9d48880b57daa227004b16d320c0eb885d6c49d472d54c16a05fa3179e" => "InFlightExitStarted(address,bytes32)",
-      "0xdd6f755cba05d0a420007aef6afc05e4889ab424505e2e440ecd1c434ba7082e" => "ExitStarted(address,uint160)"
+      "0xe0ffc2e7d623cb04e12318e11dd2c9df46dbfba8ac0c429dd49885f35785cf63" => "ExitStarted(address,uint168,uint256)"
     }
   end
 

@@ -8,13 +8,12 @@ defmodule Engine.Ethereum.RootChain.Event do
   alias ExPlasma.Crypto
   alias ExPlasma.Encoding
 
-  defstruct [:event_signature, :data, :call_data, :eth_height, :root_chain_tx_hash, :log_index]
+  defstruct [:event_signature, :data, :eth_height, :root_chain_tx_hash, :log_index]
 
   @type t() :: %__MODULE__{
           event_signature: binary(),
           log_index: non_neg_integer(),
           data: map(),
-          call_data: map() | nil,
           eth_height: non_neg_integer(),
           root_chain_tx_hash: binary()
         }
@@ -103,20 +102,24 @@ defmodule Engine.Ethereum.RootChain.Event do
   defp build_types_string(types), do: build_types_string(types, "")
   defp build_types_string([], string), do: string
 
-  defp build_types_string([{type, size} | [] = types], string) do
-    build_types_string(types, string <> "#{type}" <> "#{size}")
-  end
-
-  defp build_types_string([{type, size} | types], string) do
-    build_types_string(types, string <> "#{type}" <> "#{size}" <> ",")
-  end
-
   defp build_types_string([type | [] = types], string) do
-    build_types_string(types, string <> "#{type}")
+    build_types_string(types, string <> build_type(type))
   end
 
   defp build_types_string([type | types], string) do
-    build_types_string(types, string <> "#{type}" <> ",")
+    build_types_string(types, string <> build_type(type) <> ",")
+  end
+
+  defp build_type({base, number}) when is_integer(number) do
+    "#{base}" <> "#{number}"
+  end
+
+  defp build_type({:array, child}) do
+    build_type(child) <> "[]"
+  end
+
+  defp build_type(type) do
+    to_string(type)
   end
 
   def get_event(events, wanted_event_name, acc) do

@@ -51,11 +51,11 @@ defmodule Engine.Ethereum.SyncSupervisor do
        contracts: contracts,
        ets: AggregatorStorage.events_bucket(),
        events: [
-         [name: :deposit_created, enrich: false],
-         [name: :in_flight_exit_started, enrich: true],
-         [name: :in_flight_exit_input_piggybacked, enrich: false],
-         [name: :in_flight_exit_output_piggybacked, enrich: false],
-         [name: :exit_started, enrich: true]
+         [name: :deposit_created],
+         [name: :in_flight_exit_started],
+         [name: :in_flight_exit_input_piggybacked],
+         [name: :in_flight_exit_output_piggybacked],
+         [name: :exit_started]
        ]},
       Listener.prepare_child(
         ets: ListenerStorage.listener_checkin(),
