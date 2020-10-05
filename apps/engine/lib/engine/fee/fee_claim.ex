@@ -9,7 +9,7 @@ defmodule Engine.Fee.FeeClaim do
   alias ExPlasma.Transaction.Type.Fee, as: ExPlasmaFee
 
   @doc """
-  Calculates and return a map of fee paid given input and output data.
+  Calculates and returns a map of fee paid given input and output data.
   This correspond to the sum of input amounts - output amounts for each token,
   the result is a map of %{token => amount}.
   Only returns tokens that have a positive amount of fees paid.
@@ -33,8 +33,9 @@ defmodule Engine.Fee.FeeClaim do
   """
   @spec generate_fee_transactions(Engine.DB.Block.t(), <<_::160>>) :: list(binary())
   def generate_fee_transactions(block, fee_claimer) do
-    fee_paid = fees_in_block(block)
-    Enum.map(fee_paid, fn {token, amount} -> build_fee_transaction(block.blknum, fee_claimer, token, amount) end)
+    block
+    |> fees_in_block()
+    |> Enum.map(fn {token, amount} -> build_fee_transaction(block.blknum, fee_claimer, token, amount) end)
   end
 
   defp reduce_amounts(output_data) do
