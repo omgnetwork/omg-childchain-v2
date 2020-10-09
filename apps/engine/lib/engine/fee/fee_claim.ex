@@ -71,7 +71,7 @@ defmodule Engine.Fee.FeeClaim do
       input_data = Enum.map(transaction.inputs, &ExPlasma.Output.decode!(&1.output_data).output_data)
       output_data = Enum.map(transaction.outputs, &ExPlasma.Output.decode!(&1.output_data).output_data)
       fee_paid = fee_paid(input_data, output_data)
-      Map.merge(acc, fee_paid, fn _token, input_amount, output_amount -> input_amount + output_amount end)
+      Map.merge(acc, fee_paid, fn _token, fee1, fee2 -> fee1 + fee2 end)
     end)
   end
 end
