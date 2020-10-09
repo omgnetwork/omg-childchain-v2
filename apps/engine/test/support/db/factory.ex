@@ -198,6 +198,7 @@ defmodule Engine.DB.Factory do
       formed_at_ethereum_height: 1,
       submitted_at_ethereum_height: 1,
       attempts_counter: 0,
+      transactions: [],
       gas: 827
     }
   end

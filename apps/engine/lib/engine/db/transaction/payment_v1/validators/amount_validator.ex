@@ -4,6 +4,7 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator.Amount do
   """
 
   alias Engine.DB.Transaction.PaymentV1.Type
+  alias Engine.Fee.FeeClaim
 
   @type validation_result_t() ::
           :ok
@@ -48,39 +49,16 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator.Amount do
   @spec validate(Type.optional_accepted_fees_t(), Type.output_list_t(), Type.output_list_t()) ::
           validation_result_t()
   def validate(fees, input_data, output_data) do
-    input_amounts = reduce_amounts(input_data)
-    output_amounts = reduce_amounts(output_data)
+    fee_paid = FeeClaim.fee_paid(input_data, output_data)
 
-    filtered_amounts =
-      input_amounts
-      |> substract_outputs_from_inputs(output_amounts)
-      |> filter_zero_amounts()
-
-    with :ok <- positive_amounts(filtered_amounts),
-         :ok <- no_fees_required(filtered_amounts, fees),
-         :ok <- fees_covered(filtered_amounts, fees) do
+    with :ok <- positive_amounts(fee_paid),
+         :ok <- no_fees_required(fee_paid, fees),
+         :ok <- fees_covered(fee_paid, fees) do
       :ok
     else
       :no_fees_required -> :ok
       error -> error
     end
-  end
-
-  defp reduce_amounts(output_data) do
-    Enum.reduce(output_data, %{}, fn data, acc ->
-      amount = Map.get(acc, data.token, 0) + data.amount
-      Map.put(acc, data.token, amount)
-    end)
-  end
-
-  defp substract_outputs_from_inputs(input_amounts, output_amounts) do
-    Map.merge(input_amounts, output_amounts, fn _token, input_amount, output_amount -> input_amount - output_amount end)
-  end
-
-  defp filter_zero_amounts(amounts) do
-    amounts
-    |> Enum.filter(fn {_token, amount} -> amount != 0 end)
-    |> Map.new()
   end
 
   defp positive_amounts(amounts) do
