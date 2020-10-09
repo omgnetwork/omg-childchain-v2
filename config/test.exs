@@ -9,7 +9,8 @@ config :engine, Engine.Repo,
   pool_size: 10,
   queue_target: 100,
   queue_interval: 2000,
-  pool: Ecto.Adapters.SQL.Sandbox
+  pool: Ecto.Adapters.SQL.Sandbox,
+  log_level: :warn
 
 config :engine, ecto_repos: [Engine.Repo]
 

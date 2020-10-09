@@ -1,6 +1,6 @@
 defmodule Engine.DB.Output.OutputChangeset do
   @moduledoc """
-  Contains changesets related to outputs
+  Changesets related to outputs
   """
 
   import Ecto.Changeset
@@ -47,6 +47,14 @@ defmodule Engine.DB.Output.OutputChangeset do
     |> validate_required([:state])
     |> validate_inclusion(:state, Output.states())
   end
+
+  @doc """
+  Changeset for postion state change.
+  This updates:
+  - position
+  - output_id
+  """
+  def assign_position(changeset, params), do: output_position(changeset, params)
 
   defp output_data(output, params) do
     output

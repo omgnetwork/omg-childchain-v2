@@ -1,7 +1,7 @@
 defmodule Engine.Fee.FeeClaimTest do
   @moduledoc false
 
-  use Engine.DB.DataCase, async: true
+  use Engine.DB.DataCase, async: false
 
   alias Engine.Fee.FeeClaim
   alias ExPlasma.Transaction.Type.Fee, as: ExPlasmaFee
@@ -60,9 +60,9 @@ defmodule Engine.Fee.FeeClaimTest do
       t_3_i_1 = insert(:output, %{output_data: output_data(@alice, @eth, 2)})
       t_3_o_1 = insert(:output, %{output_data: output_data(@bob, @eth, 1)})
 
-      t_1 = insert(:payment_v1_transaction, %{inputs: [t_1_i_1], outputs: [t_1_o_1]})
-      t_2 = insert(:payment_v1_transaction, %{inputs: [t_2_i_1, t_2_i_2], outputs: [t_2_o_1, t_2_o_2]})
-      t_3 = insert(:payment_v1_transaction, %{inputs: [t_3_i_1], outputs: [t_3_o_1]})
+      t_1 = insert(:payment_v1_transaction, %{inputs: [t_1_i_1], outputs: [t_1_o_1], tx_index: 0})
+      t_2 = insert(:payment_v1_transaction, %{inputs: [t_2_i_1, t_2_i_2], outputs: [t_2_o_1, t_2_o_2], tx_index: 1})
+      t_3 = insert(:payment_v1_transaction, %{inputs: [t_3_i_1], outputs: [t_3_o_1], tx_index: 2})
 
       block = insert(:block, %{transactions: [t_1, t_2, t_3]})
 

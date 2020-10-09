@@ -6,10 +6,13 @@ defmodule API.V1.View.TransactionViewTest do
 
   describe "serialize/1" do
     test "serialize a transaction" do
-      transaction = build(:payment_v1_transaction)
+      block = build(:block)
+      transaction = build(:payment_v1_transaction, %{block: block})
 
-      assert TransactionView.serialize_hash(transaction) == %{
-               tx_hash: Encoding.to_hex(transaction.tx_hash)
+      assert TransactionView.serialize(transaction) == %{
+               tx_hash: Encoding.to_hex(transaction.tx_hash),
+               blknum: block.blknum,
+               tx_index: 0
              }
     end
   end

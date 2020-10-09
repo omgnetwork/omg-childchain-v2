@@ -1,11 +1,16 @@
 defmodule Engine.DB.TransactionTest do
-  use Engine.DB.DataCase, async: true
+  use Engine.DB.DataCase, async: false
   doctest Engine.DB.Transaction, import: true
 
+  alias Engine.DB.Block
   alias Engine.DB.Output
   alias Engine.DB.Transaction
+  alias Engine.Repo
   alias Engine.Support.TestEntity
   alias ExPlasma.Builder
+  alias ExPlasma.Output.Position
+
+  @max_txcount 65_000
 
   setup do
     _ = insert(:merged_fee)
@@ -13,49 +18,41 @@ defmodule Engine.DB.TransactionTest do
     :ok
   end
 
-  describe "decode/2" do
-    test "decodes tx_bytes and validates" do
+  describe "insert/1" do
+    test "decodes required fields" do
+      entity = TestEntity.alice()
+
+      %{output_id: output_id} = insert(:deposit_output, %{amount: 2})
+
+      outputs =
+        Enum.map([build(:output, %{amount: 1})], fn %{output_data: output_data} ->
+          ExPlasma.Output.decode!(output_data)
+        end)
+
+      transaction =
+        Builder.new(ExPlasma.payment_v1(), %{inputs: [ExPlasma.Output.decode_id!(output_id)], outputs: outputs})
+
       tx_bytes =
-        ExPlasma.payment_v1()
-        |> Builder.new()
-        |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 0)
-        |> Builder.sign!([])
+        transaction
+        |> Builder.sign!([entity.priv_encoded])
         |> ExPlasma.encode!()
 
-      assert {:ok, changeset} = Transaction.decode(tx_bytes)
+      {:ok, tx_hash} = ExPlasma.Transaction.hash(transaction)
 
-      refute changeset.valid?
-      assert assert "Cannot be zero" in errors_on(changeset).amount
-      assert assert "inputs [1000000000] are missing, spent, or not yet available" in errors_on(changeset).inputs
+      assert {:ok, %{transaction: inserted_transaction}} = Transaction.insert(tx_bytes)
+
+      assert inserted_transaction.tx_type == 1
+      assert inserted_transaction.tx_bytes == tx_bytes
+      assert inserted_transaction.tx_hash == tx_hash
     end
 
-    test "casts and validate required fields" do
-      tx_bytes =
-        ExPlasma.payment_v1()
-        |> Builder.new()
-        |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
-        |> Builder.sign!([])
-        |> ExPlasma.encode!()
-
-      assert {:ok, changeset} = Transaction.decode(tx_bytes)
-
-      signed_tx = get_field(changeset, :signed_tx)
-      {:ok, hash} = ExPlasma.hash(signed_tx)
-
-      assert get_field(changeset, :tx_type) == 1
-      assert get_field(changeset, :tx_bytes) == tx_bytes
-      assert get_field(changeset, :tx_hash) == hash
-      assert get_field(changeset, :witnesses) == []
-    end
-
-    test "builds the outputs" do
+    test "inserts the outputs" do
+      entity = TestEntity.alice()
       input_blknum = 1
-      insert(:deposit_output, %{blknum: input_blknum})
+      _ = insert(:deposit_output, %{blknum: input_blknum, amount: 3})
 
-      o_1_data = [token: <<0::160>>, amount: 10, output_guard: <<1::160>>]
-      o_2_data = [token: <<0::160>>, amount: 10, output_guard: <<1::160>>]
+      o_1_data = [token: <<0::160>>, amount: 1, output_guard: <<1::160>>]
+      o_2_data = [token: <<0::160>>, amount: 1, output_guard: <<1::160>>]
 
       tx_bytes =
         ExPlasma.payment_v1()
@@ -63,36 +60,42 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.add_input(blknum: input_blknum, txindex: 0, oindex: 0)
         |> Builder.add_output(o_1_data)
         |> Builder.add_output(o_2_data)
-        |> Builder.sign!([])
+        |> Builder.sign!([entity.priv_encoded])
         |> ExPlasma.encode!()
 
-      assert {:ok, changeset} = Transaction.decode(tx_bytes)
+      assert {:ok, %{transaction: transaction}} = Transaction.insert(tx_bytes)
 
-      assert [%Output{output_data: o_1_data_enc}, %Output{output_data: o_2_data_enc}] = get_field(changeset, :outputs)
+      assert [%Output{output_data: o_1_data_enc}, %Output{output_data: o_2_data_enc}] = transaction.outputs
       assert ExPlasma.Output.decode!(o_1_data_enc).output_data == Enum.into(o_1_data, %{})
       assert ExPlasma.Output.decode!(o_2_data_enc).output_data == Enum.into(o_1_data, %{})
     end
 
-    test "builds the inputs" do
-      input_blknum = 1
-      assert %{id: id, state: :confirmed} = insert(:deposit_output, %{blknum: input_blknum})
+    test "inserts the inputs" do
+      entity = TestEntity.alice()
+      input_blknum1 = 1
+      %{id: id1} = insert(:deposit_output, %{blknum: input_blknum1, amount: 1})
+      input_blknum2 = 2
+      %{id: id2} = insert(:deposit_output, %{blknum: input_blknum2, amount: 1})
 
       tx_bytes =
         ExPlasma.payment_v1()
         |> Builder.new()
-        |> Builder.add_input(blknum: input_blknum, txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 10)
-        |> Builder.sign!([])
+        |> Builder.add_input(blknum: input_blknum1, txindex: 0, oindex: 0)
+        |> Builder.add_input(blknum: input_blknum2, txindex: 0, oindex: 0)
+        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+        |> Builder.sign!([entity.priv_encoded, entity.priv_encoded])
         |> ExPlasma.encode!()
 
-      assert {:ok, changeset} = Transaction.decode(tx_bytes)
+      assert {:ok, %{transaction: transaction}} = Transaction.insert(tx_bytes)
 
-      assert [spent_input] = get_field(changeset, :inputs)
-      assert spent_input.id == id
-      assert spent_input.state == :spent
+      assert [input1, input2] = transaction.inputs
+      assert input1.id == id1
+      assert input1.state == :spent
+      assert input2.id == id2
+      assert input2.state == :spent
     end
 
-    test "is valid when inputs are signed correctly" do
+    test "fails when inpus are not signed correctly" do
       %{priv_encoded: priv_encoded_1, addr: addr_1} = TestEntity.alice()
       %{priv_encoded: priv_encoded_2, addr: addr_2} = TestEntity.bob()
 
@@ -105,11 +108,98 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> Builder.add_input(blknum: 2, txindex: 0, oindex: 0)
         |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 19)
-        |> Builder.sign!([priv_encoded_1, priv_encoded_2])
+        |> Builder.sign!([priv_encoded_2, priv_encoded_1])
         |> ExPlasma.encode!()
 
-      assert {:ok, changeset} = Transaction.decode(tx_bytes)
-      assert changeset.valid?
+      assert {:error, changeset} = Transaction.insert(tx_bytes)
+      assert("Given signatures do not match the inputs owners" in errors_on(changeset).witnesses)
+      assert 0 = Repo.one(from(t in Transaction, select: count(t.id)))
+    end
+
+    test "attaches transaction to a forming block" do
+      block = insert(:block)
+      tx_bytes = transaction_bytes()
+      {:ok, %{transaction: tx}} = Transaction.insert(tx_bytes)
+
+      assert tx.block.id == block.id
+      assert tx.tx_index == 0
+    end
+
+    test "does not insert new block when transaction can be accepted in currently forming block" do
+      tx_bytes = transaction_bytes()
+      {:ok, _} = Transaction.insert(tx_bytes)
+
+      number_of_blocks = Repo.one(from(b in Block, select: count(b.id)))
+      assert 1 == number_of_blocks
+    end
+
+    test "assigns consecutive transaction indicies" do
+      _ = insert(:block)
+
+      tx_bytes1 = transaction_bytes()
+      {:ok, %{transaction: tx1}} = Transaction.insert(tx_bytes1)
+
+      tx_bytes2 = transaction_bytes()
+      {:ok, %{transaction: tx2}} = Transaction.insert(tx_bytes2)
+
+      assert tx1.tx_index + 1 == tx2.tx_index
+    end
+
+    test "does not create conflicts when inserting multiple transaction concurrently" do
+      no_conflicts =
+        1..10
+        |> Enum.map(fn _ -> transaction_bytes() end)
+        |> Enum.map(fn tx_bytes -> Task.async(fn -> Transaction.insert(tx_bytes) end) end)
+        |> Enum.map(fn task -> Task.await(task) end)
+        |> Enum.all?(fn
+          {:ok, _} -> true
+          _ -> false
+        end)
+
+      assert no_conflicts
+
+      [tx1 | transactions] = Repo.all(from(t in Transaction))
+      refute tx1.block_id == nil
+
+      all_in_same_block = Enum.all?(transactions, fn t -> t.block_id == tx1.block_id end)
+      assert all_in_same_block
+    end
+
+    test "assigns positions to outputs" do
+      tx_bytes =
+        transaction_bytes(%{
+          input_amount: 3,
+          outputs: [build(:output, %{amount: 1}), build(:output, %{amount: 1})]
+        })
+
+      {:ok, %{transaction: transaction}} = Transaction.insert(tx_bytes)
+
+      expected_position = [
+        Position.pos(%{blknum: transaction.block.blknum, txindex: transaction.tx_index, oindex: 0}),
+        Position.pos(%{blknum: transaction.block.blknum, txindex: transaction.tx_index, oindex: 1})
+      ]
+
+      actual_positions = Enum.map(transaction.outputs, fn output -> output.position end)
+
+      assert expected_position == actual_positions
+    end
+
+    test "finalizes current forming block and inserts new one if transaction limit for a block is reached" do
+      block = insert(:block)
+
+      # we determine number of transactions in a block by querying for max transaction index in the block
+      _ = insert(:payment_v1_transaction, %{block: block, tx_index: @max_txcount})
+
+      tx_bytes = transaction_bytes()
+      {:ok, %{transaction: transaction}} = Transaction.insert(tx_bytes)
+
+      refute transaction.block.id == block.id
+
+      finalizing_block = Repo.get(Block, block.id)
+      assert finalizing_block.state == Block.state_finalizing()
+
+      forming_block = Repo.get(Block, transaction.block.id)
+      assert forming_block.state == Block.state_forming()
     end
   end
 
@@ -125,28 +215,19 @@ defmodule Engine.DB.TransactionTest do
     end
   end
 
-  describe "query_pending/0" do
-    test "get all pending transactions" do
-      block = insert(:block)
-      insert(:payment_v1_transaction)
-      insert(:payment_v1_transaction)
+  defp transaction_bytes(attrs \\ %{}) do
+    entity = TestEntity.alice()
 
-      :payment_v1_transaction
-      |> insert()
-      |> change(block_id: block.id)
-      |> Engine.Repo.update()
+    %{output_id: output_id} = insert(:deposit_output, %{amount: Map.get(attrs, :input_amount, 2)})
 
-      pending_tx = Engine.Repo.all(Transaction.query_pending())
-      assert Enum.count(pending_tx) == 2
-    end
-  end
+    outputs =
+      attrs
+      |> Map.get(:outputs, [build(:output, %{amount: 1})])
+      |> Enum.map(fn %{output_data: output_data} -> ExPlasma.Output.decode!(output_data) end)
 
-  describe "query_by_tx_hash/0" do
-    test "get transaction matching the hash" do
-      %{tx_hash: tx_hash} = insert(:payment_v1_transaction)
-      insert(:payment_v1_transaction)
-
-      assert %{tx_hash: ^tx_hash} = tx_hash |> Transaction.query_by_tx_hash() |> Engine.Repo.one()
-    end
+    ExPlasma.payment_v1()
+    |> Builder.new(%{inputs: [ExPlasma.Output.decode_id!(output_id)], outputs: outputs})
+    |> Builder.sign!([entity.priv_encoded])
+    |> ExPlasma.encode!()
   end
 end

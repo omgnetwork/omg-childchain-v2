@@ -2,43 +2,39 @@ defmodule Engine.DB.Transaction do
   @moduledoc """
   The Transaction record. This is one of the main entry points for the system, specifically accepting
   transactions into the Childchain as `tx_bytes`. This expands those bytes into:
-
   * `tx_bytes` - A binary of a transaction encoded by RLP.
   * `inputs`  - The outputs that the transaction is acting on, and changes state e.g marked as "spent"
   * `outputs` - The newly created outputs
-
   More information is contained in the `tx_bytes`. However, to keep the Childchain _lean_, we extract
   data onto the record as needed.
-
   The schema contains the following fields:
-
   - tx_bytes: The signed bytes submited by users
   - tx_hash: The keccak hash of the transaction
   - tx_type: The type of the transaction, this is an integer. ie: `1` for payment v1 transactions, `3` for fee transactions
-
+  - tx_index: index of the transaction in a block
   Virtual fields used for convenience and validation:
-
   - witnesses: Avoid decoding/parsing signatures mutiple times along validation process
   - signed_tx: Avoid calling decode(tx_bytes) multiple times along the validation process
-
   Note that with the current implementation, fields virtual fields are not populated when loading record from the DB
   """
 
   use Ecto.Schema
-  import Ecto.Changeset, only: [cast: 3, cast_assoc: 3, validate_required: 2]
-  import Ecto.Query, only: [from: 2]
 
+  alias __MODULE__.TransactionChangeset
+  alias Ecto.Multi
   alias Engine.DB.Block
   alias Engine.DB.Output
-  alias Engine.DB.Transaction.Validator
   alias Engine.Fee
   alias Engine.Repo
+
+  require Logger
 
   @type tx_bytes :: binary
 
   @type t() :: %{
           block: Block.t(),
           block_id: pos_integer(),
+          tx_index: non_neg_integer(),
           id: pos_integer(),
           inputs: list(Output.t()),
           inserted_at: DateTime.t(),
@@ -48,11 +44,8 @@ defmodule Engine.DB.Transaction do
           tx_hash: <<_::256>>,
           tx_type: pos_integer(),
           updated_at: DateTime.t(),
-          witnesses: DateTime.t()
+          witnesses: binary()
         }
-
-  @required_fields [:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type]
-  @optional_fields []
 
   @timestamps_opts [inserted_at: :node_inserted_at, updated_at: :node_updated_at]
 
@@ -60,6 +53,7 @@ defmodule Engine.DB.Transaction do
     field(:tx_bytes, :binary)
     field(:tx_hash, :binary)
     field(:tx_type, :integer)
+    field(:tx_index, :integer)
 
     # Virtual fields used for convenience and validation
     # Avoid decoding/parsing signatures mutiple times along validation process
@@ -78,16 +72,6 @@ defmodule Engine.DB.Transaction do
   end
 
   @doc """
-  Query all transactions that have not been formed into a block.
-  """
-  def query_pending(), do: from(t in __MODULE__, where: is_nil(t.block_id))
-
-  @doc """
-  Find transactions by the tx_hash.
-  """
-  def query_by_tx_hash(tx_hash), do: from(t in __MODULE__, where: t.tx_hash == ^tx_hash)
-
-  @doc """
   Query a transaction by the given `field`.
   Also preload given `preloads`
   """
@@ -97,12 +81,43 @@ defmodule Engine.DB.Transaction do
     |> Repo.preload(preloads)
   end
 
+  @spec encode_unsigned(t()) :: binary()
+  def encode_unsigned(transaction) do
+    {:ok, tx} = ExPlasma.decode(transaction.tx_bytes, signed: false)
+
+    ExPlasma.encode!(tx, signed: false)
+  end
+
   @doc """
-  The main action of the system. Takes tx_bytes and forms the appropriate
-  associations for the transaction and outputs and runs the changeset.
+  Inserts a new transaction and associates it with currently forming block.
+  If including a new transaction in forming block violates maximum number of transaction per block
+  then the transaction is associated with a newly inserted forming block.
   """
+  def insert(tx_bytes) do
+    with {:ok, changeset} <- decode(tx_bytes) do
+      Multi.new()
+      |> Multi.run(:current_forming_block, &Block.get_forming_block_for_update/2)
+      |> Multi.run(:block_with_next_tx_index, &Block.get_block_and_tx_index_for_transaction/2)
+      |> Multi.insert(:transaction, fn %{block_with_next_tx_index: block_with_next_tx_index} ->
+        TransactionChangeset.set_blknum_and_tx_index(changeset, block_with_next_tx_index)
+      end)
+      |> Repo.transaction()
+      |> case do
+        {:ok, _} = result ->
+          result
+
+        {:error, _, changeset, _} ->
+          {:error, changeset}
+
+        error ->
+          _ = Logger.error("Error when inserting transaction #{inspect(error)}")
+          error
+      end
+    end
+  end
+
   @spec decode(tx_bytes) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
-  def decode(tx_bytes) do
+  defp decode(tx_bytes) do
     with {:ok, decoded} <- ExPlasma.decode(tx_bytes),
          {:ok, recovered} <- ExPlasma.Transaction.with_witnesses(decoded),
          {:ok, fees} <- load_fees(recovered.tx_type) do
@@ -112,28 +127,9 @@ defmodule Engine.DB.Transaction do
         |> Map.put(:fees, fees)
         |> Map.put(:tx_bytes, tx_bytes)
 
-      {:ok, changeset(%__MODULE__{}, params)}
+      {:ok, TransactionChangeset.new_transaction_changeset(%__MODULE__{}, params)}
     end
   end
-
-  @spec encode_unsigned(t()) :: binary()
-  def encode_unsigned(transaction) do
-    {:ok, tx} = ExPlasma.decode(transaction.tx_bytes, signed: false)
-
-    ExPlasma.encode!(tx, signed: false)
-  end
-
-  def changeset(struct, params) do
-    struct
-    |> cast(params, @optional_fields ++ @required_fields)
-    |> validate_required(@required_fields)
-    |> Validator.validate_protocol()
-    |> Validator.associate_inputs(params)
-    |> cast_assoc(:outputs, with: &Output.new/2)
-    |> Validator.validate_statefully(params)
-  end
-
-  def insert(changeset), do: Repo.insert(changeset)
 
   defp load_fees(type) do
     with {:ok, all_fees} when is_map(all_fees) <- Fee.accepted_fees(),
