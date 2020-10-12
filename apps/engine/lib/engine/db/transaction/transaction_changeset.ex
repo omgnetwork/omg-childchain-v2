@@ -4,7 +4,9 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
   """
 
   use Ecto.Schema
-  import Ecto.Changeset, only: [cast: 3, cast_assoc: 3, validate_required: 2, put_change: 3, put_assoc: 3]
+
+  import Ecto.Changeset,
+    only: [cast: 3, cast_assoc: 3, fetch_change!: 2, validate_required: 2, put_change: 3, put_assoc: 3]
 
   alias Engine.DB.Output
   alias Engine.DB.Output.OutputChangeset
@@ -38,5 +40,14 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
     |> put_change(:tx_index, tx_index)
     |> put_assoc(:block, block)
     |> put_assoc(:outputs, outputs)
+  end
+
+  def validate_changeset_for_fee_transaction(changeset) do
+    fee_tx_type = ExPlasma.fee()
+
+    case fetch_change!(changeset, :tx_type) do
+      ^fee_tx_type -> :ok
+      _ -> {:error, :not_fee_transaction}
+    end
   end
 end

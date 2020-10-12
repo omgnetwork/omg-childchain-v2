@@ -9,8 +9,11 @@ defmodule Engine.DB.TransactionTest do
   alias Engine.Support.TestEntity
   alias ExPlasma.Builder
   alias ExPlasma.Output.Position
+  alias ExPlasma.Transaction, as: ExPlasmaTx
+  alias ExPlasma.Transaction.Type.Fee, as: ExPlasmaFee
 
   @max_txcount 65_000
+  @eth <<0::160>>
 
   setup do
     _ = insert(:merged_fee)
@@ -51,8 +54,8 @@ defmodule Engine.DB.TransactionTest do
       input_blknum = 1
       _ = insert(:deposit_output, %{blknum: input_blknum, amount: 3})
 
-      o_1_data = [token: <<0::160>>, amount: 1, output_guard: <<1::160>>]
-      o_2_data = [token: <<0::160>>, amount: 1, output_guard: <<1::160>>]
+      o_1_data = [token: @eth, amount: 1, output_guard: <<1::160>>]
+      o_2_data = [token: @eth, amount: 1, output_guard: <<1::160>>]
 
       tx_bytes =
         ExPlasma.payment_v1()
@@ -82,7 +85,7 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.new()
         |> Builder.add_input(blknum: input_blknum1, txindex: 0, oindex: 0)
         |> Builder.add_input(blknum: input_blknum2, txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+        |> Builder.add_output(output_guard: <<1::160>>, token: @eth, amount: 1)
         |> Builder.sign!([entity.priv_encoded, entity.priv_encoded])
         |> ExPlasma.encode!()
 
@@ -99,15 +102,15 @@ defmodule Engine.DB.TransactionTest do
       %{priv_encoded: priv_encoded_1, addr: addr_1} = TestEntity.alice()
       %{priv_encoded: priv_encoded_2, addr: addr_2} = TestEntity.bob()
 
-      insert(:deposit_output, %{output_guard: addr_1, token: <<0::160>>, amount: 10, blknum: 1})
-      insert(:deposit_output, %{output_guard: addr_2, token: <<0::160>>, amount: 10, blknum: 2})
+      insert(:deposit_output, %{output_guard: addr_1, token: @eth, amount: 10, blknum: 1})
+      insert(:deposit_output, %{output_guard: addr_2, token: @eth, amount: 10, blknum: 2})
 
       tx_bytes =
         ExPlasma.payment_v1()
         |> Builder.new()
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> Builder.add_input(blknum: 2, txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 19)
+        |> Builder.add_output(output_guard: <<1::160>>, token: @eth, amount: 19)
         |> Builder.sign!([priv_encoded_2, priv_encoded_1])
         |> ExPlasma.encode!()
 
@@ -212,6 +215,35 @@ defmodule Engine.DB.TransactionTest do
 
       assert %{tx_hash: ^tx_hash_2, inputs: %Ecto.Association.NotLoaded{}} =
                Transaction.get_by([tx_hash: tx_hash_2], [])
+    end
+  end
+
+  describe "insert_fee_transaction/4" do
+    test "sets block and transaction index for a fee transaction" do
+      owner = TestEntity.alice()
+
+      block = insert(:block)
+
+      {:ok, fee_tx} =
+        ExPlasma.fee()
+        |> Builder.new(
+          outputs: [
+            ExPlasmaFee.new_output(owner.addr, @eth, 1)
+          ]
+        )
+        |> ExPlasmaTx.with_nonce(%{blknum: block.blknum, token: @eth})
+
+      tx_hash = ExPlasma.encode!(fee_tx, signed: true)
+
+      assert {:ok, transaction} = Transaction.insert_fee_transaction(Repo, tx_hash, block, 1)
+      assert 1 == transaction.tx_index
+      assert block == transaction.block
+    end
+
+    test "assign positions to fee transaction outputs" do
+    end
+
+    test "fails for non-fee transaction" do
     end
   end
 

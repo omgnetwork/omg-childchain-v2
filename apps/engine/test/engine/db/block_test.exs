@@ -451,6 +451,23 @@ defmodule Engine.DB.BlockTest do
     end
   end
 
+  describe "prepare_for_submission/0" do
+    test "calculates merkle hash root" do
+    end
+
+    test "changes state for all finalizing blocks to pending submission" do
+    end
+
+    test "attaches fee transactions to blocks" do
+    end
+
+    test "payment transaction indicies and fee transaction indicies form a continous range of natural numbers" do
+    end
+
+    test "handles conflicts for concurrent calls" do
+    end
+  end
+
   defp receive_all_blocks() do
     receive_all_blocks([])
   end

@@ -30,4 +30,16 @@ defmodule Engine.DB.Transaction.TransactionQuery do
   def fetch_transactions_from_block(block_id) do
     from(transaction in Transaction, where: transaction.block_id == ^block_id, order_by: transaction.tx_index)
   end
+
+  @doc """
+  Returns the biggest transaction index for non-fee transaction in a block
+  """
+  def select_max_non_fee_transaction_tx_index(block_id) do
+    transaction_type_fee = ExPlasma.fee()
+
+    from(t in Transaction,
+      where: t.block_id == ^block_id and t.type != ^transaction_type_fee,
+      select: max(t.tx_index)
+    )
+  end
 end

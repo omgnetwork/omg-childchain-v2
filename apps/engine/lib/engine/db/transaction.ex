@@ -116,6 +116,18 @@ defmodule Engine.DB.Transaction do
     end
   end
 
+  @doc """
+  Inserts a fee transaction associated with a given block and transaction index
+  """
+  def insert_fee_transaction(repo, fee_transaction_bytes, block, fee_tx_index) do
+    with {:ok, changeset} <- decode(fee_transaction_bytes),
+         :ok <- TransactionChangeset.validate_changeset_for_fee_transaction(changeset) do
+      changeset
+      |> TransactionChangeset.set_blknum_and_tx_index(%{block: block, next_tx_index: fee_tx_index})
+      |> repo.insert(on_conflict: :nothing)
+    end
+  end
+
   @spec decode(tx_bytes) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
   defp decode(tx_bytes) do
     with {:ok, decoded} <- ExPlasma.decode(tx_bytes),

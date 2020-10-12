@@ -10,7 +10,10 @@ defmodule Engine.DB.Block.BlockQuery do
   @doc """
   Query all transactions that have not been formed into a block.
   """
-  def select_forming_block_for_update(), do: from(block in Block, where: block.state == ^:forming, lock: "FOR UPDATE")
+  def select_forming_block_for_update() do
+    forming = Block.state_forming()
+    from(block in Block, where: block.state == ^forming, lock: "FOR UPDATE")
+  end
 
   @doc """
   Returns the biggest nonce
@@ -27,5 +30,13 @@ defmodule Engine.DB.Block.BlockQuery do
           b.blknum > ^mined_child_block,
       order_by: [asc: :nonce]
     )
+  end
+
+  @doc """
+  Returns all finalizing blocks
+  """
+  def select_finalizing_blocks() do
+    finalizing = Block.state_finalizing()
+    from(block in Block, where: block.state == ^finalizing)
   end
 end
