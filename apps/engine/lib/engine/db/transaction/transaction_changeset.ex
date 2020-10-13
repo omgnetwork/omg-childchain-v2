@@ -6,7 +6,16 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
   use Ecto.Schema
 
   import Ecto.Changeset,
-    only: [cast: 3, cast_assoc: 3, fetch_change!: 2, validate_required: 2, put_change: 3, put_assoc: 3]
+    only: [
+      cast: 3,
+      cast_assoc: 3,
+      fetch_change!: 2,
+      validate_required: 2,
+      put_change: 3,
+      put_assoc: 3,
+      validate_number: 3,
+      validate_length: 3
+    ]
 
   alias Engine.DB.Output
   alias Engine.DB.Output.OutputChangeset
@@ -14,6 +23,7 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
   alias ExPlasma.Output.Position
 
   @required_fields [:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type]
+  @required_fee_transaction_fields [:tx_hash, :tx_bytes, :tx_type]
 
   def new_transaction_changeset(struct, params) do
     struct
@@ -23,6 +33,15 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
     |> Validator.associate_inputs(params)
     |> cast_assoc(:outputs, with: &Output.new/2)
     |> Validator.validate_statefully(params)
+  end
+
+  def new_fee_transaction_changeset(struct, params) do
+    struct
+    |> cast(params, @required_fee_transaction_fields)
+    |> validate_required(@required_fee_transaction_fields)
+    |> validate_number(:tx_type, equal_to: ExPlasma.fee())
+    |> cast_assoc(:outputs, with: &Output.new/2)
+    |> validate_length(:outputs, is: 1)
   end
 
   def set_blknum_and_tx_index(changeset, block_with_next_tx_index) do

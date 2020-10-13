@@ -219,32 +219,52 @@ defmodule Engine.DB.TransactionTest do
   end
 
   describe "insert_fee_transaction/4" do
-    test "sets block and transaction index for a fee transaction" do
-      owner = TestEntity.alice()
-
+    setup do
       block = insert(:block)
 
-      {:ok, fee_tx} =
-        ExPlasma.fee()
-        |> Builder.new(
-          outputs: [
-            ExPlasmaFee.new_output(owner.addr, @eth, 1)
-          ]
-        )
-        |> ExPlasmaTx.with_nonce(%{blknum: block.blknum, token: @eth})
+      {:ok, %{block: block}}
+    end
 
-      tx_hash = ExPlasma.encode!(fee_tx, signed: true)
+    test "sets block and transaction index for a fee transaction", %{block: block} do
+      tx_bytes = fee_transaction_bytes(block.blknum)
 
-      assert {:ok, transaction} = Transaction.insert_fee_transaction(Repo, tx_hash, block, 1)
+      assert {:ok, transaction} = Transaction.insert_fee_transaction(Repo, tx_bytes, block, 1)
       assert 1 == transaction.tx_index
       assert block == transaction.block
     end
 
-    test "assign positions to fee transaction outputs" do
+    test "assign positions to fee transaction outputs", %{block: block} do
+      tx_index = 1
+      tx_bytes = fee_transaction_bytes(block.blknum)
+
+      assert {:ok, %Transaction{outputs: [output]}} =
+               Transaction.insert_fee_transaction(Repo, tx_bytes, block, tx_index)
+
+      expected_position = Position.pos(%{blknum: block.blknum, txindex: tx_index, oindex: 0})
+
+      assert expected_position == output.position
     end
 
-    test "fails for non-fee transaction" do
+    test "propagates errors", %{block: block} do
+      tx_bytes = transaction_bytes()
+
+      assert {:error, _} = Transaction.insert_fee_transaction(Repo, tx_bytes, block, 1)
     end
+  end
+
+  defp fee_transaction_bytes(blknum) do
+    owner = TestEntity.alice()
+
+    {:ok, fee_tx} =
+      ExPlasma.fee()
+      |> Builder.new(
+        outputs: [
+          ExPlasmaFee.new_output(owner.addr, @eth, 1)
+        ]
+      )
+      |> ExPlasmaTx.with_nonce(%{blknum: blknum, token: @eth})
+
+    ExPlasma.encode!(fee_tx, signed: true)
   end
 
   defp transaction_bytes(attrs \\ %{}) do

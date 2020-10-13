@@ -120,11 +120,19 @@ defmodule Engine.DB.Transaction do
   Inserts a fee transaction associated with a given block and transaction index
   """
   def insert_fee_transaction(repo, fee_transaction_bytes, block, fee_tx_index) do
-    with {:ok, changeset} <- decode(fee_transaction_bytes),
-         :ok <- TransactionChangeset.validate_changeset_for_fee_transaction(changeset) do
-      changeset
+    with {:ok, %{outputs: [output]} = transaction} <- ExPlasma.decode(fee_transaction_bytes),
+         {:ok, tx_hash} <- ExPlasma.hash(transaction) do
+      params = %{
+        tx_type: transaction.tx_type,
+        tx_bytes: fee_transaction_bytes,
+        tx_hash: tx_hash,
+        outputs: [Map.from_struct(output)]
+      }
+
+      %__MODULE__{}
+      |> TransactionChangeset.new_fee_transaction_changeset(params)
       |> TransactionChangeset.set_blknum_and_tx_index(%{block: block, next_tx_index: fee_tx_index})
-      |> repo.insert(on_conflict: :nothing)
+      |> repo.insert()
     end
   end
 
