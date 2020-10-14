@@ -123,12 +123,59 @@ defmodule Engine.DB.Factory do
     }
   end
 
-  def payment_v1_transaction_factory(attr \\ %{}) do
+  def payment_v1_transaction_factory(attr \\ %{})
+
+  def payment_v1_transaction_factory(%{inputs: inputs, outputs: outputs} = attr) do
+    entity = TestEntity.alice()
+
+    {input_ids, inputs} =
+      inputs
+      |> Enum.map(fn %{amount: amount, token: token} ->
+        %{output_id: output_id} = input = insert(:deposit_output, %{amount: amount, token: token})
+        decoded_id = ExPlasma.Output.decode_id!(output_id)
+        {decoded_id, input}
+      end)
+      |> Enum.unzip()
+
+    {decoded_outputs, outputs} =
+      outputs
+      |> Enum.map(fn %{amount: amount, token: token} ->
+        %{output_data: output_data} =
+          output = insert(:output, %{amount: amount, token: token, output_guard: entity.addr})
+
+        decoded_output = ExPlasma.Output.decode!(output_data)
+        {decoded_output, output}
+      end)
+      |> Enum.unzip()
+
+    tx_bytes =
+      ExPlasma.payment_v1()
+      |> Builder.new(%{inputs: input_ids, outputs: decoded_outputs})
+      |> Builder.sign!(List.duplicate(entity.priv_encoded, Enum.count(inputs)))
+      |> ExPlasma.encode!()
+
+    {:ok, tx_hash} = ExPlasma.Transaction.hash(tx_bytes)
+
+    %Transaction{
+      inputs: inputs,
+      outputs: outputs,
+      tx_bytes: tx_bytes,
+      tx_hash: tx_hash,
+      tx_type: ExPlasma.payment_v1(),
+      block: Map.get(attr, :block),
+      tx_index: Map.get(attr, :tx_index, 0),
+      inserted_at: DateTime.truncate(DateTime.utc_now(), :second),
+      updated_at: DateTime.truncate(DateTime.utc_now(), :second)
+    }
+  end
+
+  def payment_v1_transaction_factory(attr) do
     entity = TestEntity.alice()
 
     %{output_id: output_id} = input = :deposit_output |> build() |> set_state(:spent)
     %{output_data: output_data} = output = build(:output)
 
+    # TODO: Make tx bytes match returned transaction
     tx_bytes =
       case attr[:tx_bytes] do
         nil ->
@@ -147,8 +194,8 @@ defmodule Engine.DB.Factory do
     {:ok, tx_hash} = ExPlasma.Transaction.hash(tx_bytes)
 
     %Transaction{
-      inputs: Map.get(attr, :inputs, [input]),
-      outputs: Map.get(attr, :outputs, [output]),
+      inputs: [input],
+      outputs: [output],
       tx_bytes: Map.get(attr, :tx_bytes, tx_bytes),
       tx_hash: tx_hash,
       tx_type: ExPlasma.payment_v1(),

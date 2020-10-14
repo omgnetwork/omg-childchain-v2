@@ -9,6 +9,8 @@ defmodule Engine.DB.BlockTest do
   alias Engine.Repo
   alias ExPlasma.Merkle
 
+  @eth <<0::160>>
+
   describe "form/0" do
     setup do
       block = insert(:block)
@@ -452,10 +454,59 @@ defmodule Engine.DB.BlockTest do
   end
 
   describe "prepare_for_submission/0" do
-    test "calculates merkle hash root" do
+    test "calculates merkle hash root and changes block state" do
+      block1 = insert(:block, %{state: Block.state_finalizing()})
+
+      _ =
+        insert(:payment_v1_transaction, %{
+          block: block1,
+          tx_index: 0,
+          inputs: [%{amount: 2, token: @eth}],
+          outputs: [%{amount: 1, token: @eth}]
+        })
+
+      block2 = insert(:block, %{state: Block.state_finalizing()})
+
+      _ =
+        insert(:payment_v1_transaction, %{
+          block: block2,
+          tx_index: 0,
+          inputs: [%{amount: 2, token: @eth}],
+          outputs: [%{amount: 1, token: @eth}]
+        })
+
+      empty_block_hash =
+        <<246, 9, 190, 253, 254, 144, 102, 254, 20, 231, 67, 179, 98, 62, 174, 135, 143, 188, 70, 128, 5, 96, 136, 22,
+          131, 44, 157, 70, 15, 42, 149, 210>>
+
+      {:ok, %{blocks_for_submission: [updated_block1, updated_block2]}} = Block.prepare_for_submission()
+
+      refute empty_block_hash == updated_block1.hash
+      assert Block.state_pending_submission() == updated_block1.state
+
+      refute empty_block_hash == updated_block2.hash
+      assert Block.state_pending_submission() == updated_block2.state
     end
 
-    test "changes state for all finalizing blocks to pending submission" do
+    test "affects only blocks in finalizing state" do
+      block_finalizing1 = insert(:block, %{state: Block.state_finalizing()})
+      block_finalizing2 = insert(:block, %{state: Block.state_finalizing()})
+      block_forming = insert(:block)
+      block_pending_submission = insert(:block, %{state: Block.state_pending_submission()})
+      block_submitted = insert(:block, %{state: Block.state_submitted()})
+      block_confirmed = insert(:block, %{state: Block.state_confirmed()})
+
+      {:ok, _} = Block.prepare_for_submission()
+      assert block_forming == Repo.get!(Block, block_forming.id)
+      assert block_pending_submission == Repo.get!(Block, block_pending_submission.id)
+      assert block_submitted == Repo.get!(Block, block_submitted.id)
+      assert block_confirmed == Repo.get!(Block, block_confirmed.id)
+
+      updated_block_finalizing1 = Repo.get!(Block, block_finalizing1.id)
+      assert Block.state_pending_submission() == updated_block_finalizing1.state
+
+      updated_block_finalizing2 = Repo.get!(Block, block_finalizing2.id)
+      assert Block.state_pending_submission() == updated_block_finalizing2.state
     end
 
     test "attaches fee transactions to blocks" do

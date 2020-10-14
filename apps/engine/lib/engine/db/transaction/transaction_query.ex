@@ -38,7 +38,7 @@ defmodule Engine.DB.Transaction.TransactionQuery do
     transaction_type_fee = ExPlasma.fee()
 
     from(t in Transaction,
-      where: t.block_id == ^block_id and t.type != ^transaction_type_fee,
+      where: t.block_id == ^block_id and t.tx_type != ^transaction_type_fee,
       select: max(t.tx_index)
     )
   end
