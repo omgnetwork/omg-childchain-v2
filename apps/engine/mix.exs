@@ -12,7 +12,7 @@ defmodule Engine.MixProject do
       elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps() ++ plugins()
     ]
   end
 
@@ -26,8 +26,6 @@ defmodule Engine.MixProject do
 
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
       {:status, in_umbrella: true},
       {:bus, in_umbrella: true},
       {:ex_abi, "~> 0.5.1"},
@@ -37,7 +35,7 @@ defmodule Engine.MixProject do
       {:postgrex, "~> 0.15"},
       {:telemetry, "~> 0.4"},
       {:ex_json_schema, "0.7.4"},
-      {:httpoison, "1.6.0"},
+      {:httpoison, "~> 1.7.0"},
       {:decorator, "~> 1.2"},
       {:ex_rlp, "~> 0.5.3"},
       # TEST
@@ -49,6 +47,19 @@ defmodule Engine.MixProject do
       {:spandex, "~> 3.0.1"},
       {:spandex_datadog, "~> 1.0.0"}
     ]
+  end
+
+  defp plugins() do
+    case System.get_env("VAULT") do
+      "0" -> [{:submit_block, git: "https://github.com/omgnetwork/submit_block.git"}]
+      "1" -> [{:submit_block_vault, git: "https://github.com/omgnetwork/submit_block_vault.git"}]
+      _ -> []
+    end ++
+      case System.get_env("GAS") do
+        nil -> []
+        "0" -> []
+        "1" -> [{:gas, git: "https://github.com/omgnetwork/gas.git"}]
+      end
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
