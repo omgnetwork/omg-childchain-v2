@@ -38,11 +38,9 @@ defmodule Engine.MixProject do
       {:telemetry, "~> 0.4"},
       {:ex_json_schema, "0.7.4"},
       {:httpoison, "1.6.0"},
-      {:hackney, "1.15.2", override: true},
       {:decorator, "~> 1.2"},
       {:ex_rlp, "~> 0.5.3"},
       # TEST
-      {:exvcr, "~> 0.10", only: :test},
       {:ex_machina, "~> 2.4", only: [:test]},
       {:briefly, git: "https://github.com/CargoSense/briefly.git", only: [:test]},
       {:fake_server, "~> 2.1", only: :test},
