@@ -74,4 +74,18 @@ defmodule Engine.DB.Transaction.TransactionQueryTest do
       assert %{tx_hash: ^tx_hash} = tx_hash |> TransactionQuery.select_by_tx_hash() |> Engine.Repo.one()
     end
   end
+
+  describe "select_max_non_fee_transaction_tx_index/1" do
+    test "selects the largest transaction index for a non-fee transaction" do
+      block = insert(:block)
+      insert(:payment_v1_transaction, %{block: block, tx_index: 0})
+      insert(:payment_v1_transaction, %{block: block, tx_index: 1})
+      insert(:fee_transaction, %{block: block, tx_index: 2, owner: <<1::160>>, amount: 1, token: <<0::160>>})
+
+      assert 1 ==
+               block.id
+               |> TransactionQuery.select_max_non_fee_transaction_tx_index()
+               |> Repo.one()
+    end
+  end
 end

@@ -71,9 +71,14 @@ defmodule Engine.Configuration do
     Application.fetch_env!(@app, :db_fetch_retry_interval)
   end
 
-  @spec fee_claimer_address :: String.t()
+  @spec fee_claimer_address :: <<_::160>>
   def fee_claimer_address() do
-    Application.fetch_env!(@app, :fee_claimer_address)
+    @app
+    |> Application.fetch_env!(:fee_claimer_address)
+    |> (fn "0x" <> suffix ->
+          {:ok, binary} = Base.decode16(suffix)
+          binary
+        end).()
   end
 
   @doc """

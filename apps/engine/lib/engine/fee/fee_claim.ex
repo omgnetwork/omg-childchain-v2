@@ -62,7 +62,6 @@ defmodule Engine.Fee.FeeClaim do
       ExPlasma.fee()
       |> Builder.new(outputs: [output])
       |> ExPlasmaTx.with_nonce(%{blknum: blknum, token: token})
-      |> IO.inspect()
 
     ExPlasma.encode!(fee_tx, signed: true)
   end

@@ -13,6 +13,10 @@ defmodule Engine.DB.Factory do
   alias Engine.Support.TestEntity
   alias ExPlasma.Builder
   alias ExPlasma.Output.Position
+  alias ExPlasma.Transaction, as: ExPlasmaTx
+  alias ExPlasma.Transaction.Type.Fee, as: ExPlasmaFee
+
+  @eth <<0::160>>
 
   def output_piggyback_event_factory(attr \\ %{}) do
     tx_hash = Map.get(attr, :tx_hash, <<1::256>>)
@@ -62,7 +66,7 @@ defmodule Engine.DB.Factory do
       |> Map.put(:data, %{
         "amount" => Map.get(attr, :amount, 1),
         "blknum" => Map.get(attr, :blknum, 1),
-        "token" => Map.get(attr, :token, <<0::160>>),
+        "token" => Map.get(attr, :token, @eth),
         "depositor" => Map.get(attr, :depositor, <<1::160>>)
       })
 
@@ -93,7 +97,7 @@ defmodule Engine.DB.Factory do
     blknum = Map.get(attr, :blknum, default_blknum)
     output_guard = Map.get(attr, :output_guard, entity.addr)
     amount = Map.get(attr, :amount, 1)
-    token = Map.get(attr, :token, <<0::160>>)
+    token = Map.get(attr, :token, @eth)
 
     {:ok, encoded_output_data} =
       %ExPlasma.Output{}
@@ -175,7 +179,6 @@ defmodule Engine.DB.Factory do
     %{output_id: output_id} = input = :deposit_output |> build() |> set_state(:spent)
     %{output_data: output_data} = output = build(:output)
 
-    # TODO: Make tx bytes match returned transaction
     tx_bytes =
       case attr[:tx_bytes] do
         nil ->
@@ -206,11 +209,40 @@ defmodule Engine.DB.Factory do
     }
   end
 
+  def fee_transaction_factory(attr) do
+    owner = Map.fetch!(attr, :owner)
+    token = Map.fetch!(attr, :token)
+    amount = Map.fetch!(attr, :amount)
+    block = Map.fetch!(attr, :block)
+    plasma_output = ExPlasmaFee.new_output(owner, token, amount)
+
+    {:ok, fee_tx} =
+      ExPlasma.fee()
+      |> Builder.new(outputs: [plasma_output])
+      |> ExPlasmaTx.with_nonce(%{blknum: block.blknum, token: token})
+
+    output = insert(:output, %{amount: amount, token: token, output_guard: owner})
+
+    tx_bytes = ExPlasma.encode!(fee_tx, signed: true)
+    {:ok, tx_hash} = ExPlasma.Transaction.hash(tx_bytes)
+
+    %Transaction{
+      outputs: [output],
+      tx_bytes: tx_bytes,
+      tx_hash: tx_hash,
+      tx_type: ExPlasma.fee(),
+      block: block,
+      tx_index: Map.fetch!(attr, :tx_index),
+      inserted_at: DateTime.truncate(DateTime.utc_now(), :second),
+      updated_at: DateTime.truncate(DateTime.utc_now(), :second)
+    }
+  end
+
   # The "lowest" unit in the hierarchy. This is made to form into transactions
   def output_factory(attr \\ %{}) do
     default_data = %{
       output_guard: Map.get(attr, :output_guard, <<1::160>>),
-      token: Map.get(attr, :token, <<0::160>>),
+      token: Map.get(attr, :token, @eth),
       amount: Map.get(attr, :amount, 10)
     }
 

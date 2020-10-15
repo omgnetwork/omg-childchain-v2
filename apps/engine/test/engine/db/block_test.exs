@@ -3,6 +3,7 @@ defmodule Engine.DB.BlockTest do
   import Ecto.Query, only: [from: 2]
 
   alias Ecto.Adapters.SQL.Sandbox
+  alias Engine.Configuration
   alias Engine.DB.Block
   alias Engine.DB.Transaction
   alias Engine.DB.Transaction.TransactionQuery
@@ -10,6 +11,7 @@ defmodule Engine.DB.BlockTest do
   alias ExPlasma.Merkle
 
   @eth <<0::160>>
+  @other_token <<1::160>>
 
   describe "form/0" do
     setup do
@@ -455,25 +457,8 @@ defmodule Engine.DB.BlockTest do
 
   describe "prepare_for_submission/0" do
     test "calculates merkle hash root and changes block state" do
-      block1 = insert(:block, %{state: Block.state_finalizing()})
-
-      _ =
-        insert(:payment_v1_transaction, %{
-          block: block1,
-          tx_index: 0,
-          inputs: [%{amount: 2, token: @eth}],
-          outputs: [%{amount: 1, token: @eth}]
-        })
-
-      block2 = insert(:block, %{state: Block.state_finalizing()})
-
-      _ =
-        insert(:payment_v1_transaction, %{
-          block: block2,
-          tx_index: 0,
-          inputs: [%{amount: 2, token: @eth}],
-          outputs: [%{amount: 1, token: @eth}]
-        })
+      _ = insert_non_empty_block(Block.state_finalizing())
+      _ = insert_non_empty_block(Block.state_finalizing())
 
       empty_block_hash =
         <<246, 9, 190, 253, 254, 144, 102, 254, 20, 231, 67, 179, 98, 62, 174, 135, 143, 188, 70, 128, 5, 96, 136, 22,
@@ -489,14 +474,15 @@ defmodule Engine.DB.BlockTest do
     end
 
     test "affects only blocks in finalizing state" do
-      block_finalizing1 = insert(:block, %{state: Block.state_finalizing()})
-      block_finalizing2 = insert(:block, %{state: Block.state_finalizing()})
-      block_forming = insert(:block)
-      block_pending_submission = insert(:block, %{state: Block.state_pending_submission()})
-      block_submitted = insert(:block, %{state: Block.state_submitted()})
-      block_confirmed = insert(:block, %{state: Block.state_confirmed()})
+      block_finalizing1 = insert_non_empty_block(Block.state_finalizing())
+      block_finalizing2 = insert_non_empty_block(Block.state_finalizing())
+      block_forming = insert_non_empty_block(Block.state_forming())
+      block_pending_submission = insert_non_empty_block(Block.state_pending_submission())
+      block_submitted = insert_non_empty_block(Block.state_submitted())
+      block_confirmed = insert_non_empty_block(Block.state_confirmed())
 
       {:ok, _} = Block.prepare_for_submission()
+
       assert block_forming == Repo.get!(Block, block_forming.id)
       assert block_pending_submission == Repo.get!(Block, block_pending_submission.id)
       assert block_submitted == Repo.get!(Block, block_submitted.id)
@@ -510,13 +496,130 @@ defmodule Engine.DB.BlockTest do
     end
 
     test "attaches fee transactions to blocks" do
+      block1 = insert_non_empty_block(Block.state_finalizing())
+
+      _ =
+        insert(:payment_v1_transaction, %{
+          block: block1,
+          tx_index: 1,
+          inputs: [%{amount: 2, token: @eth}],
+          outputs: [%{amount: 1, token: @eth}]
+        })
+
+      _ =
+        insert(:payment_v1_transaction, %{
+          block: block1,
+          tx_index: 2,
+          inputs: [%{amount: 2, token: @other_token}],
+          outputs: [%{amount: 1, token: @other_token}]
+        })
+
+      block2 = insert_non_empty_block(Block.state_finalizing())
+
+      insert(:payment_v1_transaction, %{
+        block: block2,
+        tx_index: 1,
+        inputs: [%{amount: 10, token: @other_token}],
+        outputs: [%{amount: 1, token: @other_token}]
+      })
+
+      {:ok, _} = Block.prepare_for_submission()
+
+      [fee_transaction1_block1, fee_transaction2_block1] = fee_transactions_for_block(block1)
+
+      assert expect_output_in_transaction(fee_transaction1_block1, %{
+               amount: 2,
+               output_guard: Configuration.fee_claimer_address(),
+               token: @eth
+             })
+
+      assert expect_output_in_transaction(fee_transaction2_block1, %{
+               amount: 1,
+               output_guard: Configuration.fee_claimer_address(),
+               token: @other_token
+             })
+
+      [fee_transaction1_block2, fee_transaction2_block2] = fee_transactions_for_block(block2)
+
+      assert expect_output_in_transaction(fee_transaction1_block2, %{
+               amount: 1,
+               output_guard: Configuration.fee_claimer_address(),
+               token: @eth
+             })
+
+      assert expect_output_in_transaction(fee_transaction2_block2, %{
+               amount: 9,
+               output_guard: Configuration.fee_claimer_address(),
+               token: @other_token
+             })
     end
 
     test "payment transaction indicies and fee transaction indicies form a continous range of natural numbers" do
+      block = insert_non_empty_block(Block.state_finalizing())
+
+      insert(:payment_v1_transaction, %{
+        block: block,
+        tx_index: 1,
+        inputs: [%{amount: 10, token: @other_token}],
+        outputs: [%{amount: 1, token: @other_token}]
+      })
+
+      {:ok, _} = Block.prepare_for_submission()
+
+      [fee_transaction1, fee_transaction2] =
+        block.id
+        |> TransactionQuery.fetch_transactions_from_block()
+        |> Repo.all()
+        |> Enum.filter(fn %Transaction{tx_type: tx_type} -> tx_type == ExPlasma.fee() end)
+
+      assert 2 == fee_transaction1.tx_index
+      assert 3 == fee_transaction2.tx_index
     end
 
     test "handles conflicts for concurrent calls" do
+      _ = insert_non_empty_block(Block.state_finalizing())
+      _ = insert_non_empty_block(Block.state_finalizing())
+
+      no_conflicts =
+        1..10
+        |> Enum.map(fn _ -> Task.async(fn -> Block.prepare_for_submission() end) end)
+        |> Enum.map(fn task -> Task.await(task) end)
+        |> Enum.all?(fn
+          {:ok, _} -> true
+          _ -> false
+        end)
+
+      assert no_conflicts
     end
+  end
+
+  defp fee_transactions_for_block(block) do
+    block.id
+    |> TransactionQuery.fetch_transactions_from_block()
+    |> Repo.all()
+    |> Enum.filter(fn %Transaction{tx_type: tx_type} -> tx_type == ExPlasma.fee() end)
+  end
+
+  defp expect_output_in_transaction(transaction, expected_output) do
+    {:ok, plasma_fee_transaction} = ExPlasma.decode(transaction.tx_bytes)
+    assert %{outputs: [fee_output1]} = plasma_fee_transaction
+    assert %{output_data: ^expected_output, output_type: 2} = fee_output1
+
+    true
+  end
+
+  defp insert_non_empty_block(block_state) do
+    block = insert(:block, %{state: block_state})
+
+    _ =
+      insert(:payment_v1_transaction, %{
+        block: block,
+        tx_index: 0,
+        inputs: [%{amount: 2, token: @eth}],
+        outputs: [%{amount: 1, token: @eth}]
+      })
+
+    Repo.get(Block, block.id)
   end
 
   defp receive_all_blocks() do
