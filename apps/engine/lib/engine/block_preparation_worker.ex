@@ -16,20 +16,18 @@ defmodule Engine.BlockPreparationWorker do
   end
 
   def init(args) do
-    block_preparation_interval = Keyword.fetch!(args, :block_preparation_interval)
+    interval = Keyword.fetch!(args, :block_preparation_interval)
     blocks_module = Keyword.get(args, :block_module, Block)
-    {:ok, _tref} = :timer.send_after(block_preparation_interval, :prepare_blocks_for_submission)
-    {:ok, %{block_preparation_interval: block_preparation_interval, blocks_module: blocks_module}}
+    {:ok, %{block_preparation_interval: interval, blocks_module: blocks_module}, interval}
   end
 
-  def handle_info(:prepare_blocks_for_submission, state) do
+  def handle_info(:timeout, state) do
     _ = Logger.debug("Preparing blocks for submission")
 
     case state.blocks_module.prepare_for_submission() do
       {:ok, %{blocks: blocks}} ->
         _ = Logger.info("Prepared #{inspect(Enum.count(blocks))} blocks for submision")
-        {:ok, _tref} = :timer.send_after(state.block_preparation_interval, :prepare_blocks_for_submission)
-        {:noreply, state}
+        {:noreply, state, state.interval}
 
       {:error, err} ->
         _ = Logger.error("Error when preparing blocks for submission: #{inspect(err)}")

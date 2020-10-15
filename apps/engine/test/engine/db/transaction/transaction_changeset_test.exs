@@ -73,6 +73,11 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
     end
   end
 
+  describe "new_fee_transaction_changeset/2" do
+    test "assigns fields" do
+    end
+  end
+
   def valid_params() do
     entity = TestEntity.alice()
 
