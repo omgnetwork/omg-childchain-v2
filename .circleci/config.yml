@@ -29,6 +29,20 @@ jobs:
       MIX_ENV: test
     steps:
       - checkout
+      - run:
+          name: "Don't commit private deps!"
+          command: |
+            export SHELL=/bin/bash
+            set +eo pipefail
+            grep "submit_block\|submit_block_vault\|gas" mix.lock
+            if [[ $? -eq 1 ]] 
+            then
+              echo "You're OK."
+              exit 0
+            else
+              echo "What did you do?"
+              exit 1
+            fi
       - install_rust
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
@@ -272,7 +286,6 @@ jobs:
       MIX_ENV=test
     steps:
       - checkout
-      - grep -r -c "submit_block\|submit_block_vault\|gas" mix.lock
       - add_rust_to_path
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
