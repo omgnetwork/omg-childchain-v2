@@ -14,13 +14,13 @@ commands:
             asdf plugin-add erlang || asdf plugin-update erlang
             asdf plugin-add elixir || asdf plugin-update elixir
             asdf install
+            mix local.rebar --force && mix local.hex --force
           no_output_timeout: 2400
       - save_cache:
           key: v2-asdf-install
           paths:
             - ~/.asdf
             - ~/.asdf-vm
-      - run: make install-hex-rebar
       - restore_cache:
           key: v2-mix-specs-cache-{{ .Branch }}-{{ checksum "mix.lock" }}  
   add_rust_to_path:
