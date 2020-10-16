@@ -129,6 +129,14 @@ defmodule Engine.DB.Block do
     |> Multi.run(:blocks_with_transactions, &attach_fee_transactions/2)
     |> Multi.run(:blocks_for_submission, &prepare_for_submission/2)
     |> Repo.transaction()
+    |> case do
+      {:ok, _} = result ->
+        result
+
+      error ->
+        _ = Logger.error("Error when preparing blocks for submission #{inspect(error)}")
+        error
+    end
   end
 
   @doc """

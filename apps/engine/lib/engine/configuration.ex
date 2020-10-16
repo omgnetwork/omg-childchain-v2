@@ -103,4 +103,8 @@ defmodule Engine.Configuration do
   def contract_semver() do
     Application.fetch_env!(@app, :contract_semver)
   end
+
+  def prepare_block_for_submission_interval_ms() do
+    Application.fetch_env!(@app, :prepare_block_for_submission_interval_ms)
+  end
 end

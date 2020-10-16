@@ -57,7 +57,9 @@ config :engine, Engine.Repo,
   # If checking out connections take longer than the new target, a DBConnection.ConnectionError is raised.
   # See: https://hexdocs.pm/db_connection/DBConnection.html#start_link/2-queue-config
   queue_target: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_TARGET_MS") || "100"),
-  queue_interval: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_INTERVAL_MS") || "2000")
+  queue_interval: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_INTERVAL_MS") || "2000"),
+  prepare_block_for_submission_interval_ms:
+    String.to_integer(System.get_env("PREPARE_BLOCK_FOR_SUBMISSION_INTERVAL_MS") || "10000")
 
 config :engine, ecto_repos: [Engine.Repo]
 

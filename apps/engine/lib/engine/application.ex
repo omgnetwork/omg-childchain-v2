@@ -10,6 +10,7 @@ defmodule Engine.Application do
   alias Engine.Ethereum.Monitor.AlarmHandler
   alias Engine.Ethereum.Supervisor, as: EthereumSupervisor
   alias Engine.Ethereum.SyncSupervisor
+  alias Engine.PrepareBlockForSubmissionWorker
   alias Engine.Repo.Monitor, as: RepoMonitor
   alias Engine.Telemetry.Handler
 
@@ -41,6 +42,7 @@ defmodule Engine.Application do
     repo_args = [child_spec: repo_child_spec]
 
     children = [
+      prepare_block_for_submission_worker_spec(),
       Supervisor.child_spec({RepoMonitor, repo_args}, id: RepoMonitor),
       EthereumSupervisor.child_spec([]),
       Supervisor.child_spec({SyncMonitor, monitor_args}, id: SyncMonitor)
@@ -71,5 +73,14 @@ defmodule Engine.Application do
       :ok -> :ok
       {:error, :already_exists} -> :ok
     end
+  end
+
+  defp prepare_block_for_submission_worker_spec() do
+    config = %{prepare_block_for_submission_interval_ms: Configuration.prepare_block_for_submission_interval_ms()}
+
+    %{
+      id: PrepareBlockForSubmissionWorker,
+      start: {PrepareBlockForSubmissionWorker, :start_link, [config]}
+    }
   end
 end

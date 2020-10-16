@@ -1,4 +1,4 @@
-defmodule Engine.BlockPreparationWorker do
+defmodule Engine.PrepareBlockForSubmissionWorker do
   @moduledoc """
   For blocks in finalizing state:
   - attaches fee transactions
@@ -16,7 +16,7 @@ defmodule Engine.BlockPreparationWorker do
   end
 
   def init(args) do
-    interval = Keyword.fetch!(args, :block_preparation_interval)
+    interval = Keyword.fetch!(args, :prepare_block_for_submission_interval_ms)
     blocks_module = Keyword.get(args, :block_module, Block)
     {:ok, %{block_preparation_interval: interval, blocks_module: blocks_module}, interval}
   end
