@@ -2,6 +2,9 @@ defmodule Engine.Configuration do
   @moduledoc """
     Configuration access interface
   """
+
+  alias ExPlasma.Encoding
+
   @app :engine
 
   def child_block_interval() do
@@ -75,10 +78,7 @@ defmodule Engine.Configuration do
   def fee_claimer_address() do
     @app
     |> Application.fetch_env!(:fee_claimer_address)
-    |> (fn "0x" <> suffix ->
-          {:ok, binary} = Base.decode16(suffix)
-          binary
-        end).()
+    |> Encoding.to_binary!()
   end
 
   @doc """
