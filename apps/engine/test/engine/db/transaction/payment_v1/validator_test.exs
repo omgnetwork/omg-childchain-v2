@@ -39,7 +39,7 @@ defmodule Engine.DB.Transaction.PaymentV1.ValidatorTest do
       validated_changeset = Validator.validate(changeset, @fee)
 
       refute validated_changeset.valid?
-      assert assert "Fees are not covered by inputs" in errors_on(validated_changeset).inputs
+      assert "Fees are not covered by inputs" in errors_on(validated_changeset).inputs
     end
 
     test "successfuly validates a merge transaction that doesn't include fees" do
@@ -67,7 +67,7 @@ defmodule Engine.DB.Transaction.PaymentV1.ValidatorTest do
       validated_changeset = Validator.validate(changeset, @fee)
 
       refute validated_changeset.valid?
-      assert assert "Overpaying fees" in errors_on(validated_changeset).inputs
+      assert "Overpaying fees" in errors_on(validated_changeset).inputs
     end
 
     test "rejects a transaction when inputs are not signed by their owner" do
@@ -81,7 +81,7 @@ defmodule Engine.DB.Transaction.PaymentV1.ValidatorTest do
       validated_changeset = Validator.validate(changeset, @fee)
 
       refute validated_changeset.valid?
-      assert assert "Given signatures do not match the inputs owners" in errors_on(validated_changeset).witnesses
+      assert "Given signatures do not match the inputs owners" in errors_on(validated_changeset).witnesses
     end
   end
 

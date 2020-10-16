@@ -7,6 +7,10 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
   alias Engine.Support.TestEntity
   alias ExPlasma.Builder
   alias ExPlasma.Output.Position
+  alias ExPlasma.Transaction, as: ExPlasmaTx
+  alias ExPlasma.Transaction.Type.Fee, as: ExPlasmaFee
+
+  @eth <<0::160>>
 
   setup do
     _ = insert(:merged_fee)
@@ -14,8 +18,8 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
   end
 
   describe "new_transaction_changeset/2" do
-    test "assigns fields" do
-      params = valid_params()
+    test "assigns values to fields" do
+      params = valid_payment_transaction_changeset_params()
       assert changeset = TransactionChangeset.new_transaction_changeset(%Transaction{}, params)
       assert changeset.valid?
 
@@ -27,8 +31,6 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
 
       assert [%{output_data: output_data}] = transaction.outputs
       assert [%{output_id: input_id}] = transaction.inputs
-
-      assert params[:outputs]
 
       expected_output_data =
         params[:outputs]
@@ -49,7 +51,9 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
     test "sets block number, transaction index and output positions" do
       tx_index = 1
       block = build(:block)
-      changeset = TransactionChangeset.new_transaction_changeset(%Transaction{}, valid_params())
+
+      changeset =
+        TransactionChangeset.new_transaction_changeset(%Transaction{}, valid_payment_transaction_changeset_params())
 
       update = TransactionChangeset.set_blknum_and_tx_index(changeset, %{block: block, next_tx_index: tx_index})
 
@@ -74,30 +78,124 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
   end
 
   describe "new_fee_transaction_changeset/2" do
-    test "assigns fields" do
+    test "assigns values to fields" do
+      plasma_output = ExPlasmaFee.new_output(TestEntity.alice().addr, @eth, 1)
+
+      {:ok, fee_tx} =
+        ExPlasma.fee()
+        |> Builder.new(outputs: [plasma_output])
+        |> ExPlasmaTx.with_nonce(%{blknum: 1_000, token: @eth})
+
+      tx_bytes = ExPlasma.encode!(fee_tx, signed: true)
+      {:ok, tx_hash} = ExPlasma.Transaction.hash(tx_bytes)
+
+      params = %{
+        outputs: Enum.map(fee_tx.outputs, &Map.from_struct/1),
+        tx_type: ExPlasma.fee(),
+        tx_hash: tx_hash,
+        tx_bytes: tx_bytes
+      }
+
+      changeset = TransactionChangeset.new_fee_transaction_changeset(%Transaction{}, params)
+      assert changeset.valid?
+
+      fee_transaction = Changeset.apply_changes(changeset)
+
+      assert params[:tx_type] == fee_transaction.tx_type
+      assert params[:tx_hash] == fee_transaction.tx_hash
+      assert params[:tx_bytes] == fee_transaction.tx_bytes
+
+      assert [%{output_data: output_data}] = fee_transaction.outputs
+
+      expected_output_data =
+        params[:outputs]
+        |> hd()
+        |> encoded_output_data()
+
+      assert expected_output_data == output_data
+    end
+
+    test "returns error for non-fee transaction type" do
+      changeset =
+        TransactionChangeset.new_fee_transaction_changeset(%Transaction{}, valid_payment_transaction_changeset_params())
+
+      refute changeset.valid?
+      assert "must be equal to #{inspect(ExPlasma.fee())}" in errors_on(changeset).tx_type
+    end
+
+    test "returns error when there is more than 1 output" do
+      plasma_output = ExPlasmaFee.new_output(TestEntity.alice().addr, @eth, 1)
+
+      {:ok, fee_tx} =
+        ExPlasma.fee()
+        |> Builder.new(outputs: [plasma_output, plasma_output])
+        |> ExPlasmaTx.with_nonce(%{blknum: 1_000, token: @eth})
+
+      tx_bytes = ExPlasma.encode!(fee_tx, signed: true)
+      {:ok, tx_hash} = ExPlasma.Transaction.hash(tx_bytes)
+
+      params = %{
+        outputs: Enum.map(fee_tx.outputs, &Map.from_struct/1),
+        tx_type: ExPlasma.fee(),
+        tx_hash: tx_hash,
+        tx_bytes: tx_bytes
+      }
+
+      changeset = TransactionChangeset.new_fee_transaction_changeset(%Transaction{}, params)
+
+      refute changeset.valid?
+      assert "should have 1 item(s)" in errors_on(changeset).outputs
+    end
+
+    test "returns error if any required param is missing" do
+      plasma_output = ExPlasmaFee.new_output(TestEntity.alice().addr, @eth, 1)
+
+      {:ok, fee_tx} =
+        ExPlasma.fee()
+        |> Builder.new(outputs: [plasma_output, plasma_output])
+        |> ExPlasmaTx.with_nonce(%{blknum: 1_000, token: @eth})
+
+      tx_bytes = ExPlasma.encode!(fee_tx, signed: true)
+      {:ok, tx_hash} = ExPlasma.Transaction.hash(tx_bytes)
+
+      params = %{
+        outputs: Enum.map(fee_tx.outputs, &Map.from_struct/1),
+        tx_type: ExPlasma.fee(),
+        tx_hash: tx_hash,
+        tx_bytes: tx_bytes
+      }
+
+      any_valid? =
+        params
+        |> Map.keys()
+        |> Enum.map(fn key -> Map.delete(params, key) end)
+        |> Enum.map(fn params_no_key ->
+          TransactionChangeset.new_fee_transaction_changeset(%Transaction{}, params_no_key)
+        end)
+        |> Enum.any?(fn changeset -> changeset.valid? end)
+
+      refute any_valid?
     end
   end
 
-  def valid_params() do
+  def valid_payment_transaction_changeset_params() do
     entity = TestEntity.alice()
 
     %{output_id: output_id} = insert(:deposit_output, %{amount: 2})
 
-    outputs =
-      Enum.map([build(:output, %{amount: 1})], fn %{output_data: output_data} ->
-        ExPlasma.Output.decode!(output_data)
-      end)
+    output =
+      :output
+      |> build(%{amount: 1})
+      |> (fn %{output_data: output_data} -> ExPlasma.Output.decode!(output_data) end).()
 
     {:ok, transaction} =
       ExPlasma.payment_v1()
-      |> Builder.new(%{inputs: [ExPlasma.Output.decode_id!(output_id)], outputs: outputs})
+      |> Builder.new(%{inputs: [ExPlasma.Output.decode_id!(output_id)], outputs: [output]})
       |> Builder.sign!([entity.priv_encoded])
       |> ExPlasma.Transaction.with_witnesses()
 
     tx_bytes = ExPlasma.encode!(transaction)
     {:ok, tx_hash} = ExPlasma.Transaction.hash(transaction)
-
-    fees = %{<<0::160>> => [1]}
 
     %{
       tx_type: transaction.tx_type,
@@ -107,7 +205,7 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
       witnesses: transaction.witnesses,
       inputs: Enum.map(transaction.inputs, &Map.from_struct/1),
       outputs: Enum.map(transaction.outputs, &Map.from_struct/1),
-      fees: fees
+      fees: %{@eth => [1]}
     }
   end
 

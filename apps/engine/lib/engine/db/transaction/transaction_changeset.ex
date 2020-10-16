@@ -39,7 +39,7 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
     |> cast(params, @required_fee_transaction_fields)
     |> validate_required(@required_fee_transaction_fields)
     |> validate_number(:tx_type, equal_to: ExPlasma.fee())
-    |> cast_assoc(:outputs, with: &Output.new/2)
+    |> cast_assoc(:outputs, with: &Output.new/2, required: true)
     |> validate_length(:outputs, is: 1)
   end
 

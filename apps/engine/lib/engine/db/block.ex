@@ -210,10 +210,10 @@ defmodule Engine.DB.Block do
 
         process_submission(repo, plasma_blocks, new_height, mined_child_block, submit)
 
-      error ->
+      _error ->
         nil
         # we encountered an error with one of the block submissions
-        # we'll stop here and continue laterfee_transactions_bytes
+        # we'll stop here and continue later
     end
   end
 
