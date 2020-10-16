@@ -210,10 +210,11 @@ defmodule Engine.DB.Block do
 
         process_submission(repo, plasma_blocks, new_height, mined_child_block, submit)
 
-      _error ->
-        nil
+      error ->
         # we encountered an error with one of the block submissions
         # we'll stop here and continue later
+        _ = Logger.error("Block submission stopped at block with nonce #{plasma_block.nonce}. Error: #{inspect(error)}")
+        process_submission(repo, [], new_height, mined_child_block, submit)
     end
   end
 
