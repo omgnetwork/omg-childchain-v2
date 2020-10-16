@@ -76,7 +76,7 @@ defmodule Engine.Application do
   end
 
   defp prepare_block_for_submission_worker_spec() do
-    config = %{prepare_block_for_submission_interval_ms: Configuration.prepare_block_for_submission_interval_ms()}
+    config = [prepare_block_for_submission_interval_ms: Configuration.prepare_block_for_submission_interval_ms()]
 
     %{
       id: PrepareBlockForSubmissionWorker,
