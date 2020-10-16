@@ -177,6 +177,7 @@ jobs:
           cache: "integration"
           dir: "~/childchain"
       - run: make init-contracts
+      - run: mix deps.get
       - run: mix test.integration
 
   test_docker_compose_release_public:
