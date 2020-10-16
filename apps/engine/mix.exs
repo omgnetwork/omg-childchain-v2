@@ -29,7 +29,7 @@ defmodule Engine.MixProject do
       {:status, in_umbrella: true},
       {:bus, in_umbrella: true},
       {:ex_abi, "~> 0.5.1"},
-      {:ethereumex, "0.6.3"},
+      {:ethereumex, "0.6.4"},
       {:ecto_sql, "~> 3.4"},
       {:ex_plasma, git: "https://github.com/omisego/ex_plasma.git", ref: "335d1e8ee644bcab3b6c104223a7756c26851fe0"},
       {:postgrex, "~> 0.15"},
