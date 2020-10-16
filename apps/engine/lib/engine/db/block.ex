@@ -236,14 +236,18 @@ defmodule Engine.DB.Block do
     |> repo.insert(on_conflict: :nothing)
   end
 
-  defp prepare_for_submission(repo, params) do
+  defp prepare_for_submission(repo, %{blocks_with_transactions: blocks_with_transactions}) do
     prepared_blocks =
-      Enum.map(params.blocks_with_transactions, fn block ->
+      Enum.map(blocks_with_transactions, fn block ->
         {:ok, prepared_block} = prepare_block_for_submission(repo, block)
         prepared_block
       end)
 
     {:ok, prepared_blocks}
+  end
+
+  defp prepare_for_submission(repo, %{block: block}) do
+    prepare_block_for_submission(repo, block)
   end
 
   defp prepare_block_for_submission(repo, block) do

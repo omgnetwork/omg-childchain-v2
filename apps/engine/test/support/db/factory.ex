@@ -129,7 +129,7 @@ defmodule Engine.DB.Factory do
 
   def payment_v1_transaction_factory(attr \\ %{})
 
-  def payment_v1_transaction_factory(%{inputs: inputs, outputs: outputs} = attr) do
+  def payment_v1_transaction_factory(%{inputs: inputs, outputs: outputs, block: block, tx_index: tx_index}) do
     entity = TestEntity.alice()
 
     {input_ids, inputs} =
@@ -166,8 +166,8 @@ defmodule Engine.DB.Factory do
       tx_bytes: tx_bytes,
       tx_hash: tx_hash,
       tx_type: ExPlasma.payment_v1(),
-      block: Map.get(attr, :block),
-      tx_index: Map.get(attr, :tx_index, 0),
+      block: block,
+      tx_index: tx_index,
       inserted_at: DateTime.truncate(DateTime.utc_now(), :second),
       updated_at: DateTime.truncate(DateTime.utc_now(), :second)
     }
@@ -197,8 +197,8 @@ defmodule Engine.DB.Factory do
     {:ok, tx_hash} = ExPlasma.Transaction.hash(tx_bytes)
 
     %Transaction{
-      inputs: [input],
-      outputs: [output],
+      inputs: Map.get(attr, :inputs, [input]),
+      outputs: Map.get(attr, :outputs, [output]),
       tx_bytes: Map.get(attr, :tx_bytes, tx_bytes),
       tx_hash: tx_hash,
       tx_type: ExPlasma.payment_v1(),
