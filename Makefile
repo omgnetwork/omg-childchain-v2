@@ -102,6 +102,7 @@ docker-childchain-prod:
 	docker run --rm -it \
 		-v $(PWD):/app \
 		-u root \
+		--env ${ENTERPRISE} \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
 		-c "cd /app && make build-childchain-prod"

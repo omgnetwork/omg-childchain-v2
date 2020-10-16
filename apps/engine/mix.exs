@@ -50,16 +50,19 @@ defmodule Engine.MixProject do
   end
 
   defp plugins() do
-    case System.get_env("VAULT") do
-      "0" -> [{:submit_block, git: "https://github.com/omgnetwork/submit_block.git"}]
-      "1" -> [{:submit_block_vault, git: "https://github.com/omgnetwork/submit_block_vault.git"}]
-      _ -> []
-    end ++
-      case System.get_env("GAS") do
-        nil -> []
-        "0" -> []
-        "1" -> [{:gas, git: "https://github.com/omgnetwork/gas.git"}]
-      end
+    case System.get_env("ENTERPRISE") do
+      "0" ->
+        [{:submit_block, git: "https://github.com/omgnetwork/submit_block.git"}]
+
+      "1" ->
+        [
+          {:gas, git: "https://github.com/omgnetwork/gas.git"},
+          {:submit_block_vault, git: "https://github.com/omgnetwork/submit_block_vault.git"}
+        ]
+
+      _ ->
+        []
+    end
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
