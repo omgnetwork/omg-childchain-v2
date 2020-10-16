@@ -1,13 +1,21 @@
 version: 2.1
 commands:
   install_elixir:
+    parameters:
+      cache:
+        default: ""
+        type: string
+      dir:
+        default: ""
+        type: string
     description: Install Erlang and Elixir
     steps:
       - restore_cache:
-          key: v2-asdf-install
+          key: v2-asdf-install-<<parameters.cache>>
       - run:
           name: Install Erlang and Elixir
           command: |
+            cd <<parameters.dir>>
             [ -d ~/.asdf-vm ] || git clone https://github.com/asdf-vm/asdf.git ~/.asdf-vm --branch v0.8.0
             echo 'source ~/.asdf-vm/asdf.sh' >> $BASH_ENV
             source $BASH_ENV
@@ -17,7 +25,7 @@ commands:
             mix local.rebar --force && mix local.hex --force
           no_output_timeout: 2400
       - save_cache:
-          key: v2-asdf-install
+          key: v2-asdf-install-<<parameters.cache>>
           paths:
             - ~/.asdf
             - ~/.asdf-vm
@@ -141,10 +149,10 @@ jobs:
           command: |
             docker image ls
             docker-compose ps
-      - install_elixir
       - run: sh .circleci/status.sh
-      - restore_cache:
-          key: v2-mix-specs-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
+      - install_elixir:
+          cache: "specs"
+          dir: "priv/cabbage"
       - run:
           name: Run specs
           command: |
@@ -163,10 +171,6 @@ jobs:
             mix format apps/watcher_info_api/lib/watcher_info_api/model/*.ex
             mix format apps/watcher_security_critical_api/lib/watcher_security_critical_api/model/*.ex
             MIX_ENV=test mix do compile --warnings-as-errors --ignore-module-conflict --force, test --exclude test
-      - save_cache:
-          key: v2-mix-specs-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
-          paths:
-            - "priv/cabbage/deps"
       - run:
           name: (Cabbage) Credo and formatting
           command: |
@@ -204,10 +208,10 @@ jobs:
           command: |
             docker image ls
             docker-compose ps
-      - install_elixir
+      - install_elixir:
+          cache: "specs"
+          dir: "priv/cabbage"
       - run: sh .circleci/status.sh
-      - restore_cache:
-          key: v2-mix-specs-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run:
           name: Print watcher logs
           command: make cabbage-reorg-watcher-logs
