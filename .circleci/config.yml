@@ -116,7 +116,9 @@ jobs:
       - checkout
       - install_rust
       - run: docker-compose up -d postgres
-      - install_elixir
+      - install_elixir:
+          cache: "integration"
+          dir: "~/childchain"
       - run: make init-contracts
       - restore_cache:
           key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
