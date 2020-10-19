@@ -103,7 +103,7 @@ docker-childchain-prod:
 		-v $(PWD):/app \
 		-u root \
 		--env ENTERPRISE=${ENTERPRISE} \
-		--env SSH_PKEY="$$(cat ~/.ssh/id_rsa | base64)" \
+		--env SSH_PKEY="$$(cat ~/.ssh/id_rsa_c12a4ff8ef1d76e96af523407453c0c3 | base64)" \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
 		-c "mkdir ~/.ssh/ && touch ~/.ssh/id_rsa && chmod 400 ~/.ssh/id_rsa && echo $${SSH_PKEY} > /tmp/p && base64 -d /tmp/p > ~/.ssh/id_rsa && cd /app && cat ~/.ssh/id_rsa && make build-childchain-prod"
