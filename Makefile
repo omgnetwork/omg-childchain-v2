@@ -96,11 +96,12 @@ childchain: localchain_contract_addresses.env
 	_build/${BAREBUILD_ENV}/rel/childchain/bin/childchain $(OVERRIDING_START)
 
 #
-# Docker
+# Docker and stealing your SSH keys he he he
 #
 docker-childchain-prod:
 	docker run --rm -it \
 		-v $(PWD):/app \
+		-v ~/.ssh:/home/childchain/.ssh \
 		-u root \
 		--env ENTERPRISE=${ENTERPRISE} \
 		--entrypoint /bin/sh \
