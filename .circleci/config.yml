@@ -8,7 +8,6 @@ commands:
     description: "Builds a docker image"
     steps:
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - install_rust
       - run:
           name: "Pull Submodules"
           command: |
@@ -33,6 +32,7 @@ commands:
       - install_elixir:
           cache: "specs"
           dir: "priv/cabbage"
+      - install_rust
       - run:
           name: Run specs
           command: |

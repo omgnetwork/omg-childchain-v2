@@ -101,12 +101,13 @@ childchain: localchain_contract_addresses.env
 docker-childchain-prod:
 	docker run --rm -it \
 		-v $(PWD):/app \
+		-v ~/.ssh:/home/root/.ssh \
 		-v ~/.ssh:/home/childchain/.ssh \
 		-u root \
 		--env ENTERPRISE=${ENTERPRISE} \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
-		-c "cd /app && make build-childchain-prod"
+		-c "echo $$(whoami) && chmod 400 ~/.ssh/id_rsa && cd /app && make build-childchain-prod"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
