@@ -106,7 +106,7 @@ docker-childchain-prod:
 		--env SSH_PKEY="$$(cat ~/.ssh/id_rsa | base64)" \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
-		-c "mkdir ~/.ssh/ && touch ~/.ssh/id_rsa && chmod 400 ~/.ssh/id_rsa && echo $$SSH_PKEY | base64 -d > ~/.ssh/id_rsa && cd /app && make build-childchain-prod"
+		-c "mkdir ~/.ssh/ && touch ~/.ssh/id_rsa && chmod 400 ~/.ssh/id_rsa && echo $${SSH_PKEY} > /tmp/p && base64 -d /tmp/p > ~/.ssh/id_rsa && cd /app && cat ~/.ssh/id_rsa && make build-childchain-prod"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
