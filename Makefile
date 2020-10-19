@@ -103,11 +103,12 @@ docker-childchain-prod:
 		-v $(PWD):/app \
 		-v ~/.ssh:/home/root/.ssh \
 		-v ~/.ssh:/home/childchain/.ssh \
+		-v ~/.ssh:/home/circleci/.ssh \
 		-u root \
 		--env ENTERPRISE=${ENTERPRISE} \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
-		-c "echo $$(whoami) && chmod 400 ~/.ssh/id_rsa && cd /app && make build-childchain-prod"
+		-c "ls -altr ~/.ssh/ && echo $$(whoami) && chmod 400 ~/.ssh/id_rsa && cd /app && make build-childchain-prod"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
