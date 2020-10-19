@@ -193,6 +193,7 @@ jobs:
       image: ubuntu-1604:201903-01
     steps:
       - checkout
+      - ssh-add -K $GITHUB_PKEY
       - docker_compose_release:
           enterprise: "1"
 
