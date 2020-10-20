@@ -98,6 +98,10 @@ childchain: localchain_contract_addresses.env
 #
 # Docker and stealing your SSH keys he he he
 #
+
+ensure_pkey:
+	base64 -d $$SSH_PKEY > /tmp/p && ssh-add /tmp/p && rm /tmp/p
+
 docker-childchain-prod:
 	docker run --rm -it \
 		-v $(PWD):/app \
@@ -106,7 +110,7 @@ docker-childchain-prod:
 		--env SSH_PKEY=${SSH_PKEY} \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) #\
-		-c "echo $SSH_PKEY > /tmp/p && ssh-add /tmp/p && rm /tmp/p && cd /app && make build-childchain-prod"
+		-c "cd /app && make ensure_pkey && make build-childchain-prod"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
