@@ -105,7 +105,7 @@ pkey_permission:
 	chmod 400 /tmp/p
 
 add_pkey:
-	 ssh-add -k /tmp/p
+	  eval 'ssh-agent -c' && ssh-add -k /tmp/p
 
 ensure_pkey: 
 		rm /tmp/p && \ 
@@ -120,7 +120,7 @@ docker-childchain-prod:
 		--env SSH_PKEY="$${SSH_PKEY}" \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
-		-c "cd /app && eval 'ssh-agent -c' && make decode_pkey && make pkey_permission && make add_pkey && make ensure_pkey && make build-childchain-prod"
+		-c "cd /app && make decode_pkey && make pkey_permission && make add_pkey && make ensure_pkey && make build-childchain-prod"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
