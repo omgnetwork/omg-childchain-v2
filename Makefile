@@ -110,7 +110,7 @@ docker-childchain-prod:
 		--env SSH_PKEY="$${SSH_PKEY}" \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
-		-c "cd /app && make ensure_pkey && make build-childchain-prod"
+		-c "cd /app && make ensure_pkey && sleep 3600"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
