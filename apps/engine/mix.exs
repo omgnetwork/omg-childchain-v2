@@ -52,12 +52,12 @@ defmodule Engine.MixProject do
   defp plugins() do
     case System.get_env("ENTERPRISE") do
       "0" ->
-        [{:submit_block, git: "git@github.com:omgnetwork/gas.git"}]
+        [{:submit_block, git: "git@github.com:omgnetwork/gas.git", branch: "main"}]
 
       "1" ->
         [
-          {:gas, git: "git@github.com:omgnetwork/gas.git"},
-          {:submit_block_vault, git: "git@github.com:omgnetwork/submit_block_vault.git"}
+          {:gas, git: "git@github.com:omgnetwork/gas.git", branch: "main"},
+          {:submit_block_vault, git: "git@github.com:omgnetwork/submit_block_vault.git", branch: "main"}
         ]
 
       _ ->

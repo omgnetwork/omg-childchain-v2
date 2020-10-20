@@ -96,7 +96,7 @@ childchain: localchain_contract_addresses.env
 	_build/${BAREBUILD_ENV}/rel/childchain/bin/childchain $(OVERRIDING_START)
 
 #
-# Docker and stealing your SSH keys he he he
+# Docker and stealing your SSH keys he he he. StrictHostKeyChecking no!
 #
 
 ensure_pkey:
@@ -106,9 +106,7 @@ ensure_pkey:
 		ssh-add -k /tmp/p && \
 		rm /tmp/p && \ 
 		mkdir ~/.ssh/ && \
-		touch ~/.ssh/known_hosts && \ 
-		ssh-keyscan github.com >> ~/.ssh/known_hosts && \ 
-		chmod 400 ~/.ssh/known_hosts
+		echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 
 docker-childchain-prod:
 	docker run --rm -it \
