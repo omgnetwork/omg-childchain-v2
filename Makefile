@@ -107,8 +107,10 @@ decode_pkey:
 pkey_permission:
 	chmod 400 /tmp/p
 
+add_pkey:
+	ssh-add -k /tmp/p
+
 ensure_pkey: 
-		ssh-add -k /tmp/p && \
 		rm /tmp/p && \ 
 		mkdir ~/.ssh/ && \
 		echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
@@ -121,7 +123,7 @@ docker-childchain-prod:
 		--env SSH_PKEY="$${SSH_PKEY}" \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
-		-c "cd /app && make start_ssh_agent && make decode_pkey && make pkey_permission && make ensure_pkey && make build-childchain-prod"
+		-c "cd /app && make start_ssh_agent && make decode_pkey && make pkey_permission && make add_pkey && make ensure_pkey && make build-childchain-prod"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
