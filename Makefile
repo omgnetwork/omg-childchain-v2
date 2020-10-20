@@ -100,14 +100,14 @@ childchain: localchain_contract_addresses.env
 #
 
 ensure_pkey:
-	echo $$SSH_PKEY | base64 -d > /tmp/p && ssh-add /tmp/p && rm /tmp/p
+	eval `ssh-agent -s` && echo $$SSH_PKEY | base64 -d > /tmp/p && chmod 400 /tmp/p && ssh-add /tmp/p && rm /tmp/p
 
 docker-childchain-prod:
 	docker run --rm -it \
 		-v $(PWD):/app \
 		-u root \
 		--env ENTERPRISE=${ENTERPRISE} \
-		--env SSH_PKEY=${SSH_PKEY} \
+		--env SSH_PKEY="$${SSH_PKEY}" \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
 		-c "cd /app && make ensure_pkey && make build-childchain-prod"
