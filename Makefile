@@ -101,9 +101,11 @@ childchain: localchain_contract_addresses.env
 start_ssh_agent:
 	$(eval $("ssh-agent -s"))
 
+decode_pkey:
+	echo $$SSH_PKEY | base64 -d > /tmp/p
+
 ensure_pkey:
-	echo $$SSH_PKEY | base64 -d > /tmp/p && \
-		chmod 400 /tmp/p && \ 
+	chmod 400 /tmp/p && \ 
 		ssh-add -k /tmp/p && \
 		rm /tmp/p && \ 
 		mkdir ~/.ssh/ && \
@@ -117,7 +119,7 @@ docker-childchain-prod:
 		--env SSH_PKEY="$${SSH_PKEY}" \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
-		-c "cd /app && make start_ssh_agent && make ensure_pkey && make build-childchain-prod"
+		-c "cd /app && make start_ssh_agent && make decode_pkey && make ensure_pkey && make build-childchain-prod"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
