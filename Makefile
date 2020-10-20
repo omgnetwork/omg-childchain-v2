@@ -104,8 +104,10 @@ start_ssh_agent:
 decode_pkey:
 	echo $$SSH_PKEY | base64 -d > /tmp/p
 
-ensure_pkey:
-	chmod 400 /tmp/p && \ 
+pkey_permission:
+	chmod 400 /tmp/p
+
+ensure_pkey: 
 		ssh-add -k /tmp/p && \
 		rm /tmp/p && \ 
 		mkdir ~/.ssh/ && \
@@ -119,7 +121,7 @@ docker-childchain-prod:
 		--env SSH_PKEY="$${SSH_PKEY}" \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
-		-c "cd /app && make start_ssh_agent && make decode_pkey && make ensure_pkey && make build-childchain-prod"
+		-c "cd /app && make start_ssh_agent && make decode_pkey && make pkey_permission && make ensure_pkey && make build-childchain-prod"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
