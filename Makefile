@@ -103,10 +103,10 @@ docker-childchain-prod:
 		-v $(PWD):/app \
 		-u root \
 		--env ENTERPRISE=${ENTERPRISE} \
-		--env SSH_PKEY==${SSH_PKEY} \
+		--env SSH_PKEY=${SSH_PKEY} \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) #\
-		-c "echo $SSH_PKEY > /tmp/p && ssh-add /tmp/p && rm /tmp/p && cd /app && cat /app/mix.exs && make build-childchain-prod"
+		-c "echo $SSH_PKEY > /tmp/p && ssh-add /tmp/p && rm /tmp/p && cd /app && make build-childchain-prod"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
