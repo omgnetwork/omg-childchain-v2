@@ -105,7 +105,10 @@ ensure_pkey:
 		chmod 400 /tmp/p && \ 
 		ssh-add -k /tmp/p && \
 		rm /tmp/p && \ 
-		ssh-keyscan github.com >> ~/.ssh/known_hosts
+		mkdir ~/.ssh/ && \
+		touch ~/.ssh/known_hosts && \ 
+		ssh-keyscan github.com >> ~/.ssh/known_hosts && \ 
+		chmod 400 ~/.ssh/known_hosts
 
 docker-childchain-prod:
 	docker run --rm -it \
