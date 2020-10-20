@@ -100,7 +100,7 @@ childchain: localchain_contract_addresses.env
 #
 
 ensure_pkey:
-	base64 -d $$SSH_PKEY > /tmp/p && ssh-add /tmp/p && rm /tmp/p
+	echo $$SSH_PKEY | base64 -d > /tmp/p && ssh-add /tmp/p && rm /tmp/p
 
 docker-childchain-prod:
 	docker run --rm -it \
