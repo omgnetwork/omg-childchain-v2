@@ -196,7 +196,6 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "c1:2a:4f:f8:ef:1d:76:e9:6a:f5:23:40:74:53:c0:c3"
-      - run: git clone https://github.com/omgnetwork/gas.git
       - docker_compose_release:
           enterprise: "1"
 
