@@ -100,7 +100,12 @@ childchain: localchain_contract_addresses.env
 #
 
 ensure_pkey:
-	eval `ssh-agent -s` && echo $$SSH_PKEY | base64 -d > /tmp/p && chmod 400 /tmp/p && ssh-add -k /tmp/p && rm /tmp/p
+	eval `ssh-agent -s` \ 
+		echo $$SSH_PKEY | base64 -d > /tmp/p \
+		chmod 400 /tmp/p  \ 
+		ssh-add -k /tmp/p \
+		rm /tmp/p \ 
+		ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 docker-childchain-prod:
 	docker run --rm -it \
