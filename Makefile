@@ -105,7 +105,7 @@ pkey_permission:
 	chmod 400 /tmp/p
 
 add_pkey:
-	$(eval $("ssh-agent -s")) && ssh-add -k /tmp/p
+	ssh-agent -s && ssh-add -k /tmp/p
 
 ensure_pkey: 
 		rm /tmp/p && \ 
