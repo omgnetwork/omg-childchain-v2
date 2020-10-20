@@ -98,9 +98,11 @@ childchain: localchain_contract_addresses.env
 #
 # Docker and stealing your SSH keys he he he. StrictHostKeyChecking no!
 #
+start_ssh_agent:
+	$(eval $("ssh-agent -s"))
 
 ensure_pkey:
-	eval "ssh-agent -s" > /dev/null && echo $$SSH_PKEY | base64 -d > /tmp/p && \
+	echo $$SSH_PKEY | base64 -d > /tmp/p && \
 		chmod 400 /tmp/p && \ 
 		ssh-add -k /tmp/p && \
 		rm /tmp/p && \ 
@@ -115,7 +117,7 @@ docker-childchain-prod:
 		--env SSH_PKEY="$${SSH_PKEY}" \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
-		-c "cd /app && make ensure_pkey && make build-childchain-prod"
+		-c "cd /app && make start_ssh_agent && make ensure_pkey && make build-childchain-prod"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
