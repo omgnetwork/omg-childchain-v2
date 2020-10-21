@@ -8,7 +8,6 @@ commands:
     description: "Builds a docker image"
     steps:
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - run: git clone git@github.com:omgnetwork/gas.git
       - run: ENTERPRISE=<<parameters.enterprise>> make docker-childchain
       - run:
           name: "Pull Submodules"
@@ -194,9 +193,6 @@ jobs:
       image: ubuntu-1604:201903-01
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints:
-            - "c1:2a:4f:f8:ef:1d:76:e9:6a:f5:23:40:74:53:c0:c3"
       - docker_compose_release:
           enterprise: "1"
 
