@@ -126,7 +126,7 @@ docker-childchain-prod:
 		--env SSH_AUTH_SOCK=/ssh-agent/ssh_auth_sock \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
-		-c "cd /app && make build-childchain-prod"
+		-c "cd /app && make mmm && make build-childchain-prod"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
