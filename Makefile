@@ -112,6 +112,10 @@ ensure_pkey:
 		mkdir ~/.ssh/ || true && \
 		echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 #SSH_AUTH_SOCK=/tmp/ssh-VlWazq2mL7fK/agent.14
+
+mmm:
+	ssh -o StrictHostKeyChecking=no git@github.com || true
+
 docker-childchain-prod:
 	docker run --rm -it \
 		-v $(PWD):/app \
@@ -119,10 +123,10 @@ docker-childchain-prod:
 		-u root \
 		--env ENTERPRISE=${ENTERPRISE} \
 		--env SSH_PKEY="$${SSH_PKEY}" \
-		--env SSH_AUTH_SOCK=/ssh-agent \
+		--env SSH_AUTH_SOCK=/ssh-agent/ssh_auth_sock \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
-		-c "cd /app && make build-childchain-prod"
+		-c "cd /app && make mmm && make build-childchain-prod"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
