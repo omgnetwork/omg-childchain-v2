@@ -120,10 +120,11 @@ mmm:
 docker-childchain-prod:
 	docker run --rm -it \
 		-v $(PWD):/app \
+		-v ~/.ssh/:/home/root/.ssh \
 		-v $$(dirname ${SSH_AUTH_SOCK}):/ssh-agent \
 		-u root \
 		--env ENTERPRISE=${ENTERPRISE} \
-		--env SSH_AUTH_SOCK=/ssh-agent/ssh_auth_sock \
+		--env SSH_AUTH_SOCK=/ssh-agent/$$(basename ${SSH_AUTH_SOCK}) \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
 		-c "cd /app && make mmm && make build-childchain-prod"
