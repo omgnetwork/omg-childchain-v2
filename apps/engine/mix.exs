@@ -57,7 +57,7 @@ defmodule Engine.MixProject do
       "1" ->
         [
           {:gas, git: "git@github.com:omgnetwork/gas.git", branch: "main"},
-          {:submit_block_vault, git: "git@github.com:omgnetwork/submit_block_vault.git", branch: "main"}
+          {:submit_block, git: "git@github.com:omgnetwork/submit_block_vault.git", branch: "main"}
         ]
 
       _ ->

@@ -115,18 +115,18 @@ ensure_pkey:
 
 mmm:
 	ssh -o StrictHostKeyChecking=no git@github.com || true
-
+#ssh-add ~/.ssh/id_rsa
+#make sure you're running eval "$(ssh-agent -s)"
 docker-childchain-prod:
 	docker run --rm -it \
 		-v $(PWD):/app \
 		-v $$(dirname ${SSH_AUTH_SOCK}):/ssh-agent \
 		-u root \
 		--env ENTERPRISE=${ENTERPRISE} \
-		--env SSH_PKEY="$${SSH_PKEY}" \
 		--env SSH_AUTH_SOCK=/ssh-agent/ssh_auth_sock \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
-		-c "cd /app && make mmm && make build-childchain-prod"
+		-c "cd /app && make build-childchain-prod"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
