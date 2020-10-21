@@ -7,8 +7,8 @@ commands:
         type: string
     description: "Builds a docker image"
     steps:
-      - run: ENTERPRISE=<<parameters.enterprise>> make docker-childchain
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run: ENTERPRISE=<<parameters.enterprise>> make docker-childchain
       - run:
           name: "Pull Submodules"
           command: |
