@@ -96,11 +96,9 @@ defmodule Engine.DB.Transaction do
   def insert(tx_bytes) do
     with {:ok, changeset} <- decode(tx_bytes) do
       Multi.new()
-      |> Multi.run(:current_forming_block, &Block.get_forming_block_for_update/2)
-      |> Multi.run(:block_with_next_tx_index, &Block.get_block_and_tx_index_for_transaction/2)
-      |> Multi.insert(:transaction, fn %{block_with_next_tx_index: block_with_next_tx_index} ->
-        TransactionChangeset.set_blknum_and_tx_index(changeset, block_with_next_tx_index)
-      end)
+      # |> Multi.run(:current_forming_block, &Block.get_forming_block_for_update/2)
+      # |> Multi.run(:block_with_next_tx_index, &Block.get_block_and_tx_index_for_transaction/2)
+      |> Multi.insert(:transaction, changeset)
       |> Repo.transaction()
       |> case do
         {:ok, _} = result ->

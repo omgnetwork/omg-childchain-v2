@@ -8,10 +8,12 @@ defmodule Engine.DB.BlockTest do
   alias Engine.DB.Transaction.TransactionQuery
   alias Engine.Repo
   alias ExPlasma.Merkle
+  alias Engine.Support.TestEntity
 
   describe "form/0" do
     setup do
       block = insert(:block)
+      _ = insert(:merged_fee)
       {:ok, %{block: block}}
     end
 
@@ -91,31 +93,46 @@ defmodule Engine.DB.BlockTest do
     @tag timeout: :infinity
     @tag :integration
     test "correctly calculates hash for a lot of transactions", %{block: block} do
-      alice_priv_key =
-        "0x" <>
-          Base.encode16(
-            <<54, 43, 207, 67, 140, 160, 190, 135, 18, 162, 70, 120, 36, 245, 106, 165, 5, 101, 183, 55, 11, 117, 126,
-              135, 49, 50, 12, 228, 173, 219, 183, 175>>,
-            case: :lower
-          )
+      entity = TestEntity.alice()
 
       bob_address = <<207, 194, 79, 222, 88, 128, 171, 217, 153, 41, 195, 239, 138, 178, 227, 16, 72, 173, 118, 35>>
 
-      _ =
-        Enum.each(1..64_000, fn index ->
+      task = fn task_id ->
+        1..15000
+        |> Enum.map(fn index ->
+          blknum = task_id * 20_000 + index
+          insert(:deposit_output, %{blknum: blknum, amount: 2})
+
           tx_bytes =
             ExPlasma.payment_v1()
             |> ExPlasma.Builder.new()
-            |> ExPlasma.Builder.add_input(blknum: 1, txindex: index, oindex: index)
+            |> ExPlasma.Builder.add_input(blknum: blknum, txindex: 0, oindex: 0)
             |> ExPlasma.Builder.add_output(
               output_type: 1,
-              output_data: %{output_guard: bob_address, token: <<0::160>>, amount: 100}
+              output_data: %{output_guard: bob_address, token: <<0::160>>, amount: 1}
             )
-            |> ExPlasma.Builder.sign!([alice_priv_key])
+            |> ExPlasma.Builder.sign!([entity.priv_encoded])
             |> ExPlasma.encode!()
 
-          _ = insert(:payment_v1_transaction, %{block: block, tx_index: index, tx_bytes: tx_bytes})
+          {time, _} = :timer.tc(fn -> Transaction.insert(tx_bytes) end)
+          time
         end)
+        |> Enum.reduce(0, fn a, b -> a + b end)
+      end
+
+      1..1
+      |> Enum.map(fn task_id -> Task.async(fn -> task.(task_id) end) end)
+      |> Enum.map(fn t -> Task.await(t, 300_000) end)
+      |> Enum.map(fn time -> time / 1_000_000 end)
+      |> Enum.map(&IO.inspect/1)
+
+      tx_indicies = from(t in Transaction, select: t.tx_index)
+      |> Repo.all()
+      |> Enum.frequencies()
+      |> Enum.each(fn
+          {key, val} when val != 1 -> IO.inspect("!!!!!!!!! #{key} #{val}")
+          _ -> ""
+      end)
 
       assert {:ok, %{block_for_submission: block_for_submission}} = Block.form()
 

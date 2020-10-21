@@ -17,6 +17,24 @@ defmodule Engine.Repo.Migrations.CreateTransactions do
     create(index(:transactions, [:block_id]))
     create(unique_index(:transactions, [:tx_type, :tx_hash, :block_id]))
     create(unique_index(:transactions, [:tx_index, :block_id]))
+    #create(unique_index(:transactions, :tx_index))
     execute("SELECT ecto_manage_updated_at('transactions');")
+
+    execute("CREATE SEQUENCE tx_index START 1;")
+
+    execute("
+    CREATE OR REPLACE FUNCTION fill_in_tx_index() RETURNS trigger AS $$
+    BEGIN
+      NEW.tx_index := nextval('tx_index') - 1;
+      IF (NEW.tx_index > 64000) THEN
+          ALTER SEQUENCE tx_index RESTART WITH 1;
+      END IF;
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;")
+
+    execute(
+      "CREATE TRIGGER fill_in_tx_index BEFORE INSERT ON transactions FOR EACH ROW EXECUTE PROCEDURE fill_in_tx_index();"
+    )
   end
 end
