@@ -95,28 +95,12 @@ childchain: localchain_contract_addresses.env
 	. ${OVERRIDING_VARIABLES} && \
 	_build/${BAREBUILD_ENV}/rel/childchain/bin/childchain $(OVERRIDING_START)
 
-#
-# Docker and stealing your SSH keys he he he. StrictHostKeyChecking no!
-#
-decode_pkey:
-	echo $$SSH_PKEY | base64 -d > /tmp/p
-
-pkey_permission:
-	chmod 400 /tmp/p
-
-add_pkey:
-	  ssh-add -k /tmp/p
-
-ensure_pkey: 
-		rm /tmp/p && \ 
-		mkdir ~/.ssh/ || true && \
-		echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-#SSH_AUTH_SOCK=/tmp/ssh-VlWazq2mL7fK/agent.14
-
-mmm:
+disable_strict_host_checking:
 	ssh -o StrictHostKeyChecking=no git@github.com || true
-#ssh-add ~/.ssh/id_rsa
-#make sure you're running eval "$(ssh-agent -s)"
+# make sure you're running eval "$(ssh-agent -s)"
+# starting the ssh-agent should set `SSH_AUTH_SOCK` env var!
+# https://www.rockyourcode.com/ssh-agent-could-not-open-a-connection-to-your-authentication-agent-with-fish-shell/
+# after that you need to unlock your private key with: ssh-add ~/.ssh/id_rsa
 docker-childchain-prod:
 	docker run --rm -it \
 		-v $(PWD):/app \
@@ -127,7 +111,7 @@ docker-childchain-prod:
 		--env SSH_AUTH_SOCK=/ssh-agent/$$(basename ${SSH_AUTH_SOCK}) \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
-		-c "cd /app && make mmm && make build-childchain-prod"
+		-c "cd /app && make disable_strict_host_checking && make build-childchain-prod"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
