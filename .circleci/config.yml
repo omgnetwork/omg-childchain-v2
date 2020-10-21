@@ -7,6 +7,7 @@ commands:
         type: string
     description: "Builds a docker image"
     steps:
+      - run: ENTERPRISE=<<parameters.enterprise>> make docker-childchain
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run:
           name: "Pull Submodules"
@@ -17,7 +18,6 @@ commands:
           name: Setup data dir
           command: |
             [ -d data ] || mkdir data && chmod 777 data
-      - run: ENTERPRISE=<<parameters.enterprise>> make docker-childchain
       - run:
           name: Start daemon services
           command: |

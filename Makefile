@@ -105,22 +105,24 @@ pkey_permission:
 	chmod 400 /tmp/p
 
 add_pkey:
-	  eval 'ssh-agent -c' && ssh-add -k /tmp/p
+	  ssh-add -k /tmp/p
 
 ensure_pkey: 
 		rm /tmp/p && \ 
-		mkdir ~/.ssh/ && \
+		mkdir ~/.ssh/ || true && \
 		echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
-
+#SSH_AUTH_SOCK=/tmp/ssh-VlWazq2mL7fK/agent.14
 docker-childchain-prod:
 	docker run --rm -it \
 		-v $(PWD):/app \
+		-v $$(dirname ${SSH_AUTH_SOCK}):/ssh-agent \
 		-u root \
 		--env ENTERPRISE=${ENTERPRISE} \
 		--env SSH_PKEY="$${SSH_PKEY}" \
+		--env SSH_AUTH_SOCK=/ssh-agent \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
-		-c "cd /app && make decode_pkey && make pkey_permission && make add_pkey && make ensure_pkey && make build-childchain-prod"
+		-c "cd /app && make build-childchain-prod"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
