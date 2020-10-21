@@ -8,6 +8,7 @@ commands:
     description: "Builds a docker image"
     steps:
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run: git clone git@github.com:omgnetwork/gas.git
       - run: ENTERPRISE=<<parameters.enterprise>> make docker-childchain
       - run:
           name: "Pull Submodules"
