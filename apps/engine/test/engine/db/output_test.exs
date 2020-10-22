@@ -1,5 +1,5 @@
 defmodule Engine.DB.OutputTest do
-  use Engine.DB.DataCase, async: true
+  use Engine.DB.DataCase, async: false
   doctest Engine.DB.Output, import: true
 
   alias Ecto.Changeset

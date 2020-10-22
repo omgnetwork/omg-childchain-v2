@@ -4,8 +4,6 @@ defmodule API.V1.RouterTest do
 
   alias API.V1.Router
   alias Engine.DB.Block
-  alias Engine.DB.Transaction
-  alias Engine.Repo
   alias Engine.Support.TestEntity
   alias ExPlasma.Builder
   alias ExPlasma.Encoding
@@ -122,14 +120,19 @@ defmodule API.V1.RouterTest do
   end
 
   describe "block.get" do
-    test "that it returns a block" do
-      %{id: id} = insert(:payment_v1_transaction)
-      Block.form()
-      transaction = Transaction |> Repo.get(id) |> Repo.preload(:block)
+    setup do
+      block = insert(:block)
+      {:ok, %{forming_block: block}}
+    end
+
+    test "it returns a block", %{forming_block: block} do
+      transaction = insert(:payment_v1_transaction, %{block: block})
+
+      {:ok, %{block_for_submission: formed_block}} = Block.form()
 
       tx_bytes = Encoding.to_hex(transaction.tx_bytes)
-      hash = Encoding.to_hex(transaction.block.hash)
-      number = transaction.block.blknum
+      hash = Encoding.to_hex(formed_block.hash)
+      number = formed_block.blknum
       {:ok, payload} = post("block.get", %{hash: hash})
 
       assert_payload_data(payload, %{
@@ -139,7 +142,7 @@ defmodule API.V1.RouterTest do
       })
     end
 
-    test "that it returns an error if missing hash params" do
+    test "it returns an error if missing hash params" do
       {:ok, payload} = post("block.get", %{})
 
       assert_payload_data(payload, %{
@@ -149,7 +152,7 @@ defmodule API.V1.RouterTest do
       })
     end
 
-    test "that it returns an error if hash param is not a hex" do
+    test "it returns an error if hash param is not a hex" do
       {:ok, payload} = post("block.get", %{hash: "12345"})
 
       assert_payload_data(payload, %{
@@ -161,29 +164,34 @@ defmodule API.V1.RouterTest do
   end
 
   describe "transaction.submit" do
-    test "decodes a transaction and inserts it" do
+    setup do
+      block = insert(:block)
+      {:ok, %{blknum: block.blknum}}
+    end
+
+    test "after a block is formed, incoming transaction is associated with a new block", %{blknum: blknum} do
       insert(:merged_fee)
 
-      entity = TestEntity.alice()
-      %{output_id: output_id} = insert(:deposit_output, amount: 10, output_guard: entity.addr)
-      %{output_data: output_data} = build(:output, output_guard: entity.addr, amount: 9)
+      {tx_bytes1, tx_hash1} = tx_bytes_and_hash()
 
-      transaction =
-        Builder.new(ExPlasma.payment_v1(), %{
-          inputs: [ExPlasma.Output.decode_id!(output_id)],
-          outputs: [ExPlasma.Output.decode!(output_data)]
-        })
+      {:ok, payload1} = post("transaction.submit", %{transaction: Encoding.to_hex(tx_bytes1)})
 
-      tx_bytes =
-        transaction
-        |> Builder.sign!([entity.priv_encoded])
-        |> ExPlasma.encode!()
+      assert_payload_data(payload1, %{"tx_hash" => Encoding.to_hex(tx_hash1), "blknum" => blknum, "tx_index" => 0})
 
-      {:ok, tx_hash} = ExPlasma.Transaction.hash(transaction)
+      {tx_bytes2, tx_hash2} = tx_bytes_and_hash()
 
-      {:ok, payload} = post("transaction.submit", %{transaction: Encoding.to_hex(tx_bytes)})
+      {:ok, payload2} = post("transaction.submit", %{transaction: Encoding.to_hex(tx_bytes2)})
 
-      assert_payload_data(payload, %{"tx_hash" => Encoding.to_hex(tx_hash)})
+      assert_payload_data(payload2, %{"tx_hash" => Encoding.to_hex(tx_hash2), "blknum" => blknum, "tx_index" => 1})
+
+      _ = Block.form()
+      next_blknum = blknum + 1_000
+
+      {tx_bytes3, tx_hash3} = tx_bytes_and_hash()
+
+      {:ok, payload3} = post("transaction.submit", %{transaction: Encoding.to_hex(tx_bytes3)})
+
+      assert_payload_data(payload3, %{"tx_hash" => Encoding.to_hex(tx_hash3), "blknum" => next_blknum, "tx_index" => 0})
     end
 
     test "that it returns an error if missing transaction params" do
@@ -220,5 +228,27 @@ defmodule API.V1.RouterTest do
     assert payload["service_name"] == "child_chain"
     assert payload["version"] == "1.0"
     assert payload["data"] == data
+  end
+
+  defp tx_bytes_and_hash() do
+    entity = TestEntity.alice()
+
+    %{output_id: input_output_id} = insert(:deposit_output, amount: 10, output_guard: entity.addr)
+    %{output_data: output_data} = build(:output, output_guard: entity.addr, amount: 9)
+
+    transaction =
+      Builder.new(ExPlasma.payment_v1(), %{
+        inputs: [ExPlasma.Output.decode_id!(input_output_id)],
+        outputs: [ExPlasma.Output.decode!(output_data)]
+      })
+
+    tx_bytes =
+      transaction
+      |> Builder.sign!([entity.priv_encoded])
+      |> ExPlasma.encode!()
+
+    {:ok, tx_hash} = ExPlasma.Transaction.hash(transaction)
+
+    {tx_bytes, tx_hash}
   end
 end

@@ -88,7 +88,7 @@ defmodule Engine.DB.Factory do
   def deposit_output_factory(attr \\ %{}) do
     entity = TestEntity.alice()
 
-    default_blknum = sequence(:blknum, fn seq -> seq + 1 end)
+    default_blknum = sequence(:deposit_output_blknum, fn seq -> seq + 1 end)
 
     blknum = Map.get(attr, :blknum, default_blknum)
     output_guard = Map.get(attr, :output_guard, entity.addr)
@@ -123,28 +123,39 @@ defmodule Engine.DB.Factory do
     }
   end
 
-  def payment_v1_transaction_factory() do
+  def payment_v1_transaction_factory(attr \\ %{}) do
     entity = TestEntity.alice()
 
     %{output_id: output_id} = input = :deposit_output |> build() |> set_state(:spent)
     %{output_data: output_data} = output = build(:output)
 
     tx_bytes =
-      ExPlasma.payment_v1()
-      |> Builder.new(%{inputs: [ExPlasma.Output.decode_id!(output_id)], outputs: [ExPlasma.Output.decode!(output_data)]})
-      |> Builder.sign!([entity.priv_encoded])
-      |> ExPlasma.encode!()
+      case attr[:tx_bytes] do
+        nil ->
+          ExPlasma.payment_v1()
+          |> Builder.new(%{
+            inputs: [ExPlasma.Output.decode_id!(output_id)],
+            outputs: [ExPlasma.Output.decode!(output_data)]
+          })
+          |> Builder.sign!([entity.priv_encoded])
+          |> ExPlasma.encode!()
+
+        bytes ->
+          bytes
+      end
 
     {:ok, tx_hash} = ExPlasma.Transaction.hash(tx_bytes)
 
     %Transaction{
-      inputs: [input],
-      outputs: [output],
-      tx_bytes: tx_bytes,
+      inputs: Map.get(attr, :inputs, [input]),
+      outputs: Map.get(attr, :outputs, [output]),
+      tx_bytes: Map.get(attr, :tx_bytes, tx_bytes),
       tx_hash: tx_hash,
       tx_type: ExPlasma.payment_v1(),
-      inserted_at: DateTime.utc_now(),
-      updated_at: DateTime.utc_now()
+      block: Map.get(attr, :block),
+      tx_index: Map.get(attr, :tx_index, 0),
+      inserted_at: DateTime.truncate(DateTime.utc_now(), :second),
+      updated_at: DateTime.truncate(DateTime.utc_now(), :second)
     }
   end
 
@@ -156,9 +167,9 @@ defmodule Engine.DB.Factory do
       amount: Map.get(attr, :amount, 10)
     }
 
-    default_blknum = sequence(:blknum, fn seq -> (seq + 1) * 1000 end)
-    default_txindex = sequence(:txindex, fn seq -> seq + 1 end)
-    default_oindex = sequence(:oindex, fn seq -> seq + 1 end)
+    default_blknum = sequence(:output_blknum, fn seq -> (seq + 1) * 1000 end)
+    default_txindex = sequence(:output_txindex, fn seq -> seq + 1 end)
+    default_oindex = sequence(:output_oindex, fn seq -> seq + 1 end)
 
     default_output_id =
       Position.new(
@@ -192,12 +203,14 @@ defmodule Engine.DB.Factory do
   def block_factory() do
     %Block{
       hash: :crypto.strong_rand_bytes(32),
-      nonce: 1,
-      blknum: 1000,
+      nonce: sequence(:block_nonce, fn seq -> seq + 1 end),
+      blknum: sequence(:block_blknum, fn seq -> (seq + 1) * 1000 end),
+      state: :forming,
       tx_hash: :crypto.strong_rand_bytes(64),
       formed_at_ethereum_height: 1,
       submitted_at_ethereum_height: 1,
       attempts_counter: 0,
+      transactions: [],
       gas: 827
     }
   end

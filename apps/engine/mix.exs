@@ -12,7 +12,7 @@ defmodule Engine.MixProject do
       elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps() ++ plugins()
     ]
   end
 
@@ -26,23 +26,19 @@ defmodule Engine.MixProject do
 
   defp deps do
     [
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
       {:status, in_umbrella: true},
       {:bus, in_umbrella: true},
       {:ex_abi, "~> 0.5.1"},
-      {:ethereumex, "0.6.3"},
+      {:ethereumex, "0.6.4"},
       {:ecto_sql, "~> 3.4"},
       {:ex_plasma, git: "https://github.com/omisego/ex_plasma.git", ref: "335d1e8ee644bcab3b6c104223a7756c26851fe0"},
       {:postgrex, "~> 0.15"},
       {:telemetry, "~> 0.4"},
       {:ex_json_schema, "0.7.4"},
-      {:httpoison, "1.6.0"},
-      {:hackney, "1.15.2", override: true},
+      {:httpoison, "~> 1.7.0"},
       {:decorator, "~> 1.2"},
       {:ex_rlp, "~> 0.5.3"},
       # TEST
-      {:exvcr, "~> 0.10", only: :test},
       {:ex_machina, "~> 2.4", only: [:test]},
       {:briefly, git: "https://github.com/CargoSense/briefly.git", only: [:test]},
       {:fake_server, "~> 2.1", only: :test},
@@ -51,6 +47,22 @@ defmodule Engine.MixProject do
       {:spandex, "~> 3.0.1"},
       {:spandex_datadog, "~> 1.0.0"}
     ]
+  end
+
+  defp plugins() do
+    case System.get_env("ENTERPRISE") do
+      "0" ->
+        [{:submit_block, git: "git@github.com:omgnetwork/submit_block.git", branch: "master"}]
+
+      "1" ->
+        [
+          {:gas, git: "git@github.com:omgnetwork/gas.git", branch: "main"},
+          {:submit_block, git: "git@github.com:omgnetwork/submit_block_vault.git", branch: "main"}
+        ]
+
+      _ ->
+        []
+    end
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]

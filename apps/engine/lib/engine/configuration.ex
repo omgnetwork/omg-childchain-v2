@@ -71,6 +71,11 @@ defmodule Engine.Configuration do
     Application.fetch_env!(@app, :db_fetch_retry_interval)
   end
 
+  @spec fee_claimer_address :: String.t()
+  def fee_claimer_address() do
+    Application.fetch_env!(@app, :fee_claimer_address)
+  end
+
   @doc """
   Prepares options Keyword for the FeeServer process
   """

@@ -1,7 +1,7 @@
 defmodule Engine.Callbacks.DepositTest do
   @moduledoc false
 
-  use Engine.DB.DataCase, async: true
+  use Engine.DB.DataCase, async: false
 
   alias Engine.Callbacks.Deposit
   alias Engine.DB.ListenerState
