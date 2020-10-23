@@ -24,6 +24,11 @@ commands:
             cd priv/cabbage
             make start_daemon_services || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
       - run:
+          name: Log
+          command: |
+            docker-compose logs -f childchain
+          background: true
+      - run:
           name: Print docker states
           command: |
             docker image ls
