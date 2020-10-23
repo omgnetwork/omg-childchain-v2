@@ -49,7 +49,7 @@ defmodule Engine.Application do
     ]
 
     _ = Logger.info("Starting #{__MODULE__}")
-    opts = [strategy: :one_for_one, name: Engine.Supervisor]
+    opts = [strategy: :one_for_one, name: __MODULE__.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
