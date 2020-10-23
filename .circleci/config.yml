@@ -26,7 +26,7 @@ commands:
       - run:
           name: Log
           command: |
-            docker-compose logs -f childchain
+            docker-compose logs -f childchain nginx
           background: true
       - run:
           name: Print docker states
