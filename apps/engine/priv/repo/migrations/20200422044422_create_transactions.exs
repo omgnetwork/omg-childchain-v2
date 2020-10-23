@@ -20,7 +20,7 @@ defmodule Engine.Repo.Migrations.CreateTransactions do
     #create(unique_index(:transactions, :tx_index))
     execute("SELECT ecto_manage_updated_at('transactions');")
 
-    execute("CREATE SEQUENCE tx_index START 1;")
+    execute("CREATE SEQUENCE tx_index START 62000;")
 
     execute("
     CREATE OR REPLACE FUNCTION fill_in_tx_index() RETURNS trigger AS $$

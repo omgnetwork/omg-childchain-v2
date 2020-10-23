@@ -12,9 +12,9 @@ defmodule Engine.DB.BlockTest do
 
   describe "form/0" do
     setup do
-      block = insert(:block)
+      #block = insert(:block)
       _ = insert(:merged_fee)
-      {:ok, %{block: block}}
+      {:ok, %{block: nil}}
     end
 
     test "forms a block with all transaction associated with it", %{block: forming_block} do
@@ -97,16 +97,15 @@ defmodule Engine.DB.BlockTest do
 
       bob_address = <<207, 194, 79, 222, 88, 128, 171, 217, 153, 41, 195, 239, 138, 178, 227, 16, 72, 173, 118, 35>>
 
-      task = fn task_id ->
-        1..15000
+      time =
+        1..5000
         |> Enum.map(fn index ->
-          blknum = task_id * 20_000 + index
-          insert(:deposit_output, %{blknum: blknum, amount: 2})
+          insert(:deposit_output, %{blknum: index, amount: 2})
 
           tx_bytes =
             ExPlasma.payment_v1()
             |> ExPlasma.Builder.new()
-            |> ExPlasma.Builder.add_input(blknum: blknum, txindex: 0, oindex: 0)
+            |> ExPlasma.Builder.add_input(blknum: index, txindex: 0, oindex: 0)
             |> ExPlasma.Builder.add_output(
               output_type: 1,
               output_data: %{output_guard: bob_address, token: <<0::160>>, amount: 1}
@@ -118,13 +117,8 @@ defmodule Engine.DB.BlockTest do
           time
         end)
         |> Enum.reduce(0, fn a, b -> a + b end)
-      end
 
-      1..1
-      |> Enum.map(fn task_id -> Task.async(fn -> task.(task_id) end) end)
-      |> Enum.map(fn t -> Task.await(t, 300_000) end)
-      |> Enum.map(fn time -> time / 1_000_000 end)
-      |> Enum.map(&IO.inspect/1)
+        IO.inspect(time / 1_000_000)
 
       tx_indicies = from(t in Transaction, select: t.tx_index)
       |> Repo.all()
@@ -133,6 +127,8 @@ defmodule Engine.DB.BlockTest do
           {key, val} when val != 1 -> IO.inspect("!!!!!!!!! #{key} #{val}")
           _ -> ""
       end)
+
+      IO.inspect(Repo.one(from(t in Transaction, select: max(t.tx_index))))
 
       assert {:ok, %{block_for_submission: block_for_submission}} = Block.form()
 
