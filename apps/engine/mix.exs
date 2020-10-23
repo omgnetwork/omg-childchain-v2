@@ -39,7 +39,7 @@ defmodule Engine.MixProject do
       {:ex_rlp, "~> 0.5.3"},
       {:spandex_ecto, "~> 0.6.2"},
       {:spandex, "~> 3.0.1"},
-      {:spandex_datadog, "~> 1.0.0"}
+      {:spandex_datadog, "~> 1.0.0"},
       # TEST
       {:ex_machina, "~> 2.4", only: [:test]},
       {:briefly, git: "https://github.com/CargoSense/briefly.git", only: [:test]},
