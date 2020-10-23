@@ -220,4 +220,4 @@ clean-contracts:
 
 get-alarm:
 	echo "Childchain alarms" ; \
-	curl -s -X GET http://localhost:9656/alarm.get
+	curl -s -X GET http://localhost:9656/v1/health.check

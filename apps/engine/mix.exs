@@ -30,22 +30,21 @@ defmodule Engine.MixProject do
       {:bus, in_umbrella: true},
       {:ex_abi, "~> 0.5.1"},
       {:ethereumex, "0.6.4"},
-      {:ecto_sql, "~> 3.4"},
+      {:ecto_sql, "~> 3.5"},
       {:ex_plasma, git: "https://github.com/omisego/ex_plasma.git", ref: "335d1e8ee644bcab3b6c104223a7756c26851fe0"},
       {:postgrex, "~> 0.15"},
       {:telemetry, "~> 0.4"},
-      {:ex_json_schema, "0.7.4"},
       {:httpoison, "~> 1.7.0"},
       {:decorator, "~> 1.2"},
       {:ex_rlp, "~> 0.5.3"},
+      {:spandex_ecto, "~> 0.6.2"},
+      {:spandex, "~> 3.0.1"},
+      {:spandex_datadog, "~> 1.0.0"}
       # TEST
       {:ex_machina, "~> 2.4", only: [:test]},
       {:briefly, git: "https://github.com/CargoSense/briefly.git", only: [:test]},
       {:fake_server, "~> 2.1", only: :test},
-      {:yaml_elixir, "~> 2.4.0", only: [:test]},
-      {:spandex_ecto, "~> 0.6.2"},
-      {:spandex, "~> 3.0.1"},
-      {:spandex_datadog, "~> 1.0.0"}
+      {:yaml_elixir, "~> 2.4.0", only: [:test]}
     ]
   end
 
