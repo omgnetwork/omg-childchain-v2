@@ -10,6 +10,16 @@ IMAGE_BUILD_DIR ?= $(PWD)
 ENV_DEV         ?= env MIX_ENV=dev
 ENV_TEST        ?= env MIX_ENV=test
 ENV_PROD        ?= env MIX_ENV=prod
+OS=$(shell uname -s)
+ifeq ($(OS),Darwin)
+	SSH_A_SOCK = /run/host-services/ssh-auth.sock
+	SSH_A_SOCK_MOUNT = /run/host-services/ssh-auth.sock
+	SSH_A_SOCK_MOUNT_VAR = /run/host-services/ssh-auth.sock
+else
+	SSH_A_SOCK = $$(dirname ${SSH_AUTH_SOCK})
+	SSH_A_SOCK_MOUNT = /ssh-agent
+	SSH_A_SOCK_MOUNT_VAR = /ssh-agent/$$(basename ${SSH_AUTH_SOCK})
+endif
 
 clean:
 	rm -rf _build/*
@@ -95,16 +105,24 @@ childchain: localchain_contract_addresses.env
 	. ${OVERRIDING_VARIABLES} && \
 	_build/${BAREBUILD_ENV}/rel/childchain/bin/childchain $(OVERRIDING_START)
 
-#
-# Docker
-#
+disable_strict_host_checking:
+	ssh -o StrictHostKeyChecking=no git@github.com || true
+# make sure you're running eval "$(ssh-agent -s)"
+# starting the ssh-agent should set `SSH_AUTH_SOCK` env var!
+# https://www.rockyourcode.com/ssh-agent-could-not-open-a-connection-to-your-authentication-agent-with-fish-shell/
+# after that you need to unlock your private key with: ssh-add ~/.ssh/id_rsa
+
 docker-childchain-prod:
 	docker run --rm -it \
 		-v $(PWD):/app \
+		-v ~/.ssh/:/home/root/.ssh \
+		-v $(SSH_A_SOCK):$(SSH_A_SOCK_MOUNT) \
 		-u root \
+		--env ENTERPRISE=${ENTERPRISE} \
+		--env SSH_AUTH_SOCK=$(SSH_A_SOCK_MOUNT_VAR) \
 		--entrypoint /bin/sh \
 		$(IMAGE_BUILDER) \
-		-c "cd /app && make build-childchain-prod"
+		-c "cd /app && make disable_strict_host_checking && make build-childchain-prod"
 
 docker-childchain-build:
 	docker build -f Dockerfile.childchain \
@@ -202,4 +220,4 @@ clean-contracts:
 
 get-alarm:
 	echo "Childchain alarms" ; \
-	curl -s -X GET http://localhost:9656/alarm.get
+	curl -s -X GET http://localhost:9656/v1/health.check
