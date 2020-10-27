@@ -12,6 +12,7 @@ defmodule Engine.Application do
   alias Engine.Ethereum.SyncSupervisor
   alias Engine.PrepareBlockForSubmissionWorker
   alias Engine.Repo.Monitor, as: RepoMonitor
+  alias Engine.Supervisor, as: EngineSupervisor
   alias Engine.Telemetry.Handler
 
   require Logger
@@ -45,11 +46,12 @@ defmodule Engine.Application do
       prepare_block_for_submission_worker_spec(),
       Supervisor.child_spec({RepoMonitor, repo_args}, id: RepoMonitor),
       EthereumSupervisor.child_spec([]),
-      Supervisor.child_spec({SyncMonitor, monitor_args}, id: SyncMonitor)
+      Supervisor.child_spec({SyncMonitor, monitor_args}, id: SyncMonitor),
+      EngineSupervisor.child_spec([])
     ]
 
     _ = Logger.info("Starting #{__MODULE__}")
-    opts = [strategy: :one_for_one, name: Engine.Supervisor]
+    opts = [strategy: :one_for_one, name: __MODULE__.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
