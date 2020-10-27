@@ -8,6 +8,23 @@ defmodule Engine.PrepareBlockForSubmissionWorkerTest do
   @interval_ms 10
   @eth <<0::160>>
 
+  setup do
+    case Application.start(:sasl) do
+      {:error, {:already_started, :sasl}} ->
+        :ok = Application.stop(:sasl)
+        :ok = Application.start(:sasl)
+
+      :ok ->
+        :ok
+    end
+
+    on_exit(fn ->
+      Application.stop(:sasl)
+    end)
+
+    :ok
+  end
+
   test "periodically prepares blocks for submission" do
     config = [
       prepare_block_for_submission_interval_ms: @interval_ms
@@ -43,6 +60,29 @@ defmodule Engine.PrepareBlockForSubmissionWorkerTest do
 
     prepared_block = Repo.get(Block, block_forming.id)
     assert Block.state_pending_submission() == prepared_block.state
+  end
+
+  test "backs off on alert" do
+    config = [
+      prepare_block_for_submission_interval_ms: @interval_ms
+    ]
+
+    {:ok, worker} = PrepareBlockForSubmissionWorker.start_link(config)
+    GenServer.cast(worker, {:set_alarm, :db_connection_lost})
+    assert %{connection_alarm_raised: true} = :sys.get_state(worker)
+
+    block = insert_non_empty_block(Block.state_finalizing())
+    Process.sleep(3 * @interval_ms)
+
+    block_finalizing = Repo.get(Block, block.id)
+    assert Block.state_finalizing() == block_finalizing.state
+
+    GenServer.cast(worker, {:clear_alarm, :db_connection_lost})
+    assert %{connection_alarm_raised: false} = :sys.get_state(worker)
+    Process.sleep(3 * @interval_ms)
+
+    updated_block = Repo.get(Block, block.id)
+    assert Block.state_pending_submission() == updated_block.state
   end
 
   defp insert_non_empty_block(block_state) do

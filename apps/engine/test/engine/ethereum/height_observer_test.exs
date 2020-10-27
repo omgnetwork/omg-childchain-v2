@@ -1,5 +1,5 @@
 defmodule Engine.Ethereum.HeightObserverTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
   alias __MODULE__.Alarm
   alias __MODULE__.EthereumClientMock
   alias Engine.Ethereum.HeightObserver

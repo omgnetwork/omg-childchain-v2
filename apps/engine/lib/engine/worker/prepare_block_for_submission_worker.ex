@@ -47,11 +47,11 @@ defmodule Engine.PrepareBlockForSubmissionWorker do
   end
 
   def handle_cast({:set_alarm, :db_connection_lost}, state) do
-    {:noreply, %{state | connection_alarm_raised: true}}
+    {:noreply, %{state | connection_alarm_raised: true}, state.interval}
   end
 
   def handle_cast({:clear_alarm, :db_connection_lost}, state) do
-    {:noreply, %{state | connection_alarm_raised: false}}
+    {:noreply, %{state | connection_alarm_raised: false}, state.interval}
   end
 
   defp subscribe_to_alarm(sasl_alarm_handler, handler, consumer) do
