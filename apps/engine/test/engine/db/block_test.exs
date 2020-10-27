@@ -577,11 +577,10 @@ defmodule Engine.DB.BlockTest do
     end
 
     test "handles conflicts for concurrent calls" do
-      _ = insert_non_empty_block(Block.state_finalizing())
-      _ = insert_non_empty_block(Block.state_finalizing())
+      :ok = Enum.each(1..50, fn _ -> insert_non_empty_block(Block.state_finalizing()) end)
 
       no_conflicts =
-        1..10
+        1..50
         |> Enum.map(fn _ -> Task.async(fn -> Block.prepare_for_submission() end) end)
         |> Enum.map(fn task -> Task.await(task) end)
         |> Enum.all?(fn

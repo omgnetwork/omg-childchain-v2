@@ -43,11 +43,11 @@ defmodule Engine.Application do
     repo_args = [child_spec: repo_child_spec]
 
     children = [
-      prepare_block_for_submission_worker_spec(),
       Supervisor.child_spec({RepoMonitor, repo_args}, id: RepoMonitor),
       EthereumSupervisor.child_spec([]),
       Supervisor.child_spec({SyncMonitor, monitor_args}, id: SyncMonitor),
-      EngineSupervisor.child_spec([])
+      EngineSupervisor.child_spec([]),
+      prepare_block_for_submission_worker_spec()
     ]
 
     _ = Logger.info("Starting #{__MODULE__}")
