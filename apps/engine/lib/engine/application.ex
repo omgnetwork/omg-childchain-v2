@@ -59,21 +59,19 @@ defmodule Engine.Application do
     :ok
   end
 
-  def verify_integrations() do
+  defp verify_integrations() do
     prod = Application.get_env(:engine, :prod)
+    submit_block = Code.ensure_loaded?(SubmitBlock)
+    gas = Code.ensure_loaded?(Gas)
 
-    case {prod, Code.ensure_loaded?(SubmitBlock), Code.ensure_loaded?(Gas)} do
+    case {prod, submit_block, gas} do
       {true, true, false} ->
-        true = Code.ensure_loaded?(SubmitBlock)
-
-        create_gas()
+        create_gas_integration()
         message = "You're in PROD mode. Default Gas module created. SubmitBlock loaded."
         _ = Logger.info(message)
         :ok
 
       {true, true, true} ->
-        true = Code.ensure_loaded?(SubmitBlock)
-        true = Code.ensure_loaded?(Gas)
         message = "You're in PROD ENTERPRISE mode. Integrations are loaded."
         _ = Logger.info(message)
 
@@ -97,13 +95,8 @@ defmodule Engine.Application do
   end
 
   defp attach_telemetry() do
-    :ok =
-      :telemetry.attach(
-        "spandex-query-tracer",
-        [:engine, :repo, :query],
-        &SpandexEcto.TelemetryAdapter.handle_event/4,
-        nil
-      )
+    handle_event_fun = &SpandexEcto.TelemetryAdapter.handle_event/4
+    :ok = :telemetry.attach("spandex-query-tracer", [:engine, :repo, :query], handle_event_fun, nil)
 
     _ = Logger.info("Attaching telemetry handlers #{inspect(Handler.supported_events())}")
 
@@ -113,7 +106,7 @@ defmodule Engine.Application do
     end
   end
 
-  defp create_gas() do
+  defp create_gas_integration() do
     ast =
       quote do
         defmodule unquote(Gas) do
