@@ -19,7 +19,7 @@ defmodule Engine.MixProject do
   def application() do
     [
       extra_applications: [:logger, :sasl],
-      start_phases: [{:verify_integrations, []}, {:boot_done, []}],
+      start_phases: [{:boot_done, []}],
       mod: {Engine.Application, []}
     ]
   end
@@ -49,15 +49,21 @@ defmodule Engine.MixProject do
   end
 
   defp plugins() do
-    case System.get_env("ENTERPRISE") do
-      "0" ->
+    prod = Mix.env()
+    enterprise = System.get_env("ENTERPRISE")
+
+    case {prod, enterprise} do
+      {:prod, "0"} ->
         [{:submit_block, git: "git@github.com:omgnetwork/submit_block.git", branch: "master"}]
 
-      "1" ->
+      {:prod, "1"} ->
         [
           {:gas, git: "git@github.com:omgnetwork/gas.git", branch: "main"},
           {:submit_block, git: "git@github.com:omgnetwork/submit_block_vault.git", branch: "main"}
         ]
+
+      {:prod, _} ->
+        exit("You've tried to build a release without any integrations. Export `ENTERPRISE` variable (0 or 1).")
 
       _ ->
         []

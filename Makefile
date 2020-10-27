@@ -36,6 +36,9 @@ deps: deps-childchain
 deps-childchain:
 	HEX_HTTP_TIMEOUT=120 mix deps.get
 
+deps-prod-childchain:
+	$(ENV_PROD) HEX_HTTP_TIMEOUT=120 mix deps.get
+
 .PHONY: test test-console test-focus test-console-focus
 
 init_test: init-contracts
@@ -80,7 +83,7 @@ check-dialyzer:
 #
 
 
-build-childchain-prod: deps-childchain
+build-childchain-prod: deps-prod-childchain
 	$(ENV_PROD) mix do compile, release childchain --overwrite
 
 build-childchain-dev: deps-childchain
