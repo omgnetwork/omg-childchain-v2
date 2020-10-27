@@ -97,8 +97,8 @@ defmodule Engine.DB.Block do
     |> Multi.run(:get_all, fn repo, changeset ->
       get_all(repo, changeset, new_height, mined_child_block)
     end)
-    |> Multi.run(:compute_gas_and_submit, fn repo, changeset ->
-      compute_gas_and_submit(repo, changeset, new_height, mined_child_block, submit, gas)
+    |> Multi.run(:get_gas_and_submit, fn repo, changeset ->
+      get_gas_and_submit(repo, changeset, new_height, mined_child_block, submit, gas)
     end)
     |> Repo.transaction()
   end
@@ -161,20 +161,20 @@ defmodule Engine.DB.Block do
     {:ok, repo.all(query)}
   end
 
-  defp compute_gas_and_submit(repo, %{get_all: plasma_blocks}, new_height, mined_child_block, submit, gas) do
-    :ok = process_submission(repo, plasma_blocks, new_height, mined_child_block, submit, gas)
+  defp get_gas_and_submit(repo, %{get_all: plasma_blocks}, new_height, mined_child_block, submit_fn, gas_fn) do
+    :ok = process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas_fn)
     {:ok, []}
   end
 
-  defp process_submission(_repo, [], _new_height, _mined_child_block, _submit) do
+  defp process_submission(_repo, [], _new_height, _mined_child_block, _submit_fn, _gas_fn) do
     :ok
   end
 
-  defp process_submission(repo, [plasma_block | plasma_blocks], new_height, mined_child_block, submit, gas) do
-    # get appropriate gas here
-    gas = gas.()
+  defp process_submission(repo, [plasma_block | plasma_blocks], new_height, mined_child_block, submit_fn, gas_fn) do
+    # getting appropriate gas here
+    gas = gas_fn.()
 
-    case submit.(plasma_block.hash, plasma_block.nonce, gas) do
+    case submit_fn.(plasma_block.hash, plasma_block.nonce, gas) do
       :ok ->
         plasma_block
         |> BlockChangeset.submitted(%{
@@ -184,13 +184,13 @@ defmodule Engine.DB.Block do
         })
         |> repo.update!([])
 
-        process_submission(repo, plasma_blocks, new_height, mined_child_block, submit)
+        process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas_fn)
 
       error ->
         # we encountered an error with one of the block submissions
         # we'll stop here and continue later
         _ = Logger.error("Block submission stopped at block with nonce #{plasma_block.nonce}. Error: #{inspect(error)}")
-        process_submission(repo, [], new_height, mined_child_block, submit)
+        process_submission(repo, [], new_height, mined_child_block, submit_fn, gas_fn)
     end
   end
 

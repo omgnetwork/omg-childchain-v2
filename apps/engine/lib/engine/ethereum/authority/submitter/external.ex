@@ -35,6 +35,7 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
       body = %{"block_root" => block_root, "gas" => gas, "nonce" => nonce}
       HTTPoison.post(url, body)
     end
+
     # submit_block(block_root, nonce, gas_price, contract, opts) 
     # vault
     #    opts = [vault_token: vault_token, wallet_name: wallet_name, authority: authority]

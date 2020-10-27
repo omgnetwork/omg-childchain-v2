@@ -190,7 +190,16 @@ defmodule Engine.DB.BlockTest do
       Kernel.send(parent, {hash, nonce, gas})
     end
 
-    assert Block.get_all_and_submit(1000, 1000, integration) == {:ok, %{compute_gas_and_submit: [], get_all: []}}
+    ref = make_ref()
+
+    gas_integration = fn ->
+      Kernel.send(parent, ref)
+      1
+    end
+
+    assert Block.get_all_and_submit(1000, 1000, integration, gas_integration) ==
+             {:ok, %{get_gas_and_submit: [], get_all: []}}
+
     refute_receive _
   end
 
@@ -226,16 +235,24 @@ defmodule Engine.DB.BlockTest do
         :ok
       end
 
+      ref = make_ref()
+
+      gas_integration = fn ->
+        Kernel.send(parent, ref)
+        1
+      end
+
       # at this height, I'm looking at what was submitted and what wasn't
       # I notice  that blocks with blknum from 1000 to 7000 were mined but above that it needs a resubmission
       my_current_eth_height = 11
       mined_child_block = 7000
 
-      {:ok, %{get_all: blocks}} = Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
+      {:ok, %{get_all: blocks}} =
+        Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point, gas_integration)
 
       assert [%{nonce: 8}, %{nonce: 9}, %{nonce: 10}] = blocks
       # assert that our integration point was called with these blocks
-      [8, 9, 10] = receive_all_blocks()
+      [8, 9, 10] = receive_all_blocks_nonces()
 
       sql =
         from(plasma_block in Block,
@@ -283,6 +300,13 @@ defmodule Engine.DB.BlockTest do
         :ok
       end
 
+      ref = make_ref()
+
+      gas_integration = fn ->
+        Kernel.send(parent, ref)
+        1
+      end
+
       # at this height, I'm looking at what was submitted and what wasn't
       # I notice  that blocks with blknum from 1000 to 7000 were mined but above that it needs a resubmission
       insert(:block, %{nonce: 11, blknum: 11_000, formed_at_ethereum_height: 11})
@@ -290,11 +314,12 @@ defmodule Engine.DB.BlockTest do
       my_current_eth_height = 11
       mined_child_block = 7000
 
-      {:ok, %{get_all: blocks}} = Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
+      {:ok, %{get_all: blocks}} =
+        Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point, gas_integration)
 
       assert [%{nonce: 8}, %{nonce: 9}, %{nonce: 10}, %{nonce: 11}] = blocks
       # assert that our integration point was called with these blocks
-      [8, 9, 10, 11] = receive_all_blocks()
+      [8, 9, 10, 11] = receive_all_blocks_nonces()
 
       sql =
         from(plasma_block in Block,
@@ -348,16 +373,24 @@ defmodule Engine.DB.BlockTest do
         :ok
       end
 
+      ref = make_ref()
+
+      gas_integration = fn ->
+        Kernel.send(parent, ref)
+        1
+      end
+
       # at this height, I'm looking at what was submitted and what wasn't
       # I notice  that blocks with blknum from 1000 to 7000 were mined but above that it needs a resubmission
       my_current_eth_height = 6
       mined_child_block = 6000
 
-      {:ok, %{get_all: blocks}} = Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
+      {:ok, %{get_all: blocks}} =
+        Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point, gas_integration)
 
       assert [] = blocks
       # assert that our integration point was called with these blocks
-      [] = receive_all_blocks()
+      [] = receive_all_blocks_nonces()
     end
   end
 
@@ -384,16 +417,24 @@ defmodule Engine.DB.BlockTest do
         :ok
       end
 
+      ref = make_ref()
+
+      gas_integration = fn ->
+        Kernel.send(parent, ref)
+        1
+      end
+
       # at this height, I'm looking at what was submitted and what wasn't
       # I notice  that blocks with blknum from 1000 to 7000 were mined but above that it needs a resubmission
 
       mined_child_block = 1000
 
-      {:ok, %{get_all: blocks}} = Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
+      {:ok, %{get_all: blocks}} =
+        Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point, gas_integration)
 
       assert [] = blocks
       # assert that our integration point was called with these blocks
-      [] = receive_all_blocks()
+      [] = receive_all_blocks_nonces()
     end
   end
 
@@ -424,6 +465,13 @@ defmodule Engine.DB.BlockTest do
         :ok
       end
 
+      ref = make_ref()
+
+      gas_integration_point = fn ->
+        Kernel.send(parent, ref)
+        1
+      end
+
       # at this height, I'm looking at what was submitted and what wasn't
       # I notice  that blocks with blknum from 1000 to 7000 were mined but above that it needs a resubmission
       insert(:block, %{nonce: 11, blknum: 11_000, formed_at_ethereum_height: 11})
@@ -437,7 +485,7 @@ defmodule Engine.DB.BlockTest do
       |> Task.async_stream(
         fn _ ->
           Sandbox.allow(Engine.Repo, parent, self())
-          Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point)
+          Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point, gas_integration_point)
         end,
         timeout: 5000,
         on_timeout: :kill_task,
@@ -447,21 +495,32 @@ defmodule Engine.DB.BlockTest do
 
       # if submission was executed once, it was executed by one of the childchains
       # that WON the race, hence, we should receive nonces as messages only once
-      [8, 9, 10, 11] = receive_all_blocks()
+      [8, 9, 10, 11] = receive_all_blocks_nonces()
+      ^ref = get_gas_ref()
     end
   end
 
-  defp receive_all_blocks() do
-    receive_all_blocks([])
+  defp receive_all_blocks_nonces() do
+    receive_all_blocks_nonces([])
   end
 
-  defp receive_all_blocks(acc) do
+  defp receive_all_blocks_nonces(acc) do
     receive do
-      {_hash, nonce, _gas} -> receive_all_blocks([nonce | acc])
+      {_hash, nonce, _gas} -> receive_all_blocks_nonces([nonce | acc])
     after
       50 ->
         # list appending adds at the tail so we need to reverse it once done
         Enum.reverse(acc)
+    end
+  end
+
+  defp get_gas_ref() do
+    receive do
+      ref when is_reference(ref) -> ref
+    after
+      50 ->
+        # list appending adds at the tail so we need to reverse it once done
+        exit(:no_gas_reference)
     end
   end
 end
