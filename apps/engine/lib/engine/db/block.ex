@@ -91,14 +91,14 @@ defmodule Engine.DB.Block do
 
   def state_confirmed(), do: :confirmed
 
-  @spec get_all_and_submit(pos_integer(), pos_integer(), function()) :: transaction_result_t()
-  def get_all_and_submit(new_height, mined_child_block, submit) do
+  @spec get_all_and_submit(pos_integer(), pos_integer(), function(), function()) :: transaction_result_t()
+  def get_all_and_submit(new_height, mined_child_block, submit, gas) do
     Multi.new()
     |> Multi.run(:get_all, fn repo, changeset ->
       get_all(repo, changeset, new_height, mined_child_block)
     end)
     |> Multi.run(:compute_gas_and_submit, fn repo, changeset ->
-      compute_gas_and_submit(repo, changeset, new_height, mined_child_block, submit)
+      compute_gas_and_submit(repo, changeset, new_height, mined_child_block, submit, gas)
     end)
     |> Repo.transaction()
   end
@@ -161,8 +161,8 @@ defmodule Engine.DB.Block do
     {:ok, repo.all(query)}
   end
 
-  defp compute_gas_and_submit(repo, %{get_all: plasma_blocks}, new_height, mined_child_block, submit) do
-    :ok = process_submission(repo, plasma_blocks, new_height, mined_child_block, submit)
+  defp compute_gas_and_submit(repo, %{get_all: plasma_blocks}, new_height, mined_child_block, submit, gas) do
+    :ok = process_submission(repo, plasma_blocks, new_height, mined_child_block, submit, gas)
     {:ok, []}
   end
 
@@ -170,9 +170,9 @@ defmodule Engine.DB.Block do
     :ok
   end
 
-  defp process_submission(repo, [plasma_block | plasma_blocks], new_height, mined_child_block, submit) do
+  defp process_submission(repo, [plasma_block | plasma_blocks], new_height, mined_child_block, submit, gas) do
     # get appropriate gas here
-    gas = plasma_block.gas + 1
+    gas = gas.()
 
     case submit.(plasma_block.hash, plasma_block.nonce, gas) do
       :ok ->

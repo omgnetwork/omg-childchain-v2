@@ -58,6 +58,32 @@ defmodule Engine.Application do
     :ok
   end
 
+  def start_phase(:verify_integrations, :normal, _phase_args) do
+    prod = Application.get_env(:engine, :prod)
+    enterprise = Application.get_env(:engine, :enterprise)
+
+    case {prod, enterprise} do
+      {true, "0"} ->
+        true = Code.ensure_loaded?(SubmitBlock)
+
+        ast =
+          quote do
+            def unquote(:gas)(), do: unquote(100_000)
+          end
+
+        Module.create(Gas, ast, Macro.Env.location(__ENV__))
+          :ok
+      {true, "1"} ->
+        true = Code.ensure_loaded?(SubmitBlock)
+        true = Code.ensure_loaded?(Gas)
+        _ = Logger.error("You're in DEV mode. You don't have any integrations loaded. This isn't what you want. Probably.")
+        :ok
+      {nil, _} ->
+        _ = Logger.error("You're in DEV or TEST mode. You don't have any integrations loaded. This isn't what you want. Probably.")
+        :ok
+    end
+  end
+
   defp attach_telemetry() do
     :ok =
       :telemetry.attach(

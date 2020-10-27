@@ -15,6 +15,7 @@ mandatory = fn env, exception ->
 end
 
 config :engine,
+  enterprise: System.get_env("ENTERPRISE"),
   finality_margin: String.to_integer(System.get_env("FINALITY_MARGIN") || "10"),
   url: rpc_url,
   network: System.get_env("ETHEREUM_NETWORK"),

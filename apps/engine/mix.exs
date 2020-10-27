@@ -19,7 +19,7 @@ defmodule Engine.MixProject do
   def application() do
     [
       extra_applications: [:logger, :sasl],
-      start_phases: [{:boot_done, []}],
+      start_phases: [{:verify_integrations, []}, {:boot_done, []}],
       mod: {Engine.Application, []}
     ]
   end
