@@ -30,21 +30,21 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
   """
   @spec submit_block(String.t(), String.t()) :: function()
   def submit_block(plasma_framework, vault) do
-    # fn block_root, nonce, gas ->
-    #   url = vault <> "/" <> plasma_framework
-    #   body = %{"block_root" => block_root, "gas" => gas, "nonce" => nonce}
-    #   HTTPoison.post(url, body)
-    # end
+    fn block_root, nonce, gas ->
+      url = vault <> "/" <> plasma_framework
+      body = %{"block_root" => block_root, "gas" => gas, "nonce" => nonce}
+      HTTPoison.post(url, body)
+    end
     # submit_block(block_root, nonce, gas_price, contract, opts) 
     # vault
     #    opts = [vault_token: vault_token, wallet_name: wallet_name, authority: authority]
     # raw
     #    opts = [private_key_module: System, private_key_function: :get_env, private_key_args: "PRIVATE_KEY"]
-    opts = []
+    # opts = []
 
-    fn block_root, nonce, gas_price ->
-      apply(SubmitBlock, :submit_block, [block_root, nonce, gas_price, plasma_framework])
-    end
+    # fn block_root, nonce, gas_price ->
+    #   apply(SubmitBlock, :submit_block, [block_root, nonce, gas_price, plasma_framework])
+    # end
   end
 
   def gas() do

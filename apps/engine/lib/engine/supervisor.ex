@@ -16,7 +16,7 @@ defmodule Engine.Supervisor do
     fee_server_opts = Configuration.fee_server_opts()
 
     children = [
-      # {FeeServer, fee_server_opts}
+      {FeeServer, fee_server_opts}
     ]
 
     opts = [strategy: :one_for_one]
