@@ -92,13 +92,13 @@ defmodule Engine.DB.Block do
   def state_confirmed(), do: :confirmed
 
   @spec get_all_and_submit(pos_integer(), pos_integer(), function(), function()) :: transaction_result_t()
-  def get_all_and_submit(new_height, mined_child_block, submit, gas) do
+  def get_all_and_submit(new_height, mined_child_block, submit_fn, gas_fn) do
     Multi.new()
     |> Multi.run(:get_all, fn repo, changeset ->
       get_all(repo, changeset, new_height, mined_child_block)
     end)
     |> Multi.run(:get_gas_and_submit, fn repo, changeset ->
-      get_gas_and_submit(repo, changeset, new_height, mined_child_block, submit, gas)
+      get_gas_and_submit(repo, changeset, new_height, mined_child_block, submit_fn, gas_fn)
     end)
     |> Repo.transaction()
   end

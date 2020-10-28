@@ -253,6 +253,7 @@ defmodule Engine.DB.BlockTest do
       assert [%{nonce: 8}, %{nonce: 9}, %{nonce: 10}] = blocks
       # assert that our integration point was called with these blocks
       [8, 9, 10] = receive_all_blocks_nonces()
+      ^ref = get_gas_ref()
 
       sql =
         from(plasma_block in Block,
@@ -320,6 +321,7 @@ defmodule Engine.DB.BlockTest do
       assert [%{nonce: 8}, %{nonce: 9}, %{nonce: 10}, %{nonce: 11}] = blocks
       # assert that our integration point was called with these blocks
       [8, 9, 10, 11] = receive_all_blocks_nonces()
+      ^ref = get_gas_ref()
 
       sql =
         from(plasma_block in Block,
@@ -435,6 +437,7 @@ defmodule Engine.DB.BlockTest do
       assert [] = blocks
       # assert that our integration point was called with these blocks
       [] = receive_all_blocks_nonces()
+      :no_gas_reference = get_gas_ref()
     end
   end
 
@@ -520,7 +523,7 @@ defmodule Engine.DB.BlockTest do
     after
       50 ->
         # list appending adds at the tail so we need to reverse it once done
-        exit(:no_gas_reference)
+        :no_gas_reference
     end
   end
 end

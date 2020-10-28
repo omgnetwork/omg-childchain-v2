@@ -1,6 +1,4 @@
 defmodule Engine.Application do
-  # See https://hexdocs.pm/elixir/Application.html
-  # for more information on OTP Applications
   @moduledoc false
 
   use Application
@@ -10,6 +8,7 @@ defmodule Engine.Application do
   alias Engine.Ethereum.Monitor.AlarmHandler
   alias Engine.Ethereum.Supervisor, as: EthereumSupervisor
   alias Engine.Ethereum.SyncSupervisor
+  alias Engine.Plugin
   alias Engine.Repo.Monitor, as: RepoMonitor
   alias Engine.Supervisor, as: EngineSupervisor
   alias Engine.Telemetry.Handler
@@ -63,35 +62,7 @@ defmodule Engine.Application do
     prod = Application.get_env(:engine, :prod)
     submit_block = Code.ensure_loaded?(SubmitBlock)
     gas = Code.ensure_loaded?(Gas)
-
-    case {prod, submit_block, gas} do
-      {true, true, false} ->
-        create_gas_integration()
-        message = "You're in PROD mode. Default Gas module created. SubmitBlock loaded."
-        _ = Logger.info(message)
-        :ok
-
-      {true, true, true} ->
-        message = "You're in PROD ENTERPRISE mode. Integrations are loaded."
-        _ = Logger.info(message)
-
-        :ok
-
-      {true, _, _} ->
-        message =
-          "You're in PROD mode. You don't have all integrations loaded. This isn't what you want. I'll halt the VM."
-
-        _ = Logger.error(message)
-        message |> String.to_charlist() |> :erlang.halt()
-
-      _ ->
-        message =
-          "You're in DEV or TEST mode. You don't have any integrations loaded. This isn't what you want. Probably."
-
-        _ = Logger.error(message)
-
-        :ok
-    end
+    Plugin.verify(prod, submit_block, gas)
   end
 
   defp attach_telemetry() do
@@ -104,19 +75,5 @@ defmodule Engine.Application do
       :ok -> :ok
       {:error, :already_exists} -> :ok
     end
-  end
-
-  defp create_gas_integration() do
-    ast =
-      quote do
-        defmodule unquote(Gas) do
-          defstruct low: 70_000 * 60 / 100, fast: 80_000, fastest: 120_000, standard: 70_000, name: "Geth"
-          def unquote(:gas)(_), do: "Elixir.Gas" |> String.to_atom() |> Kernel.struct!()
-          def unquote(:integrations)(), do: []
-        end
-      end
-
-    {{:module, Gas, _, _}, []} = Code.eval_quoted(ast)
-    true = Code.ensure_loaded?(Gas)
   end
 end

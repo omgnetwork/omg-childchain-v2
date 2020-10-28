@@ -58,9 +58,9 @@ defmodule Engine.Ethereum.Authority.Submitter do
   defp submit(height, state) do
     next_child_block = External.next_child_block(state.plasma_framework, state.opts)
     mined_child_block = Core.mined(next_child_block, state.child_block_interval)
-    integration_fun = External.submit_block(state.vault, state.plasma_framework)
+    submit_fn = External.submit_block(state.vault, state.plasma_framework)
     gas_fun = External.gas()
-    {:ok, _} = Block.get_all_and_submit(height, mined_child_block, integration_fun, gas_fun)
+    {:ok, _} = Block.get_all_and_submit(height, mined_child_block, submit_fn, gas_fun)
     :ok
   end
 end
