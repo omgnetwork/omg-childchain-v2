@@ -13,6 +13,7 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
   alias Engine.DB.Transaction.PaymentV1.Validator.Amount
   alias Engine.DB.Transaction.PaymentV1.Validator.Merge
   alias Engine.DB.Transaction.PaymentV1.Validator.Witness
+  alias Engine.Fee.FeeClaim
   alias ExPlasma.Output
 
   @error_messages [
@@ -32,20 +33,21 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
 
   Returns `:ok` if the transaction is valid, or `{:error, {field, error}}` otherwise.
   """
-  @spec validate(Ecto.Changeset.t(), Type.accepted_fees_t()) :: Ecto.Changeset.t()
+  @spec validate(Ecto.Changeset.t(), Type.accepted_fees_t()) :: {Ecto.Changeset.t(), FeeClaim.paid_fees_t()}
   @impl Engine.DB.Transaction.Validator
   def validate(changeset, fees) do
     input_data = get_decoded_output_data(changeset, :inputs)
     output_data = get_decoded_output_data(changeset, :outputs)
+    fees_by_currency = FeeClaim.fee_paid(input_data, output_data)
     witnesses = get_field(changeset, :witnesses)
 
     with :ok <- Witness.validate(input_data, witnesses),
          fees <- validate_merge_fees(fees, input_data, output_data),
-         :ok <- Amount.validate(fees, input_data, output_data) do
-      changeset
+         :ok <- Amount.validate(fees, fees_by_currency) do
+      {changeset, fees_by_currency}
     else
       {:error, {field, message}} ->
-        add_error(changeset, field, @error_messages[message])
+        {add_error(changeset, field, @error_messages[message]), fees_by_currency}
     end
   end
 

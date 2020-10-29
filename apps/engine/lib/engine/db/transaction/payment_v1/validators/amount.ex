@@ -4,7 +4,6 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator.Amount do
   """
 
   alias Engine.DB.Transaction.PaymentV1.Type
-  alias Engine.Fee.FeeClaim
 
   @type validation_result_t() ::
           :ok
@@ -40,20 +39,16 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator.Amount do
   ## Example:
 
   iex> Engine.DB.Transaction.PaymentV1.Validator.Amount.validate(
-  ...> %{<<1::160>> => [1, 3]},[
-  ...> %{output_guard: <<1::160>>, token: <<1::160>>, amount: 1},
-  ...> %{output_guard: <<1::160>>, token: <<2::160>>, amount: 2}], [
-  ...> %{output_guard: <<2::160>>, token: <<2::160>>, amount: 2}])
+  ...> %{<<1::160>> => [1, 3]},
+  ...> %{<<1::160>> => 1})
   :ok
   """
-  @spec validate(Type.optional_accepted_fees_t(), Type.output_list_t(), Type.output_list_t()) ::
+  @spec validate(Type.optional_accepted_fees_t(), %{required(<<_::160>>) => pos_integer()}) ::
           validation_result_t()
-  def validate(fees, input_data, output_data) do
-    fee_paid = FeeClaim.fee_paid(input_data, output_data)
-
-    with :ok <- positive_amounts(fee_paid),
-         :ok <- no_fees_required(fee_paid, fees),
-         :ok <- fees_covered(fee_paid, fees) do
+  def validate(fees, paid_fees_by_currency) do
+    with :ok <- positive_amounts(paid_fees_by_currency),
+         :ok <- no_fees_required(paid_fees_by_currency, fees),
+         :ok <- fees_covered(paid_fees_by_currency, fees) do
       :ok
     else
       :no_fees_required -> :ok

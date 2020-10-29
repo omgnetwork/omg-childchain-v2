@@ -113,11 +113,11 @@ defmodule Engine.DB.Transaction.ValidatorTest do
         |> Ecto.Changeset.add_error(:some_key, "some message")
 
       params = %{tx_type: 1}
-      validated_changeset = Validator.validate_statefully(changeset, params)
+      {validated_changeset, %{}} = Validator.validate_statefully(changeset, params)
       assert validated_changeset == changeset
     end
 
-    test "returns the changeset unchanged when valid" do
+    test "returns the unchanged changeset and fees by currency when valid" do
       token = <<0::160>>
       alice = <<1::160>>
       bob = <<2::160>>
@@ -147,10 +147,12 @@ defmodule Engine.DB.Transaction.ValidatorTest do
         |> put_assoc(:outputs, outputs)
 
       params = %{tx_type: 1, fees: fees}
-      validated_changeset = Validator.validate_statefully(changeset, params)
+      {validated_changeset, fees_by_currency} = Validator.validate_statefully(changeset, params)
 
       assert validated_changeset.valid?
       assert validated_changeset == changeset
+
+      assert %{token => 1} == fees_by_currency
     end
 
     test "returns the changeset with an error when invalid" do
@@ -178,7 +180,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
         |> put_assoc(:outputs, outputs)
 
       params = %{tx_type: 1, fees: fees}
-      validated_changeset = Validator.validate_statefully(changeset, params)
+      {validated_changeset, _} = Validator.validate_statefully(changeset, params)
 
       refute validated_changeset.valid?
       assert {"Fees are not covered by inputs", _} = validated_changeset.errors[:inputs]
