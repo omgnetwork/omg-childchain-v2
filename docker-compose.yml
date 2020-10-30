@@ -126,7 +126,7 @@ services:
     environment:
       - ETHEREUM_NETWORK=LOCALCHAIN
       - ETHEREUM_RPC_URL=http://172.27.0.102:80
-      - CHILD_CHAIN_URL=http://172.27.0.103:9656
+      - CHILD_CHAIN_URL=http://172.27.0.103:9656/v1
       - PORT=7434
       - APP_ENV=local_docker_development
       - DD_HOSTNAME=datadog
@@ -169,7 +169,7 @@ services:
     environment:
       - ETHEREUM_NETWORK=LOCALCHAIN
       - ETHEREUM_RPC_URL=http://172.27.0.102:80
-      - CHILD_CHAIN_URL=http://172.27.0.103:9656
+      - CHILD_CHAIN_URL=http://172.27.0.103:9656/v1
       - DATABASE_URL=postgresql://omisego_dev:omisego_dev@172.27.0.107:5432/omisego_dev
       - PORT=7534
       - APP_ENV=local_docker_development
