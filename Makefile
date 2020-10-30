@@ -37,7 +37,7 @@ deps-childchain:
 	HEX_HTTP_TIMEOUT=120 mix deps.get
 
 deps-prod-childchain:
-	$(ENV_PROD) deps-childchain
+	$(ENV_PROD) make deps-childchain
 
 .PHONY: test test-console test-focus test-console-focus
 
