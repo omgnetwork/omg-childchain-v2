@@ -11,7 +11,7 @@ services:
       - 8546:81
       - 443:443
     healthcheck:
-      test: curl geth:80
+      test: curl geth:8545
       interval: 5s
       timeout: 3s
       retries: 5
@@ -76,8 +76,6 @@ services:
       FEE_ADAPTER: FEED
       STORED_FEE_UPDATE_INTERVAL_MINUTES: 2
       FEE_CLAIMER_ADDRESS: "0x0000000000000000000000000000000000000000"
-    expose:
-      - "9656"
     depends_on:
       - feefeed
       - nginx
@@ -117,7 +115,7 @@ services:
     environment:
       - ETHEREUM_NETWORK=LOCALCHAIN
       - ETHEREUM_RPC_URL=http://172.27.0.108:80
-      - CHILD_CHAIN_URL=http://172.27.0.103:9656/v1
+      - CHILD_CHAIN_URL=http://172.27.0.108:9656/v1
       - PORT=7434
       - APP_ENV=local_docker_development
       - DD_HOSTNAME=datadog
@@ -160,7 +158,7 @@ services:
     environment:
       - ETHEREUM_NETWORK=LOCALCHAIN
       - ETHEREUM_RPC_URL=http://172.27.0.108:80
-      - CHILD_CHAIN_URL=http://172.27.0.103:9656/v1
+      - CHILD_CHAIN_URL=http://172.27.0.108:9656/v1
       - DATABASE_URL=postgresql://omisego_dev:omisego_dev@172.27.0.107:5432/omisego_dev
       - PORT=7534
       - APP_ENV=local_docker_development
