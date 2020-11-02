@@ -244,8 +244,8 @@ jobs:
           command: |
             wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb && sudo dpkg -i erlang-solutions_2.0_all.deb
             sudo apt-get update
-            sudo apt-get install esl-erlang
-            sudo apt-get install elixir
+            sudo apt-get install esl-erlang=1:23.0.3-1
+            sudo apt-get install elixir=1.10.4-1
             mix local.rebar --force && mix local.hex --force
       - run: mix deps.get && mix ecto.create && mix ecto.migrate
       - run:
