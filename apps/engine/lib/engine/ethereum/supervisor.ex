@@ -19,7 +19,7 @@ defmodule Engine.Ethereum.Supervisor do
   def init(_args) do
     ethereum_events_check_interval_ms = Configuration.ethereum_events_check_interval_ms()
     ethereum_stalled_sync_threshold_ms = Configuration.ethereum_stalled_sync_threshold_ms()
-    url = Configuration.url()
+    rpc_url = Configuration.rpc_url()
 
     children = [
       {Height, []},
@@ -31,7 +31,7 @@ defmodule Engine.Ethereum.Supervisor do
          eth_module: Rpc,
          alarm_module: Alarm,
          event_bus_module: Bus,
-         opts: [url: url]
+         opts: [url: rpc_url]
        ]}
     ]
 

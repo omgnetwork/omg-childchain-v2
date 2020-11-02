@@ -43,9 +43,14 @@ defmodule Engine.Configuration do
     Application.fetch_env!(@app, :eth_vault)
   end
 
-  @spec url() :: String.t()
-  def url() do
-    Application.fetch_env!(@app, :url)
+  @spec rpc_url() :: String.t()
+  def rpc_url() do
+    Application.fetch_env!(@app, :rpc_url)
+  end
+
+  @spec rpc_url() :: String.t()
+  def vault_url() do
+    Application.fetch_env!(@app, :vault_url)
   end
 
   @spec plasma_framework() :: String.t()
