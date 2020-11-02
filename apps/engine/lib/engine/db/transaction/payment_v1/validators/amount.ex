@@ -4,6 +4,7 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator.Amount do
   """
 
   alias Engine.DB.Transaction.PaymentV1.Type
+  alias Engine.Fee.FeeClaim
 
   @type validation_result_t() ::
           :ok
@@ -43,7 +44,7 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator.Amount do
   ...> %{<<1::160>> => 1})
   :ok
   """
-  @spec validate(Type.optional_accepted_fees_t(), %{required(<<_::160>>) => pos_integer()}) ::
+  @spec validate(Type.optional_accepted_fees_t(), FeeClaim.paid_fees_t()) ::
           validation_result_t()
   def validate(fees, paid_fees_by_currency) do
     with :ok <- positive_amounts(paid_fees_by_currency),

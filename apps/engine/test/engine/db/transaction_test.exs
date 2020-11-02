@@ -4,6 +4,7 @@ defmodule Engine.DB.TransactionTest do
 
   alias Engine.DB.Block
   alias Engine.DB.Output
+  alias Engine.DB.PaidFee
   alias Engine.DB.Transaction
   alias Engine.Repo
   alias Engine.Support.TestEntity
@@ -95,7 +96,28 @@ defmodule Engine.DB.TransactionTest do
       assert input2.state == :spent
     end
 
-    test "fails when inpus are not signed correctly" do
+    test "inserts paid fees" do
+      entity = TestEntity.alice()
+      input_blknum1 = 1
+      _ = insert(:deposit_output, %{blknum: input_blknum1, amount: 2})
+      input_blknum2 = 2
+      _ = insert(:deposit_output, %{blknum: input_blknum2, amount: 1, token: <<1::160>>})
+
+      tx_bytes =
+        ExPlasma.payment_v1()
+        |> Builder.new()
+        |> Builder.add_input(blknum: input_blknum1, txindex: 0, oindex: 0)
+        |> Builder.add_input(blknum: input_blknum2, txindex: 0, oindex: 0)
+        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+        |> Builder.add_output(output_guard: <<1::160>>, token: <<1::160>>, amount: 1)
+        |> Builder.sign!([entity.priv_encoded, entity.priv_encoded])
+        |> ExPlasma.encode!()
+
+      assert {:ok, %{transaction: transaction}} = Transaction.insert(tx_bytes)
+      assert [%PaidFee{amount: 1, currency: <<0::160>>}] = Repo.all(from(_ in PaidFee))
+    end
+
+    test "fails when inputs are not signed correctly" do
       %{priv_encoded: priv_encoded_1, addr: addr_1} = TestEntity.alice()
       %{priv_encoded: priv_encoded_2, addr: addr_2} = TestEntity.bob()
 
