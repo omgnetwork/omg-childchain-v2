@@ -74,7 +74,7 @@ commands:
             max_attempts=25
             until $(curl -v --silent http://localhost:9656/v1/health.check 2>&1 | grep -q 200); do
               echo "Response was:"
-              curl -is -X GET http://localhost:9656/v1/health.check
+              curl -is -X GET http://localhost:9756/v1/health.check
               if [ ${attempt_counter} -eq ${max_attempts} ];then
                 echo "Max attempts reached"
                 exit 1
@@ -253,7 +253,7 @@ jobs:
       - run: mix deps.get && mix ecto.create && mix ecto.migrate
       - run:
           name: Start the childchain via development entrypoint
-          command: iex -S mix
+          command: PORT=9756 iex -S mix
           background: true
       - run: sleep 10
       - pull_childchain_health
@@ -273,7 +273,7 @@ jobs:
           name: Now we shutdown all services
           command: |
             docker-compose down
-            sleep 20
+            sleep 40
       - run:
           name: Start the childchain via development entrypoint
           command: iex -S mix
