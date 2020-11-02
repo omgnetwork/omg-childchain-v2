@@ -34,6 +34,9 @@ commands:
             docker image ls
             docker-compose ps
       - run: sh .circleci/status.sh
+      # we can uncomment this part once we're confident cabbage tests will work with 
+      # our new childchain
+      
       # - install_elixir:
       #     cache: "specs"
       #     dir: "priv/cabbage"
