@@ -4,7 +4,7 @@ services:
     image: nginx:latest
     volumes:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./docker/nginx/geth_nginx.conf:/etc/nginx/config/geth.conf:ro
+      - ./docker/nginx/geth_nginx.conf:/etc/nginx/server_config/geth.conf:ro
     ports:
       - 9656:9656
       - 8545:80
