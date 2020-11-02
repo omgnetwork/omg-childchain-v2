@@ -276,7 +276,7 @@ jobs:
             sleep 20
       - run:
           name: Start the childchain via development entrypoint
-          command: iex -S mix
+          command: PORT=9756 iex -S mix
           background: true
       - run:
           name: Start all services
