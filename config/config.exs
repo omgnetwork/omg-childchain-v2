@@ -45,10 +45,6 @@ config :engine, Engine.Fee,
   fee_buffer_duration_ms: 30_000
 
 config :engine, Engine.Repo,
-  database: "engine_repo",
-  username: "omisego_dev",
-  password: "omisego_dev",
-  hostname: "localhost",
   backoff_type: :stop,
   # Have at most `:pool_size` DB connections on standby and serving DB queries.
   pool_size: String.to_integer(System.get_env("ENGINE_DB_POOL_SIZE") || "10"),
@@ -57,7 +53,8 @@ config :engine, Engine.Repo,
   # If checking out connections take longer than the new target, a DBConnection.ConnectionError is raised.
   # See: https://hexdocs.pm/db_connection/DBConnection.html#start_link/2-queue-config
   queue_target: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_TARGET_MS") || "100"),
-  queue_interval: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_INTERVAL_MS") || "2000")
+  queue_interval: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_INTERVAL_MS") || "2000"),
+  telemetry_prefix: [:engine, :repo]
 
 config :engine, ecto_repos: [Engine.Repo]
 
@@ -87,8 +84,6 @@ config :spandex, :decorators, tracer: Status.Metric.Tracer
 config :spandex_phoenix, tracer: Status.Metric.Tracer
 
 config :spandex_ecto, SpandexEcto.EctoLogger, tracer: Status.Metric.Tracer
-
-config :engine, Engine.Repo, telemetry_prefix: [:engine, :repo]
 
 # APMs are sent via HTTP requests
 config :spandex_datadog,
