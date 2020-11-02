@@ -31,7 +31,8 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
   Note that the fee can be overriden if the transaction is a merge, in this case
   :no_fees_required will be passed to the Amount validator.
 
-  Returns `:ok` if the transaction is valid, or `{:error, {field, error}}` otherwise.
+  Returns `{changeset, paid_fees}` if the transaction is valid, or `{{:error, {field, error}}, paid_fees}` otherwise.
+  `paid_fees` is a map indicating how much fees the transaction paid in each currency.
   """
   @spec validate(Ecto.Changeset.t(), Type.accepted_fees_t()) :: {Ecto.Changeset.t(), FeeClaim.paid_fees_t()}
   @impl Engine.DB.Transaction.Validator

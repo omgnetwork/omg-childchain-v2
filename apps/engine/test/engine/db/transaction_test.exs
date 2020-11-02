@@ -114,7 +114,9 @@ defmodule Engine.DB.TransactionTest do
         |> ExPlasma.encode!()
 
       assert {:ok, %{transaction: transaction}} = Transaction.insert(tx_bytes)
-      assert [%PaidFee{amount: 1, currency: <<0::160>>}] = Repo.all(from(_ in PaidFee))
+
+      assert [%PaidFee{amount: 1, currency: <<0::160>>}] =
+               Repo.all(from(f in PaidFee, where: f.transaction_id == ^transaction.id))
     end
 
     test "fails when inputs are not signed correctly" do
