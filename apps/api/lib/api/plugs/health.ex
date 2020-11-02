@@ -9,13 +9,9 @@ defmodule API.Plugs.Health do
 
   def call(conn, _params) do
     if Status.is_healthy() do
-      conn
-      |> put_status(200)
-      |> send_resp(200, "")
+      send_resp(conn, 200, "")
     else
-      conn
-      |> put_status(503)
-      |> send_resp(503, "")
+      send_resp(conn, 503, "")
     end
   end
 end
