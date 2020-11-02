@@ -34,33 +34,57 @@ commands:
             docker image ls
             docker-compose ps
       - run: sh .circleci/status.sh
-      - install_elixir:
-          cache: "specs"
-          dir: "priv/cabbage"
-      - install_rust
+      # we can uncomment this part once we're confident cabbage tests will work with 
+      # our new childchain
+      
+      # - install_elixir:
+      #     cache: "specs"
+      #     dir: "priv/cabbage"
+      # - install_rust
+      # - run:
+      #     name: Run specs
+      #     command: |
+      #       cd priv/cabbage
+      #       make install
+      #       make generate_api_code
+      #       mix deps.get
+      #       mix test
+      # - run:
+      #     name: (Cabbage) Format generated code and check for warnings
+      #     command: |
+      #       cd priv/cabbage
+      #       # run format ONLY on formatted code so that it cleans up quoted atoms because
+      #       # we cannot exclude folders to --warnings-as-errors
+      #       mix format apps/child_chain_api/lib/child_chain_api/model/*.ex
+      #       mix format apps/watcher_info_api/lib/watcher_info_api/model/*.ex
+      #       mix format apps/watcher_security_critical_api/lib/watcher_security_critical_api/model/*.ex
+      #       MIX_ENV=test mix do compile --warnings-as-errors --ignore-module-conflict --force, test --exclude test
+      # - run:
+      #     name: (Cabbage) Credo and formatting
+      #     command: |
+      #       cd priv/cabbage
+      #       mix do credo, format --check-formatted --dry-run
+  
+  pull_childchain_health:
+    steps:
       - run:
-          name: Run specs
+          name: Check if Childchain got back up
           command: |
-            cd priv/cabbage
-            make install
-            make generate_api_code
-            mix deps.get
-            mix test
-      - run:
-          name: (Cabbage) Format generated code and check for warnings
-          command: |
-            cd priv/cabbage
-            # run format ONLY on formatted code so that it cleans up quoted atoms because
-            # we cannot exclude folders to --warnings-as-errors
-            mix format apps/child_chain_api/lib/child_chain_api/model/*.ex
-            mix format apps/watcher_info_api/lib/watcher_info_api/model/*.ex
-            mix format apps/watcher_security_critical_api/lib/watcher_security_critical_api/model/*.ex
-            MIX_ENV=test mix do compile --warnings-as-errors --ignore-module-conflict --force, test --exclude test
-      - run:
-          name: (Cabbage) Credo and formatting
-          command: |
-            cd priv/cabbage
-            mix do credo, format --check-formatted --dry-run
+            attempt_counter=0
+            max_attempts=25
+            until $(curl -v --silent http://localhost:9656/v1/health.check 2>&1 | grep -q 200); do
+              echo "Response was:"
+              curl -is -X GET http://localhost:9656/v1/health.check
+              if [ ${attempt_counter} -eq ${max_attempts} ];then
+                echo "Max attempts reached"
+                exit 1
+              fi
+              echo "------------------------------"
+              printf 'Trying again.'
+              attempt_counter=$(($attempt_counter+1))
+              sleep 5
+            done
+            curl -is -X GET http://localhost:9656/v1/health.check
 
   install_elixir:
     parameters:
@@ -73,7 +97,7 @@ commands:
     description: Install Erlang and Elixir
     steps:
       - restore_cache:
-          key: v2-asdf-install-<<parameters.cache>>
+          key: v4-asdf-install-<<parameters.cache>>
       - run:
           name: Install Erlang and Elixir
           command: |
@@ -87,7 +111,7 @@ commands:
             mix local.rebar --force && mix local.hex --force
           no_output_timeout: 2400
       - save_cache:
-          key: v2-asdf-install-<<parameters.cache>>
+          key: v4-asdf-install-<<parameters.cache>>
           paths:
             - ~/.asdf
             - ~/.asdf-vm
@@ -200,6 +224,66 @@ jobs:
       - checkout
       - docker_compose_release:
           enterprise: "1"
+  
+  development:
+    working_directory: ~/childchain
+    machine:
+      image: ubuntu-2004:202010-01
+    steps:
+      - checkout
+      - run: 
+          command: make init-contracts
+          background: true
+      - run: 
+          command: docker-compose up -d nginx_geth postgres geth
+          background: true
+      - run:
+          name: Docker logs
+          command: docker-compose logs -f
+          background: true 
+      - install_rust
+      - run: 
+          name: Installing elixir via apt (asdf breaks iex -S mix)
+          command: |
+            wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb && sudo dpkg -i erlang-solutions_2.0_all.deb
+            sudo apt-get update
+            sudo apt-get install esl-erlang=1:23.0.3-1
+            sudo apt-get install elixir=1.10.4-1
+            mix local.rebar --force && mix local.hex --force
+      - run: mix deps.get && mix ecto.create && mix ecto.migrate
+      - run:
+          name: Start the childchain via development entrypoint
+          command: iex -S mix
+          background: true
+      - run: sleep 10
+      - pull_childchain_health
+      - run:
+          name: Now we shutdown all services
+          command: |
+            docker-compose down
+            sleep 20     
+      - run: 
+          name: Restart all services
+          background: true
+          command: docker-compose up -d nginx_geth postgres geth
+      - pull_childchain_health   
+      # at this point we reverse the startup order, first childchain then all services
+      - run: sudo pkill beam
+      - run:
+          name: Now we shutdown all services
+          command: |
+            docker-compose down
+            sleep 20
+      - run:
+          name: Start the childchain via development entrypoint
+          command: iex -S mix
+          background: true
+      - run: 
+          name: Start all services
+          background: true
+          command: docker-compose up -d nginx_geth postgres geth
+      - run: sleep 20
+      - pull_childchain_health              
 
   test_docker_compose_reorg:
     machine:
@@ -380,10 +464,14 @@ workflows:
       - test_docker_compose_release_public:
           requires:
             - build
-      #
+      
       # - test_docker_compose_reorg:
       #     requires:
       #       - build
+
+      - development:
+          requires:
+            - build
 
       - credo:
           requires:

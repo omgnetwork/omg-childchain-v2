@@ -16,6 +16,16 @@ defmodule Engine.Ethereum.Authority.Submitter do
     GenServer.cast(server, :submit)
   end
 
+  def child_spec(opts) do
+    %{
+      id: __MODULE__,
+      start: {__MODULE__, :start_link, [opts]},
+      type: :worker,
+      restart: :permanent,
+      shutdown: 500
+    }
+  end
+
   def start_link(init_arg) do
     name = Keyword.get(init_arg, :name, __MODULE__)
     GenServer.start_link(__MODULE__, init_arg, name: name)
