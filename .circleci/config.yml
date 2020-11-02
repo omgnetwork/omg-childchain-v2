@@ -72,7 +72,7 @@ commands:
           command: |
             attempt_counter=0
             max_attempts=25
-            until $(curl -v --silent http://localhost:9656/v1/health.check 2>&1 | grep -q 200); do
+            until $(curl -v --silent http://localhost:9756/v1/health.check 2>&1 | grep -q 200); do
               echo "Response was:"
               curl -is -X GET http://localhost:9756/v1/health.check
               if [ ${attempt_counter} -eq ${max_attempts} ];then
