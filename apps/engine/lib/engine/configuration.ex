@@ -48,7 +48,7 @@ defmodule Engine.Configuration do
     Application.fetch_env!(@app, :rpc_url)
   end
 
-  @spec rpc_url() :: String.t()
+  @spec vault_url() :: String.t()
   def vault_url() do
     Application.fetch_env!(@app, :vault_url)
   end
