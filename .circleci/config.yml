@@ -34,9 +34,9 @@ commands:
             docker image ls
             docker-compose ps
       - run: sh .circleci/status.sh
-      # we can uncomment this part once we're confident cabbage tests will work with 
+      # we can uncomment this part once we're confident cabbage tests will work with
       # our new childchain
-      
+
       # - install_elixir:
       #     cache: "specs"
       #     dir: "priv/cabbage"
@@ -64,7 +64,7 @@ commands:
       #     command: |
       #       cd priv/cabbage
       #       mix do credo, format --check-formatted --dry-run
-  
+
   pull_childchain_health:
     steps:
       - run:
@@ -116,7 +116,7 @@ commands:
             - ~/.asdf
             - ~/.asdf-vm
       - restore_cache:
-          key: v2-mix-specs-cache-{{ .Branch }}-{{ checksum "mix.lock" }}  
+          key: v2-mix-specs-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
   add_rust_to_path:
     description: "Add path to PATH env var"
     steps:
@@ -152,7 +152,7 @@ jobs:
             export SHELL=/bin/bash
             set +eo pipefail
             grep "submit_block\|submit_block_vault\|gas" mix.lock
-            if [[ $? -eq 1 ]] 
+            if [[ $? -eq 1 ]]
             then
               echo "You're OK."
               exit 0
@@ -224,25 +224,25 @@ jobs:
       - checkout
       - docker_compose_release:
           enterprise: "1"
-  
+
   development:
     working_directory: ~/childchain
     machine:
       image: ubuntu-2004:202010-01
     steps:
       - checkout
-      - run: 
+      - run:
           command: make init-contracts
           background: true
-      - run: 
-          command: docker-compose up -d nginx_geth postgres geth
+      - run:
+          command: docker-compose up -d nginx postgres geth
           background: true
       - run:
           name: Docker logs
           command: docker-compose logs -f
-          background: true 
+          background: true
       - install_rust
-      - run: 
+      - run:
           name: Installing elixir via apt (asdf breaks iex -S mix)
           command: |
             wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb && sudo dpkg -i erlang-solutions_2.0_all.deb
@@ -261,12 +261,12 @@ jobs:
           name: Now we shutdown all services
           command: |
             docker-compose down
-            sleep 20     
-      - run: 
+            sleep 20
+      - run:
           name: Restart all services
           background: true
-          command: docker-compose up -d nginx_geth postgres geth
-      - pull_childchain_health   
+          command: docker-compose up -d nginx postgres geth
+      - pull_childchain_health
       # at this point we reverse the startup order, first childchain then all services
       - run: sudo pkill beam
       - run:
@@ -278,12 +278,12 @@ jobs:
           name: Start the childchain via development entrypoint
           command: iex -S mix
           background: true
-      - run: 
+      - run:
           name: Start all services
           background: true
-          command: docker-compose up -d nginx_geth postgres geth
+          command: docker-compose up -d nginx postgres geth
       - run: sleep 20
-      - pull_childchain_health              
+      - pull_childchain_health
 
   test_docker_compose_reorg:
     machine:
@@ -464,7 +464,7 @@ workflows:
       - test_docker_compose_release_public:
           requires:
             - build
-      
+
       # - test_docker_compose_reorg:
       #     requires:
       #       - build
