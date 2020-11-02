@@ -273,7 +273,7 @@ jobs:
           name: Now we shutdown all services
           command: |
             docker-compose down
-            sleep 40
+            sleep 20
       - run:
           name: Start the childchain via development entrypoint
           command: iex -S mix
