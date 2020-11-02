@@ -54,7 +54,6 @@
   "spandex_phoenix": {:hex, :spandex_phoenix, "0.4.2", "8d63d080b411f43a0b269e19ca2a21d2ed832d93bcf2d1b1f9d13101188a45f1", [:mix], [{:plug, "~> 1.3", [hex: :plug, repo: "hexpm", optional: false]}, {:spandex, "~> 2.2 or ~> 3.0", [hex: :spandex, repo: "hexpm", optional: false]}], "hexpm", "c8e729cba2576bd055fae0b205436d459eeab1e32b0473d662e14a056522153d"},
   "ssl_verify_fun": {:hex, :ssl_verify_fun, "1.1.6", "cf344f5692c82d2cd7554f5ec8fd961548d4fd09e7d22f5b62482e5aeaebd4b0", [:make, :mix, :rebar3], [], "hexpm", "bdb0d2471f453c88ff3908e7686f86f9be327d065cc1ec16fa4540197ea04680"},
   "statix": {:git, "https://github.com/omisego/statix.git", "50745f14fd1d44297818a48336f041c228a0920f", [branch: "otp-21.3.8.4-support-global-tag-patch"]},
-  "submit_block": {:git, "git@github.com:omgnetwork/submit_block.git", "03fd58a7caa61ed48eba71bfd35e470575d1248d", [branch: "master"]},
   "telemetry": {:hex, :telemetry, "0.4.2", "2808c992455e08d6177322f14d3bdb6b625fbcfd233a73505870d8738a2f4599", [:rebar3], [], "hexpm", "2d1419bd9dda6a206d7b5852179511722e2b18812310d304620c7bd92a13fcef"},
   "toml": {:hex, :toml, "0.5.2", "e471388a8726d1ce51a6b32f864b8228a1eb8edc907a0edf2bb50eab9321b526", [:mix], [], "hexpm", "f1e3dabef71fb510d015fad18c0e05e7c57281001141504c6b69d94e99750a07"},
   "unicode_util_compat": {:hex, :unicode_util_compat, "0.5.0", "8516502659002cec19e244ebd90d312183064be95025a319a6c7e89f4bccd65b", [:rebar3], [], "hexpm", "d48d002e15f5cc105a696cf2f1bbb3fc72b4b770a184d8420c8db20da2674b38"},
