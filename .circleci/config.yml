@@ -84,7 +84,7 @@ commands:
               attempt_counter=$(($attempt_counter+1))
               sleep 5
             done
-            curl -is -X GET http://localhost:9656/v1/health.check
+            curl -is -X GET http://localhost:9756/v1/health.check
 
   install_elixir:
     parameters:
