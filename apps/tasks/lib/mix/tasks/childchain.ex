@@ -24,6 +24,7 @@ defmodule Mix.Tasks.Childchain.Start do
   def run(args) do
     Mix.Task.run("compile")
     config = Contract.load([ethereumex: [url: Configuration.rpc_url()]], system_adapter: Mix.Tasks.Childchain.Start)
+    Engine.Plugin.verify(true, true, Code.ensure_loaded?(Gas))
     :ok = Application.put_all_env(config)
     Start.run(args)
   end
