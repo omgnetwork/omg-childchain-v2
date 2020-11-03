@@ -4,8 +4,8 @@ defmodule Engine.DB.TransactionTest do
 
   alias Engine.DB.Block
   alias Engine.DB.Output
-  alias Engine.DB.TransactionFee
   alias Engine.DB.Transaction
+  alias Engine.DB.TransactionFee
   alias Engine.Repo
   alias Engine.Support.TestEntity
   alias ExPlasma.Builder

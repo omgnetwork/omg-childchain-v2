@@ -8,8 +8,8 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
 
   alias Engine.DB.Output
   alias Engine.DB.Output.OutputChangeset
-  alias Engine.DB.TransactionFee
   alias Engine.DB.Transaction.Validator
+  alias Engine.DB.TransactionFee
 
   alias ExPlasma.Output.Position
 
