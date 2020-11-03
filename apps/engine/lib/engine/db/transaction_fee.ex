@@ -1,4 +1,4 @@
-defmodule Engine.DB.PaidFee do
+defmodule Engine.DB.TransactionFee do
   @moduledoc """
   Represents fees collected for a transaction.
 
@@ -29,7 +29,7 @@ defmodule Engine.DB.PaidFee do
 
   @timestamps_opts [inserted_at: :node_inserted_at]
 
-  schema "paid_fees" do
+  schema "transaction_fees" do
     belongs_to(:transaction, Transaction)
     field(:currency, :binary)
     field(:amount, :integer)

@@ -4,7 +4,7 @@ defmodule Engine.DB.TransactionTest do
 
   alias Engine.DB.Block
   alias Engine.DB.Output
-  alias Engine.DB.PaidFee
+  alias Engine.DB.TransactionFee
   alias Engine.DB.Transaction
   alias Engine.Repo
   alias Engine.Support.TestEntity
@@ -115,8 +115,8 @@ defmodule Engine.DB.TransactionTest do
 
       assert {:ok, %{transaction: transaction}} = Transaction.insert(tx_bytes)
 
-      assert [%PaidFee{amount: 1, currency: <<0::160>>}] =
-               Repo.all(from(f in PaidFee, where: f.transaction_id == ^transaction.id))
+      assert [%TransactionFee{amount: 1, currency: <<0::160>>}] =
+               Repo.all(from(f in TransactionFee, where: f.transaction_id == ^transaction.id))
     end
 
     test "fails when inputs are not signed correctly" do

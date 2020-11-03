@@ -8,7 +8,7 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
 
   alias Engine.DB.Output
   alias Engine.DB.Output.OutputChangeset
-  alias Engine.DB.PaidFee
+  alias Engine.DB.TransactionFee
   alias Engine.DB.Transaction.Validator
 
   alias ExPlasma.Output.Position
@@ -48,7 +48,7 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
   defp associate_paid_fees(changeset, paid_fees_by_currency) do
     paid_fees =
       Enum.map(paid_fees_by_currency, fn {currency, amount} ->
-        PaidFee.changeset(%PaidFee{}, %{currency: currency, amount: amount})
+        TransactionFee.changeset(%TransactionFee{}, %{currency: currency, amount: amount})
       end)
 
     put_assoc(changeset, :paid_fees, paid_fees)
