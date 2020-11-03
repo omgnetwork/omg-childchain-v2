@@ -8,19 +8,15 @@
 
 version: "3.7"
 services:
-  childchain_postgres:
-    image: nginx:latest
+  nginx:
     volumes:
-      - ./docker/nginx/nginx.pg-replica.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/nginx.pg-replica.conf:/etc/nginx/main_config/pg.conf:ro
     depends_on:
       - postgres-0
-    networks:
-      chain_net:
-        ipv4_address: 172.27.0.160
 
   childchain:
     environment:
-      DATABASE_URL: postgresql://omisego_dev:omisego_dev@172.27.0.160:5440/engine_repo
+      DATABASE_URL: postgresql://omisego_dev:omisego_dev@172.27.0.108:5440/engine_repo
 
   postgres-0:
     image: bitnami/postgresql-repmgr:12-debian-10

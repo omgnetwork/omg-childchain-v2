@@ -4,29 +4,20 @@ services:
     image: nginx:latest
     volumes:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/geth_nginx.conf:/etc/nginx/server_config/geth.conf:ro
     ports:
-      - "9656:9656"
-    networks:
-      chain_net:
-        ipv4_address: 172.27.0.108
-
-  nginx_geth:
-    image: nginx:latest
-    container_name: nginx_geth
-    volumes:
-      - ./docker/nginx/geth_nginx.conf:/etc/nginx/nginx.conf:ro
-    ports:
+      - 9656:9656
       - 8545:80
       - 8546:81
       - 443:443
     healthcheck:
-      test: curl nginx_geth:80
+      test: curl geth:8545
       interval: 5s
       timeout: 3s
       retries: 5
     networks:
       chain_net:
-        ipv4_address: 172.27.0.102
+        ipv4_address: 172.27.0.108
 
   postgres:
     image: postgres:12.2-alpine
@@ -59,7 +50,7 @@ services:
       - SECRET_KEY_BASE="Y8naENMR8b+vbPHILjwNtEfWFrnbGi2k+UYWm75VnKHfsavmyGLtTmmeJxAGK+zJ"
       - DATADOG_DISABLED=true
       - DATADOG_HOST="localhost"
-      - ETHEREUM_NODE_URL=http://172.27.0.102:80
+      - ETHEREUM_NODE_URL=http://172.27.0.108:80
     ports:
       - "4000:4000"
     expose:
@@ -78,7 +69,7 @@ services:
       - ./localchain_contract_addresses.env
     environment:
       DATABASE_URL: postgresql://engine_repo:engine_repo@172.27.0.107:5432/engine_repo
-      ETHEREUM_RPC_URL: http://172.27.0.102:80
+      ETHEREUM_RPC_URL: http://172.27.0.108:80
       LOGGER_BACKEND: console
       ETHEREUM_EVENTS_CHECK_INTERVAL_MS: 800
       FEE_FEED_URL: http://172.27.0.110:4000/api/v1/fees
@@ -86,8 +77,6 @@ services:
       FEE_ADAPTER: FEED
       STORED_FEE_UPDATE_INTERVAL_MINUTES: 2
       FEE_CLAIMER_ADDRESS: "0x0000000000000000000000000000000000000000"
-    expose:
-      - "9656"
     depends_on:
       - feefeed
       - nginx
@@ -113,7 +102,7 @@ services:
       - ./docker/geth/command:/data/command
       - ./docker/geth/geth-blank-password:/data/geth-blank-password
     depends_on:
-      - nginx_geth
+      - nginx
     networks:
       chain_net:
         ipv4_address: 172.27.0.101
@@ -126,8 +115,8 @@ services:
       - ./localchain_contract_addresses.env
     environment:
       - ETHEREUM_NETWORK=LOCALCHAIN
-      - ETHEREUM_RPC_URL=http://172.27.0.102:80
-      - CHILD_CHAIN_URL=http://172.27.0.103:9656/v1
+      - ETHEREUM_RPC_URL=http://172.27.0.108:80
+      - CHILD_CHAIN_URL=http://172.27.0.108:9656/v1
       - PORT=7434
       - APP_ENV=local_docker_development
       - DD_HOSTNAME=datadog
@@ -169,8 +158,8 @@ services:
       - ./localchain_contract_addresses.env
     environment:
       - ETHEREUM_NETWORK=LOCALCHAIN
-      - ETHEREUM_RPC_URL=http://172.27.0.102:80
-      - CHILD_CHAIN_URL=http://172.27.0.103:9656/v1
+      - ETHEREUM_RPC_URL=http://172.27.0.108:80
+      - CHILD_CHAIN_URL=http://172.27.0.108:9656/v1
       - DATABASE_URL=postgresql://omisego_dev:omisego_dev@172.27.0.107:5432/omisego_dev
       - PORT=7534
       - APP_ENV=local_docker_development
