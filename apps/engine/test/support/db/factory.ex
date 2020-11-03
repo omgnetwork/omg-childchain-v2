@@ -9,6 +9,7 @@ defmodule Engine.DB.Factory do
   alias Engine.DB.Fee
   alias Engine.DB.Output
   alias Engine.DB.Transaction
+  alias Engine.DB.TransactionFee
   alias Engine.Ethereum.RootChain.Event
   alias Engine.Support.TestEntity
   alias ExPlasma.Builder
@@ -279,6 +280,13 @@ defmodule Engine.DB.Factory do
       term: fees,
       hash: hash,
       inserted_at: DateTime.utc_now()
+    }
+  end
+
+  def transaction_fee_factory(attr) do
+    %TransactionFee{
+      amount: Map.fetch!(attr, :amount),
+      currency: Map.fetch!(attr, :currency)
     }
   end
 

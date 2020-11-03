@@ -9,7 +9,6 @@ defmodule Engine.DB.Transaction.Validator do
 
   alias Engine.DB.Output
   alias Engine.DB.Transaction.PaymentV1
-  alias Engine.Fee.FeeClaim
   alias Engine.Repo
 
   @type_validators %{
@@ -18,7 +17,7 @@ defmodule Engine.DB.Transaction.Validator do
 
   @type accepted_fee_t() :: %{required(<<_::160>>) => list(pos_integer())}
 
-  @callback validate(Ecto.Changeset.t(), accepted_fee_t()) :: {Ecto.Changeset.t(), FeeClaim.paid_fees_t()}
+  @callback validate(Ecto.Changeset.t(), accepted_fee_t()) :: Ecto.Changeset.t()
 
   @doc """
   Validate the transaction bytes with the generic transaction format protocol.
@@ -75,9 +74,9 @@ defmodule Engine.DB.Transaction.Validator do
 
   Returns the changeset unchanged if valid or with an error otherwise.
   """
-  @spec validate_statefully(Ecto.Changeset.t(), map()) :: {Ecto.Changeset.t(), FeeClaim.paid_fees_t()} | no_return()
+  @spec validate_statefully(Ecto.Changeset.t(), map()) :: Ecto.Changeset.t() | no_return()
   # We can't perform statefull validation if there are errors in the changeset
-  def validate_statefully(%Ecto.Changeset{valid?: false} = changeset, _params), do: {changeset, %{}}
+  def validate_statefully(%Ecto.Changeset{valid?: false} = changeset, _params), do: changeset
 
   def validate_statefully(changeset, params) do
     get_validator(params.tx_type).validate(changeset, params.fees)

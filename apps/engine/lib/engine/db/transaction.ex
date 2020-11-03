@@ -65,7 +65,7 @@ defmodule Engine.DB.Transaction do
     belongs_to(:block, Block)
     has_many(:inputs, Output, foreign_key: :spending_transaction_id)
     has_many(:outputs, Output, foreign_key: :creating_transaction_id)
-    has_many(:paid_fees, TransactionFee, foreign_key: :transaction_id)
+    has_many(:fees, TransactionFee, foreign_key: :transaction_id)
 
     field(:inserted_at, :utc_datetime)
     field(:updated_at, :utc_datetime)

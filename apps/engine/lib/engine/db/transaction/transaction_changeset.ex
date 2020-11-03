@@ -9,23 +9,19 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
   alias Engine.DB.Output
   alias Engine.DB.Output.OutputChangeset
   alias Engine.DB.Transaction.Validator
-  alias Engine.DB.TransactionFee
 
   alias ExPlasma.Output.Position
 
   @required_fields [:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type]
 
   def new_transaction_changeset(struct, params) do
-    {changeset, paid_fees_by_currency} =
-      struct
-      |> cast(params, @required_fields)
-      |> validate_required(@required_fields)
-      |> Validator.validate_protocol()
-      |> Validator.associate_inputs(params)
-      |> cast_assoc(:outputs, with: &Output.new/2)
-      |> Validator.validate_statefully(params)
-
-    associate_paid_fees(changeset, paid_fees_by_currency)
+    struct
+    |> cast(params, @required_fields)
+    |> validate_required(@required_fields)
+    |> Validator.validate_protocol()
+    |> Validator.associate_inputs(params)
+    |> cast_assoc(:outputs, with: &Output.new/2)
+    |> Validator.validate_statefully(params)
   end
 
   def set_blknum_and_tx_index(changeset, block_with_next_tx_index) do
@@ -43,14 +39,5 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
     |> put_change(:tx_index, tx_index)
     |> put_assoc(:block, block)
     |> put_assoc(:outputs, outputs)
-  end
-
-  defp associate_paid_fees(changeset, paid_fees_by_currency) do
-    paid_fees =
-      Enum.map(paid_fees_by_currency, fn {currency, amount} ->
-        TransactionFee.changeset(%TransactionFee{}, %{currency: currency, amount: amount})
-      end)
-
-    put_assoc(changeset, :paid_fees, paid_fees)
   end
 end

@@ -24,12 +24,10 @@ defmodule Engine.DB.Transaction.PaymentV1.ValidatorTest do
 
       changeset = build_changeset([i_1, i_2, i_3], [o_1, o_2], [@alice, @alice, @alice])
 
-      assert {validated_changeset, fees} = Validator.validate(changeset, @fee)
+      validated_changeset = Validator.validate(changeset, @fee)
 
       assert validated_changeset.valid?
       assert validated_changeset == changeset
-
-      assert %{@token_1 => 2} == fees
     end
 
     test "rejects a non-merge transaction that doesn't include fees" do
@@ -38,7 +36,7 @@ defmodule Engine.DB.Transaction.PaymentV1.ValidatorTest do
 
       changeset = build_changeset([i_1], [o_1], [@alice])
 
-      assert {validated_changeset, %{}} = Validator.validate(changeset, @fee)
+      assert validated_changeset = Validator.validate(changeset, @fee)
 
       refute validated_changeset.valid?
       assert assert "Fees are not covered by inputs" in errors_on(validated_changeset).inputs
@@ -52,7 +50,7 @@ defmodule Engine.DB.Transaction.PaymentV1.ValidatorTest do
 
       changeset = build_changeset([i_1, i_2], [o_1], [@alice, @alice])
 
-      assert {validated_changeset, %{}} = Validator.validate(changeset, @fee)
+      assert validated_changeset = Validator.validate(changeset, @fee)
 
       assert validated_changeset.valid?
       assert validated_changeset == changeset
@@ -66,7 +64,7 @@ defmodule Engine.DB.Transaction.PaymentV1.ValidatorTest do
 
       changeset = build_changeset([i_1, i_2], [o_1], [@alice, @alice])
 
-      assert {validated_changeset, %{@token_1 => 2}} = Validator.validate(changeset, @fee)
+      assert validated_changeset = Validator.validate(changeset, @fee)
 
       refute validated_changeset.valid?
       assert assert "Overpaying fees" in errors_on(validated_changeset).inputs
@@ -80,7 +78,7 @@ defmodule Engine.DB.Transaction.PaymentV1.ValidatorTest do
 
       changeset = build_changeset([i_1, i_2], [o_1], [@alice, @alice])
 
-      {validated_changeset, %{@token_1 => 2}} = Validator.validate(changeset, @fee)
+      validated_changeset = Validator.validate(changeset, @fee)
 
       refute validated_changeset.valid?
       assert assert "Given signatures do not match the inputs owners" in errors_on(validated_changeset).witnesses

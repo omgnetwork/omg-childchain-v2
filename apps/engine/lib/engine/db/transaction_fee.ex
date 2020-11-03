@@ -10,7 +10,6 @@ defmodule Engine.DB.TransactionFee do
   """
 
   use Ecto.Schema
-  use Spandex.Decorators
 
   import Ecto.Changeset
 
