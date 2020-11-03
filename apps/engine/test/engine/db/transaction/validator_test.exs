@@ -4,6 +4,7 @@ defmodule Engine.DB.Transaction.ValidatorTest do
   alias Engine.DB.Output, as: DbOutput
   alias Engine.DB.Transaction
   alias Engine.DB.Transaction.Validator
+  alias Engine.DB.TransactionFee
   alias Engine.Repo
   alias ExPlasma.Builder
   alias ExPlasma.Output
@@ -140,14 +141,14 @@ defmodule Engine.DB.Transaction.ValidatorTest do
         })
       ]
 
-      transaction_fees = [build(:transaction_fee, %{amount: 1, currency: token})]
+      transaction_fee_changeset = TransactionFee.changeset(%TransactionFee{}, %{amount: 1, currency: token})
 
       changeset =
         %Transaction{}
         |> change(%{witnesses: [alice, alice]})
         |> put_assoc(:inputs, inputs)
         |> put_assoc(:outputs, outputs)
-        |> put_assoc(:fees, transaction_fees)
+        |> put_assoc(:fees, [transaction_fee_changeset])
 
       params = %{tx_type: 1, fees: fees}
       validated_changeset = Validator.validate_statefully(changeset, params)
