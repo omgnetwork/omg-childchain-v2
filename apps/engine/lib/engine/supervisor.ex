@@ -29,6 +29,12 @@ defmodule Engine.Supervisor do
       plasma_framework: Configuration.plasma_framework(),
       child_block_interval: Configuration.child_block_interval(),
       opts: [module: SubmitBlock, function: :submit_block, url: url, http_request_options: []],
+      gas_integration_fallback_order: [
+        Gas.Integration.Etherscan,
+        Gas.Integration.GasPriceOracle,
+        Gas.Integration.Pulse,
+        Gas.Integration.Web3Api
+      ],
       enterprise: enterprise
     ]
 

@@ -25,9 +25,9 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
     block_number
   end
 
-  def gas() do
+  def gas(gas_integration_fallback_order) do
     fn ->
-      apply(Gas, :get, [Gas.Integration.Etherscan])
+      get_gas(gas_integration_fallback_order)
     end
   end
 
@@ -49,6 +49,7 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
     end
   end
 
+  @spec external_opts(0 | 1, Keyword.t()) :: Keyword.t()
   defp external_opts(0, opts) do
     # even though we merge opts, ethereumex takes only :url
     private_key = System.get_env("PRIVATE_KEY")
@@ -64,5 +65,19 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
 
   defp call(plasma_framework, signature, args, opts) do
     Rpc.call_contract(plasma_framework, signature, args, opts)
+  end
+
+  defp get_gas(_, result) when is_struct(result) do
+    result
+  end
+
+  defp get_gas(integrations, result) do
+    _ = Logger.error("Got bad gas response: #{inspect(result)}. Continue to fallback: #{inspect(integrations)}")
+    get_gas(integrations)
+  end
+
+  # I think this needs to be rescued, let's see.
+  defp get_gas([integration | integrations]) do
+    get_gas(integrations, apply(Gas, :get, [integration]))
   end
 end

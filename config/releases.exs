@@ -31,6 +31,14 @@ config :engine,
     String.to_integer(System.get_env("ETHEREUM_STALLED_SYNC_THRESHOLD_MS") || "20000"),
   fee_claimer_address: System.get_env("FEE_CLAIMER_ADDRESS")
 
+config :gas, Gas.Integration.Pulse, api_key: System.get_env("PULSE_API_KEY")
+
+config :gas, Gas.Integration.Web3Api,
+  blockchain_id: System.get_env("WEB3API_BLOCKCHAIN_ID"),
+  api_key: System.get_env("WEB3API_API_KEY")
+
+config :gas, Gas.Integration.Etherscan, api_key: System.get_env("ETHERSCAN_API_KEY")
+
 config :engine, Engine.Repo,
   url: System.get_env("DATABASE_URL"),
   backoff_type: :stop,
