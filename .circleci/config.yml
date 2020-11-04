@@ -250,10 +250,16 @@ jobs:
             sudo apt-get install esl-erlang=1:23.0.3-1
             sudo apt-get install elixir=1.10.4-1
             mix local.rebar --force && mix local.hex --force
-      - run: mix deps.get && mix ecto.create && mix ecto.migrate
+      - run:
+          environment: 
+            ENTERPRISE: 0
+          command: mix deps.get && mix ecto.create && mix ecto.migrate
       - run:
           name: Start the childchain via development entrypoint
-          command: PORT=9756 iex -S mix
+          environment: 
+            ENTERPRISE: 0
+            PORT: 9756
+          command: iex -S mix
           background: true
       - run: sleep 10
       - pull_childchain_health
@@ -276,7 +282,10 @@ jobs:
             sleep 20
       - run:
           name: Start the childchain via development entrypoint
-          command: PORT=9756 iex -S mix
+          environment: 
+            ENTERPRISE: 0
+            PORT: 9756
+          command: iex -S mix
           background: true
       - run:
           name: Start all services
@@ -441,7 +450,10 @@ jobs:
     steps:
       - checkout
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - run: make docker-childchain CHILDCHAIN_IMAGE_NAME=$CHILDCHAIN_IMAGE_NAME
+      - run: 
+          environment:
+            ENTERPRISE: 0
+          command: make docker-childchain CHILDCHAIN_IMAGE_NAME=$CHILDCHAIN_IMAGE_NAME
       - run: IMAGE_NAME=$CHILDCHAIN_IMAGE_NAME sh .circleci/ci_publish.sh
 
 workflows:

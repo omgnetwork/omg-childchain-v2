@@ -12,7 +12,7 @@ defmodule Engine.MixProject do
       elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      deps: deps() ++ plugins()
+      deps: deps() ++ plugins() ++ validate_release_plugins()
     ]
   end
 
@@ -49,20 +49,29 @@ defmodule Engine.MixProject do
   end
 
   defp plugins() do
-    prod = Mix.env()
     enterprise = System.get_env("ENTERPRISE")
 
-    case {prod, enterprise} do
-      {:prod, "0"} ->
+    case enterprise do
+      "0" ->
         [{:submit_block, git: "git@github.com:omgnetwork/submit_block.git", branch: "master"}]
 
-      {:prod, "1"} ->
+      "1" ->
         [
           {:gas, git: "git@github.com:omgnetwork/gas.git", branch: "main"},
           {:submit_block, git: "git@github.com:omgnetwork/submit_block_vault.git", branch: "main"}
         ]
 
-      {:prod, _} ->
+      _ ->
+        []
+    end
+  end
+
+  defp validate_release_plugins() do
+    prod = Mix.env()
+    enterprise = System.get_env("ENTERPRISE")
+
+    case {prod, enterprise} do
+      {:prod, nil} ->
         exit("You've tried to build a release without any integrations. Export `ENTERPRISE` variable (0 or 1).")
 
       _ ->

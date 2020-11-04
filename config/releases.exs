@@ -1,5 +1,6 @@
 import Config
-rpc_url = System.get_env("ETHEREUM_RPC_URL") || "http://localhost:8545"
+rpc_url = System.get_env("ETHEREUM_RPC_URL")
+vault_url = System.get_env("VAULT_URL")
 
 to_boolean = fn
   "true" -> true
@@ -16,7 +17,8 @@ end
 
 config :engine,
   finality_margin: String.to_integer(System.get_env("FINALITY_MARGIN") || "10"),
-  url: rpc_url,
+  rpc_url: rpc_url,
+  vault_url: vault_url,
   network: System.get_env("ETHEREUM_NETWORK"),
   tx_hash_contract: System.get_env("TX_HASH_CONTRACT"),
   authority_address: System.get_env("AUTHORITY_ADDRESS"),
@@ -28,6 +30,14 @@ config :engine,
   ethereum_stalled_sync_threshold_ms:
     String.to_integer(System.get_env("ETHEREUM_STALLED_SYNC_THRESHOLD_MS") || "20000"),
   fee_claimer_address: System.get_env("FEE_CLAIMER_ADDRESS")
+
+config :gas, Gas.Integration.Pulse, api_key: System.get_env("PULSE_API_KEY")
+
+config :gas, Gas.Integration.Web3Api,
+  blockchain_id: System.get_env("WEB3API_BLOCKCHAIN_ID"),
+  api_key: System.get_env("WEB3API_API_KEY")
+
+config :gas, Gas.Integration.Etherscan, api_key: System.get_env("ETHERSCAN_API_KEY")
 
 config :engine, Engine.Repo,
   url: System.get_env("DATABASE_URL"),

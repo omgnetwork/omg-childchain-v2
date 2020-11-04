@@ -38,7 +38,7 @@ defmodule Engine.Ethereum.SyncSupervisor do
     finality_margin = Configuration.finality_margin()
     metrics_collection_interval = Configuration.metrics_collection_interval()
     contracts = Configuration.contracts()
-    url = Configuration.url()
+    rpc_url = Configuration.rpc_url()
 
     [
       {Coordinator,
@@ -47,7 +47,7 @@ defmodule Engine.Ethereum.SyncSupervisor do
          finality_margin
        )},
       {Aggregator,
-       opts: [url: url],
+       opts: [url: rpc_url],
        contracts: contracts,
        ets: AggregatorStorage.events_bucket(),
        events: [

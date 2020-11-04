@@ -36,7 +36,7 @@ defmodule Engine.Plugin do
       quote do
         defmodule unquote(Gas) do
           defstruct low: 33.0, fast: 80.0, fastest: 85.0, standard: 50.0, name: "Geth"
-          def unquote(:gas)(_), do: "Elixir.Gas" |> String.to_atom() |> Kernel.struct!()
+          def unquote(:get)(_), do: "Elixir.Gas" |> String.to_atom() |> Kernel.struct!()
           def unquote(:integrations)(), do: []
         end
       end

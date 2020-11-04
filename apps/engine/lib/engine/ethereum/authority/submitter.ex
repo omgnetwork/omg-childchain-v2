@@ -10,7 +10,7 @@ defmodule Engine.Ethereum.Authority.Submitter do
 
   require Logger
 
-  defstruct [:vault, :plasma_framework, :child_block_interval, :height, :opts]
+  defstruct [:plasma_framework, :child_block_interval, :height, :enterprise, :gas_integration_fallback_order, :opts]
 
   def push(server \\ __MODULE__) do
     GenServer.cast(server, :submit)
@@ -32,19 +32,21 @@ defmodule Engine.Ethereum.Authority.Submitter do
   end
 
   def init(init_arg) do
-    vault = Keyword.fetch!(init_arg, :vault)
+    enterprise = Keyword.fetch!(init_arg, :enterprise)
     plasma_framework = Keyword.fetch!(init_arg, :plasma_framework)
     child_block_interval = Keyword.fetch!(init_arg, :child_block_interval)
+    gas_integration_fallback_order = Keyword.fetch!(init_arg, :gas_integration_fallback_order)
     opts = Keyword.fetch!(init_arg, :opts)
     event_bus = Keyword.get(init_arg, :event_bus, Bus)
     :ok = event_bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
     height = Height.get()
 
     state = %__MODULE__{
-      vault: vault,
       plasma_framework: plasma_framework,
       child_block_interval: child_block_interval,
       height: height,
+      enterprise: enterprise,
+      gas_integration_fallback_order: gas_integration_fallback_order,
       opts: opts
     }
 
@@ -68,8 +70,8 @@ defmodule Engine.Ethereum.Authority.Submitter do
   defp submit(height, state) do
     next_child_block = External.next_child_block(state.plasma_framework, state.opts)
     mined_child_block = Core.mined(next_child_block, state.child_block_interval)
-    submit_fn = External.submit_block(state.vault, state.plasma_framework)
-    gas_fun = External.gas()
+    submit_fn = External.submit_block(state.plasma_framework, state.enterprise, state.opts)
+    gas_fun = External.gas(state.gas_integration_fallback_order)
     {:ok, _} = Block.get_all_and_submit(height, mined_child_block, submit_fn, gas_fun)
     :ok
   end
