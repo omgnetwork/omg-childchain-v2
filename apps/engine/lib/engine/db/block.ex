@@ -28,6 +28,7 @@ defmodule Engine.DB.Block do
   alias Engine.Configuration
   alias Engine.DB.Transaction
   alias Engine.DB.Transaction.TransactionQuery
+  alias Engine.DB.TransactionFee.TransactionFeeQuery
   alias Engine.Fee.FeeClaim
   alias Engine.Repo
   alias ExPlasma.Merkle
@@ -295,10 +296,19 @@ defmodule Engine.DB.Block do
   end
 
   defp attach_fee_transactions_to_block(repo, block) do
+    fees_by_currency =
+      block.id
+      |> TransactionFeeQuery.get_fees_for_block()
+      |> repo.all()
+      |> Enum.map(fn {key, val} -> {key, Decimal.to_integer(val)} end)
+      |> Enum.into(%{})
+
     fee_transactions_bytes =
-      block
-      |> Repo.preload(transactions: [:inputs, :outputs])
-      |> FeeClaim.generate_fee_transactions(Engine.Configuration.fee_claimer_address())
+      FeeClaim.generate_fee_transactions(
+        block.blknum,
+        fees_by_currency,
+        Engine.Configuration.fee_claimer_address()
+      )
 
     max_non_fee_transaction_tx_index =
       repo.one(TransactionQuery.select_max_non_fee_transaction_tx_index(block.id)) || -1

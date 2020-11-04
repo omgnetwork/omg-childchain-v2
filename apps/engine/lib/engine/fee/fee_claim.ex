@@ -33,11 +33,9 @@ defmodule Engine.Fee.FeeClaim do
   - Creates a fee transaction for each fee token found
   Returns the list of binary encoded transactions.
   """
-  @spec generate_fee_transactions(Engine.DB.Block.t(), <<_::160>>) :: list(binary())
-  def generate_fee_transactions(block, fee_claimer) do
-    block
-    |> fees_in_block()
-    |> Enum.map(fn {token, amount} -> build_fee_transaction(block.blknum, fee_claimer, token, amount) end)
+  @spec generate_fee_transactions(pos_integer(), paid_fees_t(), <<_::160>>) :: list(binary())
+  def generate_fee_transactions(blknum, fees_by_currency, fee_claimer) do
+    Enum.map(fees_by_currency, fn {token, amount} -> build_fee_transaction(blknum, fee_claimer, token, amount) end)
   end
 
   defp reduce_amounts(output_data) do
@@ -66,14 +64,5 @@ defmodule Engine.Fee.FeeClaim do
       |> ExPlasmaTx.with_nonce(%{blknum: blknum, token: token})
 
     ExPlasma.encode!(fee_tx, signed: true)
-  end
-
-  defp fees_in_block(block) do
-    Enum.reduce(block.transactions, %{}, fn transaction, acc ->
-      input_data = Enum.map(transaction.inputs, &ExPlasma.Output.decode!(&1.output_data).output_data)
-      output_data = Enum.map(transaction.outputs, &ExPlasma.Output.decode!(&1.output_data).output_data)
-      fee_paid = fee_paid(input_data, output_data)
-      Map.merge(acc, fee_paid, fn _token, fee1, fee2 -> fee1 + fee2 end)
-    end)
   end
 end

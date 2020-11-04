@@ -550,7 +550,7 @@ defmodule Engine.DB.BlockTest do
     test "attaches fee transactions to blocks" do
       block1 = insert_non_empty_block(Block.state_finalizing())
 
-      _ =
+      tx1 =
         insert(:payment_v1_transaction, %{
           block: block1,
           tx_index: 1,
@@ -558,7 +558,9 @@ defmodule Engine.DB.BlockTest do
           outputs: [%{amount: 1, token: @eth}]
         })
 
-      _ =
+      _ = insert(:transaction_fee, %{transaction: tx1, currency: @eth, amount: 1})
+
+      tx2 =
         insert(:payment_v1_transaction, %{
           block: block1,
           tx_index: 2,
@@ -566,14 +568,19 @@ defmodule Engine.DB.BlockTest do
           outputs: [%{amount: 1, token: @other_token}]
         })
 
+      _ = insert(:transaction_fee, %{transaction: tx2, currency: @other_token, amount: 1})
+
       block2 = insert_non_empty_block(Block.state_finalizing())
 
-      insert(:payment_v1_transaction, %{
-        block: block2,
-        tx_index: 1,
-        inputs: [%{amount: 10, token: @other_token}],
-        outputs: [%{amount: 1, token: @other_token}]
-      })
+      tx3 =
+        insert(:payment_v1_transaction, %{
+          block: block2,
+          tx_index: 1,
+          inputs: [%{amount: 10, token: @other_token}],
+          outputs: [%{amount: 1, token: @other_token}]
+        })
+
+      _ = insert(:transaction_fee, %{transaction: tx3, currency: @other_token, amount: 9})
 
       {:ok, _} = Block.prepare_for_submission()
 
@@ -609,12 +616,15 @@ defmodule Engine.DB.BlockTest do
     test "payment transaction indicies and fee transaction indicies form a continous range of natural numbers" do
       block = insert_non_empty_block(Block.state_finalizing())
 
-      insert(:payment_v1_transaction, %{
-        block: block,
-        tx_index: 1,
-        inputs: [%{amount: 10, token: @other_token}],
-        outputs: [%{amount: 1, token: @other_token}]
-      })
+      tx =
+        insert(:payment_v1_transaction, %{
+          block: block,
+          tx_index: 1,
+          inputs: [%{amount: 10, token: @other_token}],
+          outputs: [%{amount: 1, token: @other_token}]
+        })
+
+      _ = insert(:transaction_fee, %{transaction: tx, currency: @other_token, amount: 9})
 
       {:ok, _} = Block.prepare_for_submission()
 
@@ -662,13 +672,15 @@ defmodule Engine.DB.BlockTest do
   defp insert_non_empty_block(block_state) do
     block = insert(:block, %{state: block_state})
 
-    _ =
+    transaction =
       insert(:payment_v1_transaction, %{
         block: block,
         tx_index: 0,
         inputs: [%{amount: 2, token: @eth}],
         outputs: [%{amount: 1, token: @eth}]
       })
+
+    _ = insert(:transaction_fee, %{transaction: transaction, currency: @eth, amount: 1})
 
     Repo.get(Block, block.id)
   end
