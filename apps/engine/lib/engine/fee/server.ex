@@ -23,7 +23,8 @@ defmodule Engine.Fee.Server do
     :fee_buffer_duration_ms,
     :fee_fetcher_opts,
     fee_fetcher_check_timer: nil,
-    expire_fee_timer: nil
+    expire_fee_timer: nil,
+    fee_update_error: false
   ]
 
   @typep t() :: %__MODULE__{
@@ -31,7 +32,8 @@ defmodule Engine.Fee.Server do
            fee_buffer_duration_ms: pos_integer(),
            fee_fetcher_opts: Keyword.t(),
            fee_fetcher_check_timer: :timer.tref(),
-           expire_fee_timer: :timer.tref()
+           expire_fee_timer: :timer.tref(),
+           fee_update_error: boolean()
          }
 
   def start_link(opts) do
@@ -41,13 +43,13 @@ defmodule Engine.Fee.Server do
   def init(args) do
     state = Kernel.struct(__MODULE__, args)
 
-    _ = update_fee_specs(state)
-
     interval = state.fee_fetcher_check_interval_ms
     {:ok, fee_fetcher_check_timer} = :timer.send_interval(interval, self(), :update_fee_specs)
     new_state = %__MODULE__{state | fee_fetcher_check_timer: fee_fetcher_check_timer}
 
     _ = Logger.info("Started #{inspect(__MODULE__)}")
+
+    _ = update_fee_specs(state)
 
     {:ok, new_state}
   end
@@ -56,21 +58,35 @@ defmodule Engine.Fee.Server do
   Returns a list of amounts that are accepted as a fee for each token/type.
   These amounts include the currently supported fees plus the buffered ones.
   """
-  @spec accepted_fees() :: {:ok, Fee.typed_merged_fee_t()}
+  @spec accepted_fees() :: {:ok, Fee.typed_merged_fee_t()} | {:error, :fee_update_error}
   def accepted_fees() do
-    fees = load_accepted_fees()
+    case fee_server_healthy?() do
+      true ->
+        fees = load_accepted_fees()
+        {:ok, fees.term}
 
-    {:ok, fees.term}
+      false ->
+        {:error, :fee_update_error}
+    end
   end
 
   @doc """
   Returns currently accepted tokens and amounts in which transaction fees are collected for each transaction type
   """
-  @spec current_fees() :: {:ok, Fee.full_fee_t()}
+  @spec current_fees() :: {:ok, Fee.full_fee_t()} | {:error, :fee_update_error}
   def current_fees() do
-    fees = load_current_fees()
+    case fee_server_healthy?() do
+      true ->
+        fees = load_current_fees()
+        {:ok, fees.term}
 
-    {:ok, fees.term}
+      false ->
+        {:error, :fee_update_error}
+    end
+  end
+
+  def handle_call(:healthy?, _from, state) do
+    {:reply, not state.fee_update_error, state}
   end
 
   # The way this works (in a multi childchain setup) is that insert/1 has on_conflict: nothing.
@@ -92,6 +108,10 @@ defmodule Engine.Fee.Server do
 
     _ = Logger.info("Previous fees are now invalid and current fees must be paid")
     {:noreply, state}
+  rescue
+    error ->
+      _ = Logger.error("Exception during fees expire. Reason: #{inspect(error)}")
+      {:noreply, %{state | fee_update_error: true}}
   end
 
   def handle_info(:update_fee_specs, state) do
@@ -99,15 +119,15 @@ defmodule Engine.Fee.Server do
       case update_fee_specs(state) do
         {:ok, updated_state} ->
           Alarm.clear(invalid_fee_source())
-          updated_state
+          %{updated_state | fee_update_error: false}
 
         :ok ->
           Alarm.clear(invalid_fee_source())
-          state
+          %{state | fee_update_error: false}
 
         _ ->
           Alarm.set(invalid_fee_source())
-          state
+          %{state | fee_update_error: true}
       end
 
     {:noreply, new_state}
@@ -135,8 +155,13 @@ defmodule Engine.Fee.Server do
 
       error ->
         _ = Logger.error("Unable to update fees. Reason: #{inspect(error)}")
+
         error
     end
+  rescue
+    error ->
+      _ = Logger.error("Exception during fees update. Reason: #{inspect(error)}")
+      error
   end
 
   defp fees_expired?(nil, _current_fees, _fee_buffer_duration_ms), do: false
@@ -205,5 +230,9 @@ defmodule Engine.Fee.Server do
       {:ok, fees} -> fees
       _ -> nil
     end
+  end
+
+  defp fee_server_healthy?() do
+    GenServer.call(__MODULE__, :healthy?)
   end
 end

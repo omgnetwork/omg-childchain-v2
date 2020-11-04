@@ -5,8 +5,8 @@ defmodule Engine.Supervisor do
   """
   use Supervisor
 
-  # alias Engine.Configuration
-  # alias Engine.Fee.Server, as: FeeServer
+  alias Engine.Configuration
+  alias Engine.Fee.Server, as: FeeServer
   # alias Engine.Ethereum.Authority.Submitter
   require Logger
 
@@ -15,11 +15,11 @@ defmodule Engine.Supervisor do
   end
 
   def init(_args) do
-    # fee_server_opts = Configuration.fee_server_opts()
+    fee_server_opts = Configuration.fee_server_opts()
     # opts = []
 
     children = [
-      # {FeeServer, fee_server_opts}
+      {FeeServer, fee_server_opts}
       # {Submitter, opts}
     ]
 
