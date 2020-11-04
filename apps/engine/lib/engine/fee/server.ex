@@ -41,13 +41,13 @@ defmodule Engine.Fee.Server do
   def init(args) do
     state = Kernel.struct(__MODULE__, args)
 
+    _ = update_fee_specs(state)
+
     interval = state.fee_fetcher_check_interval_ms
     {:ok, fee_fetcher_check_timer} = :timer.send_interval(interval, self(), :update_fee_specs)
     new_state = %__MODULE__{state | fee_fetcher_check_timer: fee_fetcher_check_timer}
 
     _ = Logger.info("Started #{inspect(__MODULE__)}")
-
-    _ = update_fee_specs(state)
 
     {:ok, new_state}
   end
