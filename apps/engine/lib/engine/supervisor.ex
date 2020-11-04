@@ -8,7 +8,7 @@ defmodule Engine.Supervisor do
   alias Engine.Configuration
   alias Engine.Fee.Server, as: FeeServer
   alias Engine.Ethereum.Authority.Submitter
-  
+
   require Logger
 
   def start_link(args) do
@@ -40,7 +40,7 @@ defmodule Engine.Supervisor do
     ]
 
     children = [
-      {FeeServer, fee_server_opts}
+      {FeeServer, fee_server_opts},
       {Submitter, submitter_opts}
     ]
 
