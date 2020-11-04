@@ -7,14 +7,6 @@ defmodule API.V1.Controllere.TransactionControllerTest do
   alias ExPlasma.Builder
   alias ExPlasma.Encoding
 
-  setup_all do
-    unless Process.whereis(Engine.Fee.Server) do
-      {:ok, _pid} = Engine.TestFeeServer.start_link()
-    end
-
-    :ok
-  end
-
   setup do
     _ = insert(:merged_fee)
     block = insert(:block)

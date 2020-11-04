@@ -23,8 +23,7 @@ defmodule Engine.Fee.Server do
     :fee_buffer_duration_ms,
     :fee_fetcher_opts,
     fee_fetcher_check_timer: nil,
-    expire_fee_timer: nil,
-    fee_update_error: false
+    expire_fee_timer: nil
   ]
 
   @typep t() :: %__MODULE__{
@@ -32,8 +31,7 @@ defmodule Engine.Fee.Server do
            fee_buffer_duration_ms: pos_integer(),
            fee_fetcher_opts: Keyword.t(),
            fee_fetcher_check_timer: :timer.tref(),
-           expire_fee_timer: :timer.tref(),
-           fee_update_error: boolean()
+           expire_fee_timer: :timer.tref()
          }
 
   def start_link(opts) do
@@ -85,10 +83,6 @@ defmodule Engine.Fee.Server do
     end
   end
 
-  def handle_call(:healthy?, _from, state) do
-    {:reply, not state.fee_update_error, state}
-  end
-
   # The way this works (in a multi childchain setup) is that insert/1 has on_conflict: nothing.
   # Which has a conflict on the `hash` and `type` columns on fees. If multiple childchains would
   # try to insert fees at the same time any subsequent insertion would be ignored.
@@ -111,7 +105,10 @@ defmodule Engine.Fee.Server do
   rescue
     error ->
       _ = Logger.error("Exception during fees expire. Reason: #{inspect(error)}")
-      {:noreply, %{state | fee_update_error: true}}
+
+      Alarm.set(fee_update_error())
+
+      {:noreply, state}
   end
 
   def handle_info(:update_fee_specs, state) do
@@ -119,15 +116,15 @@ defmodule Engine.Fee.Server do
       case update_fee_specs(state) do
         {:ok, updated_state} ->
           Alarm.clear(invalid_fee_source())
-          %{updated_state | fee_update_error: false}
+          updated_state
 
         :ok ->
           Alarm.clear(invalid_fee_source())
-          %{state | fee_update_error: false}
+          state
 
         _ ->
           Alarm.set(invalid_fee_source())
-          %{state | fee_update_error: true}
+          state
       end
 
     {:noreply, new_state}
@@ -138,30 +135,40 @@ defmodule Engine.Fee.Server do
     {:invalid_fee_source, %{node: Node.self(), reporter: __MODULE__}}
   end
 
+  @spec fee_update_error() :: {:fee_update_error, %{:node => atom(), :reporter => Engine.Fee.Server}}
+  defp fee_update_error() do
+    {:fee_update_error, %{node: Node.self(), reporter: __MODULE__}}
+  end
+
   @spec update_fee_specs(t()) :: :ok | {:ok, map()} | {:error, {atom(), any()}}
   defp update_fee_specs(state) do
     current_fee_specs = load_current_fees()
 
-    case Fetcher.get_fee_specs(state.fee_fetcher_opts, current_fee_specs && current_fee_specs.term) do
-      {:ok, fee_specs} ->
-        :ok = save_fees(fee_specs)
-        _ = Logger.info("Reloaded fee specs from FeeFetcher")
+    result =
+      case Fetcher.get_fee_specs(state.fee_fetcher_opts, current_fee_specs && current_fee_specs.term) do
+        {:ok, fee_specs} ->
+          :ok = save_fees(fee_specs)
+          _ = Logger.info("Reloaded fee specs from FeeFetcher")
 
-        new_expire_fee_timer = start_expiration_timer(state.expire_fee_timer, state.fee_buffer_duration_ms)
-        {:ok, %__MODULE__{state | expire_fee_timer: new_expire_fee_timer}}
+          new_expire_fee_timer = start_expiration_timer(state.expire_fee_timer, state.fee_buffer_duration_ms)
+          {:ok, %__MODULE__{state | expire_fee_timer: new_expire_fee_timer}}
 
-      :ok ->
-        :ok
+        :ok ->
+          :ok
 
-      error ->
-        _ = Logger.error("Unable to update fees. Reason: #{inspect(error)}")
+        error ->
+          _ = Logger.error("Unable to update fees. Reason: #{inspect(error)}")
 
-        error
-    end
+          error
+      end
+
+    Alarm.clear(fee_update_error())
+
+    result
   rescue
     error ->
       _ = Logger.error("Exception during fees update. Reason: #{inspect(error)}")
-      error
+      Alarm.set(fee_update_error())
   end
 
   defp fees_expired?(nil, _current_fees, _fee_buffer_duration_ms), do: false
@@ -233,6 +240,8 @@ defmodule Engine.Fee.Server do
   end
 
   defp fee_server_healthy?() do
-    GenServer.call(__MODULE__, :healthy?)
+    Enum.all?([fee_update_error(), invalid_fee_source()], fn alarm ->
+      not Enum.member?(Alarm.all(), alarm)
+    end)
   end
 end
