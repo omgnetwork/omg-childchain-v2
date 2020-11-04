@@ -24,6 +24,7 @@ defmodule Engine.DB.Transaction do
   alias Ecto.Multi
   alias Engine.DB.Block
   alias Engine.DB.Output
+  alias Engine.DB.TransactionFee
   alias Engine.Fee
   alias Engine.Repo
 
@@ -64,6 +65,7 @@ defmodule Engine.DB.Transaction do
     belongs_to(:block, Block)
     has_many(:inputs, Output, foreign_key: :spending_transaction_id)
     has_many(:outputs, Output, foreign_key: :creating_transaction_id)
+    has_many(:fees, TransactionFee, foreign_key: :transaction_id)
 
     field(:inserted_at, :utc_datetime)
     field(:updated_at, :utc_datetime)
