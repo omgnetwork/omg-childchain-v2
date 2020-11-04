@@ -19,6 +19,7 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
   alias Engine.DB.Output
   alias Engine.DB.Output.OutputChangeset
   alias Engine.DB.Transaction.Validator
+
   alias ExPlasma.Output.Position
 
   @required_fields [:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type]

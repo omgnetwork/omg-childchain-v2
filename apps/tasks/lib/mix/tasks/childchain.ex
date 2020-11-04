@@ -22,7 +22,9 @@ defmodule Mix.Tasks.Childchain.Start do
   https://github.com/elixir-lang/elixir/blob/v1.10.3/lib/mix/lib/mix/tasks/app.start.ex
   """
   def run(args) do
-    config = Contract.load([ethereumex: [url: Configuration.url()]], system_adapter: Mix.Tasks.Childchain.Start)
+    Mix.Task.run("compile")
+    config = Contract.load([ethereumex: [url: Configuration.rpc_url()]], system_adapter: Mix.Tasks.Childchain.Start)
+    Engine.Plugin.verify(true, true, Code.ensure_loaded?(Gas))
     :ok = Application.put_all_env(config)
     Start.run(args)
   end
@@ -40,6 +42,6 @@ defmodule Mix.Tasks.Childchain.Start do
   end
 
   def get_env("ETHEREUM_RPC_URL") do
-    Configuration.url()
+    Configuration.rpc_url()
   end
 end

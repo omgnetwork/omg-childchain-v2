@@ -4,7 +4,7 @@ defmodule Engine.Repo.Migrations.CreateListenerStates do
   def change do
     create table(:listener_states, primary_key: false) do
       add(:listener, :string, primary_key: true)
-      add(:height, :integer)
+      add(:height, :bigint)
 
       add(:inserted_at, :utc_datetime, null: false, default: fragment("now_utc()"))
       add(:updated_at, :utc_datetime, null: false, default: fragment("now_utc()"))

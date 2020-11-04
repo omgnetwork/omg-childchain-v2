@@ -12,7 +12,7 @@ defmodule Engine.MixProject do
       elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      deps: deps() ++ plugins()
+      deps: deps() ++ plugins() ++ validate_release_plugins()
     ]
   end
 
@@ -31,7 +31,7 @@ defmodule Engine.MixProject do
       {:ex_abi, "~> 0.5.1"},
       {:ethereumex, "0.6.4"},
       {:ecto_sql, "~> 3.5"},
-      {:ex_plasma, git: "https://github.com/omisego/ex_plasma.git", ref: "335d1e8ee644bcab3b6c104223a7756c26851fe0"},
+      {:ex_plasma, git: "https://github.com/omgnetwork/ex_plasma.git", ref: "0336be01bea7b4aeb5b7fbd75edcbe4ad0d1c69f"},
       {:postgrex, "~> 0.15"},
       {:telemetry, "~> 0.4"},
       {:httpoison, "~> 1.7.0"},
@@ -49,7 +49,9 @@ defmodule Engine.MixProject do
   end
 
   defp plugins() do
-    case System.get_env("ENTERPRISE") do
+    enterprise = System.get_env("ENTERPRISE")
+
+    case enterprise do
       "0" ->
         [{:submit_block, git: "git@github.com:omgnetwork/submit_block.git", branch: "master"}]
 
@@ -58,6 +60,19 @@ defmodule Engine.MixProject do
           {:gas, git: "git@github.com:omgnetwork/gas.git", branch: "main"},
           {:submit_block, git: "git@github.com:omgnetwork/submit_block_vault.git", branch: "main"}
         ]
+
+      _ ->
+        []
+    end
+  end
+
+  defp validate_release_plugins() do
+    prod = Mix.env()
+    enterprise = System.get_env("ENTERPRISE")
+
+    case {prod, enterprise} do
+      {:prod, nil} ->
+        exit("You've tried to build a release without any integrations. Export `ENTERPRISE` variable (0 or 1).")
 
       _ ->
         []

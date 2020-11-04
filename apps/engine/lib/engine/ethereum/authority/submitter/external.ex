@@ -21,23 +21,63 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
     signature = "nextChildBlock()"
     {:ok, data} = call(plasma_framework, signature, [], opts)
     %{"block_number" => block_number} = Abi.decode_function(data, signature)
-    _ = Logger.info("Retrieved next child block number #{block_number}.")
+    _ = Logger.debug("Retrieved next child block number #{block_number}.")
     block_number
   end
 
-  @doc """
-    This is the point where we integrate with Vault.
-  """
-  @spec submit_block(String.t(), String.t()) :: function()
-  def submit_block(plasma_framework, vault) do
-    fn block_root, nonce, gas ->
-      url = vault <> "/" <> plasma_framework
-      body = %{"block_root" => block_root, "gas" => gas, "nonce" => nonce}
-      HTTPoison.post(url, body)
+  def gas(gas_integration_fallback_order) do
+    fn ->
+      get_gas(gas_integration_fallback_order)
     end
+  end
+
+  @doc """
+    This is the point where we integrate with SubmitBlock.
+    Default integration signature:
+    SubmitBlock.submit_block(block_root, nonce, gas_price, contract, opts)
+    
+  """
+  @spec submit_block(String.t(), 0 | 1, Keyword.t()) :: function()
+  def submit_block(plasma_framework, enteprise, opts) do
+    {module, opts1} = Keyword.pop(opts, :module)
+    {function, opts2} = Keyword.pop(opts1, :function)
+    external_opts = external_opts(enteprise, opts2)
+    contract = plasma_framework
+
+    fn block_root, nonce, gas_price ->
+      apply(module, function, [block_root, nonce, gas_price, contract, external_opts])
+    end
+  end
+
+  @spec external_opts(0 | 1, Keyword.t()) :: Keyword.t()
+  defp external_opts(0, opts) do
+    # even though we merge opts, ethereumex takes only :url
+    private_key = System.get_env("PRIVATE_KEY")
+    [private_key: private_key] ++ opts
+  end
+
+  defp external_opts(1, opts) do
+    vault_token = System.get_env("VAULT_TOKEN")
+    wallet_name = System.get_env("WALLET_NAME")
+    authority_address = System.get_env("AUTHORITY_ADDRESS")
+    [vault_token: vault_token, wallet_name: wallet_name, authority_address: authority_address] ++ opts
   end
 
   defp call(plasma_framework, signature, args, opts) do
     Rpc.call_contract(plasma_framework, signature, args, opts)
+  end
+
+  defp get_gas(_, result) when is_struct(result) do
+    result
+  end
+
+  defp get_gas(integrations, result) do
+    _ = Logger.error("Got bad gas response: #{inspect(result)}. Continue to fallback: #{inspect(integrations)}")
+    get_gas(integrations)
+  end
+
+  # I think this needs to be rescued, let's see.
+  defp get_gas([integration | integrations]) do
+    get_gas(integrations, apply(Gas, :get, [integration]))
   end
 end

@@ -45,10 +45,6 @@ config :engine, Engine.Fee,
   fee_buffer_duration_ms: 30_000
 
 config :engine, Engine.Repo,
-  database: "engine_repo",
-  username: "omisego_dev",
-  password: "omisego_dev",
-  hostname: "localhost",
   backoff_type: :stop,
   # Have at most `:pool_size` DB connections on standby and serving DB queries.
   pool_size: String.to_integer(System.get_env("ENGINE_DB_POOL_SIZE") || "10"),
@@ -56,10 +52,11 @@ config :engine, Engine.Repo,
   # a `:queue_interval` takes more than `:queue_target`, then we double the `:queue_target`.
   # If checking out connections take longer than the new target, a DBConnection.ConnectionError is raised.
   # See: https://hexdocs.pm/db_connection/DBConnection.html#start_link/2-queue-config
+  prepare_block_for_submission_interval_ms:
+    String.to_integer(System.get_env("PREPARE_BLOCK_FOR_SUBMISSION_INTERVAL_MS") || "10000"),
   queue_target: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_TARGET_MS") || "100"),
   queue_interval: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_INTERVAL_MS") || "2000"),
-  prepare_block_for_submission_interval_ms:
-    String.to_integer(System.get_env("PREPARE_BLOCK_FOR_SUBMISSION_INTERVAL_MS") || "10000")
+  telemetry_prefix: [:engine, :repo]
 
 config :engine, ecto_repos: [Engine.Repo]
 
@@ -90,8 +87,6 @@ config :spandex_phoenix, tracer: Status.Metric.Tracer
 
 config :spandex_ecto, SpandexEcto.EctoLogger, tracer: Status.Metric.Tracer
 
-config :engine, Engine.Repo, telemetry_prefix: [:engine, :repo]
-
 # APMs are sent via HTTP requests
 config :spandex_datadog,
   host: "localhost",
@@ -121,7 +116,7 @@ config :ex_plasma,
   }
 
 config :api,
-  port: 9656,
+  port: "PORT" |> System.get_env("9656") |> String.to_integer(),
   cors_enabled: true
 
 import_config "#{Mix.env()}.exs"

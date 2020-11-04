@@ -16,19 +16,26 @@ defmodule Engine.Ethereum.Authority.Submitter.ExternalTest do
     Kernel.send(pid, :stop)
   end
 
-  test "external call to submit block (whatever that is we don't really know)" do
+  test "external call to submit block (whatever that is we don't really know)", %{test: test_name} do
     parent = self()
-    pid = spawn(fn -> __MODULE__.EthereumClient.start(8886, parent) end)
+    plasma_framework = "plasma_framework_address"
+    enteprise = 0
 
-    receive do
-      :done -> :ok
-    after
-      500 -> raise("we ded")
+    defmodule test_name do
+      def fake(_, _, _, _, opts), do: Kernel.send(Keyword.fetch!(opts, :parent), :done_calling)
     end
 
-    call = External.submit_block("plasma_framework_address", "block")
+    opts = [module: test_name, function: :fake, parent: parent]
+    call = External.submit_block(plasma_framework, enteprise, opts)
     call.(1, 2, 3)
-    Kernel.send(pid, :stop)
+
+    receive do
+      :done_calling ->
+        assert true
+    after
+      500 ->
+        assert false
+    end
   end
 
   defmodule EthereumClient do

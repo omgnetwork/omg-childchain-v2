@@ -8,6 +8,8 @@ defmodule Engine.Fee.FeeClaim do
   alias ExPlasma.Transaction, as: ExPlasmaTx
   alias ExPlasma.Transaction.Type.Fee, as: ExPlasmaFee
 
+  @type paid_fees_t() :: %{required(<<_::160>>) => pos_integer()}
+
   @doc """
   Calculates and returns a map of fee paid given input and output data.
   This correspond to the sum of input amounts - output amounts for each token,

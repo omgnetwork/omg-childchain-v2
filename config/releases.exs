@@ -1,5 +1,6 @@
 import Config
-rpc_url = System.get_env("ETHEREUM_RPC_URL") || "http://localhost:8545"
+rpc_url = System.get_env("ETHEREUM_RPC_URL")
+vault_url = System.get_env("VAULT_URL")
 
 to_boolean = fn
   "true" -> true
@@ -16,7 +17,8 @@ end
 
 config :engine,
   finality_margin: String.to_integer(System.get_env("FINALITY_MARGIN") || "10"),
-  url: rpc_url,
+  rpc_url: rpc_url,
+  vault_url: vault_url,
   network: System.get_env("ETHEREUM_NETWORK"),
   tx_hash_contract: System.get_env("TX_HASH_CONTRACT"),
   authority_address: System.get_env("AUTHORITY_ADDRESS"),
@@ -30,6 +32,14 @@ config :engine,
   fee_claimer_address: System.get_env("FEE_CLAIMER_ADDRESS"),
   prepare_block_for_submission_interval_ms:
     String.to_integer(System.get_env("PREPARE_BLOCK_FOR_SUBMISSION_INTERVAL_MS") || "10000")
+
+config :gas, Gas.Integration.Pulse, api_key: System.get_env("PULSE_API_KEY")
+
+config :gas, Gas.Integration.Web3Api,
+  blockchain_id: System.get_env("WEB3API_BLOCKCHAIN_ID"),
+  api_key: System.get_env("WEB3API_API_KEY")
+
+config :gas, Gas.Integration.Etherscan, api_key: System.get_env("ETHERSCAN_API_KEY")
 
 config :engine, Engine.Repo,
   url: System.get_env("DATABASE_URL"),
@@ -92,3 +102,11 @@ config :engine, Engine.Feefeed.Rules.Scheduler,
 
 config :api,
   port: String.to_integer(System.get_env("PORT") || "9656")
+
+config :ex_plasma,
+  eip_712_domain: %{
+    name: "OMG Network",
+    salt: "0xfad5c7f626d80f9256ef01929f3beb96e058b8b4b0e3fe52d84f054c0e2a7a83",
+    verifying_contract: System.get_env("CONTRACT_ADDRESS_PLASMA_FRAMEWORK"),
+    version: "1"
+  }
