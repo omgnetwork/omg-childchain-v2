@@ -38,6 +38,10 @@ defmodule Engine.DB.DataCase do
       Sandbox.mode(Engine.Repo, {:shared, self()})
     end
 
+    unless Process.whereis(Engine.Fee.Server) do
+      {:ok, _pid} = Engine.TestFeeServer.start_link()
+    end
+
     :ok
   end
 
