@@ -18,6 +18,8 @@ defmodule Engine.DB.DataCase do
 
   alias Ecto.Adapters.SQL.Sandbox
   alias Ecto.Changeset
+  alias Status.Alert.Alarm
+  alias Status.Alert.AlarmHandler
 
   using do
     quote do
@@ -39,7 +41,7 @@ defmodule Engine.DB.DataCase do
     end
 
     _ = Application.start(:sasl)
-    :ok = Status.Alert.AlarmHandler.install(Status.Alert.Alarm.alarm_types(), Status.Alert.AlarmHandler.table_name())
+    :ok = AlarmHandler.install(Alarm.alarm_types(), AlarmHandler.table_name())
 
     :ok
   end
