@@ -6,8 +6,8 @@ defmodule Engine.Supervisor do
   use Supervisor
 
   alias Engine.Configuration
-  alias Engine.Fee.Server, as: FeeServer
   alias Engine.Ethereum.Authority.Submitter
+  alias Engine.Fee.Server, as: FeeServer
 
   require Logger
 
