@@ -1,7 +1,6 @@
 defmodule Engine.TestFeeServer do
   use GenServer
 
-  @impl true
   def start_link() do
     GenServer.start_link(__MODULE__, [], name: Engine.Fee.Server)
   end
