@@ -1,9 +1,9 @@
-defmodule Engine.PrepareBlockForSubmissionWorkerTest do
+defmodule Engine.Worker.PrepareBlockForSubmissionWorkerTest do
   use Engine.DB.DataCase, async: false
 
   alias Engine.DB.Block
-  alias Engine.PrepareBlockForSubmissionWorker
   alias Engine.Repo
+  alias Engine.Worker.PrepareBlockForSubmissionWorker
 
   @interval_ms 10
   @eth <<0::160>>

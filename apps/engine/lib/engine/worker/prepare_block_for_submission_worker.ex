@@ -1,4 +1,4 @@
-defmodule Engine.PrepareBlockForSubmissionWorker do
+defmodule Engine.Worker.PrepareBlockForSubmissionWorker do
   @moduledoc """
   For blocks in finalizing state:
   - attaches fee transactions
@@ -8,7 +8,7 @@ defmodule Engine.PrepareBlockForSubmissionWorker do
   use GenServer
 
   alias Engine.DB.Block
-  alias Engine.PrepareBlockForSubmissionWorker.AlarmHandler
+  alias Engine.Worker.PrepareBlockForSubmissionWorker.AlarmHandler
 
   require Logger
 

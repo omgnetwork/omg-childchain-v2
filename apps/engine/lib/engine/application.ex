@@ -9,10 +9,10 @@ defmodule Engine.Application do
   alias Engine.Ethereum.Supervisor, as: EthereumSupervisor
   alias Engine.Ethereum.SyncSupervisor
   alias Engine.Plugin
-  alias Engine.PrepareBlockForSubmissionWorker
   alias Engine.Repo.Monitor, as: RepoMonitor
   alias Engine.Supervisor, as: EngineSupervisor
   alias Engine.Telemetry.Handler
+  alias Engine.Worker.PrepareBlockForSubmissionWorker
 
   require Logger
 
