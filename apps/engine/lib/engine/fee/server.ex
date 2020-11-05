@@ -40,9 +40,6 @@ defmodule Engine.Fee.Server do
     _ = Process.flag(:trap_exit, true)
     state = Kernel.struct(__MODULE__, args)
 
-    # we did not fetch fees yet
-    Alarm.set(invalid_fee_source())
-
     interval = state.fee_fetcher_check_interval_ms
 
     _ = Process.send_after(self(), :update_fee_specs, interval)
@@ -61,6 +58,11 @@ defmodule Engine.Fee.Server do
     fees = load_accepted_fees()
 
     {:ok, fees.term}
+  end
+
+  @spec raise_fee_source_alarm() :: :ok | :duplicate
+  def raise_fee_source_alarm() do
+    Alarm.set(invalid_fee_source())
   end
 
   @doc """

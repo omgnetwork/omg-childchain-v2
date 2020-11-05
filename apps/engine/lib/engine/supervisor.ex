@@ -16,6 +16,9 @@ defmodule Engine.Supervisor do
   end
 
   def init(_args) do
+    # we did not fetch fees yet
+    FeeServer.raise_fee_source_alarm()
+
     fee_server_opts = Configuration.fee_server_opts()
 
     enterprise = apply(SubmitBlock, :enterprise, [])
