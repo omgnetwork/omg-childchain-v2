@@ -3,6 +3,27 @@ defmodule API.RouterTest do
   use Plug.Test
 
   alias API.Router
+  alias Status.Alert.Alarm
+  alias Status.Alert.AlarmHandler
+
+  setup_all do
+    case Application.start(:sasl) do
+      {:error, {:already_started, :sasl}} ->
+        :ok = Application.stop(:sasl)
+        :ok = Application.start(:sasl)
+
+      :ok ->
+        :ok
+    end
+
+    :ok = AlarmHandler.install(Alarm.alarm_types(), AlarmHandler.table_name())
+
+    on_exit(fn ->
+      _ = Application.stop(:sasl)
+    end)
+
+    :ok
+  end
 
   test "renders an error when not matching a supported version" do
     {:ok, payload} =
