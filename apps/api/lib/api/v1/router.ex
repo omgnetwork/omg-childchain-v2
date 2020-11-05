@@ -12,7 +12,6 @@ defmodule API.V1.Router do
 
   alias API.Configuration
   alias API.Plugs.ExpectParams
-  alias API.Plugs.Health
   alias API.Plugs.Responder
   alias API.Plugs.Version
   alias API.V1.Controller.BlockController
