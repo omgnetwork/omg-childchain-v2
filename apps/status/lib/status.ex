@@ -14,7 +14,9 @@ defmodule Status do
                         :ethereum_connection_error,
                         :ethereum_stalled_sync,
                         :main_supervisor_halted,
-                        :db_connection_lost
+                        :db_connection_lost,
+                        :fee_update_error,
+                        :invalid_fee_source
                       ],
                       do: [{{n, 0}, [], [false]}, {{n, 1}, [], [true]}]
                 )

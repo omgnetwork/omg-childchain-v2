@@ -51,7 +51,7 @@ defmodule API.V1.Router do
   plug(:dispatch)
 
   get "health.check" do
-    Health.call(conn, %{})
+    put_conn_response(conn, "")
   end
 
   get "configuration.get" do

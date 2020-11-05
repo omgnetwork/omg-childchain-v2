@@ -56,31 +56,21 @@ defmodule Engine.Fee.Server do
   Returns a list of amounts that are accepted as a fee for each token/type.
   These amounts include the currently supported fees plus the buffered ones.
   """
-  @spec accepted_fees() :: {:ok, Fee.typed_merged_fee_t()} | {:error, :fee_update_error}
+  @spec accepted_fees() :: {:ok, Fee.typed_merged_fee_t()}
   def accepted_fees() do
-    case fee_server_healthy?() do
-      true ->
-        fees = load_accepted_fees()
-        {:ok, fees.term}
+    fees = load_accepted_fees()
 
-      false ->
-        {:error, :fee_update_error}
-    end
+    {:ok, fees.term}
   end
 
   @doc """
   Returns currently accepted tokens and amounts in which transaction fees are collected for each transaction type
   """
-  @spec current_fees() :: {:ok, Fee.full_fee_t()} | {:error, :fee_update_error}
+  @spec current_fees() :: {:ok, Fee.full_fee_t()}
   def current_fees() do
-    case fee_server_healthy?() do
-      true ->
-        fees = load_current_fees()
-        {:ok, fees.term}
+    fees = load_current_fees()
 
-      false ->
-        {:error, :fee_update_error}
-    end
+    {:ok, fees.term}
   end
 
   # The way this works (in a multi childchain setup) is that insert/1 has on_conflict: nothing.
@@ -237,11 +227,5 @@ defmodule Engine.Fee.Server do
       {:ok, fees} -> fees
       _ -> nil
     end
-  end
-
-  defp fee_server_healthy?() do
-    Enum.all?([fee_update_error(), invalid_fee_source()], fn alarm ->
-      not Enum.member?(Alarm.all(), alarm)
-    end)
   end
 end
