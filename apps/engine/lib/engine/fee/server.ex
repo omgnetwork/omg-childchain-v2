@@ -37,7 +37,6 @@ defmodule Engine.Fee.Server do
   end
 
   def init(args) do
-    _ = Process.flag(:trap_exit, true)
     state = Kernel.struct(__MODULE__, args)
 
     interval = state.fee_fetcher_check_interval_ms
@@ -120,18 +119,11 @@ defmodule Engine.Fee.Server do
 
   def terminate(reason, _state) do
     _ = Logger.error("Fee server failed. Reason: #{inspect(reason)}")
-
-    Alarm.set(fee_update_error())
   end
 
   @spec invalid_fee_source() :: {:invalid_fee_source, %{:node => atom(), :reporter => Engine.Fee.Server}}
   defp invalid_fee_source() do
     {:invalid_fee_source, %{node: Node.self(), reporter: __MODULE__}}
-  end
-
-  @spec fee_update_error() :: {:fee_update_error, %{:node => atom(), :reporter => Engine.Fee.Server}}
-  defp fee_update_error() do
-    {:fee_update_error, %{node: Node.self(), reporter: __MODULE__}}
   end
 
   @spec update_fee_specs(t()) :: :ok | {:ok, map()} | {:error, {atom(), any()}}
@@ -155,8 +147,6 @@ defmodule Engine.Fee.Server do
 
           error
       end
-
-    Alarm.clear(fee_update_error())
 
     result
   end
