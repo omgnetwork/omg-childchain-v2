@@ -59,9 +59,9 @@ defmodule Engine.Fee.Server do
     {:ok, fees.term}
   end
 
-  @spec raise_fee_source_alarm() :: :ok | :duplicate
-  def raise_fee_source_alarm() do
-    Alarm.set(invalid_fee_source())
+  @spec raise_no_fees_alarm() :: :ok | :duplicate
+  def raise_no_fees_alarm() do
+    Alarm.set(no_fees())
   end
 
   @doc """
@@ -100,15 +100,15 @@ defmodule Engine.Fee.Server do
     new_state =
       case update_fee_specs(state) do
         {:ok, updated_state} ->
-          Alarm.clear(invalid_fee_source())
+          Alarm.clear(no_fees())
           updated_state
 
         :ok ->
-          Alarm.clear(invalid_fee_source())
+          Alarm.clear(no_fees())
           state
 
         _ ->
-          Alarm.set(invalid_fee_source())
+          Alarm.set(no_fees())
           state
       end
 
@@ -121,9 +121,9 @@ defmodule Engine.Fee.Server do
     _ = Logger.error("Fee server failed. Reason: #{inspect(reason)}")
   end
 
-  @spec invalid_fee_source() :: {:invalid_fee_source, %{:node => atom(), :reporter => Engine.Fee.Server}}
-  defp invalid_fee_source() do
-    {:invalid_fee_source, %{node: Node.self(), reporter: __MODULE__}}
+  @spec no_fees() :: {:no_fees, %{:node => atom(), :reporter => Engine.Fee.Server}}
+  defp no_fees() do
+    {:no_fees, %{node: Node.self(), reporter: __MODULE__}}
   end
 
   @spec update_fee_specs(t()) :: :ok | {:ok, map()} | {:error, {atom(), any()}}
@@ -200,8 +200,15 @@ defmodule Engine.Fee.Server do
 
   defp load_current_fees() do
     case FeeDB.fetch_current_fees() do
-      {:ok, fees} -> fees
-      _ -> nil
+      {:ok, fees} ->
+        Alarm.clear(no_fees())
+
+        fees
+
+      _ ->
+        Alarm.set(no_fees())
+
+        nil
     end
   end
 

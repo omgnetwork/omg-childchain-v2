@@ -17,7 +17,7 @@ defmodule Engine.Supervisor do
 
   def init(_args) do
     # we did not fetch fees yet
-    FeeServer.raise_fee_source_alarm()
+    FeeServer.raise_no_fees_alarm()
 
     fee_server_opts = Configuration.fee_server_opts()
 
