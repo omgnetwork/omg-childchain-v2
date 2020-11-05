@@ -235,7 +235,7 @@ jobs:
           command: make init-contracts
           background: true
       - run:
-          command: docker-compose up -d nginx postgres geth
+          command: docker-compose up -d nginx postgres geth feefeed
           background: true
       - run:
           name: Docker logs
@@ -251,12 +251,12 @@ jobs:
             sudo apt-get install elixir=1.10.4-1
             mix local.rebar --force && mix local.hex --force
       - run:
-          environment: 
+          environment:
             ENTERPRISE: 0
           command: mix deps.get && mix ecto.create && mix ecto.migrate
       - run:
           name: Start the childchain via development entrypoint
-          environment: 
+          environment:
             ENTERPRISE: 0
             PORT: 9756
           command: iex -S mix
@@ -271,7 +271,7 @@ jobs:
       - run:
           name: Restart all services
           background: true
-          command: docker-compose up -d nginx postgres geth
+          command: docker-compose up -d nginx postgres geth feefeed
       - pull_childchain_health
       # at this point we reverse the startup order, first childchain then all services
       - run: sudo pkill beam
@@ -282,7 +282,7 @@ jobs:
             sleep 20
       - run:
           name: Start the childchain via development entrypoint
-          environment: 
+          environment:
             ENTERPRISE: 0
             PORT: 9756
           command: iex -S mix
@@ -450,7 +450,7 @@ jobs:
     steps:
       - checkout
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - run: 
+      - run:
           environment:
             ENTERPRISE: 0
           command: make docker-childchain CHILDCHAIN_IMAGE_NAME=$CHILDCHAIN_IMAGE_NAME
