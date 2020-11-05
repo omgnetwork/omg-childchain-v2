@@ -50,7 +50,8 @@ defmodule API.V1.Router do
   plug(:dispatch)
 
   get "health.check" do
-    put_conn_response(conn, "")
+    # Health plug will intercept this if alarms were raised
+    send_resp(conn, 200, "")
   end
 
   get "configuration.get" do
