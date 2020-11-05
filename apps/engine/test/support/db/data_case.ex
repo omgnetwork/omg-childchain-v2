@@ -18,6 +18,8 @@ defmodule Engine.DB.DataCase do
 
   alias Ecto.Adapters.SQL.Sandbox
   alias Ecto.Changeset
+  alias Status.Alert.Alarm
+  alias Status.Alert.AlarmHandler
 
   using do
     quote do
@@ -37,6 +39,9 @@ defmodule Engine.DB.DataCase do
     unless tags[:async] do
       Sandbox.mode(Engine.Repo, {:shared, self()})
     end
+
+    _ = Application.start(:sasl)
+    :ok = AlarmHandler.install(Alarm.alarm_types(), AlarmHandler.table_name())
 
     :ok
   end
