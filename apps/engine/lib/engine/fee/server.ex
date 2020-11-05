@@ -22,7 +22,6 @@ defmodule Engine.Fee.Server do
     :fee_fetcher_check_interval_ms,
     :fee_buffer_duration_ms,
     :fee_fetcher_opts,
-    fee_fetcher_check_timer: nil,
     expire_fee_timer: nil
   ]
 
@@ -30,7 +29,6 @@ defmodule Engine.Fee.Server do
            fee_fetcher_check_interval_ms: pos_integer(),
            fee_buffer_duration_ms: pos_integer(),
            fee_fetcher_opts: Keyword.t(),
-           fee_fetcher_check_timer: :timer.tref(),
            expire_fee_timer: :timer.tref()
          }
 
@@ -39,17 +37,19 @@ defmodule Engine.Fee.Server do
   end
 
   def init(args) do
+    _ = Process.flag(:trap_exit, true)
     state = Kernel.struct(__MODULE__, args)
 
-    _ = update_fee_specs(state)
+    # we did not fetch fees yet
+    Alarm.set(invalid_fee_source())
 
     interval = state.fee_fetcher_check_interval_ms
-    {:ok, fee_fetcher_check_timer} = :timer.send_interval(interval, self(), :update_fee_specs)
-    new_state = %__MODULE__{state | fee_fetcher_check_timer: fee_fetcher_check_timer}
+
+    _ = Process.send_after(self(), :update_fee_specs, interval)
 
     _ = Logger.info("Started #{inspect(__MODULE__)}")
 
-    {:ok, new_state}
+    {:ok, state}
   end
 
   @doc """
@@ -91,14 +91,8 @@ defmodule Engine.Fee.Server do
     end
 
     _ = Logger.info("Previous fees are now invalid and current fees must be paid")
+
     {:noreply, state}
-  rescue
-    error ->
-      _ = Logger.error("Exception during fees expire. Reason: #{inspect(error)}")
-
-      Alarm.set(fee_update_error())
-
-      {:noreply, state}
   end
 
   def handle_info(:update_fee_specs, state) do
@@ -117,7 +111,15 @@ defmodule Engine.Fee.Server do
           state
       end
 
+    _ = Process.send_after(self(), :update_fee_specs, state.fee_fetcher_check_interval_ms)
+
     {:noreply, new_state}
+  end
+
+  def terminate(reason, _state) do
+    _ = Logger.error("Fee server failed. Reason: #{inspect(reason)}")
+
+    Alarm.set(fee_update_error())
   end
 
   @spec invalid_fee_source() :: {:invalid_fee_source, %{:node => atom(), :reporter => Engine.Fee.Server}}
@@ -155,10 +157,6 @@ defmodule Engine.Fee.Server do
     Alarm.clear(fee_update_error())
 
     result
-  rescue
-    error ->
-      _ = Logger.error("Exception during fees update. Reason: #{inspect(error)}")
-      Alarm.set(fee_update_error())
   end
 
   defp fees_expired?(nil, _current_fees, _fee_buffer_duration_ms), do: false
