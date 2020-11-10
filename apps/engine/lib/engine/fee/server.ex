@@ -101,12 +101,7 @@ defmodule Engine.Fee.Server do
     new_state =
       case update_fee_specs(state) do
         {:ok, updated_state} ->
-          Alarm.clear(no_fees())
           updated_state
-
-        :ok ->
-          Alarm.clear(no_fees())
-          state
 
         _ ->
           state
