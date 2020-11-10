@@ -259,7 +259,7 @@ defmodule Engine.DB.TransactionTest do
       assert expected_tx_bytes == transaction.tx_bytes
     end
 
-    test "assign positions to fee transaction outputs and sets outputs owner to authority address", %{block: block} do
+    test "assign positions to fee transaction outputs and sets outputs owner to fee claimer address", %{block: block} do
       tx_index = 1
 
       assert {:ok, %Transaction{outputs: [output]}} =

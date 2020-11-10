@@ -302,7 +302,7 @@ defmodule Engine.DB.Block do
 
     max_non_fee_transaction_tx_index = repo.one(TransactionQuery.select_max_non_fee_transaction_tx_index(block.id))
 
-    # assign indexes to fee transactions
+    # inserts fee transaction with corresponding transaction index
     # indexes are consecutive natural numbers starting with the next number after `max_non_fee_transaction_tx_index`
     fees_by_currency
     |> Enum.with_index()
