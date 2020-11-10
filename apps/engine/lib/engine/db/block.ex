@@ -300,8 +300,7 @@ defmodule Engine.DB.Block do
       |> TransactionFeeQuery.get_fees_for_block()
       |> repo.all()
 
-    max_non_fee_transaction_tx_index =
-      repo.one(TransactionQuery.select_max_non_fee_transaction_tx_index(block.id)) || -1
+    max_non_fee_transaction_tx_index = repo.one(TransactionQuery.select_max_non_fee_transaction_tx_index(block.id))
 
     # assign indexes to fee transactions
     # indexes are consecutive natural numbers starting with the next number after `max_non_fee_transaction_tx_index`
