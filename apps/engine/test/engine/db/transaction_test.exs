@@ -249,43 +249,40 @@ defmodule Engine.DB.TransactionTest do
       {:ok, %{block: block}}
     end
 
-    test "sets block and transaction index for a fee transaction", %{block: block} do
-      tx_bytes = fee_transaction_bytes(block.blknum)
-
-      assert {:ok, transaction} = Transaction.insert_fee_transaction(Repo, tx_bytes, block, 1)
+    test "sets block, transaction index, tx_type and tx_bytes for a fee transaction", %{block: block} do
+      assert {:ok, transaction} = Transaction.insert_fee_transaction(Repo, {@eth, Decimal.new(1)}, block, 1)
       assert 1 == transaction.tx_index
       assert block == transaction.block
+      assert ExPlasma.fee() == transaction.tx_type
+
+      expected_tx_bytes = fee_transaction_bytes(block.blknum)
+      assert expected_tx_bytes == transaction.tx_bytes
     end
 
-    test "assign positions to fee transaction outputs", %{block: block} do
+    test "assign positions to fee transaction outputs and sets outputs owner to authority address", %{block: block} do
       tx_index = 1
-      tx_bytes = fee_transaction_bytes(block.blknum)
 
       assert {:ok, %Transaction{outputs: [output]}} =
-               Transaction.insert_fee_transaction(Repo, tx_bytes, block, tx_index)
+               Transaction.insert_fee_transaction(Repo, {@eth, Decimal.new(1)}, block, tx_index)
 
       expected_position = Position.pos(%{blknum: block.blknum, txindex: tx_index, oindex: 0})
-
       assert expected_position == output.position
-    end
 
-    test "propagates errors", %{block: block} do
-      tx_bytes = transaction_bytes()
+      owner = Engine.Configuration.fee_claimer_address()
 
-      assert {:error, changeset} = Transaction.insert_fee_transaction(Repo, tx_bytes, block, 1)
-      refute changeset.valid?
-      assert "must be equal to 3" in errors_on(changeset).tx_type
+      assert %{output_data: %{amount: 1, output_guard: ^owner, token: @eth}} =
+               ExPlasma.Output.decode!(output.output_data)
     end
   end
 
   defp fee_transaction_bytes(blknum) do
-    owner = TestEntity.alice()
+    owner = Engine.Configuration.fee_claimer_address()
 
     {:ok, fee_tx} =
       ExPlasma.fee()
       |> Builder.new(
         outputs: [
-          ExPlasmaFee.new_output(owner.addr, @eth, 1)
+          ExPlasmaFee.new_output(owner, @eth, 1)
         ]
       )
       |> ExPlasmaTx.with_nonce(%{blknum: blknum, token: @eth})

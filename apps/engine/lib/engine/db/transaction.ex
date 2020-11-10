@@ -27,6 +27,9 @@ defmodule Engine.DB.Transaction do
   alias Engine.DB.TransactionFee
   alias Engine.Fee
   alias Engine.Repo
+  alias ExPlasma.Builder
+  alias ExPlasma.Transaction, as: ExPlasmaTx
+  alias ExPlasma.Transaction.Type.Fee, as: ExPlasmaFee
 
   require Logger
 
@@ -121,12 +124,12 @@ defmodule Engine.DB.Transaction do
   @doc """
   Inserts a fee transaction associated with a given block and transaction index
   """
-  def insert_fee_transaction(repo, fee_transaction_bytes, block, fee_tx_index) do
-    {:ok, %{outputs: [output]} = transaction} = ExPlasma.decode(fee_transaction_bytes)
+  def insert_fee_transaction(repo, currency_with_amount, block, fee_tx_index) do
+    {fee_transaction_bytes, output} = fee_transaction_bytes_and_output(currency_with_amount, block.blknum)
     {:ok, tx_hash} = ExPlasma.hash(fee_transaction_bytes)
 
     params = %{
-      tx_type: transaction.tx_type,
+      tx_type: ExPlasma.fee(),
       tx_bytes: fee_transaction_bytes,
       tx_hash: tx_hash,
       outputs: [Map.from_struct(output)]
@@ -141,7 +144,7 @@ defmodule Engine.DB.Transaction do
   @spec decode(tx_bytes) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
   defp decode(tx_bytes) do
     with {:ok, decoded} <- ExPlasma.decode(tx_bytes),
-         {:ok, recovered} <- ExPlasma.Transaction.with_witnesses(decoded),
+         {:ok, recovered} <- ExPlasmaTx.with_witnesses(decoded),
          {:ok, fees} <- load_fees(recovered.tx_type) do
       params =
         recovered
@@ -173,5 +176,18 @@ defmodule Engine.DB.Transaction do
       tx_type: transaction.tx_type,
       witnesses: transaction.witnesses
     }
+  end
+
+  defp fee_transaction_bytes_and_output(currency_with_amount, blknum) do
+    {token, amount} = currency_with_amount
+    output = ExPlasmaFee.new_output(Engine.Configuration.fee_claimer_address(), token, Decimal.to_integer(amount))
+
+    {:ok, fee_tx} =
+      ExPlasma.fee()
+      |> Builder.new(outputs: [output])
+      |> ExPlasmaTx.with_nonce(%{blknum: blknum, token: token})
+
+    fee_transaction_bytes = ExPlasma.encode!(fee_tx, signed: true)
+    {fee_transaction_bytes, output}
   end
 end

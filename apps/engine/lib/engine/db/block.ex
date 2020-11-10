@@ -301,23 +301,16 @@ defmodule Engine.DB.Block do
       |> TransactionFeeQuery.get_fees_for_block()
       |> repo.all()
 
-    fee_transactions_bytes_list =
-      FeeClaim.generate_fee_transactions(
-        block.blknum,
-        fees_by_currency,
-        Engine.Configuration.fee_claimer_address()
-      )
-
     max_non_fee_transaction_tx_index =
       repo.one(TransactionQuery.select_max_non_fee_transaction_tx_index(block.id)) || -1
 
     # assign indexes to fee transactions
     # indexes are consecutive natural numbers starting with the next number after `max_non_fee_transaction_tx_index`
-    fee_transactions_bytes_list
+    fees_by_currency
     |> Enum.with_index()
-    |> Enum.each(fn {fee_transaction_bytes, index} ->
+    |> Enum.each(fn {currency_with_amount, index} ->
       fee_tx_index = max_non_fee_transaction_tx_index + index + 1
-      {:ok, _} = Transaction.insert_fee_transaction(repo, fee_transaction_bytes, block, fee_tx_index)
+      {:ok, _} = Transaction.insert_fee_transaction(repo, currency_with_amount, block, fee_tx_index)
       :ok
     end)
   end
