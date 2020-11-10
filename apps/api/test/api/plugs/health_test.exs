@@ -17,10 +17,6 @@ defmodule API.Plugs.HealthTest do
         :ok
     end
 
-    on_exit(fn ->
-      _ = Application.stop(:sasl)
-    end)
-
     Table.setup(AlarmHandler.table_name())
   end
 

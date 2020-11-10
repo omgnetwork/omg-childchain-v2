@@ -1,26 +1,10 @@
 defmodule Status.Alert.AlarmHandlerTest do
   use ExUnit.Case, async: true
 
-  alias Status.Alert.Alarm
   alias Status.Alert.AlarmHandler
   alias Status.Alert.AlarmHandler.Table
 
   setup_all do
-    case Application.start(:sasl) do
-      {:error, {:already_started, :sasl}} ->
-        :ok = Application.stop(:sasl)
-        :ok = Application.start(:sasl)
-
-      :ok ->
-        :ok
-    end
-
-    on_exit(fn ->
-      Application.stop(:sasl)
-    end)
-
-    :ok = AlarmHandler.install(Alarm.alarm_types(), AlarmHandler.table_name())
-
     handlers = :gen_event.which_handlers(:alarm_handler)
     Enum.each(handlers -- [AlarmHandler], fn handler -> :gen_event.delete_handler(:alarm_handler, handler, []) end)
     [AlarmHandler] = :gen_event.which_handlers(:alarm_handler)
