@@ -15,6 +15,7 @@ defmodule Engine.Fee.Server do
   alias Engine.Fee.Fetcher.Updater.Merger
   alias Engine.Repo
   alias Status.Alert.Alarm
+  alias Status.Alert.Alarm.Types
 
   require Logger
 
@@ -120,34 +121,26 @@ defmodule Engine.Fee.Server do
     _ = Logger.error("Fee server failed. Reason: #{inspect(reason)}")
   end
 
-  @spec no_fees() :: {:no_fees, %{:node => atom(), :reporter => Engine.Fee.Server}}
-  defp no_fees() do
-    {:no_fees, %{node: Node.self(), reporter: __MODULE__}}
-  end
-
   @spec update_fee_specs(t()) :: :ok | {:ok, map()} | {:error, {atom(), any()}}
   defp update_fee_specs(state) do
     current_fee_specs = load_current_fees()
 
-    result =
-      case Fetcher.get_fee_specs(state.fee_fetcher_opts, current_fee_specs && current_fee_specs.term) do
-        {:ok, fee_specs} ->
-          :ok = save_fees(fee_specs)
-          _ = Logger.info("Reloaded fee specs from FeeFetcher")
+    case Fetcher.get_fee_specs(state.fee_fetcher_opts, current_fee_specs && current_fee_specs.term) do
+      {:ok, fee_specs} ->
+        :ok = save_fees(fee_specs)
+        _ = Logger.info("Reloaded fee specs from FeeFetcher")
 
-          new_expire_fee_timer = start_expiration_timer(state.expire_fee_timer, state.fee_buffer_duration_ms)
-          {:ok, %__MODULE__{state | expire_fee_timer: new_expire_fee_timer}}
+        new_expire_fee_timer = start_expiration_timer(state.expire_fee_timer, state.fee_buffer_duration_ms)
+        {:ok, %__MODULE__{state | expire_fee_timer: new_expire_fee_timer}}
 
-        :ok ->
-          :ok
+      :ok ->
+        :ok
 
-        error ->
-          _ = Logger.error("Unable to update fees. Reason: #{inspect(error)}")
+      error ->
+        _ = Logger.error("Unable to update fees. Reason: #{inspect(error)}")
 
-          error
-      end
-
-    result
+        error
+    end
   end
 
   defp fees_expired?(nil, _current_fees, _fee_buffer_duration_ms), do: false
@@ -223,5 +216,9 @@ defmodule Engine.Fee.Server do
       {:ok, fees} -> fees
       _ -> nil
     end
+  end
+
+  defp no_fees() do
+    Types.no_fees(__MODULE__)
   end
 end
