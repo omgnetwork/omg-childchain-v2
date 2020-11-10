@@ -12,7 +12,6 @@ defmodule Engine.Application do
   alias Engine.Repo.Monitor, as: RepoMonitor
   alias Engine.Supervisor, as: EngineSupervisor
   alias Engine.Telemetry.Handler
-  alias Engine.Worker.PrepareBlockForSubmissionWorker
 
   require Logger
 
@@ -46,8 +45,7 @@ defmodule Engine.Application do
       Supervisor.child_spec({RepoMonitor, repo_args}, id: RepoMonitor),
       EthereumSupervisor.child_spec([]),
       Supervisor.child_spec({SyncMonitor, monitor_args}, id: SyncMonitor),
-      EngineSupervisor.child_spec([]),
-      prepare_block_for_submission_worker_spec()
+      EngineSupervisor.child_spec([])
     ]
 
     _ = Logger.info("Starting #{__MODULE__}")
@@ -77,14 +75,5 @@ defmodule Engine.Application do
       :ok -> :ok
       {:error, :already_exists} -> :ok
     end
-  end
-
-  defp prepare_block_for_submission_worker_spec() do
-    config = [prepare_block_for_submission_interval_ms: Configuration.prepare_block_for_submission_interval_ms()]
-
-    %{
-      id: PrepareBlockForSubmissionWorker,
-      start: {PrepareBlockForSubmissionWorker, :start_link, [config]}
-    }
   end
 end

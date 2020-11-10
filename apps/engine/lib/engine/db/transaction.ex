@@ -123,7 +123,7 @@ defmodule Engine.DB.Transaction do
   """
   def insert_fee_transaction(repo, fee_transaction_bytes, block, fee_tx_index) do
     {:ok, %{outputs: [output]} = transaction} = ExPlasma.decode(fee_transaction_bytes)
-    {:ok, tx_hash} = ExPlasma.hash(transaction)
+    {:ok, tx_hash} = ExPlasma.hash(fee_transaction_bytes)
 
     params = %{
       tx_type: transaction.tx_type,

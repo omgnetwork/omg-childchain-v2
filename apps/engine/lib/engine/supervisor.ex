@@ -5,6 +5,7 @@ defmodule Engine.Supervisor do
   """
   use Supervisor
 
+  alias Engine.BlockForming.PrepareForSubmission
   alias Engine.Configuration
   # alias Engine.Fee.Server, as: FeeServer
   alias Engine.Ethereum.Authority.Submitter
@@ -40,12 +41,22 @@ defmodule Engine.Supervisor do
 
     children = [
       # {FeeServer, fee_server_opts}
-      {Submitter, submitter_opts}
+      {Submitter, submitter_opts},
+      prepare_block_for_submission_spec()
     ]
 
     opts = [strategy: :one_for_one]
 
     _ = Logger.info("Starting #{inspect(__MODULE__)}")
     Supervisor.init(children, opts)
+  end
+
+  defp prepare_block_for_submission_spec() do
+    config = [prepare_block_for_submission_interval_ms: Configuration.prepare_block_for_submission_interval_ms()]
+
+    %{
+      id: PrepareBlockForSubmission,
+      start: {PrepareBlockForSubmission, :start_link, [config]}
+    }
   end
 end

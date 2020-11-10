@@ -16,7 +16,7 @@ defmodule Engine.Fee.FeeClaim do
   the result is a map of %{token => amount}.
   Only returns tokens that have a positive amount of fees paid.
   """
-  @spec fee_paid(Type.output_list_t(), Type.output_list_t()) :: %{required(<<_::160>>) => pos_integer()}
+  @spec fee_paid(Type.output_list_t(), Type.output_list_t()) :: paid_fees_t()
   def fee_paid(input_data, output_data) do
     output_amounts = reduce_amounts(output_data)
 
@@ -33,7 +33,7 @@ defmodule Engine.Fee.FeeClaim do
   - Creates a fee transaction for each fee token found
   Returns the list of binary encoded transactions.
   """
-  @spec generate_fee_transactions(pos_integer(), paid_fees_t(), <<_::160>>) :: list(binary())
+  @spec generate_fee_transactions(pos_integer(), %{required(<<_::160>>) => Decimal.t()}, <<_::160>>) :: list(binary())
   def generate_fee_transactions(blknum, fees_by_currency, fee_claimer) do
     Enum.map(fees_by_currency, fn {token, amount} -> build_fee_transaction(blknum, fee_claimer, token, amount) end)
   end
@@ -56,7 +56,7 @@ defmodule Engine.Fee.FeeClaim do
   end
 
   defp build_fee_transaction(blknum, owner, token, amount) do
-    output = ExPlasmaFee.new_output(owner, token, amount)
+    output = ExPlasmaFee.new_output(owner, token, Decimal.to_integer(amount))
 
     {:ok, fee_tx} =
       ExPlasma.fee()

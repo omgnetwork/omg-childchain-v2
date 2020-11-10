@@ -1,9 +1,9 @@
-defmodule Engine.Worker.PrepareBlockForSubmissionWorkerTest do
+defmodule Engine.BlockForming.PrepareForSubmissionTest do
   use Engine.DB.DataCase, async: false
 
+  alias Engine.BlockForming.PrepareForSubmission
   alias Engine.DB.Block
   alias Engine.Repo
-  alias Engine.Worker.PrepareBlockForSubmissionWorker
 
   @interval_ms 10
   @eth <<0::160>>
@@ -35,7 +35,7 @@ defmodule Engine.Worker.PrepareBlockForSubmissionWorkerTest do
     block3 = insert_non_empty_block(Block.state_confirmed())
     block4 = insert_non_empty_block(Block.state_forming())
 
-    {:ok, _} = PrepareBlockForSubmissionWorker.start_link(config)
+    {:ok, _} = PrepareForSubmission.start_link(config)
 
     Process.sleep(3 * @interval_ms)
 
@@ -67,7 +67,7 @@ defmodule Engine.Worker.PrepareBlockForSubmissionWorkerTest do
       prepare_block_for_submission_interval_ms: @interval_ms
     ]
 
-    {:ok, worker} = PrepareBlockForSubmissionWorker.start_link(config)
+    {:ok, worker} = PrepareForSubmission.start_link(config)
     GenServer.cast(worker, {:set_alarm, :db_connection_lost})
     assert %{connection_alarm_raised: true} = :sys.get_state(worker)
 

@@ -1,4 +1,4 @@
-defmodule Engine.Worker.PrepareBlockForSubmissionWorker.AlarmHandler do
+defmodule Engine.BlockForming.PrepareForSubmission.AlarmHandler do
   @moduledoc """
   Listens for :db_connection_lost and cast the alarm back to worker
   """

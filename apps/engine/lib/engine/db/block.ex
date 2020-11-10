@@ -300,10 +300,8 @@ defmodule Engine.DB.Block do
       block.id
       |> TransactionFeeQuery.get_fees_for_block()
       |> repo.all()
-      |> Enum.map(fn {key, val} -> {key, Decimal.to_integer(val)} end)
-      |> Enum.into(%{})
 
-    fee_transactions_bytes =
+    fee_transactions_bytes_list =
       FeeClaim.generate_fee_transactions(
         block.blknum,
         fees_by_currency,
@@ -313,7 +311,9 @@ defmodule Engine.DB.Block do
     max_non_fee_transaction_tx_index =
       repo.one(TransactionQuery.select_max_non_fee_transaction_tx_index(block.id)) || -1
 
-    fee_transactions_bytes
+    # assign indexes to fee transactions
+    # indexes are consecutive natural numbers starting with the next number after `max_non_fee_transaction_tx_index`
+    fee_transactions_bytes_list
     |> Enum.with_index()
     |> Enum.each(fn {fee_transaction_bytes, index} ->
       fee_tx_index = max_non_fee_transaction_tx_index + index + 1

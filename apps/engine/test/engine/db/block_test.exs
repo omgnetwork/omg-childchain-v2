@@ -655,10 +655,8 @@ defmodule Engine.DB.BlockTest do
   end
 
   defp fee_transactions_for_block(block) do
-    block.id
-    |> TransactionQuery.fetch_transactions_from_block()
-    |> Repo.all()
-    |> Enum.filter(fn %Transaction{tx_type: tx_type} -> tx_type == ExPlasma.fee() end)
+    fee_tx_type = ExPlasma.fee()
+    Repo.all(from(t in Transaction, where: t.block_id == ^block.id and t.tx_type == ^fee_tx_type, order_by: t.tx_index))
   end
 
   defp expect_output_in_transaction(transaction, expected_output) do

@@ -272,7 +272,9 @@ defmodule Engine.DB.TransactionTest do
     test "propagates errors", %{block: block} do
       tx_bytes = transaction_bytes()
 
-      assert {:error, _} = Transaction.insert_fee_transaction(Repo, tx_bytes, block, 1)
+      assert {:error, changeset} = Transaction.insert_fee_transaction(Repo, tx_bytes, block, 1)
+      refute changeset.valid?
+      assert "must be equal to 3" in errors_on(changeset).tx_type
     end
   end
 

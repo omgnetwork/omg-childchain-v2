@@ -49,8 +49,8 @@ defmodule Engine.Fee.FeeClaimTest do
       blknum = 1_000
 
       fees_by_currency = %{
-        @eth => 4,
-        @token_1 => 1
+        @eth => Decimal.new(4),
+        @token_1 => Decimal.new(1)
       }
 
       assert [fee_tx_1, fee_tx_2] = FeeClaim.generate_fee_transactions(blknum, fees_by_currency, @fee_claimer)
