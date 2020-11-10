@@ -108,7 +108,6 @@ defmodule Engine.Fee.Server do
           state
 
         _ ->
-          Alarm.set(no_fees())
           state
       end
 
