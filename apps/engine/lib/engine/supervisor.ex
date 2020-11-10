@@ -55,8 +55,8 @@ defmodule Engine.Supervisor do
     config = [prepare_block_for_submission_interval_ms: Configuration.prepare_block_for_submission_interval_ms()]
 
     %{
-      id: PrepareBlockForSubmission,
-      start: {PrepareBlockForSubmission, :start_link, [config]}
+      id: PrepareForSubmission,
+      start: {PrepareForSubmission, :start_link, [config]}
     }
   end
 end

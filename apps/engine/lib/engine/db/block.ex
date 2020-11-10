@@ -29,7 +29,6 @@ defmodule Engine.DB.Block do
   alias Engine.DB.Transaction
   alias Engine.DB.Transaction.TransactionQuery
   alias Engine.DB.TransactionFee.TransactionFeeQuery
-  alias Engine.Fee.FeeClaim
   alias Engine.Repo
   alias ExPlasma.Merkle
 
@@ -290,7 +289,7 @@ defmodule Engine.DB.Block do
 
   defp attach_fee_transactions(repo, params) do
     finalizing_blocks = params.finalizing_blocks
-    :ok = Enum.each(finalizing_blocks, fn block -> attach_fee_transactions_to_block(repo, block) end)
+    :ok = Enum.each(finalizing_blocks, &attach_fee_transactions_to_block(repo, &1))
 
     {:ok, finalizing_blocks}
   end
