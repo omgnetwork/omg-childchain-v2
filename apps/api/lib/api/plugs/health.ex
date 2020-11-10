@@ -7,11 +7,13 @@ defmodule API.Plugs.Health do
 
   def init(options), do: options
 
-  def call(conn, _params) do
+  def call(conn, _opts) do
     if Status.is_healthy() do
-      send_resp(conn, 200, "")
+      conn
     else
-      send_resp(conn, 503, "")
+      conn
+      |> send_resp(503, "")
+      |> halt()
     end
   end
 end

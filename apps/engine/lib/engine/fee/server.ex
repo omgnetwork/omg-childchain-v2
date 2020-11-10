@@ -15,6 +15,7 @@ defmodule Engine.Fee.Server do
   alias Engine.Fee.Fetcher.Updater.Merger
   alias Engine.Repo
   alias Status.Alert.Alarm
+  alias Status.Alert.Alarm.Types
 
   require Logger
 
@@ -22,7 +23,6 @@ defmodule Engine.Fee.Server do
     :fee_fetcher_check_interval_ms,
     :fee_buffer_duration_ms,
     :fee_fetcher_opts,
-    fee_fetcher_check_timer: nil,
     expire_fee_timer: nil
   ]
 
@@ -30,7 +30,6 @@ defmodule Engine.Fee.Server do
            fee_fetcher_check_interval_ms: pos_integer(),
            fee_buffer_duration_ms: pos_integer(),
            fee_fetcher_opts: Keyword.t(),
-           fee_fetcher_check_timer: :timer.tref(),
            expire_fee_timer: :timer.tref()
          }
 
@@ -41,15 +40,13 @@ defmodule Engine.Fee.Server do
   def init(args) do
     state = Kernel.struct(__MODULE__, args)
 
-    _ = update_fee_specs(state)
-
     interval = state.fee_fetcher_check_interval_ms
-    {:ok, fee_fetcher_check_timer} = :timer.send_interval(interval, self(), :update_fee_specs)
-    new_state = %__MODULE__{state | fee_fetcher_check_timer: fee_fetcher_check_timer}
+
+    _ = Process.send_after(self(), :update_fee_specs, interval)
 
     _ = Logger.info("Started #{inspect(__MODULE__)}")
 
-    {:ok, new_state}
+    {:ok, state}
   end
 
   @doc """
@@ -61,6 +58,11 @@ defmodule Engine.Fee.Server do
     fees = load_accepted_fees()
 
     {:ok, fees.term}
+  end
+
+  @spec raise_no_fees_alarm() :: :ok | :duplicate
+  def raise_no_fees_alarm() do
+    Alarm.set(no_fees())
   end
 
   @doc """
@@ -91,6 +93,7 @@ defmodule Engine.Fee.Server do
     end
 
     _ = Logger.info("Previous fees are now invalid and current fees must be paid")
+
     {:noreply, state}
   end
 
@@ -98,24 +101,19 @@ defmodule Engine.Fee.Server do
     new_state =
       case update_fee_specs(state) do
         {:ok, updated_state} ->
-          Alarm.clear(invalid_fee_source())
           updated_state
 
-        :ok ->
-          Alarm.clear(invalid_fee_source())
-          state
-
         _ ->
-          Alarm.set(invalid_fee_source())
           state
       end
+
+    _ = Process.send_after(self(), :update_fee_specs, state.fee_fetcher_check_interval_ms)
 
     {:noreply, new_state}
   end
 
-  @spec invalid_fee_source() :: {:invalid_fee_source, %{:node => atom(), :reporter => Engine.Fee.Server}}
-  defp invalid_fee_source() do
-    {:invalid_fee_source, %{node: Node.self(), reporter: __MODULE__}}
+  def terminate(reason, _state) do
+    _ = Logger.error("Fee server failed. Reason: #{inspect(reason)}")
   end
 
   @spec update_fee_specs(t()) :: :ok | {:ok, map()} | {:error, {atom(), any()}}
@@ -135,6 +133,7 @@ defmodule Engine.Fee.Server do
 
       error ->
         _ = Logger.error("Unable to update fees. Reason: #{inspect(error)}")
+
         error
     end
   end
@@ -188,9 +187,23 @@ defmodule Engine.Fee.Server do
 
   defp load_current_fees() do
     case FeeDB.fetch_current_fees() do
-      {:ok, fees} -> fees
-      _ -> nil
+      {:ok, fees} ->
+        Alarm.clear(no_fees())
+
+        fees
+
+      _ ->
+        Alarm.set(no_fees())
+
+        nil
     end
+  rescue
+    error ->
+      _ = Logger.error("Failed to fetch current fees. Reason: #{inspect(error)}")
+
+      Alarm.set(no_fees())
+
+      nil
   end
 
   defp load_accepted_fees() do
@@ -198,6 +211,11 @@ defmodule Engine.Fee.Server do
       {:ok, fees} -> fees
       _ -> nil
     end
+  rescue
+    error ->
+      _ = Logger.error("Failed to fetch accepted fees. Reason: #{inspect(error)}")
+
+      nil
   end
 
   defp load_previous_fees() do
@@ -205,5 +223,14 @@ defmodule Engine.Fee.Server do
       {:ok, fees} -> fees
       _ -> nil
     end
+  rescue
+    error ->
+      _ = Logger.error("Failed to fetch previous fees. Reason: #{inspect(error)}")
+
+      nil
+  end
+
+  defp no_fees() do
+    Types.no_fees(__MODULE__)
   end
 end

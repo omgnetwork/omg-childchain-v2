@@ -11,19 +11,6 @@ defmodule Engine.Ethereum.HeightObserverTest do
   end
 
   setup %{test: test_name} do
-    case Application.start(:sasl) do
-      {:error, {:already_started, :sasl}} ->
-        :ok = Application.stop(:sasl)
-        :ok = Application.start(:sasl)
-
-      :ok ->
-        :ok
-    end
-
-    on_exit(fn ->
-      Application.stop(:sasl)
-    end)
-
     check_interval_ms = 8000
     stall_threshold_ms = 16_000
     {:ok, alarm_instance} = Alarm.start_link([])

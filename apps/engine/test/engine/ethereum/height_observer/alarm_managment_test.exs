@@ -2,17 +2,6 @@ defmodule Engine.Ethereum.HeightObserver.AlarmManagmentTest do
   use ExUnit.Case, async: true
   alias Engine.Ethereum.HeightObserver.AlarmManagement
 
-  setup do
-    on_exit(fn ->
-      case Application.stop(:sasl) do
-        {:error, {:not_started, :sasl}} -> :ok
-        :ok -> :ok
-      end
-    end)
-
-    :ok
-  end
-
   test "install and remove an an alarm handler", %{test: test_name} do
     consumer = test_name
 
