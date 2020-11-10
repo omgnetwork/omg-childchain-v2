@@ -197,6 +197,13 @@ defmodule Engine.Fee.Server do
 
         nil
     end
+  rescue
+    error ->
+      _ = Logger.error("Failed to fetch current fees. Reason: #{inspect(error)}")
+
+      Alarm.set(no_fees())
+
+      nil
   end
 
   defp load_accepted_fees() do
@@ -204,6 +211,11 @@ defmodule Engine.Fee.Server do
       {:ok, fees} -> fees
       _ -> nil
     end
+  rescue
+    error ->
+      _ = Logger.error("Failed to fetch accepted fees. Reason: #{inspect(error)}")
+
+      nil
   end
 
   defp load_previous_fees() do
@@ -211,6 +223,11 @@ defmodule Engine.Fee.Server do
       {:ok, fees} -> fees
       _ -> nil
     end
+  rescue
+    error ->
+      _ = Logger.error("Failed to fetch previous fees. Reason: #{inspect(error)}")
+
+      nil
   end
 
   defp no_fees() do
