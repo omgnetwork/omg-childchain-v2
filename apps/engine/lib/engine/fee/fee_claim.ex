@@ -13,8 +13,8 @@ defmodule Engine.Fee.FeeClaim do
   the result is a map of %{token => amount}.
   Only returns tokens that have a positive amount of fees paid.
   """
-  @spec fee_paid(Type.output_list_t(), Type.output_list_t()) :: paid_fees_t()
-  def fee_paid(input_data, output_data) do
+  @spec paid_fees(Type.output_list_t(), Type.output_list_t()) :: paid_fees_t()
+  def paid_fees(input_data, output_data) do
     output_amounts = reduce_amounts(output_data)
 
     input_data

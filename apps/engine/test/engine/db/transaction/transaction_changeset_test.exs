@@ -2,6 +2,7 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
   use Engine.DB.DataCase, async: true
 
   alias Ecto.Changeset
+  alias Engine.Configuration
   alias Engine.DB.Transaction
   alias Engine.DB.Transaction.TransactionChangeset
   alias Engine.Support.TestEntity
@@ -79,12 +80,13 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
 
   describe "new_fee_transaction_changeset/2" do
     test "assigns values to fields" do
-      plasma_output = ExPlasmaFee.new_output(TestEntity.alice().addr, @eth, 1)
+      block = build(:block)
+      plasma_output = ExPlasmaFee.new_output(Configuration.fee_claimer_address(), @eth, 1)
 
       {:ok, fee_tx} =
         ExPlasma.fee()
         |> Builder.new(outputs: [plasma_output])
-        |> ExPlasmaTx.with_nonce(%{blknum: 1_000, token: @eth})
+        |> ExPlasmaTx.with_nonce(%{blknum: block.blknum, token: @eth})
 
       tx_bytes = ExPlasma.encode!(fee_tx, signed: true)
       {:ok, tx_hash} = ExPlasma.Transaction.hash(tx_bytes)
@@ -96,7 +98,7 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
         tx_bytes: tx_bytes
       }
 
-      changeset = TransactionChangeset.new_fee_transaction_changeset(%Transaction{}, params)
+      changeset = TransactionChangeset.new_fee_transaction_changeset({@eth, Decimal.new(1)}, block)
       assert changeset.valid?
 
       fee_transaction = Changeset.apply_changes(changeset)
@@ -113,68 +115,6 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
         |> encoded_output_data()
 
       assert expected_output_data == output_data
-    end
-
-    test "returns error for non-fee transaction type" do
-      changeset =
-        TransactionChangeset.new_fee_transaction_changeset(%Transaction{}, valid_payment_transaction_changeset_params())
-
-      refute changeset.valid?
-      assert "must be equal to #{inspect(ExPlasma.fee())}" in errors_on(changeset).tx_type
-    end
-
-    test "returns error when there is more than 1 output" do
-      plasma_output = ExPlasmaFee.new_output(TestEntity.alice().addr, @eth, 1)
-
-      {:ok, fee_tx} =
-        ExPlasma.fee()
-        |> Builder.new(outputs: [plasma_output, plasma_output])
-        |> ExPlasmaTx.with_nonce(%{blknum: 1_000, token: @eth})
-
-      tx_bytes = ExPlasma.encode!(fee_tx, signed: true)
-      {:ok, tx_hash} = ExPlasma.Transaction.hash(tx_bytes)
-
-      params = %{
-        outputs: Enum.map(fee_tx.outputs, &Map.from_struct/1),
-        tx_type: ExPlasma.fee(),
-        tx_hash: tx_hash,
-        tx_bytes: tx_bytes
-      }
-
-      changeset = TransactionChangeset.new_fee_transaction_changeset(%Transaction{}, params)
-
-      refute changeset.valid?
-      assert "should have 1 item(s)" in errors_on(changeset).outputs
-    end
-
-    test "returns error if any required param is missing" do
-      plasma_output = ExPlasmaFee.new_output(TestEntity.alice().addr, @eth, 1)
-
-      {:ok, fee_tx} =
-        ExPlasma.fee()
-        |> Builder.new(outputs: [plasma_output, plasma_output])
-        |> ExPlasmaTx.with_nonce(%{blknum: 1_000, token: @eth})
-
-      tx_bytes = ExPlasma.encode!(fee_tx, signed: true)
-      {:ok, tx_hash} = ExPlasma.Transaction.hash(tx_bytes)
-
-      params = %{
-        outputs: Enum.map(fee_tx.outputs, &Map.from_struct/1),
-        tx_type: ExPlasma.fee(),
-        tx_hash: tx_hash,
-        tx_bytes: tx_bytes
-      }
-
-      any_valid? =
-        params
-        |> Map.keys()
-        |> Enum.map(fn key -> Map.delete(params, key) end)
-        |> Enum.map(fn params_no_key ->
-          TransactionChangeset.new_fee_transaction_changeset(%Transaction{}, params_no_key)
-        end)
-        |> Enum.any?(fn changeset -> changeset.valid? end)
-
-      refute any_valid?
     end
   end
 

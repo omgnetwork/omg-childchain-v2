@@ -256,6 +256,8 @@ defmodule Engine.DB.Block do
       |> fetch_tx_bytes_in_block()
       |> Merkle.root_hash()
 
+    # conflict on hash means block was prepared for submission by other process
+    # do nothing then
     block
     |> BlockChangeset.prepare_for_submission(%{hash: hash})
     |> repo.update(on_conflict: :nothing)

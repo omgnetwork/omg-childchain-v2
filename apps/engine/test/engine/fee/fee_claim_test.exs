@@ -35,7 +35,7 @@ defmodule Engine.Fee.FeeClaimTest do
         output_data(@bob, @token_2, 5)
       ]
 
-      assert FeeClaim.fee_paid(input_data, output_data) == %{
+      assert FeeClaim.paid_fees(input_data, output_data) == %{
                @eth => 1,
                @token_1 => 4
              }

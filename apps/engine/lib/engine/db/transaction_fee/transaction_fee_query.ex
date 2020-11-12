@@ -9,7 +9,7 @@ defmodule Engine.DB.TransactionFee.TransactionFeeQuery do
   alias Engine.DB.TransactionFee
 
   @doc """
-  Query all transactions that have not been formed into a block.
+  Query all fee transactions for a block.
   """
   def get_fees_for_block(block_id) do
     from(f in TransactionFee,

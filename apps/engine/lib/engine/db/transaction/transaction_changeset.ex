@@ -18,9 +18,13 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
 
   alias Engine.DB.Output
   alias Engine.DB.Output.OutputChangeset
+  alias Engine.DB.Transaction
   alias Engine.DB.Transaction.Validator
 
+  alias ExPlasma.Builder
   alias ExPlasma.Output.Position
+  alias ExPlasma.Transaction, as: ExPlasmaTx
+  alias ExPlasma.Transaction.Type.Fee, as: ExPlasmaFee
 
   @required_fields [:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type]
   @required_fee_transaction_fields [:tx_hash, :tx_bytes, :tx_type]
@@ -35,8 +39,18 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
     |> Validator.validate_statefully(params)
   end
 
-  def new_fee_transaction_changeset(struct, params) do
-    struct
+  def new_fee_transaction_changeset(currency_with_amount, block) do
+    {fee_transaction_bytes, output} = fee_transaction_bytes_and_output(currency_with_amount, block.blknum)
+    {:ok, tx_hash} = ExPlasma.hash(fee_transaction_bytes)
+
+    params = %{
+      tx_type: ExPlasma.fee(),
+      tx_bytes: fee_transaction_bytes,
+      tx_hash: tx_hash,
+      outputs: [Map.from_struct(output)]
+    }
+
+    %Transaction{}
     |> cast(params, @required_fee_transaction_fields)
     |> validate_required(@required_fee_transaction_fields)
     |> validate_number(:tx_type, equal_to: ExPlasma.fee())
@@ -59,5 +73,18 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
     |> put_change(:tx_index, tx_index)
     |> put_assoc(:block, block)
     |> put_assoc(:outputs, outputs)
+  end
+
+  defp fee_transaction_bytes_and_output(currency_with_amount, blknum) do
+    {token, amount} = currency_with_amount
+    output = ExPlasmaFee.new_output(Engine.Configuration.fee_claimer_address(), token, Decimal.to_integer(amount))
+
+    {:ok, fee_tx} =
+      ExPlasma.fee()
+      |> Builder.new(outputs: [output])
+      |> ExPlasmaTx.with_nonce(%{blknum: blknum, token: token})
+
+    fee_transaction_bytes = ExPlasma.encode!(fee_tx, signed: true)
+    {fee_transaction_bytes, output}
   end
 end

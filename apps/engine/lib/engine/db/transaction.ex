@@ -27,9 +27,7 @@ defmodule Engine.DB.Transaction do
   alias Engine.DB.TransactionFee
   alias Engine.Fee
   alias Engine.Repo
-  alias ExPlasma.Builder
   alias ExPlasma.Transaction, as: ExPlasmaTx
-  alias ExPlasma.Transaction.Type.Fee, as: ExPlasmaFee
 
   require Logger
 
@@ -125,18 +123,8 @@ defmodule Engine.DB.Transaction do
   Inserts a fee transaction associated with a given block and transaction index
   """
   def insert_fee_transaction(repo, currency_with_amount, block, fee_tx_index) do
-    {fee_transaction_bytes, output} = fee_transaction_bytes_and_output(currency_with_amount, block.blknum)
-    {:ok, tx_hash} = ExPlasma.hash(fee_transaction_bytes)
-
-    params = %{
-      tx_type: ExPlasma.fee(),
-      tx_bytes: fee_transaction_bytes,
-      tx_hash: tx_hash,
-      outputs: [Map.from_struct(output)]
-    }
-
-    %__MODULE__{}
-    |> TransactionChangeset.new_fee_transaction_changeset(params)
+    currency_with_amount
+    |> TransactionChangeset.new_fee_transaction_changeset(block)
     |> TransactionChangeset.set_blknum_and_tx_index(%{block: block, next_tx_index: fee_tx_index})
     |> repo.insert()
   end
@@ -176,18 +164,5 @@ defmodule Engine.DB.Transaction do
       tx_type: transaction.tx_type,
       witnesses: transaction.witnesses
     }
-  end
-
-  defp fee_transaction_bytes_and_output(currency_with_amount, blknum) do
-    {token, amount} = currency_with_amount
-    output = ExPlasmaFee.new_output(Engine.Configuration.fee_claimer_address(), token, Decimal.to_integer(amount))
-
-    {:ok, fee_tx} =
-      ExPlasma.fee()
-      |> Builder.new(outputs: [output])
-      |> ExPlasmaTx.with_nonce(%{blknum: blknum, token: token})
-
-    fee_transaction_bytes = ExPlasma.encode!(fee_tx, signed: true)
-    {fee_transaction_bytes, output}
   end
 end

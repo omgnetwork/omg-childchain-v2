@@ -40,7 +40,7 @@ defmodule Engine.DB.Transaction.PaymentV1.Validator do
   def validate(changeset, fees) do
     input_data = get_decoded_output_data(changeset, :inputs)
     output_data = get_decoded_output_data(changeset, :outputs)
-    fees_by_currency = FeeClaim.fee_paid(input_data, output_data)
+    fees_by_currency = FeeClaim.paid_fees(input_data, output_data)
     witnesses = get_field(changeset, :witnesses)
 
     with :ok <- Witness.validate(input_data, witnesses),
