@@ -2,6 +2,7 @@ version: "3.7"
 services:
   nginx:
     image: nginx:latest
+    container_name: nginx
     volumes:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./docker/nginx/geth_nginx.conf:/etc/nginx/server_config/geth.conf:ro
@@ -22,6 +23,7 @@ services:
   postgres:
     image: postgres:12.2-alpine
     restart: always
+    container_name: postgres
     ports:
       - "5432:5432"
     volumes:
@@ -65,6 +67,7 @@ services:
   childchain:
     image: omisego/childchain:latest
     command: "full_local"
+    container_name: childchain
     env_file:
       - ./localchain_contract_addresses.env
     environment:
@@ -88,6 +91,7 @@ services:
 
   geth:
     image: ethereum/client-go:v1.9.15
+    container_name: geth
     entrypoint: /bin/sh -c ". data/command"
     environment:
       RPC_PORT: 8545
