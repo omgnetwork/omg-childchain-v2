@@ -183,10 +183,8 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
 
     %{output_id: output_id} = insert(:deposit_output, %{amount: 2})
 
-    output =
-      :output
-      |> build(%{amount: 1})
-      |> (fn %{output_data: output_data} -> ExPlasma.Output.decode!(output_data) end).()
+    %{output_data: output_data} = build(:output, %{amount: 1})
+    output = ExPlasma.Output.decode!(output_data)
 
     {:ok, transaction} =
       ExPlasma.payment_v1()
