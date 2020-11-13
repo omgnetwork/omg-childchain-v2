@@ -105,15 +105,22 @@ defmodule Engine.DB.Block do
   end
 
   @doc """
-  Forms a block awaiting submission.
+  Changes currently forming block's state to finalizing
   """
   @decorate trace(service: :ecto, type: :backend)
-  def form() do
-    Multi.new()
-    |> Multi.run(:block, &get_forming_block_for_update/2)
-    |> Multi.run(:block_for_submission, fn repo, %{block: block} -> hash_transactions(repo, block) end)
-    |> Multi.run(:new_forming_block, &insert_block/2)
-    |> Repo.transaction()
+  def finalize_current_block() do
+    result =
+      Multi.new()
+      |> Multi.run(:block, &get_non_empty_forming_block_for_update/2)
+      |> Multi.update(:finalizing_block, &finalize_block/1)
+      |> Repo.transaction(on_conflict: :nothing)
+
+    case result do
+      {:ok, _} -> :ok
+      {:error, :block, :empty_block, %{}} -> :ok
+      {:error, :block, :no_forming_block, %{}} -> :ok
+      other -> {:error, other}
+    end
   end
 
   @doc """
@@ -123,6 +130,7 @@ defmodule Engine.DB.Block do
   - merkle root hash is calculated
   - state is changed to pending submission
   """
+  @decorate trace(service: :ecto, type: :backend)
   def prepare_for_submission() do
     Multi.new()
     |> Multi.run(:finalizing_blocks, &get_finalizing_blocks/2)
@@ -172,6 +180,23 @@ defmodule Engine.DB.Block do
     end
   end
 
+  defp get_non_empty_forming_block_for_update(repo, _params) do
+    block = repo.one(BlockQuery.select_forming_block_for_update())
+
+    case block do
+      nil ->
+        {:error, :no_forming_block}
+
+      block ->
+        tx_count = (repo.one(TransactionQuery.select_max_tx_index_for_block(block.id)) || -1) + 1
+
+        case tx_count do
+          c when c > 0 -> {:ok, block}
+          _ -> {:error, :empty_block}
+        end
+    end
+  end
+
   defp get_all(repo, _changeset, new_height, mined_child_block) do
     query = BlockQuery.get_all(new_height, mined_child_block)
     {:ok, repo.all(query)}
@@ -213,7 +238,7 @@ defmodule Engine.DB.Block do
   defp insert_block(repo, _) do
     nonce =
       BlockQuery.select_max_nonce()
-      |> Repo.one()
+      |> repo.one()
       |> case do
         nil -> 1
         found_nonce -> found_nonce + 1
@@ -303,4 +328,6 @@ defmodule Engine.DB.Block do
       :ok
     end)
   end
+
+  defp finalize_block(%{block: block}), do: BlockChangeset.finalize(block)
 end
