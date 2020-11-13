@@ -60,12 +60,9 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
 
       assert tx_index == Changeset.fetch_change!(update, :tx_index)
 
-      blknum =
-        update
-        |> Changeset.fetch_change!(:block)
-        |> (fn %{data: block} -> block.blknum end).()
+      %{data: block_change} = Changeset.fetch_change!(update, :block)
 
-      assert block.blknum == blknum
+      assert block_change.blknum == block.blknum
 
       output_change =
         update

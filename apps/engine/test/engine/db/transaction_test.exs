@@ -2,6 +2,7 @@ defmodule Engine.DB.TransactionTest do
   use Engine.DB.DataCase, async: false
   doctest Engine.DB.Transaction, import: true
 
+  alias Engine.Configuration
   alias Engine.DB.Block
   alias Engine.DB.Output
   alias Engine.DB.Transaction
@@ -9,6 +10,7 @@ defmodule Engine.DB.TransactionTest do
   alias Engine.Repo
   alias Engine.Support.TestEntity
   alias ExPlasma.Builder
+  alias ExPlasma.Output, as: ExPlasmaOutput
   alias ExPlasma.Output.Position
   alias ExPlasma.Transaction, as: ExPlasmaTx
   alias ExPlasma.Transaction.Type.Fee, as: ExPlasmaFee
@@ -30,11 +32,11 @@ defmodule Engine.DB.TransactionTest do
 
       outputs =
         Enum.map([build(:output, %{amount: 1})], fn %{output_data: output_data} ->
-          ExPlasma.Output.decode!(output_data)
+          ExPlasmaOutput.decode!(output_data)
         end)
 
       transaction =
-        Builder.new(ExPlasma.payment_v1(), %{inputs: [ExPlasma.Output.decode_id!(output_id)], outputs: outputs})
+        Builder.new(ExPlasma.payment_v1(), %{inputs: [ExPlasmaOutput.decode_id!(output_id)], outputs: outputs})
 
       tx_bytes =
         transaction
@@ -70,8 +72,8 @@ defmodule Engine.DB.TransactionTest do
       assert {:ok, %{transaction: transaction}} = Transaction.insert(tx_bytes)
 
       assert [%Output{output_data: o_1_data_enc}, %Output{output_data: o_2_data_enc}] = transaction.outputs
-      assert ExPlasma.Output.decode!(o_1_data_enc).output_data == Enum.into(o_1_data, %{})
-      assert ExPlasma.Output.decode!(o_2_data_enc).output_data == Enum.into(o_1_data, %{})
+      assert ExPlasmaOutput.decode!(o_1_data_enc).output_data == Enum.into(o_1_data, %{})
+      assert ExPlasmaOutput.decode!(o_2_data_enc).output_data == Enum.into(o_1_data, %{})
     end
 
     test "inserts the inputs" do
@@ -251,12 +253,12 @@ defmodule Engine.DB.TransactionTest do
 
     test "sets block, transaction index, tx_type and tx_bytes for a fee transaction", %{block: block} do
       assert {:ok, transaction} = Transaction.insert_fee_transaction(Repo, {@eth, Decimal.new(1)}, block, 1)
-      assert 1 == transaction.tx_index
-      assert block == transaction.block
-      assert ExPlasma.fee() == transaction.tx_type
+      assert transaction.tx_index == 1
+      assert transaction.block == block
+      assert transaction.tx_type == ExPlasma.fee()
 
       expected_tx_bytes = fee_transaction_bytes(block.blknum)
-      assert expected_tx_bytes == transaction.tx_bytes
+      assert transaction.tx_bytes == expected_tx_bytes
     end
 
     test "assign positions to fee transaction outputs and sets outputs owner to fee claimer address", %{block: block} do
@@ -266,17 +268,17 @@ defmodule Engine.DB.TransactionTest do
                Transaction.insert_fee_transaction(Repo, {@eth, Decimal.new(1)}, block, tx_index)
 
       expected_position = Position.pos(%{blknum: block.blknum, txindex: tx_index, oindex: 0})
-      assert expected_position == output.position
+      assert output.position == expected_position
 
-      owner = Engine.Configuration.fee_claimer_address()
+      owner = Configuration.fee_claimer_address()
 
       assert %{output_data: %{amount: 1, output_guard: ^owner, token: @eth}} =
-               ExPlasma.Output.decode!(output.output_data)
+               ExPlasmaOutput.decode!(output.output_data)
     end
   end
 
   defp fee_transaction_bytes(blknum) do
-    owner = Engine.Configuration.fee_claimer_address()
+    owner = Configuration.fee_claimer_address()
 
     {:ok, fee_tx} =
       ExPlasma.fee()
@@ -298,10 +300,10 @@ defmodule Engine.DB.TransactionTest do
     outputs =
       attrs
       |> Map.get(:outputs, [build(:output, %{amount: 1})])
-      |> Enum.map(fn %{output_data: output_data} -> ExPlasma.Output.decode!(output_data) end)
+      |> Enum.map(fn %{output_data: output_data} -> ExPlasmaOutput.decode!(output_data) end)
 
     ExPlasma.payment_v1()
-    |> Builder.new(%{inputs: [ExPlasma.Output.decode_id!(output_id)], outputs: outputs})
+    |> Builder.new(%{inputs: [ExPlasmaOutput.decode_id!(output_id)], outputs: outputs})
     |> Builder.sign!([entity.priv_encoded])
     |> ExPlasma.encode!()
   end

@@ -111,7 +111,7 @@ defmodule Engine.DB.Block do
   def form() do
     Multi.new()
     |> Multi.run(:block, &get_forming_block_for_update/2)
-    |> Multi.run(:block_for_submission, &prepare_for_submission/2)
+    |> Multi.run(:block_for_submission, fn repo, %{block: block} -> hash_transactions(repo, block) end)
     |> Multi.run(:new_forming_block, &insert_block/2)
     |> Repo.transaction()
   end
@@ -126,17 +126,9 @@ defmodule Engine.DB.Block do
   def prepare_for_submission() do
     Multi.new()
     |> Multi.run(:finalizing_blocks, &get_finalizing_blocks/2)
-    |> Multi.run(:blocks_with_transactions, &attach_fee_transactions/2)
+    |> Multi.run(:blocks, &attach_fee_transactions/2)
     |> Multi.run(:blocks_for_submission, &prepare_for_submission/2)
     |> Repo.transaction()
-    |> case do
-      {:ok, _} = result ->
-        result
-
-      error ->
-        _ = Logger.error("Error when preparing blocks for submission #{inspect(error)}")
-        error
-    end
   end
 
   @doc """
@@ -236,21 +228,17 @@ defmodule Engine.DB.Block do
     |> repo.insert(on_conflict: :nothing)
   end
 
-  defp prepare_for_submission(repo, %{blocks_with_transactions: blocks_with_transactions}) do
+  defp prepare_for_submission(repo, %{blocks: blocks}) do
     prepared_blocks =
-      Enum.map(blocks_with_transactions, fn block ->
-        {:ok, prepared_block} = prepare_block_for_submission(repo, block)
+      Enum.map(blocks, fn block ->
+        {:ok, prepared_block} = hash_transactions(repo, block)
         prepared_block
       end)
 
     {:ok, prepared_blocks}
   end
 
-  defp prepare_for_submission(repo, %{block: block}) do
-    prepare_block_for_submission(repo, block)
-  end
-
-  defp prepare_block_for_submission(repo, block) do
+  defp hash_transactions(repo, block) do
     hash =
       block.id
       |> fetch_tx_bytes_in_block()
@@ -305,7 +293,8 @@ defmodule Engine.DB.Block do
     max_non_fee_transaction_tx_index = repo.one(TransactionQuery.select_max_non_fee_transaction_tx_index(block.id))
 
     # inserts fee transaction with corresponding transaction index
-    # fee transaction indexes are consecutive natural numbers starting with the next number after `max_non_fee_transaction_tx_index`
+    # fee transaction indexes are consecutive natural numbers
+    # starting with the next number after `max_non_fee_transaction_tx_index`
     fees_by_currency
     |> Enum.with_index()
     |> Enum.each(fn {currency_with_amount, index} ->

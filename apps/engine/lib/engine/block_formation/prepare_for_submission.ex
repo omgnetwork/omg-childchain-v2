@@ -29,16 +29,9 @@ defmodule Engine.BlockForming.PrepareForSubmission do
 
   def handle_info(:timeout, %{connection_alarm_raised: false} = state) do
     _ = Logger.debug("Preparing blocks for submission")
-
-    case state.blocks_module.prepare_for_submission() do
-      {:ok, %{blocks_for_submission: blocks}} ->
-        _ = Logger.info("Prepared #{inspect(Enum.count(blocks))} blocks for submision")
-        {:noreply, state, state.interval}
-
-      {:error, err} ->
-        _ = Logger.error("Error when preparing blocks for submission: #{inspect(err)}")
-        {:stop, err}
-    end
+    {:ok, %{blocks_for_submission: blocks}} = state.blocks_module.prepare_for_submission()
+    _ = Logger.info("Prepared #{inspect(Enum.count(blocks))} blocks for submision")
+    {:noreply, state, state.interval}
   end
 
   def handle_info(:timeout, %{connection_alarm_raised: true} = state) do

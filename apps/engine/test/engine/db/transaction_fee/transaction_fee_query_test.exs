@@ -21,19 +21,14 @@ defmodule Engine.DB.TransactionFee.TransactionFeeQueryTest do
       transaction4 = insert(:payment_v1_transaction, %{block: block2})
       _ = insert(:transaction_fee, %{transaction: transaction4, amount: 1, currency: eth})
 
-      expected = %{
-        eth => 2,
-        other_token => 1
-      }
+      expected = [{eth, Decimal.new(2)}, {other_token, Decimal.new(1)}]
 
       actual =
         block1.id
         |> TransactionFeeQuery.get_fees_for_block()
         |> Repo.all()
-        |> Enum.map(fn {key, val} -> {key, Decimal.to_integer(val)} end)
-        |> Enum.into(%{})
 
-      assert expected == actual
+      assert actual == expected
     end
   end
 end
