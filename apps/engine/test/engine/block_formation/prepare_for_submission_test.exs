@@ -1,9 +1,9 @@
 defmodule Engine.BlockForming.PrepareForSubmissionTest do
   use Engine.DB.DataCase, async: false
 
+  alias Ecto.Multi
   alias Engine.BlockForming.PrepareForSubmission
   alias Engine.DB.Block
-  alias Engine.Repo
 
   @interval_ms 10
   @eth <<0::160>>
@@ -83,6 +83,36 @@ defmodule Engine.BlockForming.PrepareForSubmissionTest do
 
     updated_block = Repo.get(Block, block.id)
     assert Block.state_pending_submission() == updated_block.state
+  end
+
+  @tag :integration
+  test "process is stopped when can not acquire a lock on database table" do
+    block = insert_non_empty_block(Block.state_finalizing())
+
+    task = fn ->
+      lock_for_update = from(b in Block, where: b.id == ^block.id, lock: "FOR UPDATE")
+
+      _ =
+        Multi.new()
+        |> Multi.run(:block, fn repo, _params -> {:ok, repo.one(lock_for_update)} end)
+        |> Multi.run(:irrelevant, fn _repo, _params ->
+          Process.sleep(10_000)
+          {:ok, :irrelevant}
+        end)
+        |> Repo.transaction()
+    end
+
+    _ = Task.async(task)
+    _ = Process.sleep(1_000)
+
+    config = [
+      prepare_block_for_submission_interval_ms: @interval_ms
+    ]
+
+    _ = Process.flag(:trap_exit, true)
+    {:ok, worker} = PrepareForSubmission.start_link(config)
+    Process.sleep(6_000)
+    assert_receive {:EXIT, ^worker, _}
   end
 
   defp insert_non_empty_block(block_state) do
