@@ -230,6 +230,7 @@ defmodule Engine.DB.Block do
 
   defp prepare_for_submission(repo, blocks) do
     %{blocks: blocks} = blocks
+
     prepared_blocks =
       Enum.map(blocks, fn block ->
         {:ok, prepared_block} = hash_transactions(repo, block)
