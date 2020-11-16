@@ -34,36 +34,34 @@ commands:
             docker image ls
             docker-compose ps
       - run: sh .circleci/status.sh
-      # we can uncomment this part once we're confident cabbage tests will work with
-      # our new childchain
 
-      # - install_elixir:
-      #     cache: "specs"
-      #     dir: "priv/cabbage"
-      # - install_rust
-      # - run:
-      #     name: Run specs
-      #     command: |
-      #       cd priv/cabbage
-      #       make install
-      #       make generate_api_code
-      #       mix deps.get
-      #       mix test
-      # - run:
-      #     name: (Cabbage) Format generated code and check for warnings
-      #     command: |
-      #       cd priv/cabbage
-      #       # run format ONLY on formatted code so that it cleans up quoted atoms because
-      #       # we cannot exclude folders to --warnings-as-errors
-      #       mix format apps/child_chain_api/lib/child_chain_api/model/*.ex
-      #       mix format apps/watcher_info_api/lib/watcher_info_api/model/*.ex
-      #       mix format apps/watcher_security_critical_api/lib/watcher_security_critical_api/model/*.ex
-      #       MIX_ENV=test mix do compile --warnings-as-errors --ignore-module-conflict --force, test --exclude test
-      # - run:
-      #     name: (Cabbage) Credo and formatting
-      #     command: |
-      #       cd priv/cabbage
-      #       mix do credo, format --check-formatted --dry-run
+      - install_elixir:
+          cache: "specs"
+          dir: "priv/cabbage"
+      - install_rust
+      - run:
+          name: Run specs
+          command: |
+            cd priv/cabbage
+            make install
+            make generate_api_code
+            mix deps.get
+            mix test
+      - run:
+          name: (Cabbage) Format generated code and check for warnings
+          command: |
+            cd priv/cabbage
+            # run format ONLY on formatted code so that it cleans up quoted atoms because
+            # we cannot exclude folders to --warnings-as-errors
+            mix format apps/child_chain_api/lib/child_chain_api/model/*.ex
+            mix format apps/watcher_info_api/lib/watcher_info_api/model/*.ex
+            mix format apps/watcher_security_critical_api/lib/watcher_security_critical_api/model/*.ex
+            MIX_ENV=test mix do compile --warnings-as-errors --ignore-module-conflict --force, test --exclude test
+      - run:
+          name: (Cabbage) Credo and formatting
+          command: |
+            cd priv/cabbage
+            mix do credo, format --check-formatted --dry-run
 
   pull_childchain_health:
     steps:
