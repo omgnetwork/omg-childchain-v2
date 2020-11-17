@@ -8,7 +8,13 @@ commands:
     description: "Builds a docker image"
     steps:
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - run: ENTERPRISE=<<parameters.enterprise>> make docker-childchain
+      - run: |
+          echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+          gcloud auth configure-docker --quiet      
+      - run: 
+          environment:
+            ENTERPRISE: <<parameters.enterprise>>
+          command: make docker-childchain
       - run:
           name: "Pull Submodules"
           command: |
@@ -205,9 +211,32 @@ jobs:
       - install_elixir:
           cache: "integration"
           dir: "~/childchain"
+      - run: |
+          echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+          gcloud auth configure-docker --quiet
       - run: make init-contracts
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
       - run: mix deps.get
       - run: mix test.integration
+      - run:
+          name: Get enteprise deps
+          environment:
+            ENTERPRISE: 1
+          command: mix deps.get
+      - run: make init-contracts-vault
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
+      - run: 
+          name: Run Vault integration test
+          environment:
+            ENTERPRISE: 1
+          command: mix test.integration_block_submission_vault
+      # - run: rm -rf deps/ _build/
+      # - run: ENTERPRISE=0 mix deps.get
+      # - run: mix test.integration_block_submission
 
   test_docker_compose_release_public:
     machine:
@@ -272,7 +301,7 @@ jobs:
       - run:
           name: Restart all services
           background: true
-          command: docker-compose up -d nginx postgres geth feefeed
+          command: docker-compose up -d nginx postgres geth feefeed && docker-compose logs -f
       - pull_childchain_health
       # at this point we reverse the startup order, first childchain then all services
       - run: sudo pkill beam
@@ -291,7 +320,7 @@ jobs:
       - run:
           name: Start all services
           background: true
-          command: docker-compose up -d nginx postgres geth
+          command: docker-compose up -d nginx postgres geth feefeed && docker-compose logs -f
       - run: sleep 20
       - pull_childchain_health
 
@@ -304,6 +333,9 @@ jobs:
       - checkout
       - install_rust
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run: |
+          echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+          gcloud auth configure-docker --quiet      
       - run:
           name: "Pull Submodules"
           command: |
@@ -447,15 +479,25 @@ jobs:
     machine:
       image: ubuntu-2004:202010-01
     environment:
-      CHILDCHAIN_IMAGE_NAME: "omisego/childchain"
+      CHILDCHAIN_IMAGE_NAME: "childchain"
+      DOCKER_HUB_REPO: "omisego"
+      GCS_REPO: "gcr.io/omisego-production"
     steps:
       - checkout
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run:
           environment:
             ENTERPRISE: 0
-          command: make docker-childchain CHILDCHAIN_IMAGE_NAME=$CHILDCHAIN_IMAGE_NAME
-      - run: IMAGE_NAME=$CHILDCHAIN_IMAGE_NAME sh .circleci/ci_publish.sh
+          command: make docker-childchain CHILDCHAIN_IMAGE_NAME=$DOCKER_HUB_REPO/$CHILDCHAIN_IMAGE_NAME
+      - run: IMAGE_NAME=$DOCKER_HUB_REPO/$CHILDCHAIN_IMAGE_NAME sh .circleci/ci_publish.sh
+      - run: |
+          echo $PRODUCTION_DOCKER_GCLOUD_KEY | gcloud auth activate-service-account --key-file=-
+          gcloud -q auth configure-docker
+      - run: 
+          environment:
+            ENTERPRISE: 1
+          command: make docker-childchain CHILDCHAIN_IMAGE_NAME=$GCS_REPO/$CHILDCHAIN_IMAGE_NAME
+      - run: IMAGE_NAME=$GCS_REPO/$CHILDCHAIN_IMAGE_NAME sh .circleci/ci_publish.sh
 
 workflows:
   version: 2
@@ -495,8 +537,11 @@ workflows:
             - build
 
       - publish_childchain:
+          context:
+            - production-docker-push
           requires:
             [
+              development,
               dialyzer,
               credo,
               integration,

@@ -8,19 +8,14 @@ defmodule Engine.Geth do
   def start(port) do
     {:ok, _} = Application.ensure_all_started(:briefly)
     {:ok, _} = Application.ensure_all_started(:httpoison)
-    {:ok, pid} = GenServer.start_link(__MODULE__, [])
+    {:ok, pid} = GenServer.start(__MODULE__, [])
     {:ok, container_id} = GenServer.call(pid, {:start, port}, 60_000)
     wait(port)
     {:ok, {pid, container_id}}
   end
 
   def init(_) do
-    Process.flag(:trap_exit, true)
     {:ok, %{}}
-  end
-
-  def handle_info({:EXIT, _, :normal}, state) do
-    {:stop, :parent, state}
   end
 
   def handle_call({:start, port}, _, _state) do
@@ -134,13 +129,6 @@ defmodule Engine.Geth do
           "#{datadir}:/data:rw",
           "#{root_path}/docker/geth/geth-blank-password:/data/geth-blank-password:rw"
         ]
-      },
-      "Networks" => %{
-        "childchain_default" => %{
-          "Aliases" => [
-            "geth"
-          ]
-        }
       }
     }
   end

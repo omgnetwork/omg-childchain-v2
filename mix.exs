@@ -36,6 +36,8 @@ defmodule Childchain.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["test --no-start"],
       "test.integration": ["test --only integration"],
+      "test.integration_block_submission_vault": ["test --only block_submission_vault"],
+      "test.integration_block_submission": ["test --only block_submission"],
       "test.all": ["test --include integration"]
     ]
   end

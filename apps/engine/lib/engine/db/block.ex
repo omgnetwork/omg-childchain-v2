@@ -226,11 +226,17 @@ defmodule Engine.DB.Block do
   end
 
   defp process_submission(repo, [plasma_block | plasma_blocks], new_height, mined_child_block, submit_fn, gas_fn) do
-    # getting appropriate gas here
-    gas = gas_fn.()
+    gas =
+      gas_fn.()
+      |> Map.get(:standard)
+      |> Kernel.*(1_000_000_000)
+      |> Kernel.round()
 
-    case submit_fn.(plasma_block.hash, plasma_block.nonce, gas) do
+    submission_result = submit_fn.(plasma_block.hash, "#{plasma_block.nonce}", "#{gas}")
+
+    case submission_result do
       :ok ->
+        # set tx_hash
         plasma_block
         |> BlockChangeset.submitted(%{
           attempts_counter: plasma_block.attempts_counter + 1,

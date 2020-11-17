@@ -39,13 +39,14 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
   """
   @spec submit_block(String.t(), 0 | 1, Keyword.t()) :: function()
   def submit_block(plasma_framework, enteprise, opts) do
-    {module, opts1} = Keyword.pop(opts, :module)
-    {function, opts2} = Keyword.pop(opts1, :function)
+    {module, opts1} = Keyword.pop!(opts, :module)
+    {function, opts2} = Keyword.pop!(opts1, :function)
     external_opts = external_opts(enteprise, opts2)
     contract = plasma_framework
 
     fn block_root, nonce, gas_price ->
       apply(module, function, [block_root, nonce, gas_price, contract, external_opts])
+      :ok
     end
   end
 

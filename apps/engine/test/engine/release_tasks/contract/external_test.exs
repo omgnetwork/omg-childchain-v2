@@ -60,7 +60,7 @@ defmodule Engine.ReleaseTasks.Contract.ExternalTest do
       exit_game_contract_address =
         External.exit_game_contract_address("contract address", 1, [{:url, "http://localhost:#{port}"}])
 
-      assert exit_game_contract_address == "0x89afce326e7da55647d22e24336c6a2816c99f6b"
+      assert exit_game_contract_address == elem(EIP55.encode("0x89afce326e7da55647d22e24336c6a2816c99f6b"), 1)
     end
   end
 
@@ -81,7 +81,7 @@ defmodule Engine.ReleaseTasks.Contract.ExternalTest do
 
       Agent.start_link(fn -> {0, execution} end, name: test_name)
       vault_address = External.vault("contract address", 1, [{:url, "http://localhost:#{port}"}])
-      assert vault_address == "0x89afce326e7da55647d22e24336c6a2816c99f6b"
+      assert vault_address == elem(EIP55.encode("0x89afce326e7da55647d22e24336c6a2816c99f6b"), 1)
     end
   end
 

@@ -13,7 +13,12 @@ defmodule EventTest do
   setup_all do
     {:ok, _ethereumex} = Application.ensure_all_started(:ethereumex)
     port = Enum.random(35_000..40_000)
-    {:ok, {_geth_pid, _container_id}} = Geth.start(port)
+    {:ok, {geth_pid, _container_id}} = Geth.start(port)
+
+    on_exit(fn ->
+      GenServer.stop(geth_pid)
+    end)
+
     :ets.new(:events_bucket_test, [:bag, :public, :named_table])
     url = "http://127.0.0.1:#{port}"
     contracts = Configuration.contracts()

@@ -12,4 +12,8 @@ Mix.Task.run("ecto.migrate", ~w(--quiet))
 {:ok, _} = Application.ensure_all_started(:sasl)
 :ok = Status.Alert.AlarmHandler.install(Status.Alert.Alarm.alarm_types(), Status.Alert.AlarmHandler.table_name())
 
-ExUnit.start(capture_log: true, assert_receive_timeout: 1000, exclude: [integration: true])
+ExUnit.start(
+  capture_log: true,
+  assert_receive_timeout: 1000,
+  exclude: [block_submission: true, block_submission_vault: true, integration: true]
+)
