@@ -50,7 +50,11 @@ defmodule Engine.ReleaseTasks.Contract.External do
   end
 
   def contract_deployment_height(plasma_framework, tx_hash, opts) do
-    {:ok, %{"contractAddress" => ^plasma_framework, "blockNumber" => height}} = Rpc.transaction_receipt(tx_hash, opts)
+    lowercase_plasma_framework_address = String.downcase(plasma_framework)
+
+    {:ok, %{"contractAddress" => ^lowercase_plasma_framework_address, "blockNumber" => height}} =
+      Rpc.transaction_receipt(tx_hash, opts)
+
     Encoding.to_int(height)
   end
 
