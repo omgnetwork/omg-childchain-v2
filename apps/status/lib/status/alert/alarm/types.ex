@@ -14,7 +14,7 @@ defmodule Status.Alert.Alarm.Types do
            | :db_connection_lost
            | :ethereum_connection_error
            | :ethereum_stalled_sync
-           | :invalid_fee_source
+           | :no_fees
            | :main_supervisor_halted, alarm_detail}
   @spec db_connection_lost(module()) :: {:db_connection_lost, alarm_detail}
   def db_connection_lost(reporter) do
@@ -36,9 +36,9 @@ defmodule Status.Alert.Alarm.Types do
     {:boot_in_progress, %{node: Node.self(), reporter: reporter}}
   end
 
-  @spec invalid_fee_source(module()) :: {:invalid_fee_source, alarm_detail}
-  def invalid_fee_source(reporter) do
-    {:invalid_fee_source, %{node: Node.self(), reporter: reporter}}
+  @spec no_fees(module()) :: {:no_fees, alarm_detail}
+  def no_fees(reporter) do
+    {:no_fees, %{node: Node.self(), reporter: reporter}}
   end
 
   @spec main_supervisor_halted(module()) :: {:main_supervisor_halted, alarm_detail}

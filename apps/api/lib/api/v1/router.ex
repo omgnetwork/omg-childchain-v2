@@ -12,7 +12,6 @@ defmodule API.V1.Router do
 
   alias API.Configuration
   alias API.Plugs.ExpectParams
-  alias API.Plugs.Health
   alias API.Plugs.Responder
   alias API.Plugs.Version
   alias API.V1.Controller.BlockController
@@ -51,7 +50,8 @@ defmodule API.V1.Router do
   plug(:dispatch)
 
   get "health.check" do
-    Health.call(conn, %{})
+    # Health plug will intercept this if alarms were raised
+    send_resp(conn, 200, "")
   end
 
   get "configuration.get" do

@@ -8,6 +8,15 @@ defmodule API.Plugs.HealthTest do
   alias Status.Alert.AlarmHandler.Table
 
   setup do
+    case Application.start(:sasl) do
+      {:error, {:already_started, :sasl}} ->
+        :ok = Application.stop(:sasl)
+        :ok = Application.start(:sasl)
+
+      :ok ->
+        :ok
+    end
+
     Table.setup(AlarmHandler.table_name())
   end
 

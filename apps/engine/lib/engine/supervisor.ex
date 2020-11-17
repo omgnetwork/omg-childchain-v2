@@ -7,8 +7,9 @@ defmodule Engine.Supervisor do
 
   alias Engine.BlockForming.PrepareForSubmission
   alias Engine.Configuration
-  # alias Engine.Fee.Server, as: FeeServer
   alias Engine.Ethereum.Authority.Submitter
+  alias Engine.Fee.Server, as: FeeServer
+
   require Logger
 
   def start_link(args) do
@@ -16,7 +17,10 @@ defmodule Engine.Supervisor do
   end
 
   def init(_args) do
-    # fee_server_opts = Configuration.fee_server_opts()
+    # we did not fetch fees yet
+    FeeServer.raise_no_fees_alarm()
+
+    fee_server_opts = Configuration.fee_server_opts()
 
     enterprise = apply(SubmitBlock, :enterprise, [])
 
@@ -40,7 +44,7 @@ defmodule Engine.Supervisor do
     ]
 
     children = [
-      # {FeeServer, fee_server_opts}
+      {FeeServer, fee_server_opts},
       {Submitter, submitter_opts},
       prepare_block_for_submission_spec()
     ]
