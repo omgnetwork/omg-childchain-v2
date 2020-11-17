@@ -111,7 +111,7 @@ defmodule Engine.DB.Block do
   def form() do
     Multi.new()
     |> Multi.run(:block, &get_forming_block_for_update/2)
-    |> Multi.run(:block_for_submission, fn repo, %{block: block} -> hash_transactions(repo, block) end)
+    |> Multi.run(:block_for_submission, &hash_transactions/2)
     |> Multi.run(:new_forming_block, &insert_block/2)
     |> Repo.transaction()
   end
@@ -239,6 +239,8 @@ defmodule Engine.DB.Block do
 
     {:ok, prepared_blocks}
   end
+
+  defp hash_transactions(repo, %{block: block}), do: hash_transactions(repo, block)
 
   defp hash_transactions(repo, block) do
     hash =

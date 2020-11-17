@@ -111,8 +111,7 @@ defmodule Engine.BlockForming.PrepareForSubmissionTest do
 
     _ = Process.flag(:trap_exit, true)
     {:ok, worker} = PrepareForSubmission.start_link(config)
-    Process.sleep(6_000)
-    assert_receive {:EXIT, ^worker, _}
+    assert_receive({:EXIT, ^worker, _}, 6_000)
   end
 
   defp insert_non_empty_block(block_state) do
