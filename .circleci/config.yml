@@ -215,13 +215,13 @@ jobs:
       - docker_compose_release:
           enterprise: "0"
 
-  test_docker_compose_release_private:
-    machine:
-      image: ubuntu-1604:201903-01
-    steps:
-      - checkout
-      - docker_compose_release:
-          enterprise: "1"
+  # test_docker_compose_release_private:
+  #   machine:
+  #     image: ubuntu-1604:201903-01
+  #   steps:
+  #     - checkout
+  #     - docker_compose_release:
+  #         enterprise: "1"
 
   development:
     working_directory: ~/childchain
@@ -468,9 +468,9 @@ workflows:
           requires:
             - build
 
-      - test_docker_compose_release_private:
-          requires:
-            - build
+      # - test_docker_compose_release_private:
+      #     requires:
+      #       - build
 
       - test_docker_compose_release_public:
           requires:
