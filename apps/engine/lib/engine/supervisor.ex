@@ -43,24 +43,19 @@ defmodule Engine.Supervisor do
       enterprise: enterprise
     ]
 
+    prepare_block_for_submission_opts = [
+      prepare_block_for_submission_interval_ms: Configuration.prepare_block_for_submission_interval_ms()
+    ]
+
     children = [
       {FeeServer, fee_server_opts},
       {Submitter, submitter_opts},
-      prepare_block_for_submission_spec()
+      {PrepareForSubmission, prepare_block_for_submission_opts}
     ]
 
     opts = [strategy: :one_for_one]
 
     _ = Logger.info("Starting #{inspect(__MODULE__)}")
     Supervisor.init(children, opts)
-  end
-
-  defp prepare_block_for_submission_spec() do
-    config = [prepare_block_for_submission_interval_ms: Configuration.prepare_block_for_submission_interval_ms()]
-
-    %{
-      id: PrepareForSubmission,
-      start: {PrepareForSubmission, :start_link, [config]}
-    }
   end
 end
