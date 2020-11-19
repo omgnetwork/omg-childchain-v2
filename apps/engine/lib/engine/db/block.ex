@@ -129,9 +129,10 @@ defmodule Engine.DB.Block do
   - transaction fees are attached
   - merkle root hash is calculated
   - state is changed to pending submission
+  - sets formed_at_eth_height to ethereum height provided as an argument
   """
   @decorate trace(service: :ecto, type: :backend)
-  def prepare_for_submission(eth_height \\ 0) do
+  def prepare_for_submission(eth_height) do
     Multi.new()
     |> Multi.run(:finalizing_blocks, &get_finalizing_blocks/2)
     |> Multi.run(:blocks, &attach_fee_transactions/2)
@@ -180,6 +181,10 @@ defmodule Engine.DB.Block do
       false ->
         {:ok, %{block: block, next_tx_index: last_tx_index + 1}}
     end
+  end
+
+  def get_last_formed_block_eth_height() do
+    Repo.one(BlockQuery.get_last_formed_block_eth_height())
   end
 
   defp get_non_empty_forming_block_for_update(repo, _params) do

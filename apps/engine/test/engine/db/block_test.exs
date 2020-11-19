@@ -12,6 +12,7 @@ defmodule Engine.DB.BlockTest do
 
   @eth <<0::160>>
   @other_token <<1::160>>
+  @eth_height 2
 
   describe "insert/2" do
     test "fails to insert block when blknum != 1000 * nonce" do
@@ -27,7 +28,7 @@ defmodule Engine.DB.BlockTest do
     test "returns the block without preloads" do
       _ = insert(:block, %{state: Block.state_finalizing()})
 
-      {:ok, %{blocks_for_submission: [block]}} = Block.prepare_for_submission()
+      {:ok, %{blocks_for_submission: [block]}} = Block.prepare_for_submission(@eth_height)
 
       assert {:ok, block_result} = Block.get_by_hash(block.hash, [])
       refute Ecto.assoc_loaded?(block_result.transactions)
@@ -426,17 +427,21 @@ defmodule Engine.DB.BlockTest do
       {:ok, %{block: block}}
     end
 
-    test "generates the block hash and changes block state to pending submission", %{block: finalizing_block} do
+    test "generates the block hash, changes block state to pending submission and sets formed ethereum height", %{
+      block: finalizing_block
+    } do
       tx = insert(:payment_v1_transaction, %{block: finalizing_block})
       hash = Merkle.root_hash([Transaction.encode_unsigned(tx)])
 
-      assert {:ok, %{blocks_for_submission: [block]}} = Block.prepare_for_submission()
+      eth_height = 10
+      assert {:ok, %{blocks_for_submission: [block]}} = Block.prepare_for_submission(eth_height)
       assert block.hash == hash
       assert block.state == Block.state_pending_submission()
+      assert block.formed_at_ethereum_height == eth_height
     end
 
     test "correctly generates block hash for empty txs list" do
-      assert {:ok, %{blocks_for_submission: [block]}} = Block.prepare_for_submission()
+      assert {:ok, %{blocks_for_submission: [block]}} = Block.prepare_for_submission(@eth_height)
 
       assert block.hash ==
                <<246, 9, 190, 253, 254, 144, 102, 254, 20, 231, 67, 179, 98, 62, 174, 135, 143, 188, 70, 128, 5, 96,
@@ -469,7 +474,7 @@ defmodule Engine.DB.BlockTest do
         _ = insert(:payment_v1_transaction, %{block: block, tx_index: index, tx_bytes: tx_bytes})
       end)
 
-      assert {:ok, %{blocks_for_submission: [block_for_submission]}} = Block.prepare_for_submission()
+      assert {:ok, %{blocks_for_submission: [block_for_submission]}} = Block.prepare_for_submission(@eth_height)
 
       assert block_for_submission.hash ==
                <<189, 245, 69, 5, 94, 45, 148, 210, 5, 89, 98, 245, 201, 111, 222, 48, 61, 114, 145, 55, 122, 84, 196,
@@ -505,7 +510,7 @@ defmodule Engine.DB.BlockTest do
           _ = insert(:payment_v1_transaction, %{block: block, tx_index: index, tx_bytes: tx_bytes})
         end)
 
-      assert {:ok, %{blocks_for_submission: [block_for_submission]}} = Block.prepare_for_submission()
+      assert {:ok, %{blocks_for_submission: [block_for_submission]}} = Block.prepare_for_submission(@eth_height)
 
       assert block_for_submission.hash ==
                <<12, 40, 202, 7, 16, 175, 119, 138, 7, 95, 8, 3, 148, 93, 162, 168, 136, 226, 196, 236, 83, 62, 220, 75,
@@ -520,7 +525,7 @@ defmodule Engine.DB.BlockTest do
       block_submitted = insert_non_empty_block(Block.state_submitted())
       block_confirmed = insert_non_empty_block(Block.state_confirmed())
 
-      {:ok, _} = Block.prepare_for_submission()
+      {:ok, _} = Block.prepare_for_submission(@eth_height)
 
       assert block_forming == Repo.get!(Block, block_forming.id)
       assert block_pending_submission == Repo.get!(Block, block_pending_submission.id)
@@ -569,7 +574,7 @@ defmodule Engine.DB.BlockTest do
 
       _ = insert(:transaction_fee, %{transaction: tx3, currency: @other_token, amount: 9})
 
-      {:ok, _} = Block.prepare_for_submission()
+      {:ok, _} = Block.prepare_for_submission(@eth_height)
 
       [fee_transaction1_block1, fee_transaction2_block1] = fee_transactions_for_block(block1)
 
@@ -613,7 +618,7 @@ defmodule Engine.DB.BlockTest do
 
       _ = insert(:transaction_fee, %{transaction: tx, currency: @other_token, amount: 9})
 
-      {:ok, _} = Block.prepare_for_submission()
+      {:ok, _} = Block.prepare_for_submission(@eth_height)
 
       [fee_transaction1, fee_transaction2] =
         block.id
@@ -630,7 +635,7 @@ defmodule Engine.DB.BlockTest do
 
       no_conflicts =
         1..50
-        |> Enum.map(fn _ -> Task.async(fn -> Block.prepare_for_submission() end) end)
+        |> Enum.map(fn _ -> Task.async(fn -> Block.prepare_for_submission(@eth_height) end) end)
         |> Enum.map(fn task -> Task.await(task) end)
         |> Enum.all?(fn
           {:ok, _} -> true

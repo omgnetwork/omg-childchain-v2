@@ -4,12 +4,8 @@ defmodule Engine.BlockForming.PrepareForSubmissionTest do
   alias Engine.BlockForming.PrepareForSubmission
   alias Engine.DB.Block
 
-  @interval_ms 10
+  @sleep_time_ms 1_000
   @eth <<0::160>>
-
-  defmodule EthereumHeightModuleMock do
-    def get(), do: {:ok, 1}
-  end
 
   setup do
     case Application.start(:sasl) do
@@ -28,66 +24,72 @@ defmodule Engine.BlockForming.PrepareForSubmissionTest do
     :ok
   end
 
-  test "periodically prepares blocks for submission" do
+  test "finalizes forming block and prepares finalizing blocks for submission" do
     config = [
-      prepare_block_for_submission_interval_ms: @interval_ms,
-      ethereum_height_module: EthereumHeightModuleMock
+      block_submit_every_nth: 1
     ]
 
-    block1 = insert_non_empty_block(Block.state_finalizing())
+    block1 = insert_non_empty_block(Block.state_forming())
     block2 = insert_non_empty_block(Block.state_finalizing())
     block3 = insert_non_empty_block(Block.state_confirmed())
-    block4 = insert_non_empty_block(Block.state_forming())
 
-    {:ok, _} = PrepareForSubmission.start_link(config)
+    {:ok, pid} = PrepareForSubmission.start_link(config)
 
-    Process.sleep(3 * @interval_ms)
+    eth_height = 10
+    _ = send(pid, {:internal_event_bus, :ethereum_new_height, eth_height})
+    _ = Process.sleep(@sleep_time_ms)
 
-    block_pending_submission1 = Repo.get(Block, block1.id)
-    assert Block.state_pending_submission() == block_pending_submission1.state
+    state_pending_submission = Block.state_pending_submission()
+    assert %Block{state: ^state_pending_submission, formed_at_ethereum_height: ^eth_height} = Repo.get(Block, block1.id)
+    assert %Block{state: ^state_pending_submission, formed_at_ethereum_height: ^eth_height} = Repo.get(Block, block2.id)
 
-    block_pending_submission2 = Repo.get(Block, block2.id)
-    assert Block.state_pending_submission() == block_pending_submission2.state
+    state_confirmed = Block.state_confirmed()
 
-    block_confirmed = Repo.get(Block, block3.id)
-    assert block3.state == block_confirmed.state
+    assert %Block{state: ^state_confirmed} = Repo.get(Block, block3.id)
+  end
 
-    block_forming = Repo.get(Block, block4.id)
-    assert block4.state == block_forming.state
+  test "does not finalize forming block if ethereum height didn't change enough" do
+    config = [
+      block_submit_every_nth: 3
+    ]
 
-    _ =
-      block_forming
-      |> Ecto.Changeset.change(%{state: Block.state_finalizing()})
-      |> Repo.update()
+    {:ok, pid} = PrepareForSubmission.start_link(config)
 
-    Process.sleep(3 * @interval_ms)
-
-    prepared_block = Repo.get(Block, block_forming.id)
-    assert Block.state_pending_submission() == prepared_block.state
+    block1 = insert_non_empty_block(Block.state_forming())
+    _ = send(pid, {:internal_event_bus, :ethereum_new_height, 2})
+    _ = Process.sleep(@sleep_time_ms)
+    block_forming = Repo.get(Block, block1.id)
+    assert Block.state_forming() == block_forming.state
   end
 
   test "backs off on alert" do
     config = [
-      prepare_block_for_submission_interval_ms: @interval_ms,
-      ethereum_height_module: EthereumHeightModuleMock
+      block_submit_every_nth: 1
     ]
 
-    {:ok, worker} = PrepareForSubmission.start_link(config)
-    GenServer.cast(worker, {:set_alarm, :db_connection_lost})
-    assert %{connection_alarm_raised: true} = :sys.get_state(worker)
+    {:ok, pid} = PrepareForSubmission.start_link(config)
+    :ok = GenServer.cast(pid, {:set_alarm, :db_connection_lost})
+    assert %{connection_alarm_raised: true} = :sys.get_state(pid)
 
-    block = insert_non_empty_block(Block.state_finalizing())
-    Process.sleep(3 * @interval_ms)
+    state_forming = Block.state_forming()
+    state_finalizing = Block.state_finalizing()
+    block1 = insert_non_empty_block(state_forming)
+    block2 = insert_non_empty_block(state_finalizing)
+    _ = send(pid, {:internal_event_bus, :ethereum_new_height, 2})
+    Process.sleep(@sleep_time_ms)
 
-    block_finalizing = Repo.get(Block, block.id)
-    assert Block.state_finalizing() == block_finalizing.state
+    assert %Block{state: ^state_forming} = Repo.get(Block, block1.id)
+    assert %Block{state: ^state_finalizing} = Repo.get(Block, block2.id)
 
-    GenServer.cast(worker, {:clear_alarm, :db_connection_lost})
-    assert %{connection_alarm_raised: false} = :sys.get_state(worker)
-    Process.sleep(3 * @interval_ms)
+    :ok = GenServer.cast(pid, {:clear_alarm, :db_connection_lost})
+    _ = send(pid, {:internal_event_bus, :ethereum_new_height, 3})
 
-    updated_block = Repo.get(Block, block.id)
-    assert Block.state_pending_submission() == updated_block.state
+    Process.sleep(@sleep_time_ms)
+    assert %{connection_alarm_raised: false} = :sys.get_state(pid)
+
+    state_pending = Block.state_pending_submission()
+    assert %Block{state: ^state_pending} = Repo.get(Block, block1.id)
+    assert %Block{state: ^state_pending} = Repo.get(Block, block2.id)
   end
 
   defp insert_non_empty_block(block_state) do

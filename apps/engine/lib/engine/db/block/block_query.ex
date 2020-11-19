@@ -39,4 +39,8 @@ defmodule Engine.DB.Block.BlockQuery do
     finalizing = Block.state_finalizing()
     from(block in Block, where: block.state == ^finalizing)
   end
+
+  def get_last_formed_block_eth_height() do
+    from(b in Block, select: max(b.formed_at_ethereum_height))
+  end
 end

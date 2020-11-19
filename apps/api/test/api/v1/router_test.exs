@@ -129,7 +129,7 @@ defmodule API.V1.RouterTest do
       transaction = insert(:payment_v1_transaction, %{block: block})
 
       :ok = Block.finalize_forming_block()
-      {:ok, %{blocks_for_submission: [formed_block]}} = Block.prepare_for_submission()
+      {:ok, %{blocks_for_submission: [formed_block]}} = Block.prepare_for_submission(1)
 
       tx_bytes = Encoding.to_hex(transaction.tx_bytes)
       hash = Encoding.to_hex(formed_block.hash)
