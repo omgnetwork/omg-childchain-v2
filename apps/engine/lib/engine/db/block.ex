@@ -108,7 +108,7 @@ defmodule Engine.DB.Block do
   Changes currently forming block's state to finalizing
   """
   @decorate trace(service: :ecto, type: :backend)
-  def finalize_current_block() do
+  def finalize_forming_block() do
     result =
       Multi.new()
       |> Multi.run(:block, &get_non_empty_forming_block_for_update/2)
@@ -131,11 +131,13 @@ defmodule Engine.DB.Block do
   - state is changed to pending submission
   """
   @decorate trace(service: :ecto, type: :backend)
-  def prepare_for_submission() do
+  def prepare_for_submission(eth_height \\ 0) do
     Multi.new()
     |> Multi.run(:finalizing_blocks, &get_finalizing_blocks/2)
     |> Multi.run(:blocks, &attach_fee_transactions/2)
-    |> Multi.run(:blocks_for_submission, &prepare_for_submission/2)
+    |> Multi.run(:blocks_for_submission, fn repo, %{blocks: blocks} ->
+      prepare_for_submission(repo, blocks, eth_height)
+    end)
     |> Repo.transaction()
   end
 
@@ -253,21 +255,17 @@ defmodule Engine.DB.Block do
     |> repo.insert(on_conflict: :nothing)
   end
 
-  defp prepare_for_submission(repo, blocks) do
-    %{blocks: blocks} = blocks
-
+  defp prepare_for_submission(repo, blocks, eth_height) do
     prepared_blocks =
       Enum.map(blocks, fn block ->
-        {:ok, prepared_block} = hash_transactions(repo, block)
+        {:ok, prepared_block} = hash_transactions(repo, block, eth_height)
         prepared_block
       end)
 
     {:ok, prepared_blocks}
   end
 
-  defp hash_transactions(repo, %{block: block}), do: hash_transactions(repo, block)
-
-  defp hash_transactions(repo, block) do
+  defp hash_transactions(repo, block, eth_height) do
     hash =
       block.id
       |> fetch_tx_bytes_in_block()
@@ -276,7 +274,7 @@ defmodule Engine.DB.Block do
     # conflict on hash means block was prepared for submission by other process
     # do nothing then
     block
-    |> BlockChangeset.prepare_for_submission(%{hash: hash})
+    |> BlockChangeset.prepare_for_submission(%{hash: hash, formed_at_ethereum_height: eth_height})
     |> repo.update(on_conflict: :nothing)
   end
 

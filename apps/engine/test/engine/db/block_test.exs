@@ -374,12 +374,12 @@ defmodule Engine.DB.BlockTest do
     end
   end
 
-  describe "finalize_current_block/0" do
+  describe "finalize_forming_block/0" do
     test "changes state of a forming block" do
       %{id: id_forming} = insert_non_empty_block(Block.state_forming())
       block_forming = Repo.one(from(b in Block, where: b.id == ^id_forming))
       expected = %Block{block_forming | state: Block.state_finalizing()}
-      assert :ok = Block.finalize_current_block()
+      assert :ok = Block.finalize_forming_block()
       actual = Repo.one(from(b in Block, where: b.id == ^id_forming))
       assert actual == expected
     end
@@ -399,7 +399,7 @@ defmodule Engine.DB.BlockTest do
       %{id: id_confirmed} = insert(:block, %{state: Block.state_confirmed()})
       block_confirmed = Repo.one(from(b in Block, where: b.id == ^id_confirmed))
 
-      assert :ok = Block.finalize_current_block()
+      assert :ok = Block.finalize_forming_block()
 
       assert Repo.one(from(b in Block, where: b.id == ^id_finalizing)) == block_finalizing
       assert Repo.one(from(b in Block, where: b.id == ^id_pending)) == block_pending
@@ -410,13 +410,13 @@ defmodule Engine.DB.BlockTest do
     test "does not update forming block if it's empty" do
       %{id: id} = insert(:block, %{state: Block.state_forming()})
       block_before_call = Repo.one(from(b in Block, where: b.id == ^id))
-      assert :ok == Block.finalize_current_block()
+      assert :ok == Block.finalize_forming_block()
       block_after_call = Repo.one(from(b in Block, where: b.id == ^id))
       assert block_after_call == block_before_call
     end
 
     test "does not fail when there is no forming block" do
-      assert :ok == Block.finalize_current_block()
+      assert :ok == Block.finalize_forming_block()
     end
   end
 

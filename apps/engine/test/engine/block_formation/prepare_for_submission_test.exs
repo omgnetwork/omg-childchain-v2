@@ -7,6 +7,10 @@ defmodule Engine.BlockForming.PrepareForSubmissionTest do
   @interval_ms 10
   @eth <<0::160>>
 
+  defmodule EthereumHeightModuleMock do
+    def get(), do: {:ok, 1}
+  end
+
   setup do
     case Application.start(:sasl) do
       {:error, {:already_started, :sasl}} ->
@@ -26,7 +30,8 @@ defmodule Engine.BlockForming.PrepareForSubmissionTest do
 
   test "periodically prepares blocks for submission" do
     config = [
-      prepare_block_for_submission_interval_ms: @interval_ms
+      prepare_block_for_submission_interval_ms: @interval_ms,
+      ethereum_height_module: EthereumHeightModuleMock
     ]
 
     block1 = insert_non_empty_block(Block.state_finalizing())
@@ -63,7 +68,8 @@ defmodule Engine.BlockForming.PrepareForSubmissionTest do
 
   test "backs off on alert" do
     config = [
-      prepare_block_for_submission_interval_ms: @interval_ms
+      prepare_block_for_submission_interval_ms: @interval_ms,
+      ethereum_height_module: EthereumHeightModuleMock
     ]
 
     {:ok, worker} = PrepareForSubmission.start_link(config)

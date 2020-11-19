@@ -9,6 +9,7 @@ defmodule Engine.BlockForming.PrepareForSubmission do
 
   alias Engine.BlockForming.PrepareForSubmission.AlarmHandler
   alias Engine.DB.Block
+  alias Engine.Ethereum.Height
 
   require Logger
 
@@ -19,17 +20,25 @@ defmodule Engine.BlockForming.PrepareForSubmission do
   def init(args) do
     interval = Keyword.fetch!(args, :prepare_block_for_submission_interval_ms)
     blocks_module = Keyword.get(args, :block_module, Block)
+    ethereum_height_module = Keyword.get(args, :ethereum_height_module, Height)
 
     alarm_handler = Keyword.get(args, :alarm_handler, AlarmHandler)
     sasl_alarm_handler = Keyword.get(args, :sasl_alarm_handler, :alarm_handler)
     :ok = subscribe_to_alarm(sasl_alarm_handler, alarm_handler, self())
 
-    {:ok, %{interval: interval, blocks_module: blocks_module, connection_alarm_raised: false}, interval}
+    {:ok,
+     %{
+       interval: interval,
+       blocks_module: blocks_module,
+       ethereum_height_module: ethereum_height_module,
+       connection_alarm_raised: false
+     }, interval}
   end
 
   def handle_info(:timeout, %{connection_alarm_raised: false} = state) do
     _ = Logger.debug("Preparing blocks for submission")
-    {:ok, %{blocks_for_submission: blocks}} = state.blocks_module.prepare_for_submission()
+    {:ok, eth_height} = state.ethereum_height_module.get()
+    {:ok, %{blocks_for_submission: blocks}} = state.blocks_module.prepare_for_submission(eth_height)
     _ = Logger.info("Prepared #{inspect(Enum.count(blocks))} blocks for submision")
     {:noreply, state, state.interval}
   end

@@ -28,7 +28,7 @@ defmodule API.V1.Controllere.TransactionControllerTest do
 
       {tx_bytes3, tx_hash3} = tx_bytes_and_hash()
 
-      _ = Block.finalize_current_block()
+      _ = Block.finalize_forming_block()
       expected_blknum = blknum + 1_000
 
       assert TransactionController.submit(tx_bytes3) ==

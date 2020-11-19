@@ -128,7 +128,7 @@ defmodule API.V1.RouterTest do
     test "it returns a block", %{forming_block: block} do
       transaction = insert(:payment_v1_transaction, %{block: block})
 
-      :ok = Block.finalize_current_block()
+      :ok = Block.finalize_forming_block()
       {:ok, %{blocks_for_submission: [formed_block]}} = Block.prepare_for_submission()
 
       tx_bytes = Encoding.to_hex(transaction.tx_bytes)
@@ -185,7 +185,7 @@ defmodule API.V1.RouterTest do
 
       assert_payload_data(payload2, %{"tx_hash" => Encoding.to_hex(tx_hash2), "blknum" => blknum, "tx_index" => 1})
 
-      _ = Block.finalize_current_block()
+      _ = Block.finalize_forming_block()
       next_blknum = blknum + 1_000
 
       {tx_bytes3, tx_hash3} = tx_bytes_and_hash()
