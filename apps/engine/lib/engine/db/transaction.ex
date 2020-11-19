@@ -27,6 +27,7 @@ defmodule Engine.DB.Transaction do
   alias Engine.DB.TransactionFee
   alias Engine.Fee
   alias Engine.Repo
+  alias ExPlasma.Transaction, as: ExPlasmaTx
 
   require Logger
 
@@ -118,10 +119,20 @@ defmodule Engine.DB.Transaction do
     end
   end
 
+  @doc """
+  Inserts a fee transaction associated with a given block and transaction index
+  """
+  def insert_fee_transaction(repo, currency_with_amount, block, fee_tx_index) do
+    currency_with_amount
+    |> TransactionChangeset.new_fee_transaction_changeset(block)
+    |> TransactionChangeset.set_blknum_and_tx_index(%{block: block, next_tx_index: fee_tx_index})
+    |> repo.insert()
+  end
+
   @spec decode(tx_bytes) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
   defp decode(tx_bytes) do
     with {:ok, decoded} <- ExPlasma.decode(tx_bytes),
-         {:ok, recovered} <- ExPlasma.Transaction.with_witnesses(decoded),
+         {:ok, recovered} <- ExPlasmaTx.with_witnesses(decoded),
          {:ok, fees} <- load_fees(recovered.tx_type) do
       params =
         recovered

@@ -2,6 +2,9 @@ defmodule Engine.Configuration do
   @moduledoc """
     Configuration access interface
   """
+
+  alias ExPlasma.Encoding
+
   @app :engine
 
   def child_block_interval() do
@@ -76,9 +79,11 @@ defmodule Engine.Configuration do
     Application.fetch_env!(@app, :db_fetch_retry_interval)
   end
 
-  @spec fee_claimer_address :: String.t()
+  @spec fee_claimer_address :: <<_::160>>
   def fee_claimer_address() do
-    Application.fetch_env!(@app, :fee_claimer_address)
+    @app
+    |> Application.fetch_env!(:fee_claimer_address)
+    |> Encoding.to_binary!()
   end
 
   @doc """
@@ -102,5 +107,9 @@ defmodule Engine.Configuration do
 
   def contract_semver() do
     Application.fetch_env!(@app, :contract_semver)
+  end
+
+  def prepare_block_for_submission_interval_ms() do
+    Application.fetch_env!(@app, :prepare_block_for_submission_interval_ms)
   end
 end

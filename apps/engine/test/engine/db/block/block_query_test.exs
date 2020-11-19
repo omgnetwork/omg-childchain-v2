@@ -1,6 +1,7 @@
 defmodule Engine.DB.Block.BlockQueryTest do
   use Engine.DB.DataCase, async: false
 
+  alias Engine.DB.Block
   alias Engine.DB.Block.BlockQuery
   alias Engine.Repo
 
@@ -15,7 +16,7 @@ defmodule Engine.DB.Block.BlockQueryTest do
 
   describe "select_max_nonce/0" do
     test "returns max nonce" do
-      block1 = insert(:block, %{state: :finalizing})
+      block1 = insert(:block, %{state: Block.state_finalizing()})
       block2 = insert(:block)
 
       max_nonce = Repo.one!(BlockQuery.select_max_nonce())
@@ -26,7 +27,7 @@ defmodule Engine.DB.Block.BlockQueryTest do
 
   describe "get_all/2" do
     test "filters by new height - submitted at ethereum height is not nil" do
-      block1 = insert(:block, %{state: :finalizing, submitted_at_ethereum_height: 1})
+      block1 = insert(:block, %{state: Block.state_finalizing(), submitted_at_ethereum_height: 1})
       _ = insert(:block, %{submitted_at_ethereum_height: 2})
 
       [block] = Repo.all(BlockQuery.get_all(2, 0))
@@ -34,7 +35,7 @@ defmodule Engine.DB.Block.BlockQueryTest do
     end
 
     test "filters by new height - submitted at ethereum height is nil" do
-      _ = insert(:block, %{state: :finalizing, submitted_at_ethereum_height: 1})
+      _ = insert(:block, %{state: Block.state_finalizing(), submitted_at_ethereum_height: 1})
       block2 = insert(:block, %{submitted_at_ethereum_height: nil})
 
       [block] = Repo.all(BlockQuery.get_all(0, 0))
@@ -42,7 +43,7 @@ defmodule Engine.DB.Block.BlockQueryTest do
     end
 
     test "filters by child block number" do
-      block1 = insert(:block, %{state: :finalizing})
+      block1 = insert(:block, %{state: Block.state_finalizing()})
       block2 = insert(:block)
 
       [block] = Repo.all(BlockQuery.get_all(2, block1.blknum))
@@ -50,12 +51,27 @@ defmodule Engine.DB.Block.BlockQueryTest do
     end
 
     test "result is ordered by nonce" do
-      _ = insert(:block, %{state: :finalizing})
+      _ = insert(:block, %{state: Block.state_finalizing()})
       _ = insert(:block)
 
       [b1, b2] = Repo.all(BlockQuery.get_all(2, 0))
 
       assert b1.blknum < b2.blknum
+    end
+  end
+
+  describe "select_finalizing_blocks/0" do
+    test "selects all finalizing blocks" do
+      block_finalizing1 = insert(:block, %{state: Block.state_finalizing()})
+      block_finalizing2 = insert(:block, %{state: Block.state_finalizing()})
+      _ = insert(:block, %{state: Block.state_forming()})
+      _ = insert(:block, %{state: Block.state_pending_submission()})
+      _ = insert(:block, %{state: Block.state_submitted()})
+      _ = insert(:block, %{state: Block.state_confirmed()})
+
+      assert [selected_block1, selected_block2] = Repo.all(BlockQuery.select_finalizing_blocks())
+      assert block_finalizing1.id == selected_block1.id
+      assert block_finalizing2.id == selected_block2.id
     end
   end
 end

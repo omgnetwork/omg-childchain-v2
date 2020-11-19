@@ -9,10 +9,15 @@ defmodule Engine.DB.Factory do
   alias Engine.DB.Fee
   alias Engine.DB.Output
   alias Engine.DB.Transaction
+  alias Engine.DB.TransactionFee
   alias Engine.Ethereum.RootChain.Event
   alias Engine.Support.TestEntity
   alias ExPlasma.Builder
   alias ExPlasma.Output.Position
+  alias ExPlasma.Transaction, as: ExPlasmaTx
+  alias ExPlasma.Transaction.Type.Fee, as: ExPlasmaFee
+
+  @eth <<0::160>>
 
   def output_piggyback_event_factory(attr \\ %{}) do
     tx_hash = Map.get(attr, :tx_hash, <<1::256>>)
@@ -62,7 +67,7 @@ defmodule Engine.DB.Factory do
       |> Map.put(:data, %{
         "amount" => Map.get(attr, :amount, 1),
         "blknum" => Map.get(attr, :blknum, 1),
-        "token" => Map.get(attr, :token, <<0::160>>),
+        "token" => Map.get(attr, :token, @eth),
         "depositor" => Map.get(attr, :depositor, <<1::160>>)
       })
 
@@ -93,7 +98,7 @@ defmodule Engine.DB.Factory do
     blknum = Map.get(attr, :blknum, default_blknum)
     output_guard = Map.get(attr, :output_guard, entity.addr)
     amount = Map.get(attr, :amount, 1)
-    token = Map.get(attr, :token, <<0::160>>)
+    token = Map.get(attr, :token, @eth)
 
     {:ok, encoded_output_data} =
       %ExPlasma.Output{}
@@ -123,7 +128,53 @@ defmodule Engine.DB.Factory do
     }
   end
 
-  def payment_v1_transaction_factory(attr \\ %{}) do
+  def payment_v1_transaction_factory(attr \\ %{})
+
+  def payment_v1_transaction_factory(%{inputs: inputs, outputs: outputs, block: block, tx_index: tx_index}) do
+    entity = TestEntity.alice()
+
+    {input_ids, inputs} =
+      inputs
+      |> Enum.map(fn %{amount: amount, token: token} ->
+        %{output_id: output_id} = input = insert(:deposit_output, %{amount: amount, token: token})
+        decoded_id = ExPlasma.Output.decode_id!(output_id)
+        {decoded_id, input}
+      end)
+      |> Enum.unzip()
+
+    {decoded_outputs, outputs} =
+      outputs
+      |> Enum.map(fn %{amount: amount, token: token} ->
+        %{output_data: output_data} =
+          output = insert(:output, %{amount: amount, token: token, output_guard: entity.addr})
+
+        decoded_output = ExPlasma.Output.decode!(output_data)
+        {decoded_output, output}
+      end)
+      |> Enum.unzip()
+
+    tx_bytes =
+      ExPlasma.payment_v1()
+      |> Builder.new(%{inputs: input_ids, outputs: decoded_outputs})
+      |> Builder.sign!(List.duplicate(entity.priv_encoded, Enum.count(inputs)))
+      |> ExPlasma.encode!()
+
+    {:ok, tx_hash} = ExPlasma.Transaction.hash(tx_bytes)
+
+    %Transaction{
+      inputs: inputs,
+      outputs: outputs,
+      tx_bytes: tx_bytes,
+      tx_hash: tx_hash,
+      tx_type: ExPlasma.payment_v1(),
+      block: block,
+      tx_index: tx_index,
+      inserted_at: DateTime.truncate(DateTime.utc_now(), :second),
+      updated_at: DateTime.truncate(DateTime.utc_now(), :second)
+    }
+  end
+
+  def payment_v1_transaction_factory(attr) do
     entity = TestEntity.alice()
 
     %{output_id: output_id} = input = :deposit_output |> build() |> set_state(:spent)
@@ -159,11 +210,40 @@ defmodule Engine.DB.Factory do
     }
   end
 
+  def fee_transaction_factory(attr) do
+    owner = Map.fetch!(attr, :owner)
+    token = Map.fetch!(attr, :token)
+    amount = Map.fetch!(attr, :amount)
+    block = Map.fetch!(attr, :block)
+    plasma_output = ExPlasmaFee.new_output(owner, token, amount)
+
+    {:ok, fee_tx} =
+      ExPlasma.fee()
+      |> Builder.new(outputs: [plasma_output])
+      |> ExPlasmaTx.with_nonce(%{blknum: block.blknum, token: token})
+
+    output = insert(:output, %{amount: amount, token: token, output_guard: owner})
+
+    tx_bytes = ExPlasma.encode!(fee_tx, signed: true)
+    {:ok, tx_hash} = ExPlasma.Transaction.hash(tx_bytes)
+
+    %Transaction{
+      outputs: [output],
+      tx_bytes: tx_bytes,
+      tx_hash: tx_hash,
+      tx_type: ExPlasma.fee(),
+      block: block,
+      tx_index: Map.fetch!(attr, :tx_index),
+      inserted_at: DateTime.truncate(DateTime.utc_now(), :second),
+      updated_at: DateTime.truncate(DateTime.utc_now(), :second)
+    }
+  end
+
   # The "lowest" unit in the hierarchy. This is made to form into transactions
   def output_factory(attr \\ %{}) do
     default_data = %{
       output_guard: Map.get(attr, :output_guard, <<1::160>>),
-      token: Map.get(attr, :token, <<0::160>>),
+      token: Map.get(attr, :token, @eth),
       amount: Map.get(attr, :amount, 10)
     }
 
@@ -279,6 +359,14 @@ defmodule Engine.DB.Factory do
       term: fees,
       hash: hash,
       inserted_at: DateTime.utc_now()
+    }
+  end
+
+  def transaction_fee_factory(attr) do
+    %TransactionFee{
+      transaction: Map.fetch!(attr, :transaction),
+      amount: Map.fetch!(attr, :amount),
+      currency: Map.fetch!(attr, :currency)
     }
   end
 

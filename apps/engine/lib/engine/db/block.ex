@@ -28,6 +28,7 @@ defmodule Engine.DB.Block do
   alias Engine.Configuration
   alias Engine.DB.Transaction
   alias Engine.DB.Transaction.TransactionQuery
+  alias Engine.DB.TransactionFee.TransactionFeeQuery
   alias Engine.Repo
   alias ExPlasma.Merkle
 
@@ -110,8 +111,23 @@ defmodule Engine.DB.Block do
   def form() do
     Multi.new()
     |> Multi.run(:block, &get_forming_block_for_update/2)
-    |> Multi.run(:block_for_submission, &prepare_for_submission/2)
+    |> Multi.run(:block_for_submission, &hash_transactions/2)
     |> Multi.run(:new_forming_block, &insert_block/2)
+    |> Repo.transaction()
+  end
+
+  @doc """
+  Forms blocks awaiting submission.
+  For all blocks in finalizing state:
+  - transaction fees are attached
+  - merkle root hash is calculated
+  - state is changed to pending submission
+  """
+  def prepare_for_submission() do
+    Multi.new()
+    |> Multi.run(:finalizing_blocks, &get_finalizing_blocks/2)
+    |> Multi.run(:blocks, &attach_fee_transactions/2)
+    |> Multi.run(:blocks_for_submission, &prepare_for_submission/2)
     |> Repo.transaction()
   end
 
@@ -212,17 +228,31 @@ defmodule Engine.DB.Block do
     |> repo.insert(on_conflict: :nothing)
   end
 
-  defp prepare_for_submission(repo, params) do
-    block = params.block
+  defp prepare_for_submission(repo, blocks) do
+    %{blocks: blocks} = blocks
 
+    prepared_blocks =
+      Enum.map(blocks, fn block ->
+        {:ok, prepared_block} = hash_transactions(repo, block)
+        prepared_block
+      end)
+
+    {:ok, prepared_blocks}
+  end
+
+  defp hash_transactions(repo, %{block: block}), do: hash_transactions(repo, block)
+
+  defp hash_transactions(repo, block) do
     hash =
       block.id
       |> fetch_tx_bytes_in_block()
       |> Merkle.root_hash()
 
+    # conflict on hash means block was prepared for submission by other process
+    # do nothing then
     block
     |> BlockChangeset.prepare_for_submission(%{hash: hash})
-    |> repo.update()
+    |> repo.update(on_conflict: :nothing)
   end
 
   defp finalize_block(repo, block) do
@@ -244,5 +274,37 @@ defmodule Engine.DB.Block do
   defp get_or_insert_forming_block(repo, params) do
     {:ok, _} = insert_block(repo, params)
     {:ok, repo.one(BlockQuery.select_forming_block_for_update())}
+  end
+
+  defp get_finalizing_blocks(repo, _params) do
+    finalizing_blocks = repo.all(BlockQuery.select_finalizing_blocks())
+    {:ok, finalizing_blocks}
+  end
+
+  defp attach_fee_transactions(repo, params) do
+    finalizing_blocks = params.finalizing_blocks
+    :ok = Enum.each(finalizing_blocks, &attach_fee_transactions_to_block(repo, &1))
+
+    {:ok, finalizing_blocks}
+  end
+
+  defp attach_fee_transactions_to_block(repo, block) do
+    fees_by_currency =
+      block.id
+      |> TransactionFeeQuery.get_fees_for_block()
+      |> repo.all()
+
+    max_non_fee_transaction_tx_index = repo.one(TransactionQuery.select_max_non_fee_transaction_tx_index(block.id))
+
+    # inserts fee transaction with corresponding transaction index
+    # fee transaction indexes are consecutive natural numbers
+    # starting with the next number after `max_non_fee_transaction_tx_index`
+    fees_by_currency
+    |> Enum.with_index()
+    |> Enum.each(fn {currency_with_amount, index} ->
+      fee_tx_index = max_non_fee_transaction_tx_index + index + 1
+      {:ok, _} = Transaction.insert_fee_transaction(repo, currency_with_amount, block, fee_tx_index)
+      :ok
+    end)
   end
 end

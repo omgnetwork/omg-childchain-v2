@@ -3,7 +3,7 @@ defmodule Engine.Repo.Migrations.CreateTransactionFees do
 
   def change do
     create table(:transaction_fees) do
-      add(:transaction_id, references(:transactions, on_delete: :delete_all), null: false)
+      add(:transaction_id, references(:transactions, on_delete: :delete_all))
       add(:currency, :binary, null: false)
       add(:amount, :bigint, null: false)
 

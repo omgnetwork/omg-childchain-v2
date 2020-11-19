@@ -20,7 +20,8 @@ config :engine,
   url: "http://localhost:8545",
   finality_margin: 1,
   ethereum_events_check_interval_ms: 10,
-  coordinator_eth_height_check_interval_ms: 10
+  coordinator_eth_height_check_interval_ms: 500,
+  prepare_block_for_submission_interval_ms: 500
 
 config :ex_plasma,
   eip_712_domain: %{
