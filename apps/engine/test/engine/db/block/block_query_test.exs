@@ -25,28 +25,36 @@ defmodule Engine.DB.Block.BlockQueryTest do
     end
   end
 
-  describe "get_all_awaiting_submission/2" do
+  describe "get_all_for_submission/2" do
     test "filters by new height - submitted at ethereum height is not nil" do
       block1 = insert(:block, %{state: Block.state_finalizing(), submitted_at_ethereum_height: 1})
       _ = insert(:block, %{submitted_at_ethereum_height: 2})
 
-      [block] = Repo.all(BlockQuery.get_all_awaiting_submission(2, 0))
+      [block] = Repo.all(BlockQuery.get_all_for_submission(2, 0))
       assert block1.id == block.id
     end
 
-    test "filters by new height - submitted at ethereum height is nil" do
-      _ = insert(:block, %{state: Block.state_finalizing(), submitted_at_ethereum_height: 1})
-      block2 = insert(:block, %{submitted_at_ethereum_height: nil})
+    test "filters by new height - submitted at ethereum height is nil and there is a block pending submission" do
+      _ = insert(:block, %{state: Block.state_pending_submission(), submitted_at_ethereum_height: 1})
+      block2 = insert(:block, %{state: Block.state_pending_submission(), submitted_at_ethereum_height: nil})
 
-      [block] = Repo.all(BlockQuery.get_all_awaiting_submission(0, 0))
+      [block] = Repo.all(BlockQuery.get_all_for_submission(0, 0))
       assert block2.id == block.id
+    end
+
+    test "filters by new height - submitted at ethereum height is nil and there are no blocks pending submission" do
+      _ = insert(:block, %{state: Block.state_pending_submission(), submitted_at_ethereum_height: 1})
+      _ = insert(:block, %{state: Block.state_forming(), submitted_at_ethereum_height: nil})
+      _ = insert(:block, %{state: Block.state_finalizing(), submitted_at_ethereum_height: nil})
+
+      assert [] == Repo.all(BlockQuery.get_all_for_submission(0, 0))
     end
 
     test "filters by child block number" do
       block1 = insert(:block, %{state: Block.state_finalizing()})
-      block2 = insert(:block)
+      block2 = insert(:block, %{state: Block.state_pending_submission()})
 
-      [block] = Repo.all(BlockQuery.get_all_awaiting_submission(2, block1.blknum))
+      [block] = Repo.all(BlockQuery.get_all_for_submission(2, block1.blknum))
       assert block2.id == block.id
     end
 
@@ -54,7 +62,7 @@ defmodule Engine.DB.Block.BlockQueryTest do
       _ = insert(:block, %{state: Block.state_finalizing()})
       _ = insert(:block)
 
-      [b1, b2] = Repo.all(BlockQuery.get_all_awaiting_submission(2, 0))
+      [b1, b2] = Repo.all(BlockQuery.get_all_for_submission(2, 0))
 
       assert b1.blknum < b2.blknum
     end

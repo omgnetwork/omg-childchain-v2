@@ -23,14 +23,17 @@ defmodule Engine.DB.Block.BlockQuery do
   @doc """
   Returns all blocks awaiting submission
   """
-  def get_all_awaiting_submission(new_height, mined_child_block) do
+  def get_all_for_submission(new_height, mined_child_block) do
     pending_submission = Block.state_pending_submission()
 
+    # block awaiting submission is either:
+    # - already submitted but not mined block
+    # - block that is not submitted yet and is in state pending_submission
     from(b in Block,
       where:
-        b.submitted_at_ethereum_height < ^new_height or
-          (is_nil(b.submitted_at_ethereum_height) and b.state == ^pending_submission and
-             b.blknum > ^mined_child_block),
+        (b.submitted_at_ethereum_height < ^new_height or
+           (is_nil(b.submitted_at_ethereum_height) and b.state == ^pending_submission)) and
+          b.blknum > ^mined_child_block,
       order_by: [asc: :nonce]
     )
   end
