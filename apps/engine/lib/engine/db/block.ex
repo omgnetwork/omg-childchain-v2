@@ -205,7 +205,7 @@ defmodule Engine.DB.Block do
   end
 
   defp get_all(repo, _changeset, new_height, mined_child_block) do
-    query = BlockQuery.get_all(new_height, mined_child_block)
+    query = BlockQuery.get_all_awaiting_submission(new_height, mined_child_block)
     {:ok, repo.all(query)}
   end
 

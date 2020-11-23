@@ -21,13 +21,16 @@ defmodule Engine.DB.Block.BlockQuery do
   def select_max_nonce(), do: from(block in Block, select: max(block.nonce))
 
   @doc """
-  Returns all blocks in the db
+  Returns all blocks awaiting submission
   """
-  def get_all(new_height, mined_child_block) do
+  def get_all_awaiting_submission(new_height, mined_child_block) do
+    pending_submission = Block.state_pending_submission()
+
     from(b in Block,
       where:
-        (b.submitted_at_ethereum_height < ^new_height or is_nil(b.submitted_at_ethereum_height)) and
-          b.blknum > ^mined_child_block,
+        b.submitted_at_ethereum_height < ^new_height or
+          (is_nil(b.submitted_at_ethereum_height) and b.state == ^pending_submission and
+             b.blknum > ^mined_child_block),
       order_by: [asc: :nonce]
     )
   end
