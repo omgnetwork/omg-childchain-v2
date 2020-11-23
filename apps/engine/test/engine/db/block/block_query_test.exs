@@ -74,4 +74,12 @@ defmodule Engine.DB.Block.BlockQueryTest do
       assert block_finalizing2.id == selected_block2.id
     end
   end
+
+  describe "get_last_formed_block_eth_height/0" do
+    test "returns last formed block ethereum height" do
+      _ = insert(:block, %{formed_at_ethereum_height: 10, state: Block.state_finalizing()})
+      _ = insert(:block, %{formed_at_ethereum_height: 20, state: Block.state_finalizing()})
+      assert Repo.one!(BlockQuery.get_last_formed_block_eth_height()) == 20
+    end
+  end
 end

@@ -33,10 +33,10 @@ defmodule Engine.BlockForming.PrepareForSubmissionTest do
     block2 = insert_non_empty_block(Block.state_finalizing())
     block3 = insert_non_empty_block(Block.state_confirmed())
 
-    {:ok, pid} = PrepareForSubmission.start_link(config)
+    _ = PrepareForSubmission.start_link(config)
 
     eth_height = 10
-    _ = send(pid, {:internal_event_bus, :ethereum_new_height, eth_height})
+    _ = ethereum_height_tick(eth_height)
     _ = Process.sleep(@sleep_time_ms)
 
     state_pending_submission = Block.state_pending_submission()
@@ -53,10 +53,10 @@ defmodule Engine.BlockForming.PrepareForSubmissionTest do
       block_submit_every_nth: 3
     ]
 
-    {:ok, pid} = PrepareForSubmission.start_link(config)
+    _ = PrepareForSubmission.start_link(config)
 
     block1 = insert_non_empty_block(Block.state_forming())
-    _ = send(pid, {:internal_event_bus, :ethereum_new_height, 2})
+    _ = ethereum_height_tick(2)
     _ = Process.sleep(@sleep_time_ms)
     block_forming = Repo.get(Block, block1.id)
     assert Block.state_forming() == block_forming.state
@@ -75,14 +75,14 @@ defmodule Engine.BlockForming.PrepareForSubmissionTest do
     state_finalizing = Block.state_finalizing()
     block1 = insert_non_empty_block(state_forming)
     block2 = insert_non_empty_block(state_finalizing)
-    _ = send(pid, {:internal_event_bus, :ethereum_new_height, 2})
+    _ = ethereum_height_tick(2)
     Process.sleep(@sleep_time_ms)
 
     assert %Block{state: ^state_forming} = Repo.get(Block, block1.id)
     assert %Block{state: ^state_finalizing} = Repo.get(Block, block2.id)
 
     :ok = GenServer.cast(pid, {:clear_alarm, :db_connection_lost})
-    _ = send(pid, {:internal_event_bus, :ethereum_new_height, 3})
+    _ = ethereum_height_tick(3)
 
     Process.sleep(@sleep_time_ms)
     assert %{connection_alarm_raised: false} = :sys.get_state(pid)
@@ -104,5 +104,10 @@ defmodule Engine.BlockForming.PrepareForSubmissionTest do
       })
 
     Repo.get(Block, block.id)
+  end
+
+  defp ethereum_height_tick(height) do
+    event = Bus.Event.new({:root_chain, "ethereum_new_height"}, :ethereum_new_height, height)
+    Bus.local_broadcast(event)
   end
 end

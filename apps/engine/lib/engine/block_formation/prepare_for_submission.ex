@@ -45,7 +45,7 @@ defmodule Engine.BlockForming.PrepareForSubmission do
       end
 
     :ok =
-      case Core.should_finalize_block?(state, new_height, last_formed_block_at_height) do
+      case Core.should_finalize_block?(new_height, last_formed_block_at_height, state.block_submit_every_nth) do
         true -> state.block_module.finalize_forming_block()
         false -> :ok
       end
