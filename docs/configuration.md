@@ -13,7 +13,7 @@
 ## Other configuration variables
 - `ETHEREUM_RPC_URL` - the Ethereum RPC URL.
 - `FINALITY_MARGIN` - the finality margin is number of Ethereum block confirmations to count before recognizing an event, by default is set to `10`.
-- `ETHEREUM_NETWORK` - the Ethereim network.
+- `ETHEREUM_NETWORK` - the Ethereum network.
 - `TX_HASH_CONTRACT` - the contract deploy transaction hash.
 - `AUTHORITY_ADDRESS` - the authority address, this address is used to call the setAuthority interface on the plasma network.
 - `CONTRACT_ADDRESS_PLASMA_FRAMEWORK` - the plasma framework contract address that is deployed.

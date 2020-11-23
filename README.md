@@ -65,7 +65,7 @@ docker kill $(docker ps -q)
 ```
 
 ## Documentation
-All documentations can found in the [docs](docs/) directory. It is recommended to take a look at the documentation.    
+All documentations can be found in the [docs](docs/) directory. It is recommended to take a look at the documentation.    
 
 ## License
 The **Childchain Server** is licensed under the [Apache License](https://www.apache.org/licenses/LICENSE-2.0).
