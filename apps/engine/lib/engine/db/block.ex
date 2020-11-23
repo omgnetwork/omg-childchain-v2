@@ -7,7 +7,7 @@ defmodule Engine.DB.Block do
   - nonce: The nonce of the transaction on the rootchain
   - blknum: The plasma block number, it's increased by 1000 for each new block
   - tx_hash: The hash of the transaction containing the the block submission on the rootchain
-  - formed_at_ethereum_height: The rootchain height at wish the block was formed
+  - formed_at_ethereum_height: The rootchain height at which the block was formed
   - submitted_at_ethereum_height: The rootchain height at wish the block was submitted
   - gas: The gas price used for the submission
   - attempts_counter: The number of submission attempts

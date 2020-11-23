@@ -40,6 +40,9 @@ defmodule Engine.DB.Block.BlockQuery do
     from(block in Block, where: block.state == ^finalizing)
   end
 
+  @doc """
+  Returns the largest rootchain height at which a childchain block was formed
+  """
   def get_last_formed_block_eth_height() do
     from(b in Block, select: max(b.formed_at_ethereum_height))
   end
