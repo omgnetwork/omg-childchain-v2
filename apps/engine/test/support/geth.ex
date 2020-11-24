@@ -29,7 +29,7 @@ defmodule Engine.Geth do
   end
 
   def terminate(_, container_id) when is_binary(container_id) do
-    stop_container_url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/containers/#{container_id}/stop"
+    stop_container_url = url() <> "containers/#{container_id}/stop"
 
     stop_response =
       HTTPoison.post!(stop_container_url, "", [{"content-type", "application/json"}],
@@ -39,8 +39,7 @@ defmodule Engine.Geth do
 
     204 = stop_response.status_code
 
-    delete_container_url =
-      "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/containers/#{container_id}?v=true&force=true"
+    delete_container_url = url() <> "containers/#{container_id}?v=true&force=true"
 
     delete_response =
       HTTPoison.delete!(delete_container_url, [{"content-type", "application/json"}],
@@ -64,7 +63,7 @@ defmodule Engine.Geth do
   end
 
   defp start_container(container_id, port) do
-    url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/containers/#{container_id}/start"
+    url = url() <> "containers/#{container_id}/start"
     response = HTTPoison.post!(url, "", [{"content-type", "application/json"}], timeout: 60_000, recv_timeout: 60_000)
 
     case response.status_code do
@@ -75,7 +74,7 @@ defmodule Engine.Geth do
 
   defp create_geth_container(port, datadir, geth_image) do
     body = Jason.encode!(geth(port, datadir, geth_image))
-    url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/containers/create"
+    url = url() <> "containers/create"
     response = HTTPoison.post!(url, body, [{"content-type", "application/json"}], timeout: 60_000, recv_timeout: 60_000)
     201 = response.status_code
     %{"Id" => id} = Jason.decode!(response.body)
@@ -86,7 +85,7 @@ defmodule Engine.Geth do
     path = Path.join([Mix.Project.build_path(), "../../", "docker-compose.yml"])
     {:ok, docker_compose} = YamlElixir.read_from_file(path)
     geth_image = docker_compose["services"]["geth"]["image"]
-    url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/images/create?fromImage=#{geth_image}"
+    url = url() <> "images/create?fromImage=#{geth_image}"
     response = HTTPoison.post!(url, "", [])
     200 = response.status_code
     geth_image
@@ -131,5 +130,9 @@ defmodule Engine.Geth do
         ]
       }
     }
+  end
+
+  defp url() do
+    "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/"
   end
 end

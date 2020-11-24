@@ -44,7 +44,7 @@ defmodule Engine.Vault do
   end
 
   def terminate(_, container_id) when is_binary(container_id) do
-    stop_container_url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/containers/#{container_id}/stop"
+    stop_container_url = url() <> "containers/#{container_id}/stop"
 
     stop_response =
       HTTPoison.post!(stop_container_url, "", [{"content-type", "application/json"}],
@@ -54,8 +54,7 @@ defmodule Engine.Vault do
 
     204 = stop_response.status_code
 
-    delete_container_url =
-      "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/containers/#{container_id}?v=true&force=true"
+    delete_container_url = url() <> "containers/#{container_id}?v=true&force=true"
 
     delete_response =
       HTTPoison.delete!(delete_container_url, [{"content-type", "application/json"}],
@@ -131,7 +130,7 @@ defmodule Engine.Vault do
   end
 
   defp start_container(container_id, port) do
-    url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/containers/#{container_id}/start"
+    url = url() <> "containers/#{container_id}/start"
     response = HTTPoison.post!(url, "", [{"content-type", "application/json"}], timeout: 60_000, recv_timeout: 60_000)
 
     case response.status_code do
@@ -142,7 +141,7 @@ defmodule Engine.Vault do
 
   defp create_vault_container(_port, datadir, vault_image) do
     body = Jason.encode!(vault(datadir, vault_image))
-    url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/containers/create?name=vault"
+    url = url() <> "containers/create?name=vault"
     response = HTTPoison.post!(url, body, [{"content-type", "application/json"}], timeout: 60_000, recv_timeout: 60_000)
     201 = response.status_code
     %{"Id" => id} = Jason.decode!(response.body)
@@ -153,7 +152,7 @@ defmodule Engine.Vault do
     path = Path.join([Mix.Project.build_path(), "../../", "docker-compose.yml"])
     {:ok, docker_compose} = YamlElixir.read_from_file(path)
     vault_image = docker_compose["services"]["vault"]["image"]
-    url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/images/create?fromImage=#{vault_image}"
+    url = url() <> "images/create?fromImage=#{vault_image}"
     {password, 0} = System.cmd("gcloud", ["auth", "print-access-token"])
 
     auth =
@@ -214,8 +213,7 @@ defmodule Engine.Vault do
   end
 
   defp log(container_id, true) do
-    url =
-      "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/containers/#{container_id}/logs?follow=true&stdout=true"
+    url = url() <> "containers/#{container_id}/logs?follow=true&stdout=true"
 
     %HTTPoison.AsyncResponse{id: id} =
       HTTPoison.get!(url, [{"content-type", "application/json"}],
@@ -245,7 +243,7 @@ defmodule Engine.Vault do
   end
 
   defp get_geth_ip(container_id) do
-    network_url = "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/containers/#{container_id}/json"
+    network_url = url() <> "containers/#{container_id}/json"
 
     response =
       HTTPoison.get!(network_url, [{"content-type", "application/json"}],
@@ -254,5 +252,9 @@ defmodule Engine.Vault do
       )
 
     Jason.decode!(response.body)["NetworkSettings"]["IPAddress"]
+  end
+
+  defp url() do
+    "http+unix://%2Fvar%2Frun%2Fdocker.sock/#{@docker_engine_api}/"
   end
 end
