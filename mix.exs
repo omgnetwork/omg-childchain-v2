@@ -25,7 +25,12 @@ defmodule Childchain.MixProject do
           ]
         ]
       ],
-      preferred_cli_env: ["test.integration": :test, "test.all": :test]
+      preferred_cli_env: [
+        "test.integration": :test,
+        "test.all": :test,
+        "test.integration_block_submission_vault": :test,
+        "test.integration_block_submission": :test
+      ]
     ]
   end
 

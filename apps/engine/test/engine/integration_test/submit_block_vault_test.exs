@@ -79,7 +79,9 @@ defmodule SubmitBlockVaultTest do
     {:ok, eth_block_number} = Rpc.eth_block_number(url: rpc_url)
     height = Encoding.to_int(eth_block_number)
     {:ok, pid} = Submitter.start_link(submitter_opts)
-    send(pid, {:internal_event_bus, :ethereum_new_height, height})
+    # send(pid, {:internal_event_bus, :ethereum_new_height, height})
+    event = Bus.Event.new({:root_chain, "ethereum_new_height"}, :ethereum_new_height, height)
+    Bus.local_broadcast(event)
     assert Process.alive?(pid)
     # lets just wait a little bit for the block to be mined
     _ = Process.sleep(2000)
