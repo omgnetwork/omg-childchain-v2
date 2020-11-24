@@ -18,22 +18,22 @@ commands:
           name: Setup data dir
           command: |
             [ -d data ] || mkdir data && chmod 777 data
-      - run:
-          name: Start daemon services
-          command: |
-            cd priv/cabbage
-            make start_daemon_services || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
-      - run:
-          name: Log
-          command: |
-            docker-compose logs -f childchain nginx
-          background: true
-      - run:
-          name: Print docker states
-          command: |
-            docker image ls
-            docker-compose ps
-      - run: sh .circleci/status.sh
+      #- run:
+      #    name: Start daemon services
+      #    command: |
+      #      cd priv/cabbage
+      #      make start_daemon_services || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
+      #- run:
+      #    name: Log
+      #    command: |
+      #      docker-compose logs -f childchain nginx
+      #    background: true
+      #- run:
+      #    name: Print docker states
+      #    command: |
+      #      docker image ls
+      #     docker-compose ps
+      # - run: sh .circleci/status.sh
       # we can uncomment this part once we're confident cabbage tests will work with
       # our new childchain
 
