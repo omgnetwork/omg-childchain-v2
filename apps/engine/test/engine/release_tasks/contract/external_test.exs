@@ -1,10 +1,10 @@
 defmodule Engine.ReleaseTasks.Contract.ExternalTest do
   use ExUnit.Case, async: true
 
+  alias __MODULE__.EthereumClient
   alias DBConnection.Backoff
   alias Engine.ReleaseTasks.Contract.EIP55
   alias Engine.ReleaseTasks.Contract.External
-  alias __MODULE__.EthereumClient
 
   setup_all do
     starting_port = 9000
