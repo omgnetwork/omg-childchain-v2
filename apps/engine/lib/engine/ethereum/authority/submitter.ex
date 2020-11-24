@@ -1,7 +1,6 @@
 defmodule Engine.Ethereum.Authority.Submitter do
   @moduledoc """
   Periodic block submitter.
-  Needs to report unsubbmitted block len!!!
   """
 
   alias Engine.DB.Block
@@ -49,7 +48,7 @@ defmodule Engine.Ethereum.Authority.Submitter do
 
   def handle_info({:internal_event_bus, :ethereum_new_height, new_height}, state) do
     new_state = %{state | height: new_height}
-    spawn(fn -> submit(new_height, new_state) end)
+    submit(new_height, new_state)
     {:noreply, new_state}
   end
 
@@ -58,7 +57,7 @@ defmodule Engine.Ethereum.Authority.Submitter do
   # Any kind of conflicts are resolved in the PG transaction, nonce of the Ethereum transaction
   # and the consesus mechanism of Ethereum.
   defp submit(height, state) do
-    _ = Logger.warn("Checking for new blocks")
+    _ = Logger.debug("Checking for new blocks")
     next_child_block = External.next_child_block(state.plasma_framework, state.opts)
     mined_child_block = Core.mined(next_child_block, state.child_block_interval)
     submit_fn = External.submit_block(state.plasma_framework, state.enterprise, state.opts)

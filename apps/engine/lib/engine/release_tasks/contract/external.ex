@@ -4,7 +4,9 @@ defmodule Engine.ReleaseTasks.Contract.External do
   alias DBConnection.Backoff
   alias Engine.Ethereum.RootChain.Abi
   alias Engine.Ethereum.RootChain.Rpc
+  alias Engine.ReleaseTasks.Contract.EIP55
   alias ExPlasma.Encoding
+
   require Logger
 
   @type option :: {:url, String.t()}
@@ -14,7 +16,7 @@ defmodule Engine.ReleaseTasks.Contract.External do
     {:ok, data} = call(plasma_framework, signature, [tx_type], opts)
     %{"exit_game_address" => exit_game_address} = Abi.decode_function(data, signature)
     _ = Logger.info("Retrieved exit game address #{exit_game_address}.")
-    elem(EIP55.encode(exit_game_address), 1)
+    EIP55.encode!(exit_game_address)
   end
 
   def vault(plasma_framework, id, opts) do
@@ -22,7 +24,7 @@ defmodule Engine.ReleaseTasks.Contract.External do
     {:ok, data} = call(plasma_framework, signature, [id], opts)
     %{"vault_address" => vault_address} = Abi.decode_function(data, signature)
     _ = Logger.info("Retrieved vault address for #{id} #{vault_address}.")
-    elem(EIP55.encode(vault_address), 1)
+    EIP55.encode!(vault_address)
   end
 
   def min_exit_period(plasma_framework, opts) do
@@ -51,7 +53,7 @@ defmodule Engine.ReleaseTasks.Contract.External do
 
   def contract_deployment_height(plasma_framework, tx_hash, opts) do
     {:ok, %{"contractAddress" => contract_address, "blockNumber" => height}} = Rpc.transaction_receipt(tx_hash, opts)
-    true = elem(EIP55.encode(plasma_framework), 1) == elem(EIP55.encode(contract_address), 1)
+    true = EIP55.encode!(plasma_framework) == EIP55.encode!(contract_address)
     Encoding.to_int(height)
   end
 

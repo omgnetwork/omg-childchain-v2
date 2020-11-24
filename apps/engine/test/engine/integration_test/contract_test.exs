@@ -43,7 +43,6 @@ defmodule ContractTest do
       ]
 
       config = Contract.load([{:ethereumex, [url: "not used because env var"]}], [])
-      # dear god this is abhorent
       # update contract deployment height
       engine_setup2 =
         Keyword.update!(engine_setup, :engine, fn existing_value ->

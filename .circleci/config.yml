@@ -1,5 +1,11 @@
 version: 2.1
 commands:
+  gcloud_login:
+    steps:
+      - run: |
+          echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+          gcloud auth configure-docker --quiet
+
   docker_compose_release:
     parameters:
       enterprise:
@@ -8,10 +14,8 @@ commands:
     description: "Builds a docker image"
     steps:
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - run: |
-          echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-          gcloud auth configure-docker --quiet      
-      - run: 
+      - gcloud_login
+      - run:
           environment:
             ENTERPRISE: <<parameters.enterprise>>
           command: make docker-childchain
@@ -211,9 +215,7 @@ jobs:
       - install_elixir:
           cache: "integration"
           dir: "~/childchain"
-      - run: |
-          echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-          gcloud auth configure-docker --quiet
+      - gcloud_login
       - run: make init-contracts
       - run:
           name: Setup data dir
@@ -229,7 +231,7 @@ jobs:
       - run:
           name: Setup data dir
           command: chmod -R 777 data
-      - run: 
+      - run:
           name: Run Vault integration test
           environment:
             ENTERPRISE: 1
@@ -301,7 +303,7 @@ jobs:
       - run:
           name: Restart all services
           background: true
-          command: docker-compose up -d nginx postgres geth feefeed && docker-compose logs -f
+          command: docker-compose up nginx postgres geth feefeed
       - pull_childchain_health
       # at this point we reverse the startup order, first childchain then all services
       - run: sudo pkill beam
@@ -320,7 +322,7 @@ jobs:
       - run:
           name: Start all services
           background: true
-          command: docker-compose up -d nginx postgres geth feefeed && docker-compose logs -f
+          command: docker-compose up nginx postgres geth feefeed
       - run: sleep 20
       - pull_childchain_health
 
@@ -333,9 +335,7 @@ jobs:
       - checkout
       - install_rust
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - run: |
-          echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-          gcloud auth configure-docker --quiet      
+      - gcloud_login
       - run:
           name: "Pull Submodules"
           command: |
@@ -493,7 +493,7 @@ jobs:
       - run: |
           echo $PRODUCTION_DOCKER_GCLOUD_KEY | gcloud auth activate-service-account --key-file=-
           gcloud -q auth configure-docker
-      - run: 
+      - run:
           environment:
             ENTERPRISE: 1
           command: make docker-childchain CHILDCHAIN_IMAGE_NAME=$GCS_REPO/$CHILDCHAIN_IMAGE_NAME

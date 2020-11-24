@@ -236,7 +236,6 @@ defmodule Engine.DB.Block do
 
     case submission_result do
       :ok ->
-        # set tx_hash
         plasma_block
         |> BlockChangeset.submitted(%{
           attempts_counter: plasma_block.attempts_counter + 1,

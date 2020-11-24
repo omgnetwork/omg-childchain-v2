@@ -33,7 +33,6 @@ defmodule Engine.Vault do
     vault_image = pull_vault_image()
     # sadly, moving the vault storage to /tmp, we're loosing all read and write permissions
     # since vault user is uid 100, group id 1000
-    # datadir = create_temp_vault_dir()
     path = Path.join([Mix.Project.build_path(), "../../", "docker-compose.yml"])
     {:ok, docker_compose} = YamlElixir.read_from_file(path)
     datadir = docker_compose["services"]["vault"]["volumes"]
@@ -168,7 +167,15 @@ defmodule Engine.Vault do
         recv_timeout: 360_000
       )
 
-    200 = response.status_code
+    case response.status_code do
+      200 ->
+        :ok
+
+      _ ->
+        _ = Logger.error("Vault couldn't be pulled. Response from Docker Engine: #{inspect(response)}")
+        200 = response.status_code
+    end
+
     vault_image
   end
 

@@ -4,6 +4,7 @@ defmodule Engine.ReleaseTasks.Contract.ExternalTest do
   alias __MODULE__.EthereumClient
   alias DBConnection.Backoff
   alias Engine.ReleaseTasks.Contract.External
+  alias Engine.ReleaseTasks.Contract.EIP55
 
   setup_all do
     starting_port = 9000
@@ -60,7 +61,7 @@ defmodule Engine.ReleaseTasks.Contract.ExternalTest do
       exit_game_contract_address =
         External.exit_game_contract_address("contract address", 1, [{:url, "http://localhost:#{port}"}])
 
-      assert exit_game_contract_address == elem(EIP55.encode("0x89afce326e7da55647d22e24336c6a2816c99f6b"), 1)
+      assert exit_game_contract_address == EIP55.encode!("0x89afce326e7da55647d22e24336c6a2816c99f6b")
     end
   end
 
@@ -81,7 +82,7 @@ defmodule Engine.ReleaseTasks.Contract.ExternalTest do
 
       Agent.start_link(fn -> {0, execution} end, name: test_name)
       vault_address = External.vault("contract address", 1, [{:url, "http://localhost:#{port}"}])
-      assert vault_address == elem(EIP55.encode("0x89afce326e7da55647d22e24336c6a2816c99f6b"), 1)
+      assert vault_address == EIP55.encode!("0x89afce326e7da55647d22e24336c6a2816c99f6b")
     end
   end
 
