@@ -267,7 +267,7 @@ defmodule Engine.DB.Block do
     do_prepare_for_submission(repo, finalizing_blocks, eth_height, [])
   end
 
-  defp do_prepare_for_submission(repo, [], eth_height, acc) do
+  defp do_prepare_for_submission(_repo, [], _eth_height, acc) do
     {:ok, acc}
   end
 
