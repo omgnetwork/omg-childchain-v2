@@ -187,7 +187,7 @@ defmodule Engine.DB.Block do
     Repo.one(BlockQuery.get_last_formed_block_eth_height())
   end
 
-  defp get_non_empty_forming_block_for_update(repo, _params) do
+  defp get_non_empty_forming_block_for_finalization(repo, _params) do
     block = repo.one(BlockQuery.select_forming_block_for_update())
 
     case block do
