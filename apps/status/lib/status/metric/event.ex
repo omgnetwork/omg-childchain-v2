@@ -93,6 +93,11 @@ defmodule Status.Metric.Event do
   def name(:multiread), do: "db_multiread"
 
   @doc """
+    Version of watcher making a HTTP request to the childchain
+  """
+  def name(:x_watcher_version, version), do: "x_watcher_version-#{version}"
+
+  @doc """
     We're interested in the events queue length that particular  Listener service process
     is handling.
   """
