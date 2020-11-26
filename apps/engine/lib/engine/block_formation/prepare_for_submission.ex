@@ -13,6 +13,8 @@ defmodule Engine.BlockForming.PrepareForSubmission do
 
   require Logger
 
+  defstruct [:block_submit_every_nth, :block_module, :connection_alarm_raised]
+
   def start_link(args) do
     GenServer.start_link(__MODULE__, args, name: __MODULE__)
   end
@@ -28,7 +30,7 @@ defmodule Engine.BlockForming.PrepareForSubmission do
     :ok = event_bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
 
     {:ok,
-     %{
+     %__MODULE__{
        block_submit_every_nth: block_submit_every_nth,
        block_module: block_module,
        connection_alarm_raised: false
@@ -39,7 +41,7 @@ defmodule Engine.BlockForming.PrepareForSubmission do
     _ = Logger.debug("Preparing blocks for submission")
 
     last_formed_block_at_height =
-      case Block.get_last_formed_block_eth_height() do
+      case state.block_module.get_last_formed_block_eth_height() do
         nil -> 0
         height -> height
       end

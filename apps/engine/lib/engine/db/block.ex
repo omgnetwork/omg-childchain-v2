@@ -105,13 +105,14 @@ defmodule Engine.DB.Block do
   end
 
   @doc """
-  Changes currently forming block's state to finalizing
+  Changes currently forming block's state to finalizing.
+  If there is a non-empty block in state `forming` it changes state to `finalizing`.
   """
   @decorate trace(service: :ecto, type: :backend)
   def finalize_forming_block() do
     result =
       Multi.new()
-      |> Multi.run(:block, &get_non_empty_forming_block_for_update/2)
+      |> Multi.run(:block, &get_non_empty_forming_block_for_finalization/2)
       |> Multi.update(:finalizing_block, &finalize_block/1)
       |> Repo.transaction()
 
@@ -195,6 +196,8 @@ defmodule Engine.DB.Block do
         {:error, :no_forming_block}
 
       block ->
+        # number of transactions in forming block is the maximum transaction index
+        # in the block plus one (indexes start from 0), in case block is empty tx_count is 0
         tx_count = (repo.one(TransactionQuery.select_max_tx_index_for_block(block.id)) || -1) + 1
 
         case tx_count do
@@ -260,14 +263,17 @@ defmodule Engine.DB.Block do
     |> repo.insert(on_conflict: :nothing)
   end
 
-  defp prepare_for_submission(repo, blocks, eth_height) do
-    prepared_blocks =
-      Enum.map(blocks, fn block ->
-        {:ok, prepared_block} = hash_transactions(repo, block, eth_height)
-        prepared_block
-      end)
+  defp prepare_for_submission(repo, finalizing_blocks, eth_height) do
+    do_prepare_for_submission(repo, finalizing_blocks, eth_height, [])
+  end
 
-    {:ok, prepared_blocks}
+  defp do_prepare_for_submission(repo, [], eth_height, acc) do
+    {:ok, acc}
+  end
+
+  defp do_prepare_for_submission(repo, [block | blocks], eth_height, acc) do
+    {:ok, prepared_block} = hash_transactions(repo, block, eth_height)
+    do_prepare_for_submission(repo, blocks, eth_height, [prepared_block | acc])
   end
 
   defp hash_transactions(repo, block, eth_height) do
