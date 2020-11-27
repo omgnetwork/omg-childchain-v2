@@ -26,6 +26,13 @@ defmodule Status.Application do
         false ->
           [
             {Datadog, []},
+            {
+              Telemetry,
+              [
+                release: Configuration.release(),
+                current_version: Configuration.current_version()
+              ]
+            },
             VmstatsSink.prepare_child(),
             {SpandexDatadog.ApiServer, spandex_datadog_options()},
             {AlarmConsumer,
