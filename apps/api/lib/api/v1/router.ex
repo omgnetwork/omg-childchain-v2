@@ -20,6 +20,7 @@ defmodule API.V1.Router do
   alias API.V1.Controller.FeeController
   alias API.V1.Controller.TransactionController
   alias API.V1.ErrorHandler
+  alias Status.Metric.Datadog
 
   @api_version "1.0"
 
@@ -42,7 +43,7 @@ defmodule API.V1.Router do
   plug(Version, @api_version)
   plug(Plug.Parsers, parsers: [:json], pass: ["application/json"], json_decoder: Jason)
   plug(ExpectParams, @expected_params)
-  plug(WatcherVersion)
+  plug(WatcherVersion, metrics_module: Datadog)
 
   # Calling Responder once here to allow early response/halt of conn if there was an error
   # in the pipeline above (ie: missing params). If there is no `:response` key in the conn
