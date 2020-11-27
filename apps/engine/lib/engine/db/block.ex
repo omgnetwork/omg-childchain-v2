@@ -170,7 +170,7 @@ defmodule Engine.DB.Block do
   def get_block_and_tx_index_for_transaction(repo, params) do
     %{current_forming_block: block} = params
     # this is safe as long as we lock on currently forming block
-    last_tx_index = repo.one(TransactionQuery.select_max_tx_index_for_block(block.id)) || -1
+    last_tx_index = last_tx_index_for_block(repo, block.id)
 
     # basic version, checking transaction limit is postponed until we get transction fees implemented
     case last_tx_index >= @max_transaction_in_block do
@@ -196,9 +196,7 @@ defmodule Engine.DB.Block do
         {:error, :no_forming_block}
 
       block ->
-        # number of transactions in forming block is the maximum transaction index
-        # in the block plus one (indexes start from 0), in case block is empty tx_count is 0
-        tx_count = (repo.one(TransactionQuery.select_max_tx_index_for_block(block.id)) || -1) + 1
+        tx_count = tx_count_for_block(repo, block.id)
 
         case tx_count do
           c when c > 0 -> {:ok, block}
@@ -343,4 +341,19 @@ defmodule Engine.DB.Block do
   end
 
   defp finalize_block(%{block: block}), do: BlockChangeset.finalize(block)
+
+  defp tx_count_for_block(repo, block_id), do: last_tx_index_for_block(repo, block_id) + 1
+
+  # returns -1 in case there are no transactions in the block
+  defp last_tx_index_for_block(repo, block_id) do
+    tx_count =
+      block_id
+      |> TransactionQuery.select_max_tx_index_for_block()
+      |> repo.one()
+
+    case tx_count do
+      nil -> -1
+      count -> count
+    end
+  end
 end
