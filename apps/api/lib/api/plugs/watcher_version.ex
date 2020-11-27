@@ -6,7 +6,11 @@ defmodule API.Plugs.WatcherVersion do
   alias Status.Metric.Event
 
   @header_name "x-watcher-version"
-  @x_watcher_version_value_pattern ~r/[\d\.]{1,10}+\+\w{7,7}$/
+
+  # [\d\.]{1,10} - any sequence of dots of digits of length no longer than 10.
+  # \+ - plus sign
+  # \w{7,7}$ - commit hash, end of string
+  @x_watcher_version_value_pattern ~r/[\d\.]{1,10}\+\w{7,7}$/
 
   def init(options), do: options
 
