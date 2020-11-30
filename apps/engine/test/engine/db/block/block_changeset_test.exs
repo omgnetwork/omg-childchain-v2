@@ -13,7 +13,7 @@ defmodule Engine.DB.Block.BlockChangesetTest do
       submitted_at_ethereum_height = 2
       gas = 1
       attempts_counter = 1
-      nonce = 1
+      nonce = 0
       blknum = 1_000
       state = Block.state_forming()
 
@@ -49,8 +49,8 @@ defmodule Engine.DB.Block.BlockChangesetTest do
       any_valid? =
         [
           %{blknum: 1_000, state: :forming},
-          %{nonce: 1, state: :forming},
-          %{nonce: 1, blknum: 1_000}
+          %{nonce: 0, state: :forming},
+          %{nonce: 0, blknum: 1_000}
         ]
         |> Enum.map(fn params -> BlockChangeset.new_block_changeset(%Block{}, params) end)
         |> Enum.any?(fn changeset -> changeset.valid? end)

@@ -39,7 +39,7 @@ defmodule Engine.DB.Block do
   @type t() :: %{
           hash: binary(),
           state: :forming | :finalizing | :pending_submission | :submitted | :confirmed,
-          nonce: pos_integer(),
+          nonce: non_neg_integer(),
           blknum: pos_integer() | nil,
           tx_hash: binary() | nil,
           formed_at_ethereum_height: pos_integer() | nil,
@@ -63,7 +63,7 @@ defmodule Engine.DB.Block do
     field(:state, Ecto.Atom)
     # nonce = max(nonce) + 1
     field(:nonce, :integer)
-    # blknum = nonce * 1000
+    # blknum = (nonce + 1) * 1000
     field(:blknum, :integer)
     field(:tx_hash, :binary)
     field(:formed_at_ethereum_height, :integer)
@@ -254,11 +254,11 @@ defmodule Engine.DB.Block do
       BlockQuery.select_max_nonce()
       |> repo.one()
       |> case do
-        nil -> 1
+        nil -> 0
         found_nonce -> found_nonce + 1
       end
 
-    blknum = nonce * Configuration.child_block_interval()
+    blknum = (nonce + 1) * Configuration.child_block_interval()
 
     params = %{state: :forming, nonce: nonce, blknum: blknum}
 

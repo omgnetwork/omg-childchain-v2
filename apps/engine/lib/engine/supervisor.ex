@@ -5,7 +5,7 @@ defmodule Engine.Supervisor do
   """
   use Supervisor
 
-  alias Engine.BlockForming.PrepareForSubmission
+  alias Engine.BlockFormation.PrepareForSubmission
   alias Engine.Configuration
   alias Engine.Ethereum.Authority.Submitter
   alias Engine.Fee.Server, as: FeeServer

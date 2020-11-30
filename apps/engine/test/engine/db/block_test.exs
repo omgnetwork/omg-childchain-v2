@@ -15,10 +15,10 @@ defmodule Engine.DB.BlockTest do
   @eth_height 2
 
   describe "insert/2" do
-    test "fails to insert block when blknum != 1000 * nonce" do
+    test "fails to insert block when blknum != 1000 * (nonce + 1)" do
       assert_raise Ecto.ConstraintError, ~r/block_number_nonce/, fn ->
         %Block{}
-        |> Block.BlockChangeset.new_block_changeset(%{nonce: 1, blknum: 2000, state: :forming})
+        |> Block.BlockChangeset.new_block_changeset(%{nonce: 1, blknum: 1000, state: :forming})
         |> Repo.insert()
       end
     end
@@ -49,8 +49,8 @@ defmodule Engine.DB.BlockTest do
 
     test "fails to insert two block with the same hash" do
       assert_raise Ecto.ConstraintError, ~r/blocks_hash_index/, fn ->
-        _ = insert(:block, hash: "1", blknum: 2000, nonce: 2)
-        _ = insert(:block, hash: "1", blknum: 5000, nonce: 5)
+        _ = insert(:block, hash: "1", blknum: 2000, nonce: 1)
+        _ = insert(:block, hash: "1", blknum: 5000, nonce: 4)
       end
     end
   end
@@ -77,7 +77,7 @@ defmodule Engine.DB.BlockTest do
 
   describe "this would be a normal case where a node sees some plasma blocks are not mined and adjust gas for those and re-submits them" do
     test "10 block in DB, 7 in ethereum, submit 3 in nonce order" do
-      nonce = 1
+      nonce = 0
       blknum = 1000
 
       # just insert 10 blocks that were created over 10 eth blocks
@@ -122,9 +122,9 @@ defmodule Engine.DB.BlockTest do
       {:ok, %{get_all: blocks}} =
         Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point, gas_integration)
 
-      assert [%{nonce: 8}, %{nonce: 9}, %{nonce: 10}] = blocks
+      assert [%{nonce: 7}, %{nonce: 8}, %{nonce: 9}] = blocks
       # assert that our integration point was called with these blocks
-      [8, 9, 10] = receive_all_blocks_nonces()
+      [7, 8, 9] = receive_all_blocks_nonces()
       ^ref = get_gas_ref()
 
       sql =
@@ -143,7 +143,7 @@ defmodule Engine.DB.BlockTest do
 
   describe "(NEWLY FORMED BLOCK) this would be a normal case where a node sees some plasma blocks are not mined and adjust gas for those and re-submits them" do
     test "10 block in DB, 7 in ethereum, submit 3 in nonce order" do
-      nonce = 1
+      nonce = 0
       blknum = 1000
 
       # just insert 10 blocks that were created over 10 eth blocks
@@ -182,7 +182,7 @@ defmodule Engine.DB.BlockTest do
 
       # at this height, I'm looking at what was submitted and what wasn't
       # I notice  that blocks with blknum from 1000 to 7000 were mined but above that it needs a resubmission
-      insert(:block, %{nonce: 11, blknum: 11_000, formed_at_ethereum_height: 11})
+      insert(:block, %{nonce: 10, blknum: 11_000, formed_at_ethereum_height: 11})
 
       my_current_eth_height = 11
       mined_child_block = 7000
@@ -190,22 +190,22 @@ defmodule Engine.DB.BlockTest do
       {:ok, %{get_all: blocks}} =
         Block.get_all_and_submit(my_current_eth_height, mined_child_block, integration_point, gas_integration)
 
-      assert [%{nonce: 8}, %{nonce: 9}, %{nonce: 10}, %{nonce: 11}] = blocks
+      assert [%{nonce: 7}, %{nonce: 8}, %{nonce: 9}, %{nonce: 10}] = blocks
       # assert that our integration point was called with these blocks
-      [8, 9, 10, 11] = receive_all_blocks_nonces()
+      [7, 8, 9, 10] = receive_all_blocks_nonces()
       ^ref = get_gas_ref()
 
       sql =
         from(plasma_block in Block,
           where:
-            plasma_block.nonce == 8 or plasma_block.nonce == 9 or plasma_block.nonce == 10 or plasma_block.nonce == 11
+            plasma_block.nonce == 7 or plasma_block.nonce == 8 or plasma_block.nonce == 9 or plasma_block.nonce == 10
         )
 
       sql
       |> Repo.all()
       |> Enum.each(fn block ->
         case block.nonce do
-          11 ->
+          10 ->
             assert block.attempts_counter == 1
 
           _ ->
@@ -218,7 +218,7 @@ defmodule Engine.DB.BlockTest do
 
   describe "a node is behind (in terms of ethereum block height and other competing childchain nodes)" do
     test "10 block in DB, 7 in ethereum, don't submit anything because you're too far behind" do
-      nonce = 1
+      nonce = 0
       blknum = 1000
 
       # just insert 10 blocks that were created over 10 eth blocks
@@ -270,7 +270,7 @@ defmodule Engine.DB.BlockTest do
 
   describe "block formed and submited at the current height is not re-submitted" do
     test "even though mined blocks shows less! this would be a case where a newly formed block was submitted by some other childchain node and not the current one" do
-      nonce = 2
+      nonce = 1
       blknum = 2000
       my_current_eth_height = 6
 
@@ -315,7 +315,7 @@ defmodule Engine.DB.BlockTest do
 
   describe "a simulation of multiple childchains accesing block submission" do
     test "processes try to re-submit blocks" do
-      nonce = 1
+      nonce = 0
       blknum = 1000
 
       # just insert 10 blocks that were created over 10 eth blocks
@@ -349,7 +349,7 @@ defmodule Engine.DB.BlockTest do
 
       # at this height, I'm looking at what was submitted and what wasn't
       # I notice  that blocks with blknum from 1000 to 7000 were mined but above that it needs a resubmission
-      insert(:block, %{nonce: 11, blknum: 11_000, formed_at_ethereum_height: 11})
+      insert(:block, %{nonce: 10, blknum: 11_000, formed_at_ethereum_height: 11})
 
       my_current_eth_height = 11
       mined_child_block = 7000
@@ -370,7 +370,7 @@ defmodule Engine.DB.BlockTest do
 
       # if submission was executed once, it was executed by one of the childchains
       # that WON the race, hence, we should receive nonces as messages only once
-      [8, 9, 10, 11] = receive_all_blocks_nonces()
+      [7, 8, 9, 10] = receive_all_blocks_nonces()
       ^ref = get_gas_ref()
     end
   end

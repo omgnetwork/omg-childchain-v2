@@ -34,7 +34,8 @@ defmodule Engine.Repo.Migrations.CreateBlocksTable do
       constraint(
         :blocks,
         :block_number_nonce,
-        check: "blknum = nonce * 1000"
+        # nonce starts from 0 since there's no transaction when authority account is created
+        check: "blknum = (nonce + 1) * 1000"
       )
     )
 

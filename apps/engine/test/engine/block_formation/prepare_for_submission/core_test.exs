@@ -1,7 +1,7 @@
-defmodule Engine.BlockForming.PrepareForSubmission.CoreTest do
+defmodule Engine.BlockFormation.PrepareForSubmission.CoreTest do
   use ExUnit.Case, async: true
 
-  alias Engine.BlockForming.PrepareForSubmission.Core
+  alias Engine.BlockFormation.PrepareForSubmission.Core
 
   describe "should_finalize_block?/3" do
     test "returns true if enough Ethereum blocks were mined since the last finalization" do
