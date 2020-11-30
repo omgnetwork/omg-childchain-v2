@@ -154,7 +154,7 @@ defmodule Engine.DB.TransactionTest do
       assert tx.tx_index == 0
     end
 
-    test "inserting first transaction in the child-chain creates a block with nonce = 0" do
+    test "inserting first transaction in the childchain creates a block with nonce = 0" do
       tx_bytes = transaction_bytes()
       {:ok, _} = Transaction.insert(tx_bytes)
 
