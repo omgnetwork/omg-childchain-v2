@@ -154,9 +154,22 @@ defmodule Engine.DB.TransactionTest do
       assert tx.tx_index == 0
     end
 
-    test "does not insert new block when transaction can be accepted in currently forming block" do
+    test "inserting first transaction in the child-chain creates a block with nonce = 0" do
       tx_bytes = transaction_bytes()
       {:ok, _} = Transaction.insert(tx_bytes)
+
+      nonce = Repo.one(from(b in Block, select: b.nonce))
+      assert nonce == 0
+    end
+
+    test "does not insert new block when transaction can be accepted in currently forming block" do
+      _ = insert(:block)
+
+      tx_bytes1 = transaction_bytes()
+      {:ok, _} = Transaction.insert(tx_bytes1)
+
+      tx_bytes2 = transaction_bytes()
+      {:ok, _} = Transaction.insert(tx_bytes2)
 
       number_of_blocks = Repo.one(from(b in Block, select: count(b.id)))
       assert number_of_blocks == 1

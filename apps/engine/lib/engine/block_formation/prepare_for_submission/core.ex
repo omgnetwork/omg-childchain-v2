@@ -1,4 +1,4 @@
-defmodule Engine.BlockForming.PrepareForSubmission.Core do
+defmodule Engine.BlockFormation.PrepareForSubmission.Core do
   @moduledoc """
     Preparing block for submission logic
   """
