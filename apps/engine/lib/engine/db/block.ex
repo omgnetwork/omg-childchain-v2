@@ -170,17 +170,23 @@ defmodule Engine.DB.Block do
   def get_block_and_tx_index_for_transaction(repo, params) do
     %{current_forming_block: block} = params
     # this is safe as long as we lock on currently forming block
-    last_tx_index = last_tx_index_for_block(repo, block.id)
+    last_tx_index_for_block = last_tx_index_for_block(repo, block.id)
 
     # basic version, checking transaction limit is postponed until we get transction fees implemented
-    case last_tx_index >= @max_transaction_in_block do
-      true ->
+    case {last_tx_index_for_block, last_tx_index_for_block >= @max_transaction_in_block} do
+      {nil, _} ->
+        # the first transaction in a new, empty block needs to start with 0
+        {:ok, %{block: block, next_tx_index: 0}}
+
+      {_, true} ->
+        # the block is full, we need to start a new block
         {:ok, _} = finalize_block(repo, block)
         {:ok, new_forming_block} = insert_block(repo, %{})
         {:ok, %{block: new_forming_block, next_tx_index: 0}}
 
-      false ->
-        {:ok, %{block: block, next_tx_index: last_tx_index + 1}}
+      {_, false} ->
+        # block is not full yet, tx_index is incremented
+        {:ok, %{block: block, next_tx_index: last_tx_index_for_block + 1}}
     end
   end
 
@@ -199,8 +205,8 @@ defmodule Engine.DB.Block do
         tx_count = tx_count_for_block(repo, block.id)
 
         case tx_count do
-          c when c > 0 -> {:ok, block}
-          _ -> {:error, :empty_block}
+          0 -> {:error, :empty_block}
+          _ -> {:ok, block}
         end
     end
   end
@@ -342,18 +348,15 @@ defmodule Engine.DB.Block do
 
   defp finalize_block(%{block: block}), do: BlockChangeset.finalize(block)
 
-  defp tx_count_for_block(repo, block_id), do: last_tx_index_for_block(repo, block_id) + 1
+  defp tx_count_for_block(repo, block_id) do
+    block_id
+    |> TransactionQuery.count_transactions_in_block()
+    |> repo.one()
+  end
 
-  # returns -1 in case there are no transactions in the block
   defp last_tx_index_for_block(repo, block_id) do
-    tx_count =
-      block_id
-      |> TransactionQuery.select_max_tx_index_for_block()
-      |> repo.one()
-
-    case tx_count do
-      nil -> -1
-      count -> count
-    end
+    block_id
+    |> TransactionQuery.select_max_tx_index_for_block()
+    |> repo.one()
   end
 end

@@ -357,7 +357,7 @@ jobs:
             make install
             make generate_api_code
             mix deps.get
-            mix test --only reorg --trace
+            mix test --only reorg
           no_output_timeout: 30m
 
 

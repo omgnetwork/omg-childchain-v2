@@ -1,5 +1,5 @@
 defmodule API.V1.Controllere.TransactionControllerTest do
-  use Engine.DB.DataCase, async: true
+  use Engine.DB.DataCase, async: false
 
   alias API.V1.Controller.TransactionController
   alias Engine.DB.Block

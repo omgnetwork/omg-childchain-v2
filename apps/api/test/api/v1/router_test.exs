@@ -1,5 +1,5 @@
 defmodule API.V1.RouterTest do
-  use Engine.DB.DataCase, async: true
+  use Engine.DB.DataCase, async: false
   use Plug.Test
 
   alias API.V1.Router

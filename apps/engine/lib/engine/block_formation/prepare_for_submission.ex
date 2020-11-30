@@ -21,18 +21,15 @@ defmodule Engine.BlockForming.PrepareForSubmission do
 
   def init(args) do
     block_submit_every_nth = Keyword.fetch!(args, :block_submit_every_nth)
-    block_module = Keyword.get(args, :block_module, Block)
 
     alarm_handler = Keyword.get(args, :alarm_handler, AlarmHandler)
     sasl_alarm_handler = Keyword.get(args, :sasl_alarm_handler, :alarm_handler)
     :ok = subscribe_to_alarm(sasl_alarm_handler, alarm_handler, self())
-    event_bus = Keyword.get(args, :event_bus, Bus)
-    :ok = event_bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
+    :ok = Bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
 
     {:ok,
      %__MODULE__{
        block_submit_every_nth: block_submit_every_nth,
-       block_module: block_module,
        connection_alarm_raised: false
      }}
   end
@@ -41,18 +38,18 @@ defmodule Engine.BlockForming.PrepareForSubmission do
     _ = Logger.debug("Preparing blocks for submission")
 
     last_formed_block_at_height =
-      case state.block_module.get_last_formed_block_eth_height() do
+      case Block.get_last_formed_block_eth_height() do
         nil -> 0
         height -> height
       end
 
     :ok =
       case Core.should_finalize_block?(new_height, last_formed_block_at_height, state.block_submit_every_nth) do
-        true -> state.block_module.finalize_forming_block()
+        true -> Block.finalize_forming_block()
         false -> :ok
       end
 
-    {:ok, %{blocks_for_submission: blocks}} = state.block_module.prepare_for_submission(new_height)
+    {:ok, %{blocks_for_submission: blocks}} = Block.prepare_for_submission(new_height)
     _ = Logger.info("Prepared #{inspect(Enum.count(blocks))} blocks for submision")
     {:noreply, state}
   end
