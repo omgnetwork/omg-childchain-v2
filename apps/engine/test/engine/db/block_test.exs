@@ -3,144 +3,16 @@ defmodule Engine.DB.BlockTest do
   import Ecto.Query, only: [from: 2]
 
   alias Ecto.Adapters.SQL.Sandbox
+  alias Engine.Configuration
   alias Engine.DB.Block
   alias Engine.DB.Transaction
   alias Engine.DB.Transaction.TransactionQuery
   alias Engine.Repo
   alias ExPlasma.Merkle
 
-  describe "form/0" do
-    setup do
-      block = insert(:block)
-      {:ok, %{block: block}}
-    end
-
-    test "forms a block with all transaction associated with it", %{block: forming_block} do
-      pending_block = insert(:block, %{state: :pending_submission})
-      other_block_tx = insert(:payment_v1_transaction, %{block: pending_block})
-      _ = insert(:payment_v1_transaction, %{block: forming_block, tx_index: 0})
-      _ = insert(:payment_v1_transaction, %{block: forming_block, tx_index: 1})
-      _ = insert(:payment_v1_transaction, %{block: forming_block, tx_index: 2})
-
-      {:ok, %{block_for_submission: block}} = Block.form()
-
-      transactions = Repo.all(TransactionQuery.fetch_transactions_from_block(block.id))
-
-      assert length(transactions) == 3
-      assert block.state == :pending_submission
-      refute Enum.any?(transactions, fn tx -> tx.id == other_block_tx.id end)
-    end
-
-    test "does not fail when called multiple times", %{block: forming_block} do
-      _ = insert(:payment_v1_transaction, %{block: forming_block})
-      {:ok, %{block_for_submission: block1}} = Block.form()
-      {:ok, %{block_for_submission: block2}} = Block.form()
-
-      refute block1.id == block2.id
-    end
-
-    test "generates the block hash", %{block: forming_block} do
-      tx = insert(:payment_v1_transaction, %{block: forming_block})
-      hash = Merkle.root_hash([Transaction.encode_unsigned(tx)])
-
-      assert {:ok, %{block_for_submission: block}} = Block.form()
-      assert block.hash == hash
-    end
-
-    test "correctly generates block hash for empty txs list" do
-      assert {:ok, %{block_for_submission: block}} = Block.form()
-
-      assert block.hash ==
-               <<246, 9, 190, 253, 254, 144, 102, 254, 20, 231, 67, 179, 98, 62, 174, 135, 143, 188, 70, 128, 5, 96,
-                 136, 22, 131, 44, 157, 70, 15, 42, 149, 210>>
-    end
-
-    test "block hash is consistent with childchain v1", %{block: block} do
-      alice_priv_key =
-        "0x" <>
-          Base.encode16(
-            <<54, 43, 207, 67, 140, 160, 190, 135, 18, 162, 70, 120, 36, 245, 106, 165, 5, 101, 183, 55, 11, 117, 126,
-              135, 49, 50, 12, 228, 173, 219, 183, 175>>,
-            case: :lower
-          )
-
-      bob_address = <<207, 194, 79, 222, 88, 128, 171, 217, 153, 41, 195, 239, 138, 178, 227, 16, 72, 173, 118, 35>>
-
-      Enum.each(0..1, fn index ->
-        tx_bytes =
-          ExPlasma.payment_v1()
-          |> ExPlasma.Builder.new()
-          |> ExPlasma.Builder.add_input(blknum: 1, txindex: index, oindex: index)
-          |> ExPlasma.Builder.add_output(
-            output_type: 1,
-            output_data: %{output_guard: bob_address, token: <<0::160>>, amount: 100}
-          )
-          |> ExPlasma.Builder.sign!([alice_priv_key])
-          |> ExPlasma.encode!()
-
-        _ = insert(:payment_v1_transaction, %{block: block, tx_index: index, tx_bytes: tx_bytes})
-      end)
-
-      assert {:ok, %{block_for_submission: block_for_submission}} = Block.form()
-
-      assert block_for_submission.hash ==
-               <<189, 245, 69, 5, 94, 45, 148, 210, 5, 89, 98, 245, 201, 111, 222, 48, 61, 114, 145, 55, 122, 84, 196,
-                 156, 254, 80, 85, 184, 3, 205, 163, 233>>
-    end
-
-    @tag timeout: :infinity
-    @tag :integration
-    test "correctly calculates hash for a lot of transactions", %{block: block} do
-      alice_priv_key =
-        "0x" <>
-          Base.encode16(
-            <<54, 43, 207, 67, 140, 160, 190, 135, 18, 162, 70, 120, 36, 245, 106, 165, 5, 101, 183, 55, 11, 117, 126,
-              135, 49, 50, 12, 228, 173, 219, 183, 175>>,
-            case: :lower
-          )
-
-      bob_address = <<207, 194, 79, 222, 88, 128, 171, 217, 153, 41, 195, 239, 138, 178, 227, 16, 72, 173, 118, 35>>
-
-      _ =
-        Enum.each(1..64_000, fn index ->
-          tx_bytes =
-            ExPlasma.payment_v1()
-            |> ExPlasma.Builder.new()
-            |> ExPlasma.Builder.add_input(blknum: 1, txindex: index, oindex: index)
-            |> ExPlasma.Builder.add_output(
-              output_type: 1,
-              output_data: %{output_guard: bob_address, token: <<0::160>>, amount: 100}
-            )
-            |> ExPlasma.Builder.sign!([alice_priv_key])
-            |> ExPlasma.encode!()
-
-          _ = insert(:payment_v1_transaction, %{block: block, tx_index: index, tx_bytes: tx_bytes})
-        end)
-
-      assert {:ok, %{block_for_submission: block_for_submission}} = Block.form()
-
-      assert block_for_submission.hash ==
-               <<12, 40, 202, 7, 16, 175, 119, 138, 7, 95, 8, 3, 148, 93, 162, 168, 136, 226, 196, 236, 83, 62, 220, 75,
-                 59, 52, 6, 18, 249, 52, 124, 228>>
-    end
-
-    test "autoincrements nonce and blknum", %{block: block} do
-      assert {:ok, %{block_for_submission: block1, new_forming_block: block2}} = Block.form()
-      assert block1.nonce == block.nonce
-      assert block1.blknum == block.blknum
-
-      assert block2.nonce == block1.nonce + 1
-      assert block2.blknum == block1.blknum + 1_000
-    end
-
-    test "inserts a new forming block", %{block: block} do
-      _ = insert(:payment_v1_transaction, %{block: block})
-
-      assert {:ok, %{block_for_submission: block, new_forming_block: new_block}} = Block.form()
-      assert new_block.state == Block.state_forming()
-      assert new_block.blknum > block.blknum
-    end
-  end
+  @eth <<0::160>>
+  @other_token <<1::160>>
+  @eth_height 2
 
   describe "insert/2" do
     test "fails to insert block when blknum != 1000 * nonce" do
@@ -154,9 +26,9 @@ defmodule Engine.DB.BlockTest do
 
   describe "get_by_hash/2" do
     test "returns the block without preloads" do
-      _ = insert(:block)
+      _ = insert(:block, %{state: Block.state_finalizing()})
 
-      {:ok, %{block_for_submission: block}} = Block.form()
+      {:ok, %{blocks_for_submission: [block]}} = Block.prepare_for_submission(@eth_height)
 
       assert {:ok, block_result} = Block.get_by_hash(block.hash, [])
       refute Ecto.assoc_loaded?(block_result.transactions)
@@ -501,6 +373,306 @@ defmodule Engine.DB.BlockTest do
       [8, 9, 10, 11] = receive_all_blocks_nonces()
       ^ref = get_gas_ref()
     end
+  end
+
+  describe "finalize_forming_block/0" do
+    test "changes state of a forming block" do
+      %{id: id_forming} = insert_non_empty_block(Block.state_forming())
+      block_forming = Repo.one(from(b in Block, where: b.id == ^id_forming))
+      expected = %Block{block_forming | state: Block.state_finalizing()}
+      assert :ok = Block.finalize_forming_block()
+      actual = Repo.one(from(b in Block, where: b.id == ^id_forming))
+      assert actual == expected
+    end
+
+    test "changes block state to finalizing only for a forming block" do
+      _ = insert_non_empty_block(Block.state_forming())
+
+      %{id: id_finalizing} = insert(:block, %{state: Block.state_finalizing()})
+      block_finalizing = Repo.one(from(b in Block, where: b.id == ^id_finalizing))
+
+      %{id: id_pending} = insert(:block, %{state: Block.state_pending_submission()})
+      block_pending = Repo.one(from(b in Block, where: b.id == ^id_pending))
+
+      %{id: id_submitted} = insert(:block, %{state: Block.state_submitted()})
+      block_submitted = Repo.one(from(b in Block, where: b.id == ^id_submitted))
+
+      %{id: id_confirmed} = insert(:block, %{state: Block.state_confirmed()})
+      block_confirmed = Repo.one(from(b in Block, where: b.id == ^id_confirmed))
+
+      assert :ok = Block.finalize_forming_block()
+
+      assert Repo.one(from(b in Block, where: b.id == ^id_finalizing)) == block_finalizing
+      assert Repo.one(from(b in Block, where: b.id == ^id_pending)) == block_pending
+      assert Repo.one(from(b in Block, where: b.id == ^id_submitted)) == block_submitted
+      assert Repo.one(from(b in Block, where: b.id == ^id_confirmed)) == block_confirmed
+    end
+
+    test "does not update forming block if it's empty" do
+      %{id: id} = insert(:block, %{state: Block.state_forming()})
+      block_before_call = Repo.one(from(b in Block, where: b.id == ^id))
+      assert :ok == Block.finalize_forming_block()
+      block_after_call = Repo.one(from(b in Block, where: b.id == ^id))
+      assert block_after_call == block_before_call
+    end
+
+    test "does not fail when there is no forming block" do
+      assert :ok == Block.finalize_forming_block()
+    end
+  end
+
+  describe "prepare_for_submission/0" do
+    setup do
+      block = insert(:block, %{state: Block.state_finalizing()})
+      {:ok, %{block: block}}
+    end
+
+    test "generates the block hash, changes block state to pending submission and sets formed ethereum height", %{
+      block: finalizing_block
+    } do
+      tx = insert(:payment_v1_transaction, %{block: finalizing_block})
+      hash = Merkle.root_hash([Transaction.encode_unsigned(tx)])
+
+      eth_height = 10
+      assert {:ok, %{blocks_for_submission: [block]}} = Block.prepare_for_submission(eth_height)
+      assert block.hash == hash
+      assert block.state == Block.state_pending_submission()
+      assert block.formed_at_ethereum_height == eth_height
+    end
+
+    test "correctly generates block hash for empty txs list" do
+      assert {:ok, %{blocks_for_submission: [block]}} = Block.prepare_for_submission(@eth_height)
+
+      assert block.hash ==
+               <<246, 9, 190, 253, 254, 144, 102, 254, 20, 231, 67, 179, 98, 62, 174, 135, 143, 188, 70, 128, 5, 96,
+                 136, 22, 131, 44, 157, 70, 15, 42, 149, 210>>
+    end
+
+    test "block hash is consistent with childchain v1", %{block: block} do
+      alice_priv_key =
+        "0x" <>
+          Base.encode16(
+            <<54, 43, 207, 67, 140, 160, 190, 135, 18, 162, 70, 120, 36, 245, 106, 165, 5, 101, 183, 55, 11, 117, 126,
+              135, 49, 50, 12, 228, 173, 219, 183, 175>>,
+            case: :lower
+          )
+
+      bob_address = <<207, 194, 79, 222, 88, 128, 171, 217, 153, 41, 195, 239, 138, 178, 227, 16, 72, 173, 118, 35>>
+
+      Enum.each(0..1, fn index ->
+        tx_bytes =
+          ExPlasma.payment_v1()
+          |> ExPlasma.Builder.new()
+          |> ExPlasma.Builder.add_input(blknum: 1, txindex: index, oindex: index)
+          |> ExPlasma.Builder.add_output(
+            output_type: 1,
+            output_data: %{output_guard: bob_address, token: <<0::160>>, amount: 100}
+          )
+          |> ExPlasma.Builder.sign!([alice_priv_key])
+          |> ExPlasma.encode!()
+
+        _ = insert(:payment_v1_transaction, %{block: block, tx_index: index, tx_bytes: tx_bytes})
+      end)
+
+      assert {:ok, %{blocks_for_submission: [block_for_submission]}} = Block.prepare_for_submission(@eth_height)
+
+      assert block_for_submission.hash ==
+               <<189, 245, 69, 5, 94, 45, 148, 210, 5, 89, 98, 245, 201, 111, 222, 48, 61, 114, 145, 55, 122, 84, 196,
+                 156, 254, 80, 85, 184, 3, 205, 163, 233>>
+    end
+
+    @tag timeout: :infinity
+    @tag :integration
+    test "correctly calculates hash for a lot of transactions", %{block: block} do
+      alice_priv_key =
+        "0x" <>
+          Base.encode16(
+            <<54, 43, 207, 67, 140, 160, 190, 135, 18, 162, 70, 120, 36, 245, 106, 165, 5, 101, 183, 55, 11, 117, 126,
+              135, 49, 50, 12, 228, 173, 219, 183, 175>>,
+            case: :lower
+          )
+
+      bob_address = <<207, 194, 79, 222, 88, 128, 171, 217, 153, 41, 195, 239, 138, 178, 227, 16, 72, 173, 118, 35>>
+
+      _ =
+        Enum.each(1..64_000, fn index ->
+          tx_bytes =
+            ExPlasma.payment_v1()
+            |> ExPlasma.Builder.new()
+            |> ExPlasma.Builder.add_input(blknum: 1, txindex: index, oindex: index)
+            |> ExPlasma.Builder.add_output(
+              output_type: 1,
+              output_data: %{output_guard: bob_address, token: <<0::160>>, amount: 100}
+            )
+            |> ExPlasma.Builder.sign!([alice_priv_key])
+            |> ExPlasma.encode!()
+
+          _ = insert(:payment_v1_transaction, %{block: block, tx_index: index, tx_bytes: tx_bytes})
+        end)
+
+      assert {:ok, %{blocks_for_submission: [block_for_submission]}} = Block.prepare_for_submission(@eth_height)
+
+      assert block_for_submission.hash ==
+               <<12, 40, 202, 7, 16, 175, 119, 138, 7, 95, 8, 3, 148, 93, 162, 168, 136, 226, 196, 236, 83, 62, 220, 75,
+                 59, 52, 6, 18, 249, 52, 124, 228>>
+    end
+
+    test "affects only blocks in finalizing state" do
+      block_finalizing1 = insert_non_empty_block(Block.state_finalizing())
+      block_finalizing2 = insert_non_empty_block(Block.state_finalizing())
+      block_forming = insert_non_empty_block(Block.state_forming())
+      block_pending_submission = insert_non_empty_block(Block.state_pending_submission())
+      block_submitted = insert_non_empty_block(Block.state_submitted())
+      block_confirmed = insert_non_empty_block(Block.state_confirmed())
+
+      {:ok, _} = Block.prepare_for_submission(@eth_height)
+
+      assert block_forming == Repo.get!(Block, block_forming.id)
+      assert block_pending_submission == Repo.get!(Block, block_pending_submission.id)
+      assert block_submitted == Repo.get!(Block, block_submitted.id)
+      assert block_confirmed == Repo.get!(Block, block_confirmed.id)
+
+      updated_block_finalizing1 = Repo.get!(Block, block_finalizing1.id)
+      assert Block.state_pending_submission() == updated_block_finalizing1.state
+
+      updated_block_finalizing2 = Repo.get!(Block, block_finalizing2.id)
+      assert Block.state_pending_submission() == updated_block_finalizing2.state
+    end
+
+    test "attaches fee transactions to blocks" do
+      block1 = insert_non_empty_block(Block.state_finalizing())
+
+      tx1 =
+        insert(:payment_v1_transaction, %{
+          block: block1,
+          tx_index: 1,
+          inputs: [%{amount: 2, token: @eth}],
+          outputs: [%{amount: 1, token: @eth}]
+        })
+
+      _ = insert(:transaction_fee, %{transaction: tx1, currency: @eth, amount: 1})
+
+      tx2 =
+        insert(:payment_v1_transaction, %{
+          block: block1,
+          tx_index: 2,
+          inputs: [%{amount: 2, token: @other_token}],
+          outputs: [%{amount: 1, token: @other_token}]
+        })
+
+      _ = insert(:transaction_fee, %{transaction: tx2, currency: @other_token, amount: 1})
+
+      block2 = insert_non_empty_block(Block.state_finalizing())
+
+      tx3 =
+        insert(:payment_v1_transaction, %{
+          block: block2,
+          tx_index: 1,
+          inputs: [%{amount: 10, token: @other_token}],
+          outputs: [%{amount: 1, token: @other_token}]
+        })
+
+      _ = insert(:transaction_fee, %{transaction: tx3, currency: @other_token, amount: 9})
+
+      {:ok, _} = Block.prepare_for_submission(@eth_height)
+
+      [fee_transaction1_block1, fee_transaction2_block1] = fee_transactions_for_block(block1)
+
+      assert expect_output_in_transaction(fee_transaction1_block1, %{
+               amount: 2,
+               output_guard: Configuration.fee_claimer_address(),
+               token: @eth
+             })
+
+      assert expect_output_in_transaction(fee_transaction2_block1, %{
+               amount: 1,
+               output_guard: Configuration.fee_claimer_address(),
+               token: @other_token
+             })
+
+      [fee_transaction1_block2, fee_transaction2_block2] = fee_transactions_for_block(block2)
+
+      assert expect_output_in_transaction(fee_transaction1_block2, %{
+               amount: 1,
+               output_guard: Configuration.fee_claimer_address(),
+               token: @eth
+             })
+
+      assert expect_output_in_transaction(fee_transaction2_block2, %{
+               amount: 9,
+               output_guard: Configuration.fee_claimer_address(),
+               token: @other_token
+             })
+    end
+
+    test "payment transaction indicies and fee transaction indicies form a continous range of natural numbers" do
+      block = insert_non_empty_block(Block.state_finalizing())
+
+      tx =
+        insert(:payment_v1_transaction, %{
+          block: block,
+          tx_index: 1,
+          inputs: [%{amount: 10, token: @other_token}],
+          outputs: [%{amount: 1, token: @other_token}]
+        })
+
+      _ = insert(:transaction_fee, %{transaction: tx, currency: @other_token, amount: 9})
+
+      {:ok, _} = Block.prepare_for_submission(@eth_height)
+
+      [fee_transaction1, fee_transaction2] =
+        block.id
+        |> TransactionQuery.fetch_transactions_from_block()
+        |> Repo.all()
+        |> Enum.filter(fn %Transaction{tx_type: tx_type} -> tx_type == ExPlasma.fee() end)
+
+      assert 2 == fee_transaction1.tx_index
+      assert 3 == fee_transaction2.tx_index
+    end
+
+    test "handles conflicts for concurrent calls" do
+      :ok = Enum.each(1..50, fn _ -> insert_non_empty_block(Block.state_finalizing()) end)
+
+      no_conflicts =
+        1..50
+        |> Enum.map(fn _ -> Task.async(fn -> Block.prepare_for_submission(@eth_height) end) end)
+        |> Enum.map(fn task -> Task.await(task) end)
+        |> Enum.all?(fn
+          {:ok, _} -> true
+          _ -> false
+        end)
+
+      assert no_conflicts
+    end
+  end
+
+  defp fee_transactions_for_block(block) do
+    fee_tx_type = ExPlasma.fee()
+    Repo.all(from(t in Transaction, where: t.block_id == ^block.id and t.tx_type == ^fee_tx_type, order_by: t.tx_index))
+  end
+
+  defp expect_output_in_transaction(transaction, expected_output) do
+    {:ok, plasma_fee_transaction} = ExPlasma.decode(transaction.tx_bytes)
+    assert %{outputs: [fee_output1]} = plasma_fee_transaction
+    assert %{output_data: ^expected_output, output_type: 2} = fee_output1
+
+    true
+  end
+
+  defp insert_non_empty_block(block_state) do
+    block = insert(:block, %{state: block_state})
+
+    transaction =
+      insert(:payment_v1_transaction, %{
+        block: block,
+        tx_index: 0,
+        inputs: [%{amount: 2, token: @eth}],
+        outputs: [%{amount: 1, token: @eth}]
+      })
+
+    _ = insert(:transaction_fee, %{transaction: transaction, currency: @eth, amount: 1})
+
+    Repo.get(Block, block.id)
   end
 
   defp receive_all_blocks_nonces() do

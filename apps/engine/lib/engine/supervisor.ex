@@ -5,6 +5,7 @@ defmodule Engine.Supervisor do
   """
   use Supervisor
 
+  alias Engine.BlockForming.PrepareForSubmission
   alias Engine.Configuration
   alias Engine.Ethereum.Authority.Submitter
   alias Engine.Fee.Server, as: FeeServer
@@ -42,9 +43,14 @@ defmodule Engine.Supervisor do
       enterprise: enterprise
     ]
 
+    prepare_block_for_submission_opts = [
+      block_submit_every_nth: Configuration.block_submit_every_nth()
+    ]
+
     children = [
       {FeeServer, fee_server_opts},
-      {Submitter, submitter_opts}
+      {Submitter, submitter_opts},
+      {PrepareForSubmission, prepare_block_for_submission_opts}
     ]
 
     opts = [strategy: :one_for_one]

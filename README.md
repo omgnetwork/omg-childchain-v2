@@ -1,38 +1,71 @@
+<img src="docs/assets/logo.png" width="100" height="100" align="right" />
+
 # Childchain
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
 
-If you're deploying with Vault, set:
-- VAULT_URL, VAULT_TOKEN, WALLET_NAME, AUTHORITY_ADDRESS
+- [Overview](#overview)
+- [Getting Started](#getting-started)
+    - [Service start up using Docker Compose](#service-start-up-using-docker-compose)
+    - [Troubleshooting Docker](#troubleshooting-docker)
+- [Documentation](#documentation)
+- [License](#license)
+<!-- markdown-toc end -->
 
-If there's no Vault, set:
-- PRIVATE_KEY
+## Overview
+**Childchain** is a server application written in Elixir, it collects valid transactions that move funds on the child chain, submits child chain block hashes to the root chain contract and publishes child chain block's contents.  
 
-Other ENV vars:
+## Getting started
 
-- ETHEREUM_RPC_URL
-- FINALITY_MARGIN (default 10)
-- ETHEREUM_NETWORK
-- TX_HASH_CONTRACT
-- AUTHORITY_ADDRESS
-- CONTRACT_ADDRESS_PLASMA_FRAMEWORK
-- ETHEREUM_EVENTS_CHECK_INTERVAL_MS (default 8000)
-- ETHEREUM_STALLED_SYNC_THRESHOLD_MS (default 20000)
-- FEE_CLAIMER_ADDRESS
-- DATABASE_URL
-- ENGINE_DB_POOL_SIZE (default 10)
-- ENGINE_DB_POOL_QUEUE_TARGET_MS (default 100)
-- ENGINE_DB_POOL_QUEUE_TARGET_MS (default 2000)
-- FEE_FEED_URL (default http://localhost:4000/api/v1)
-- FEE_CHANGE_TOLERANCE_PERCENT (default 25)
-- STORED_FEE_UPDATE_INTERVAL_MINUTES (default 1)
-- SENTRY_DSN
-- HOSTNAME (childchain hostname)
-- APP_ENV
-- DD_HOSTNAME (default datadog)
-- DD_APM_PORT (default 8126)
-- BATCH_SIZE (default 10)
-- SYNC_THRESHOLD (default 100)
-- DD_DISABLED (default true)
-- RULES_FETCH_INTERVAL (default 180)
-- PORT (default 9656)
+### Service start up using Docker Compose
+The quickest way to get Childchain Server running is to use [Docker-Compose](https://docs.docker.com/compose/install/).
 
+* Install [Docker](https://docs.docker.com/install/) and [Docker-Compose](https://docs.docker.com/compose/install/).
+* Clone the Childchain repo:
+```
+git clone https://github.com/omgnetwork/childchain.git && cd childchain
+```
 
+In order to avoid possible port conflicts, make sure that the following `TCP` ports are available: 
+* `9656`, `8545`, `8546`, `443`, `7434`, `7534`, `5432`, `4000`, `8555`, `8556`
+
+All commands should be run from the root of the repo folder.
+
+* [Configure OS environment variables](docs/configuration.md).
+
+* To get the necessary dependencies to build the project:
+```
+make deps
+```
+- To bring the entire system up, you will first need to bring in the compatible `geth` snapshot of plasma contracts:
+```
+make init_test
+```
+
+- To start the server:
+```
+docker-compose up
+```
+- To start the server with only specific services up (eg: the childchain service, geth, etc...):
+
+```
+docker-compose up childchain geth ...
+```
+*(Note: This will also bring up any services childchain depends on.)*
+
+### Troubleshooting Docker
+If service start up is unsuccessful, containers can be left hanging, which impacts the start of services on the future attempts of `docker-compose up`.
+- View all running containers:
+```
+docker ps
+```
+- Stop all running containers:
+```
+docker kill $(docker ps -q)
+```
+
+## Documentation
+All documentations can be found in the [docs](docs/) directory. It is recommended to take a look at the documentation.    
+
+## License
+The **Childchain Server** is licensed under the [Apache License](https://www.apache.org/licenses/LICENSE-2.0).

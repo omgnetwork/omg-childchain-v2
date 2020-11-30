@@ -25,7 +25,7 @@ defmodule Engine.Telemetry.Handler do
   end
 
   def handle_event([:monitor, :db_connection_lost, :clear], _, _, _config) do
-    Logger.info("DB supervisor started. Clearing alarm.")
+    _ = Logger.info("DB supervisor started. Clearing alarm.")
     Alarm.clear(Alarm.Types.db_connection_lost(__MODULE__))
   end
 

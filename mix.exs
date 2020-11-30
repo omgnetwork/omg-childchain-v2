@@ -43,7 +43,7 @@ defmodule Childchain.MixProject do
   defp deps do
     [
       {:hackney,
-       git: "https://github.com/SergeTupchiy/hackney", ref: "061aaa80fcbf7b1a629952c49e4bc6dcb3a497a4", override: true},
+       git: "https://github.com/SergeTupchiy/hackney", ref: "2bf38f92f647de00c4850202f37d4eaab93ed834", override: true},
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]

@@ -2,6 +2,7 @@ defmodule Engine.DB.TransactionTest do
   use Engine.DB.DataCase, async: false
   doctest Engine.DB.Transaction, import: true
 
+  alias Engine.Configuration
   alias Engine.DB.Block
   alias Engine.DB.Output
   alias Engine.DB.Transaction
@@ -9,9 +10,13 @@ defmodule Engine.DB.TransactionTest do
   alias Engine.Repo
   alias Engine.Support.TestEntity
   alias ExPlasma.Builder
+  alias ExPlasma.Output, as: ExPlasmaOutput
   alias ExPlasma.Output.Position
+  alias ExPlasma.Transaction, as: ExPlasmaTx
+  alias ExPlasma.Transaction.Type.Fee, as: ExPlasmaFee
 
   @max_txcount 65_000
+  @eth <<0::160>>
 
   setup do
     _ = insert(:merged_fee)
@@ -27,11 +32,11 @@ defmodule Engine.DB.TransactionTest do
 
       outputs =
         Enum.map([build(:output, %{amount: 1})], fn %{output_data: output_data} ->
-          ExPlasma.Output.decode!(output_data)
+          ExPlasmaOutput.decode!(output_data)
         end)
 
       transaction =
-        Builder.new(ExPlasma.payment_v1(), %{inputs: [ExPlasma.Output.decode_id!(output_id)], outputs: outputs})
+        Builder.new(ExPlasma.payment_v1(), %{inputs: [ExPlasmaOutput.decode_id!(output_id)], outputs: outputs})
 
       tx_bytes =
         transaction
@@ -52,8 +57,8 @@ defmodule Engine.DB.TransactionTest do
       input_blknum = 1
       _ = insert(:deposit_output, %{blknum: input_blknum, amount: 3})
 
-      o_1_data = [token: <<0::160>>, amount: 1, output_guard: <<1::160>>]
-      o_2_data = [token: <<0::160>>, amount: 1, output_guard: <<1::160>>]
+      o_1_data = [token: @eth, amount: 1, output_guard: <<1::160>>]
+      o_2_data = [token: @eth, amount: 1, output_guard: <<1::160>>]
 
       tx_bytes =
         ExPlasma.payment_v1()
@@ -67,8 +72,8 @@ defmodule Engine.DB.TransactionTest do
       assert {:ok, %{transaction: transaction}} = Transaction.insert(tx_bytes)
 
       assert [%Output{output_data: o_1_data_enc}, %Output{output_data: o_2_data_enc}] = transaction.outputs
-      assert ExPlasma.Output.decode!(o_1_data_enc).output_data == Enum.into(o_1_data, %{})
-      assert ExPlasma.Output.decode!(o_2_data_enc).output_data == Enum.into(o_1_data, %{})
+      assert ExPlasmaOutput.decode!(o_1_data_enc).output_data == Enum.into(o_1_data, %{})
+      assert ExPlasmaOutput.decode!(o_2_data_enc).output_data == Enum.into(o_1_data, %{})
     end
 
     test "inserts the inputs" do
@@ -83,7 +88,7 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.new()
         |> Builder.add_input(blknum: input_blknum1, txindex: 0, oindex: 0)
         |> Builder.add_input(blknum: input_blknum2, txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 1)
+        |> Builder.add_output(output_guard: <<1::160>>, token: @eth, amount: 1)
         |> Builder.sign!([entity.priv_encoded, entity.priv_encoded])
         |> ExPlasma.encode!()
 
@@ -123,15 +128,15 @@ defmodule Engine.DB.TransactionTest do
       %{priv_encoded: priv_encoded_1, addr: addr_1} = TestEntity.alice()
       %{priv_encoded: priv_encoded_2, addr: addr_2} = TestEntity.bob()
 
-      insert(:deposit_output, %{output_guard: addr_1, token: <<0::160>>, amount: 10, blknum: 1})
-      insert(:deposit_output, %{output_guard: addr_2, token: <<0::160>>, amount: 10, blknum: 2})
+      insert(:deposit_output, %{output_guard: addr_1, token: @eth, amount: 10, blknum: 1})
+      insert(:deposit_output, %{output_guard: addr_2, token: @eth, amount: 10, blknum: 2})
 
       tx_bytes =
         ExPlasma.payment_v1()
         |> Builder.new()
         |> Builder.add_input(blknum: 1, txindex: 0, oindex: 0)
         |> Builder.add_input(blknum: 2, txindex: 0, oindex: 0)
-        |> Builder.add_output(output_guard: <<1::160>>, token: <<0::160>>, amount: 19)
+        |> Builder.add_output(output_guard: <<1::160>>, token: @eth, amount: 19)
         |> Builder.sign!([priv_encoded_2, priv_encoded_1])
         |> ExPlasma.encode!()
 
@@ -154,7 +159,7 @@ defmodule Engine.DB.TransactionTest do
       {:ok, _} = Transaction.insert(tx_bytes)
 
       number_of_blocks = Repo.one(from(b in Block, select: count(b.id)))
-      assert 1 == number_of_blocks
+      assert number_of_blocks == 1
     end
 
     test "assigns consecutive transaction indicies" do
@@ -239,6 +244,54 @@ defmodule Engine.DB.TransactionTest do
     end
   end
 
+  describe "insert_fee_transaction/4" do
+    setup do
+      block = insert(:block)
+
+      {:ok, %{block: block}}
+    end
+
+    test "sets block, transaction index, tx_type and tx_bytes for a fee transaction", %{block: block} do
+      assert {:ok, transaction} = Transaction.insert_fee_transaction(Repo, {@eth, Decimal.new(1)}, block, 1)
+      assert transaction.tx_index == 1
+      assert transaction.block == block
+      assert transaction.tx_type == ExPlasma.fee()
+
+      expected_tx_bytes = fee_transaction_bytes(block.blknum)
+      assert transaction.tx_bytes == expected_tx_bytes
+    end
+
+    test "assign positions to fee transaction outputs and sets outputs owner to fee claimer address", %{block: block} do
+      tx_index = 1
+
+      assert {:ok, %Transaction{outputs: [output]}} =
+               Transaction.insert_fee_transaction(Repo, {@eth, Decimal.new(1)}, block, tx_index)
+
+      expected_position = Position.pos(%{blknum: block.blknum, txindex: tx_index, oindex: 0})
+      assert output.position == expected_position
+
+      owner = Configuration.fee_claimer_address()
+
+      assert %{output_data: %{amount: 1, output_guard: ^owner, token: @eth}} =
+               ExPlasmaOutput.decode!(output.output_data)
+    end
+  end
+
+  defp fee_transaction_bytes(blknum) do
+    owner = Configuration.fee_claimer_address()
+
+    {:ok, fee_tx} =
+      ExPlasma.fee()
+      |> Builder.new(
+        outputs: [
+          ExPlasmaFee.new_output(owner, @eth, 1)
+        ]
+      )
+      |> ExPlasmaTx.with_nonce(%{blknum: blknum, token: @eth})
+
+    ExPlasma.encode!(fee_tx, signed: true)
+  end
+
   defp transaction_bytes(attrs \\ %{}) do
     entity = TestEntity.alice()
 
@@ -247,10 +300,10 @@ defmodule Engine.DB.TransactionTest do
     outputs =
       attrs
       |> Map.get(:outputs, [build(:output, %{amount: 1})])
-      |> Enum.map(fn %{output_data: output_data} -> ExPlasma.Output.decode!(output_data) end)
+      |> Enum.map(fn %{output_data: output_data} -> ExPlasmaOutput.decode!(output_data) end)
 
     ExPlasma.payment_v1()
-    |> Builder.new(%{inputs: [ExPlasma.Output.decode_id!(output_id)], outputs: outputs})
+    |> Builder.new(%{inputs: [ExPlasmaOutput.decode_id!(output_id)], outputs: outputs})
     |> Builder.sign!([entity.priv_encoded])
     |> ExPlasma.encode!()
   end

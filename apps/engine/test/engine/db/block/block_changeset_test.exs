@@ -78,10 +78,12 @@ defmodule Engine.DB.Block.BlockChangesetTest do
   end
 
   describe "prepare_for_submission/2" do
-    test "sets hash and state" do
+    test "sets hash, state and formed ethereum height" do
       block = insert(:block)
       hash = "0xf"
-      changeset = BlockChangeset.prepare_for_submission(block, %{hash: hash})
+      eth_height = 10
+
+      changeset = BlockChangeset.prepare_for_submission(block, %{hash: hash, formed_at_ethereum_height: eth_height})
 
       assert changeset.valid?
 
@@ -89,7 +91,8 @@ defmodule Engine.DB.Block.BlockChangesetTest do
 
       assert %Block{
                hash: ^hash,
-               state: ^expected_state
+               state: ^expected_state,
+               formed_at_ethereum_height: ^eth_height
              } = Changeset.apply_changes(changeset)
     end
   end

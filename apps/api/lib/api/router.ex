@@ -9,6 +9,7 @@ defmodule API.Router do
 
   alias API.Plugs.Responder
 
+  plug(API.Plugs.RemoteIP)
   plug(API.Plugs.Health)
   plug(:match)
   plug(:dispatch)

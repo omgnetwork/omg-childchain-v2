@@ -35,6 +35,7 @@ defmodule Engine.DB.Block.BlockChangeset do
   def prepare_for_submission(struct, params) do
     struct
     |> put_hash(params)
+    |> put_formed_at_ethereum_height(params)
     |> put_state(%{state: Block.state_pending_submission()})
   end
 
@@ -68,5 +69,11 @@ defmodule Engine.DB.Block.BlockChangeset do
     struct
     |> cast(params, [:submitted_at_ethereum_height])
     |> validate_required([:submitted_at_ethereum_height])
+  end
+
+  defp put_formed_at_ethereum_height(struct, params) do
+    struct
+    |> cast(params, [:formed_at_ethereum_height])
+    |> validate_required([:formed_at_ethereum_height])
   end
 end
