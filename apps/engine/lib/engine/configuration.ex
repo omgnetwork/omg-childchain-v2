@@ -109,7 +109,7 @@ defmodule Engine.Configuration do
     Application.fetch_env!(@app, :contract_semver)
   end
 
-  def prepare_block_for_submission_interval_ms() do
-    Application.fetch_env!(@app, :prepare_block_for_submission_interval_ms)
+  def block_submit_every_nth() do
+    Application.fetch_env!(@app, :block_submit_every_nth)
   end
 end

@@ -29,9 +29,7 @@ config :engine,
   ethereum_events_check_interval_ms: String.to_integer(System.get_env("ETHEREUM_EVENTS_CHECK_INTERVAL_MS") || "8000"),
   ethereum_stalled_sync_threshold_ms:
     String.to_integer(System.get_env("ETHEREUM_STALLED_SYNC_THRESHOLD_MS") || "20000"),
-  fee_claimer_address: System.get_env("FEE_CLAIMER_ADDRESS"),
-  prepare_block_for_submission_interval_ms:
-    String.to_integer(System.get_env("PREPARE_BLOCK_FOR_SUBMISSION_INTERVAL_MS") || "10000")
+  fee_claimer_address: mandatory.("FEE_CLAIMER_ADDRESS", "FEE_CLAIMER_ADDRESS has to be set!")
 
 config :gas, Gas.Integration.Pulse, api_key: System.get_env("PULSE_API_KEY")
 

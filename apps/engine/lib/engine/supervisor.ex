@@ -44,7 +44,7 @@ defmodule Engine.Supervisor do
     ]
 
     prepare_block_for_submission_opts = [
-      prepare_block_for_submission_interval_ms: Configuration.prepare_block_for_submission_interval_ms()
+      block_submit_every_nth: Configuration.block_submit_every_nth()
     ]
 
     children = [

@@ -1,5 +1,5 @@
 defmodule API.V1.Controllere.TransactionControllerTest do
-  use Engine.DB.DataCase, async: true
+  use Engine.DB.DataCase, async: false
 
   alias API.V1.Controller.TransactionController
   alias Engine.DB.Block
@@ -28,7 +28,7 @@ defmodule API.V1.Controllere.TransactionControllerTest do
 
       {tx_bytes3, tx_hash3} = tx_bytes_and_hash()
 
-      _ = Block.form()
+      _ = Block.finalize_forming_block()
       expected_blknum = blknum + 1_000
 
       assert TransactionController.submit(tx_bytes3) ==

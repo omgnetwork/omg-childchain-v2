@@ -159,7 +159,7 @@ defmodule Engine.DB.TransactionTest do
       {:ok, _} = Transaction.insert(tx_bytes)
 
       number_of_blocks = Repo.one(from(b in Block, select: count(b.id)))
-      assert 1 == number_of_blocks
+      assert number_of_blocks == 1
     end
 
     test "assigns consecutive transaction indicies" do

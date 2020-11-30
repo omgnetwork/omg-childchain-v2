@@ -97,25 +97,29 @@ defmodule Engine.DB.Transaction do
   then the transaction is associated with a newly inserted forming block.
   """
   def insert(tx_bytes) do
-    with {:ok, changeset} <- decode(tx_bytes) do
-      Multi.new()
-      |> Multi.run(:current_forming_block, &Block.get_forming_block_for_update/2)
-      |> Multi.run(:block_with_next_tx_index, &Block.get_block_and_tx_index_for_transaction/2)
-      |> Multi.insert(:transaction, fn %{block_with_next_tx_index: block_with_next_tx_index} ->
-        TransactionChangeset.set_blknum_and_tx_index(changeset, block_with_next_tx_index)
-      end)
-      |> Repo.transaction()
-      |> case do
-        {:ok, _} = result ->
-          result
+    case decode(tx_bytes) do
+      {:ok, changeset} ->
+        Multi.new()
+        |> Multi.run(:current_forming_block, &Block.get_forming_block_for_update/2)
+        |> Multi.run(:block_with_next_tx_index, &Block.get_block_and_tx_index_for_transaction/2)
+        |> Multi.insert(:transaction, fn %{block_with_next_tx_index: block_with_next_tx_index} ->
+          TransactionChangeset.set_blknum_and_tx_index(changeset, block_with_next_tx_index)
+        end)
+        |> Repo.transaction()
+        |> case do
+          {:ok, _} = result ->
+            result
 
-        {:error, _, changeset, _} ->
-          {:error, changeset}
+          {:error, _, changeset, _} ->
+            {:error, changeset}
 
-        error ->
-          _ = Logger.error("Error when inserting transaction #{inspect(error)}")
-          error
-      end
+          error ->
+            _ = Logger.error("Error when inserting transaction #{inspect(error)}")
+            error
+        end
+
+      decode_error ->
+        decode_error
     end
   end
 
@@ -145,10 +149,9 @@ defmodule Engine.DB.Transaction do
   end
 
   defp load_fees(type) do
-    with {:ok, all_fees} when is_map(all_fees) <- Fee.accepted_fees(),
-         fees_for_type <- Map.get(all_fees, type, {:error, :invalid_transaction_type}) do
-      {:ok, fees_for_type}
-    end
+    {:ok, all_fees} = Fee.accepted_fees()
+    fees_for_type = Map.get(all_fees, type, {:error, :invalid_transaction_type})
+    {:ok, fees_for_type}
   end
 
   defp recovered_to_map(transaction) do

@@ -20,7 +20,7 @@ defmodule Engine.DB.OutputTest do
                output_data: encoded_output_data,
                output_id: encoded_output_id,
                output_type: 1,
-               position: position,
+               position: _position,
                state: :confirmed
              } = Changeset.apply_changes(changeset)
 

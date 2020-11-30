@@ -25,6 +25,13 @@ defmodule Engine.DB.Transaction.TransactionQuery do
   end
 
   @doc """
+  Querries for count of tx index for a given block id
+  """
+  def count_transactions_in_block(block_id) do
+    from(t in Transaction, where: t.block_id == ^block_id, select: count(t.tx_index))
+  end
+
+  @doc """
   Querries for all transaction in a block
   """
   def fetch_transactions_from_block(block_id) do

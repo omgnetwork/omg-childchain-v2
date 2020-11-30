@@ -7,7 +7,7 @@ defmodule Engine.DB.Block do
   - nonce: The nonce of the transaction on the rootchain
   - blknum: The plasma block number, it's increased by 1000 for each new block
   - tx_hash: The hash of the transaction containing the the block submission on the rootchain
-  - formed_at_ethereum_height: The rootchain height at wish the block was formed
+  - formed_at_ethereum_height: The rootchain height at which the block was formed
   - submitted_at_ethereum_height: The rootchain height at wish the block was submitted
   - gas: The gas price used for the submission
   - attempts_counter: The number of submission attempts
@@ -105,15 +105,23 @@ defmodule Engine.DB.Block do
   end
 
   @doc """
-  Forms a block awaiting submission.
+  Changes currently forming block's state to finalizing.
+  If there is a non-empty block in state `forming` it changes state to `finalizing`.
   """
   @decorate trace(service: :ecto, type: :backend)
-  def form() do
-    Multi.new()
-    |> Multi.run(:block, &get_forming_block_for_update/2)
-    |> Multi.run(:block_for_submission, &hash_transactions/2)
-    |> Multi.run(:new_forming_block, &insert_block/2)
-    |> Repo.transaction()
+  def finalize_forming_block() do
+    result =
+      Multi.new()
+      |> Multi.run(:block, &get_non_empty_forming_block_for_finalization/2)
+      |> Multi.update(:finalizing_block, &finalize_block/1)
+      |> Repo.transaction()
+
+    case result do
+      {:ok, _} -> :ok
+      {:error, :block, :empty_block, %{}} -> :ok
+      {:error, :block, :no_forming_block, %{}} -> :ok
+      other -> {:error, other}
+    end
   end
 
   @doc """
@@ -122,12 +130,16 @@ defmodule Engine.DB.Block do
   - transaction fees are attached
   - merkle root hash is calculated
   - state is changed to pending submission
+  - sets formed_at_eth_height to ethereum height provided as an argument
   """
-  def prepare_for_submission() do
+  @decorate trace(service: :ecto, type: :backend)
+  def prepare_for_submission(eth_height) do
     Multi.new()
     |> Multi.run(:finalizing_blocks, &get_finalizing_blocks/2)
     |> Multi.run(:blocks, &attach_fee_transactions/2)
-    |> Multi.run(:blocks_for_submission, &prepare_for_submission/2)
+    |> Multi.run(:blocks_for_submission, fn repo, %{blocks: blocks} ->
+      prepare_for_submission(repo, blocks, eth_height)
+    end)
     |> Repo.transaction()
   end
 
@@ -158,22 +170,49 @@ defmodule Engine.DB.Block do
   def get_block_and_tx_index_for_transaction(repo, params) do
     %{current_forming_block: block} = params
     # this is safe as long as we lock on currently forming block
-    last_tx_index = repo.one(TransactionQuery.select_max_tx_index_for_block(block.id)) || -1
+    last_tx_index_for_block = last_tx_index_for_block(repo, block.id)
 
     # basic version, checking transaction limit is postponed until we get transction fees implemented
-    case last_tx_index >= @max_transaction_in_block do
-      true ->
+    case {last_tx_index_for_block, last_tx_index_for_block >= @max_transaction_in_block} do
+      {nil, _} ->
+        # the first transaction in a new, empty block needs to start with 0
+        {:ok, %{block: block, next_tx_index: 0}}
+
+      {_, true} ->
+        # the block is full, we need to start a new block
         {:ok, _} = finalize_block(repo, block)
         {:ok, new_forming_block} = insert_block(repo, %{})
         {:ok, %{block: new_forming_block, next_tx_index: 0}}
 
-      false ->
-        {:ok, %{block: block, next_tx_index: last_tx_index + 1}}
+      {_, false} ->
+        # block is not full yet, tx_index is incremented
+        {:ok, %{block: block, next_tx_index: last_tx_index_for_block + 1}}
+    end
+  end
+
+  def get_last_formed_block_eth_height() do
+    Repo.one(BlockQuery.get_last_formed_block_eth_height())
+  end
+
+  defp get_non_empty_forming_block_for_finalization(repo, _params) do
+    block = repo.one(BlockQuery.select_forming_block_for_update())
+
+    case block do
+      nil ->
+        {:error, :no_forming_block}
+
+      block ->
+        tx_count = tx_count_for_block(repo, block.id)
+
+        case tx_count do
+          0 -> {:error, :empty_block}
+          _ -> {:ok, block}
+        end
     end
   end
 
   defp get_all(repo, _changeset, new_height, mined_child_block) do
-    query = BlockQuery.get_all(new_height, mined_child_block)
+    query = BlockQuery.get_all_for_submission(new_height, mined_child_block)
     {:ok, repo.all(query)}
   end
 
@@ -213,7 +252,7 @@ defmodule Engine.DB.Block do
   defp insert_block(repo, _) do
     nonce =
       BlockQuery.select_max_nonce()
-      |> Repo.one()
+      |> repo.one()
       |> case do
         nil -> 1
         found_nonce -> found_nonce + 1
@@ -228,21 +267,20 @@ defmodule Engine.DB.Block do
     |> repo.insert(on_conflict: :nothing)
   end
 
-  defp prepare_for_submission(repo, blocks) do
-    %{blocks: blocks} = blocks
-
-    prepared_blocks =
-      Enum.map(blocks, fn block ->
-        {:ok, prepared_block} = hash_transactions(repo, block)
-        prepared_block
-      end)
-
-    {:ok, prepared_blocks}
+  defp prepare_for_submission(repo, finalizing_blocks, eth_height) do
+    do_prepare_for_submission(repo, finalizing_blocks, eth_height, [])
   end
 
-  defp hash_transactions(repo, %{block: block}), do: hash_transactions(repo, block)
+  defp do_prepare_for_submission(_repo, [], _eth_height, acc) do
+    {:ok, acc}
+  end
 
-  defp hash_transactions(repo, block) do
+  defp do_prepare_for_submission(repo, [block | blocks], eth_height, acc) do
+    {:ok, prepared_block} = hash_transactions(repo, block, eth_height)
+    do_prepare_for_submission(repo, blocks, eth_height, [prepared_block | acc])
+  end
+
+  defp hash_transactions(repo, block, eth_height) do
     hash =
       block.id
       |> fetch_tx_bytes_in_block()
@@ -251,7 +289,7 @@ defmodule Engine.DB.Block do
     # conflict on hash means block was prepared for submission by other process
     # do nothing then
     block
-    |> BlockChangeset.prepare_for_submission(%{hash: hash})
+    |> BlockChangeset.prepare_for_submission(%{hash: hash, formed_at_ethereum_height: eth_height})
     |> repo.update(on_conflict: :nothing)
   end
 
@@ -306,5 +344,19 @@ defmodule Engine.DB.Block do
       {:ok, _} = Transaction.insert_fee_transaction(repo, currency_with_amount, block, fee_tx_index)
       :ok
     end)
+  end
+
+  defp finalize_block(%{block: block}), do: BlockChangeset.finalize(block)
+
+  defp tx_count_for_block(repo, block_id) do
+    block_id
+    |> TransactionQuery.count_transactions_in_block()
+    |> repo.one()
+  end
+
+  defp last_tx_index_for_block(repo, block_id) do
+    block_id
+    |> TransactionQuery.select_max_tx_index_for_block()
+    |> repo.one()
   end
 end
