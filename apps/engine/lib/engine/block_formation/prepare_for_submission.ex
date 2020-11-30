@@ -1,4 +1,4 @@
-defmodule Engine.BlockForming.PrepareForSubmission do
+defmodule Engine.BlockFormation.PrepareForSubmission do
   @moduledoc """
   For blocks in finalizing state:
   - attaches fee transactions
@@ -7,8 +7,8 @@ defmodule Engine.BlockForming.PrepareForSubmission do
   """
   use GenServer
 
-  alias Engine.BlockForming.PrepareForSubmission.AlarmHandler
-  alias Engine.BlockForming.PrepareForSubmission.Core
+  alias Engine.BlockFormation.PrepareForSubmission.AlarmHandler
+  alias Engine.BlockFormation.PrepareForSubmission.Core
   alias Engine.DB.Block
 
   require Logger

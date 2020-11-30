@@ -1,7 +1,7 @@
-defmodule Engine.BlockForming.PrepareForSubmissionTest do
+defmodule Engine.BlockFormation.PrepareForSubmissionTest do
   use Engine.DB.DataCase, async: false
 
-  alias Engine.BlockForming.PrepareForSubmission
+  alias Engine.BlockFormation.PrepareForSubmission
   alias Engine.DB.Block
 
   @sleep_time_ms 1_000
