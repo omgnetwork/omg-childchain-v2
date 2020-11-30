@@ -281,10 +281,12 @@ defmodule Engine.DB.Factory do
   end
 
   def block_factory() do
+    nonce = sequence(:block_nonce, fn seq -> seq + 1 end)
+
     %Block{
       hash: :crypto.strong_rand_bytes(32),
-      nonce: sequence(:block_nonce, fn seq -> seq + 1 end),
-      blknum: sequence(:block_blknum, fn seq -> (seq + 1) * 1000 end),
+      nonce: nonce,
+      blknum: (nonce + 1) * 1000,
       state: :forming,
       tx_hash: :crypto.strong_rand_bytes(64),
       formed_at_ethereum_height: 1,
