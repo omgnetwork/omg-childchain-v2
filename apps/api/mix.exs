@@ -18,7 +18,7 @@ defmodule API.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger, :decorator, :ex_plasma],
       mod: {API.Application, []}
     ]
   end
@@ -26,6 +26,9 @@ defmodule API.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:engine, in_umbrella: true},
+      {:ex_plasma, "~> 0.2.0"},
+      {:decorator, "~> 1.2"},
       {:cors_plug, "~> 2.0"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.0"},
