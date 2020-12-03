@@ -195,7 +195,7 @@ jobs:
   integration:
     working_directory: ~/childchain
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2004:202010-01
     environment:
       MIX_ENV=test
     steps:
@@ -211,7 +211,7 @@ jobs:
 
   test_docker_compose_release_public:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2004:202010-01
     steps:
       - checkout
       - docker_compose_release:
@@ -219,7 +219,7 @@ jobs:
 
   test_docker_compose_release_private:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2004:202010-01
     steps:
       - checkout
       - docker_compose_release:
@@ -297,7 +297,7 @@ jobs:
 
   test_docker_compose_reorg:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2004:202010-01
     environment:
       REORG: true
     steps:
@@ -445,7 +445,7 @@ jobs:
 
   publish_childchain:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2004:202010-01
     environment:
       CHILDCHAIN_IMAGE_NAME: "omisego/childchain"
     steps:
