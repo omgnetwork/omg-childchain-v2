@@ -124,11 +124,7 @@ defmodule Engine.DB.BlockTest do
 
       assert [%{nonce: 7}, %{nonce: 8}, %{nonce: 9}] = blocks
       # assert that our integration point was called with these blocks
-<<<<<<< HEAD
-      [7, 8, 9] = receive_all_blocks_nonces()
-=======
       ["7", "8", "9"] = receive_all_blocks_nonces()
->>>>>>> vault integration testing, publish public and private container image
       ^ref = get_gas_ref()
 
       sql =
@@ -196,11 +192,7 @@ defmodule Engine.DB.BlockTest do
 
       assert [%{nonce: 7}, %{nonce: 8}, %{nonce: 9}, %{nonce: 10}] = blocks
       # assert that our integration point was called with these blocks
-<<<<<<< HEAD
-      [7, 8, 9, 10] = receive_all_blocks_nonces()
-=======
       ["7", "8", "9", "10"] = receive_all_blocks_nonces()
->>>>>>> vault integration testing, publish public and private container image
       ^ref = get_gas_ref()
 
       sql =
@@ -378,11 +370,7 @@ defmodule Engine.DB.BlockTest do
 
       # if submission was executed once, it was executed by one of the childchains
       # that WON the race, hence, we should receive nonces as messages only once
-<<<<<<< HEAD
-      [7, 8, 9, 10] = receive_all_blocks_nonces()
-=======
       ["7", "8", "9", "10"] = receive_all_blocks_nonces()
->>>>>>> vault integration testing, publish public and private container image
       ^ref = get_gas_ref()
     end
   end
