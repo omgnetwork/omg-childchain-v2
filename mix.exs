@@ -25,7 +25,12 @@ defmodule Childchain.MixProject do
           ]
         ]
       ],
-      preferred_cli_env: ["test.integration": :test, "test.all": :test]
+      preferred_cli_env: [
+        "test.integration": :test,
+        "test.all": :test,
+        "test.integration_block_submission_vault": :test,
+        "test.integration_block_submission": :test
+      ]
     ]
   end
 
@@ -36,6 +41,8 @@ defmodule Childchain.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["test --no-start"],
       "test.integration": ["test --only integration"],
+      "test.integration_block_submission_vault": ["test --only block_submission_vault"],
+      "test.integration_block_submission": ["test --only block_submission"],
       "test.all": ["test --include integration"]
     ]
   end

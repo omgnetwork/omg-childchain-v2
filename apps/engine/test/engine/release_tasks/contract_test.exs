@@ -3,6 +3,7 @@ defmodule Engine.ReleaseTasks.ContractTest do
 
   alias __MODULE__.EthereumClient
   alias Engine.ReleaseTasks.Contract
+  alias Engine.ReleaseTasks.Contract.EIP55
 
   describe "on_load/2" do
     test "plasma_framework, tx_hash and authority_address can be set", %{test: test_name} do
@@ -37,9 +38,9 @@ defmodule Engine.ReleaseTasks.ContractTest do
           rpc_url: "http://localhost:#{port}/",
           authority_address: "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f",
           plasma_framework: "0xc673e4ffcb8464faff908a6804fe0e635af0ea2f",
-          eth_vault: "0x4e3aeff70f022a6d4cc5947423887e7152826cf7",
-          erc20_vault: "0x4e3aeff70f022a6d4cc5947423887e7152826cf7",
-          payment_exit_game: "0x4e3aeff70f022a6d4cc5947423887e7152826cf7",
+          eth_vault: EIP55.encode!("0x4e3aeff70f022a6d4cc5947423887e7152826cf7"),
+          erc20_vault: EIP55.encode!("0x4e3aeff70f022a6d4cc5947423887e7152826cf7"),
+          payment_exit_game: EIP55.encode!("0x4e3aeff70f022a6d4cc5947423887e7152826cf7"),
           min_exit_period_seconds: 20,
           contract_semver: "1.0.4+a69c763",
           child_block_interval: 20,

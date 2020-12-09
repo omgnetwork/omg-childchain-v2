@@ -1,20 +1,15 @@
 defmodule Engine.Ethereum.Authority.Submitter do
   @moduledoc """
-  Periodic block submitter
+  Periodic block submitter.
   """
 
   alias Engine.DB.Block
   alias Engine.Ethereum.Authority.Submitter.Core
   alias Engine.Ethereum.Authority.Submitter.External
-  alias Engine.Ethereum.Height
 
   require Logger
 
   defstruct [:plasma_framework, :child_block_interval, :height, :enterprise, :gas_integration_fallback_order, :opts]
-
-  def push(server \\ __MODULE__) do
-    GenServer.cast(server, :submit)
-  end
 
   def child_spec(opts) do
     %{
@@ -39,12 +34,10 @@ defmodule Engine.Ethereum.Authority.Submitter do
     opts = Keyword.fetch!(init_arg, :opts)
     event_bus = Keyword.get(init_arg, :event_bus, Bus)
     :ok = event_bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
-    height = Height.get()
 
     state = %__MODULE__{
       plasma_framework: plasma_framework,
       child_block_interval: child_block_interval,
-      height: height,
       enterprise: enterprise,
       gas_integration_fallback_order: gas_integration_fallback_order,
       opts: opts
@@ -54,13 +47,9 @@ defmodule Engine.Ethereum.Authority.Submitter do
   end
 
   def handle_info({:internal_event_bus, :ethereum_new_height, new_height}, state) do
-    spawn(fn -> submit(new_height, state) end)
-    {:noreply, %{state | height: new_height}}
-  end
-
-  def handle_cast(:submit, state) do
-    spawn(fn -> submit(state.height, state) end)
-    {:noreply, state}
+    new_state = %{state | height: new_height}
+    submit(new_height, new_state)
+    {:noreply, new_state}
   end
 
   # This is the submitting part of block. At this point, a blocks are already formed.
@@ -68,6 +57,7 @@ defmodule Engine.Ethereum.Authority.Submitter do
   # Any kind of conflicts are resolved in the PG transaction, nonce of the Ethereum transaction
   # and the consesus mechanism of Ethereum.
   defp submit(height, state) do
+    _ = Logger.debug("Checking for new blocks")
     next_child_block = External.next_child_block(state.plasma_framework, state.opts)
     mined_child_block = Core.mined(next_child_block, state.child_block_interval)
     submit_fn = External.submit_block(state.plasma_framework, state.enterprise, state.opts)

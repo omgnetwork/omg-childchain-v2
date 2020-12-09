@@ -198,6 +198,23 @@ services:
       chain_net:
         ipv4_address: 172.27.0.105
 
+  vault:
+    image: gcr.io/omisego-development/omgnetwork/vault:0.0.7
+    ports:
+      - "8200:8200"
+    volumes:
+      # - "./docker/immutability/ca/certs/:/etc/ssl/certs/"
+      - "./docker/vault/:/vault/entrypoint:rw"
+      - "./data/immutability/config:/vault/config:rw"
+    entrypoint: >
+      /bin/sh -c "
+        sleep 2
+        /vault/entrypoint/entrypoint.sh
+      "
+    networks:
+      chain_net:
+        ipv4_address: 172.27.0.111
+
 networks:
   chain_net:
     driver: bridge
