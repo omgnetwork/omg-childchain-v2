@@ -32,7 +32,7 @@ defmodule Engine.ReleaseTasks.Contract do
     default_url = config |> Keyword.fetch!(:ethereumex) |> Keyword.fetch!(:url)
     rpc_url = "ETHEREUM_RPC_URL" |> get_env() |> Validators.url("ETHEREUM_RPC_URL", default_url)
 
-    contracts_data = get_external_data(plasma_framework, tx_hash, rpc_url)
+    contracts_config = get_contracts_config(plasma_framework, tx_hash, rpc_url)
 
     engine_config =
       Keyword.merge(
@@ -41,33 +41,33 @@ defmodule Engine.ReleaseTasks.Contract do
           authority_address: authority_address,
           plasma_framework: plasma_framework
         ],
-        contracts_data
+        contracts_config
       )
 
     Config.Reader.merge(config, engine: engine_config)
   end
 
-  defp get_external_data(plasma_framework, tx_hash, rpc_url) do
-    case ContractsConfig.get_contracts_data() do
+  defp get_contracts_config(plasma_framework, tx_hash, rpc_url) do
+    case ContractsConfig.get() do
       nil ->
-        external_data = external_data_from_root_chain(plasma_framework, tx_hash, rpc_url)
-        :ok = store_external_data_in_db(external_data)
-        external_data
+        config = get_config_from_root_chain(plasma_framework, tx_hash, rpc_url)
+        :ok = store_contracts_config_in_db(config)
+        config
 
-      stored_external_data ->
-        stored_external_data
+      config ->
+        config
         |> Map.from_struct()
         |> Keyword.new()
     end
   end
 
-  defp store_external_data_in_db(external_data) do
-    params = Enum.into(external_data, %{})
+  defp store_contracts_config_in_db(config) do
+    params = Enum.into(config, %{})
     {:ok, _} = ContractsConfig.insert(params)
     :ok
   end
 
-  defp external_data_from_root_chain(plasma_framework, tx_hash, rpc_url) do
+  defp get_config_from_root_chain(plasma_framework, tx_hash, rpc_url) do
     payment_exit_game = External.exit_game_contract_address(plasma_framework, ExPlasma.payment_v1(), url: rpc_url)
     eth_vault = External.vault(plasma_framework, @ether_vault_id, url: rpc_url)
     erc20_vault = External.vault(plasma_framework, @erc20_vault_id, url: rpc_url)

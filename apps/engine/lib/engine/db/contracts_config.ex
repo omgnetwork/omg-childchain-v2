@@ -66,7 +66,7 @@ defmodule Engine.DB.ContractsConfig do
     |> Repo.insert()
   end
 
-  def get_contracts_data() do
+  def get() do
     Repo.one(from(b in __MODULE__, select: b))
   end
 end
