@@ -250,7 +250,7 @@ defmodule Engine.DB.Block do
       error ->
         # we encountered an error with one of the block submissions
         # we'll stop here and continue later
-        _ = Logger.error("Block submission stopped at block with nonce #{plasma_block.nonce}. Error: #{inspect(error)}")
+        _ = Logger.warn("Block submission stopped at block with nonce #{plasma_block.nonce}. Error: #{inspect(error)}")
         process_submission(repo, [], new_height, mined_child_block, submit_fn, gas_fn)
     end
   end
