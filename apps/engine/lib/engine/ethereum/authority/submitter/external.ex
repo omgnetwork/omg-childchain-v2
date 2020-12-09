@@ -10,7 +10,7 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
 
   @type option :: {:url, String.t()}
   @doc """
-  Next child block with the interval of Config.child_block_interval(). 
+  Next child block with the interval of Config.child_block_interval().
   Normally that's 1000, 2000, 3000,...
   NOT YET MINED!
   To get the last mined block:
@@ -35,7 +35,7 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
     This is the point where we integrate with SubmitBlock.
     Default integration signature:
     SubmitBlock.submit_block(block_root, nonce, gas_price, contract, opts)
-    
+
   """
   @spec submit_block(String.t(), 0 | 1, Keyword.t()) :: function()
   def submit_block(plasma_framework, enteprise, opts) do

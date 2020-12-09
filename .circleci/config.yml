@@ -236,9 +236,18 @@ jobs:
           environment:
             ENTERPRISE: 1
           command: mix test.integration_block_submission_vault
-      # - run: rm -rf deps/ _build/
-      # - run: ENTERPRISE=0 mix deps.get
-      # - run: mix test.integration_block_submission
+      - run: rm -rf deps/ _build/
+      - run: make init-contracts
+      - run:
+          name: Get deps
+          environment:
+            ENTERPRISE: 0
+          command: mix deps.get
+      - run:
+          name: Run integration test
+          environment:
+            ENTERPRISE: 0
+          command: mix test.integration_block_submission
 
   test_docker_compose_release_public:
     machine:
