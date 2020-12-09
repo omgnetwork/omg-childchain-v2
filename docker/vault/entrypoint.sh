@@ -2,9 +2,9 @@
 
 # Vault running in the container must listen on a different port.
 
-VAULT_CREDENTIALS="/home/vault/config/unseal.json"
+VAULT_CREDENTIALS="/vault/config/unseal.json"
 
-CONFIG_DIR="/home/vault/config"
+CONFIG_DIR="/vault/config"
 
 CA_CERT="$CONFIG_DIR/ca.crt"
 CA_KEY="$CONFIG_DIR/ca.key"
@@ -16,7 +16,7 @@ CSR="$CONFIG_DIR/my-service.csr"
 export VAULT_ADDR="https://127.0.0.1:8200"
 export VAULT_CACERT="$CA_CERT"
 
-nohup vault server -log-level=debug -config /home/vault/config/vault.hcl &
+nohup vault server -log-level=debug -config /vault/config/vault.hcl &
 VAULT_PID=$!
 
 function unseal() {

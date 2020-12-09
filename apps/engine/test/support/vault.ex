@@ -188,7 +188,7 @@ defmodule Engine.Vault do
       "Entrypoint" => [
         "/bin/sh",
         "-c",
-        "/home/vault/entrypoint/entrypoint.sh"
+        "/vault/entrypoint/entrypoint.sh"
       ],
       "Env" => [],
       # -p

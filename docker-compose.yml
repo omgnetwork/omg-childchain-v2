@@ -204,12 +204,12 @@ services:
       - "8200:8200"
     volumes:
       # - "./docker/immutability/ca/certs/:/etc/ssl/certs/"
-      - "./docker/vault/:/home/vault/entrypoint:rw"
-      - "./data/immutability/config:/home/vault/config:rw"
+      - "./docker/vault/:/vault/entrypoint:rw"
+      - "./data/immutability/config:/vault/config:rw"
     entrypoint: >
       /bin/sh -c "
         sleep 2
-        /home/vault/entrypoint/entrypoint.sh
+        /vault/entrypoint/entrypoint.sh
       "
     networks:
       chain_net:
