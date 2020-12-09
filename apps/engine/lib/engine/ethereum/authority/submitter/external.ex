@@ -5,7 +5,7 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
 
   alias Engine.Ethereum.RootChain.Abi
   alias Engine.Ethereum.RootChain.Rpc
-
+  alias ExPlasma.Encoding
   require Logger
 
   @type option :: {:url, String.t()}
@@ -45,8 +45,19 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
     contract = plasma_framework
 
     fn block_root, nonce, gas_price ->
-      IO.inspect apply(module, function, [block_root, nonce, gas_price, contract, external_opts]), label: "output"
-      :ok
+      case apply(module, function, [block_root, nonce, gas_price, contract, external_opts]) do
+        {:ok, %HTTPoison.Response{body: body, status_code: 200}} ->
+          # ENTERPRISE 1
+          {:ok, body |> Jason.decode!() |> Map.get("data") |> Map.get("transaction_hash")}
+
+        {:ok, tx_hash} ->
+          # ENTERPRISE 0
+          {:ok, Encoding.to_hex(tx_hash)}
+
+        other ->
+          # this should be logged by the invoker
+          other
+      end
     end
   end
 

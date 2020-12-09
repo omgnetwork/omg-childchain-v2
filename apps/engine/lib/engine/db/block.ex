@@ -235,12 +235,13 @@ defmodule Engine.DB.Block do
     submission_result = submit_fn.(plasma_block.hash, "#{plasma_block.nonce}", "#{gas}")
 
     case submission_result do
-      :ok ->
+      {:ok, tx_hash} ->
         plasma_block
         |> BlockChangeset.submitted(%{
           attempts_counter: plasma_block.attempts_counter + 1,
           gas: gas,
-          submitted_at_ethereum_height: new_height
+          submitted_at_ethereum_height: new_height,
+          tx_hash: tx_hash
         })
         |> repo.update!([])
 
