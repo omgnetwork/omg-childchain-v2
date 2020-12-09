@@ -45,7 +45,7 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
     contract = plasma_framework
 
     fn block_root, nonce, gas_price ->
-      apply(module, function, [block_root, nonce, gas_price, contract, external_opts])
+      IO.inspect apply(module, function, [block_root, nonce, gas_price, contract, external_opts]), label: "output"
       :ok
     end
   end

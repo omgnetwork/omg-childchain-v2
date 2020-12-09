@@ -24,7 +24,7 @@ defmodule SubmitBlockTest do
   end
 
   test "submit a sealed block to plasma contracts and check that it was accepted" do
-        Plugin.verify(true, true, false)
+    Plugin.verify(true, true, false)
     enterprise = 0
     rpc_url = "http://localhost:8545"
     vault_url = nil
