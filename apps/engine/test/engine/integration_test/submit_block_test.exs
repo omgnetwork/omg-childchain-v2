@@ -15,6 +15,9 @@ defmodule SubmitBlockTest do
     # https://github.com/omisego-images/docker-elixir-omg/blob/6beba75b5eb718be90e05e3d5c9f23bff41a4a1b/contracts/docker-compose.yml#L31
     System.put_env("PRIVATE_KEY", "7f30f140fd4724519e5017c0895f158d68bbbe4a81c0c10dbb25a0006e348807")
     {:ok, {geth_pid, _geth_container_id}} = Geth.start(8545)
+    # this is executed on boot when enterprise = 0 (non vault mode)
+    # and creates a fake Gas module
+    Plugin.verify(true, true, false)
 
     on_exit(fn ->
       GenServer.stop(geth_pid)
@@ -24,7 +27,6 @@ defmodule SubmitBlockTest do
   end
 
   test "submit a sealed block to plasma contracts and check that it was accepted" do
-    Plugin.verify(true, true, false)
     enterprise = 0
     rpc_url = "http://localhost:8545"
     vault_url = nil

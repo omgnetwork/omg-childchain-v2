@@ -145,7 +145,7 @@ jobs:
   build:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.4
+      - image: circleci/elixir:1.11.2
       - image: circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: omisego_dev
@@ -247,6 +247,62 @@ jobs:
           name: Run integration test
           environment:
             ENTERPRISE: 0
+          command: mix test.integration_block_submission
+
+  integration_vault:
+    working_directory: ~/childchain
+    machine:
+      image: ubuntu-2004:202010-01
+    environment:
+      MIX_ENV=test
+      ENTERPRISE=1
+    steps:
+      - checkout
+      - install_rust
+      - run: docker-compose up -d postgres
+      - install_elixir:
+          cache: "integration"
+          dir: "~/childchain"
+      - gcloud_login
+      - run:
+          name: Get enteprise deps
+          environment:
+            ENTERPRISE: 1
+          command: mix deps.get
+      - run: make init-contracts-vault
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
+      - run:
+          name: Run Vault integration test
+          environment:
+            ENTERPRISE: 1
+          command: mix test.integration_block_submission_vault
+
+  integration_send_raw_eth_transaction:
+    working_directory: ~/childchain
+    machine:
+      image: ubuntu-2004:202010-01
+    environment:
+      ENTERPRISE=0
+      MIX_ENV=test
+    steps:
+      - checkout
+      - install_rust
+      - run: docker-compose up -d postgres
+      - install_elixir:
+          cache: "integration"
+          dir: "~/childchain"
+      - gcloud_login
+      - run: make init-contracts
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
+      - run:
+          name: Get deps
+          command: mix deps.get
+      - run:
+          name: Run integration test
           command: mix test.integration_block_submission
 
   test_docker_compose_release_public:
@@ -517,9 +573,9 @@ workflows:
           requires:
             - build
 
-      - integration:
-          requires:
-            - build
+      - integration
+      - integration_send_raw_eth_transaction
+      - integration_vault
 
       - test_docker_compose_release_private:
           requires:
