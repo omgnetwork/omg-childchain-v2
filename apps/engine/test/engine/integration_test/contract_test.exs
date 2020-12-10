@@ -60,7 +60,7 @@ defmodule ContractTest do
           )
         end)
 
-      # assert config |> Keyword.get(:engine) |> Enum.sort() == engine_setup3 |> Keyword.get(:engine) |> Enum.sort()
+      assert config |> Keyword.get(:engine) |> Enum.sort() == engine_setup3 |> Keyword.get(:engine) |> Enum.sort()
 
       # config is stored in database
       contracts_config = ContractsConfig.get(Engine.Repo)
