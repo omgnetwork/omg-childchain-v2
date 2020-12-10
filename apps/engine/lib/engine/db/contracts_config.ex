@@ -69,17 +69,18 @@ defmodule Engine.DB.ContractsConfig do
   """
   @spec get(module) :: keyword() | nil
   def get(repo) do
-    config = repo.one(from(b in __MODULE__, select: b))
-
-    case config do
-      nil ->
-        nil
-
-      config ->
-        config
-        |> Map.from_struct()
-        |> Map.drop([:__meta__, :guard, :inserted_at, :node_inserted_at, :updated_at])
-        |> Keyword.new()
-    end
+    repo.one(
+      from(c in __MODULE__,
+        select: [
+          payment_exit_game: c.payment_exit_game,
+          eth_vault: c.eth_vault,
+          erc20_vault: c.erc20_vault,
+          min_exit_period_seconds: c.min_exit_period_seconds,
+          contract_semver: c.contract_semver,
+          child_block_interval: c.child_block_interval,
+          contract_deployment_height: c.contract_deployment_height
+        ]
+      )
+    )
   end
 end

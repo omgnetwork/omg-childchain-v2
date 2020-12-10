@@ -67,13 +67,13 @@ defmodule ContractTest do
       contracts_config = ContractsConfig.get(Repo)
 
       assert contracts_config == [
-               child_block_interval: 1000,
-               contract_deployment_height: 120,
-               contract_semver: "2.0.0+ddbd40b",
-               erc20_vault: "0xE520b5e3DF580F9015141152e152eA5EDf119A74",
+               payment_exit_game: "0xDD2860DD8f182F90870383A98ddAf63FdB00573E",
                eth_vault: "0xf39ABA0a60Dd1be8F9ddF2Cc2104E8C3a8BA5670",
+               erc20_vault: "0xE520b5e3DF580F9015141152e152eA5EDf119A74",
                min_exit_period_seconds: 20,
-               payment_exit_game: "0xDD2860DD8f182F90870383A98ddAf63FdB00573E"
+               contract_semver: "2.0.0+ddbd40b",
+               child_block_interval: 1000,
+               contract_deployment_height: 120
              ]
     end
 
@@ -96,13 +96,13 @@ defmodule ContractTest do
           rpc_url: "http://localhost:#{port}",
           authority_address: "0xf91d00cc5906c355b6c8a04d9d940c4adc64cb1c",
           plasma_framework: "0x97ba80836092c734d400acb79e310bcd4776dddb",
-          child_block_interval: Map.get(config_in_db, :child_block_interval),
-          contract_deployment_height: Map.get(config_in_db, :contract_deployment_height),
-          contract_semver: Map.get(config_in_db, :contract_semver),
-          erc20_vault: Map.get(config_in_db, :erc20_vault),
+          payment_exit_game: Map.get(config_in_db, :payment_exit_game),
           eth_vault: Map.get(config_in_db, :eth_vault),
+          erc20_vault: Map.get(config_in_db, :erc20_vault),
           min_exit_period_seconds: Map.get(config_in_db, :min_exit_period_seconds),
-          payment_exit_game: Map.get(config_in_db, :payment_exit_game)
+          contract_semver: Map.get(config_in_db, :contract_semver),
+          child_block_interval: Map.get(config_in_db, :child_block_interval),
+          contract_deployment_height: Map.get(config_in_db, :contract_deployment_height)
         ]
       ]
 

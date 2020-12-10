@@ -17,8 +17,16 @@ defmodule Engine.DB.ContractsConfigTest do
     test "does not return irrelevant data" do
       {:ok, _} = ContractsConfig.insert(Repo, @params)
 
-      actual = ContractsConfig.get(Repo)
-      expected = Keyword.new(@params)
+      actual =
+        Repo
+        |> ContractsConfig.get()
+        |> Enum.sort()
+
+      expected =
+        @params
+        |> Keyword.new()
+        |> Enum.sort()
+
       assert actual == expected
     end
   end
