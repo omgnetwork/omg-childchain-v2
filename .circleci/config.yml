@@ -175,6 +175,7 @@ jobs:
       - restore_cache:
           key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
       - run: mix deps.get
+      - run: mix deps.compile
       - run: mix do compile --warnings-as-errors --force
       - save_cache:
           key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
@@ -282,7 +283,7 @@ jobs:
       image: ubuntu-2004:202010-01
     environment:
       MIX_ENV: test
-      ENTERPRISE: 1
+      ENTERPRISE: 0
     steps:
       - checkout
       - install_rust
