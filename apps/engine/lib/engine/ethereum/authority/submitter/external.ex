@@ -5,12 +5,12 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
 
   alias Engine.Ethereum.RootChain.Abi
   alias Engine.Ethereum.RootChain.Rpc
-
+  alias ExPlasma.Encoding
   require Logger
 
   @type option :: {:url, String.t()}
   @doc """
-  Next child block with the interval of Config.child_block_interval(). 
+  Next child block with the interval of Config.child_block_interval().
   Normally that's 1000, 2000, 3000,...
   NOT YET MINED!
   To get the last mined block:
@@ -35,7 +35,7 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
     This is the point where we integrate with SubmitBlock.
     Default integration signature:
     SubmitBlock.submit_block(block_root, nonce, gas_price, contract, opts)
-    
+
   """
   @spec submit_block(String.t(), 0 | 1, Keyword.t()) :: function()
   def submit_block(plasma_framework, enteprise, opts) do
@@ -45,8 +45,19 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
     contract = plasma_framework
 
     fn block_root, nonce, gas_price ->
-      apply(module, function, [block_root, nonce, gas_price, contract, external_opts])
-      :ok
+      case apply(module, function, [block_root, nonce, gas_price, contract, external_opts]) do
+        {:ok, %HTTPoison.Response{body: body, status_code: 200}} ->
+          # ENTERPRISE 1
+          {:ok, body |> Jason.decode!() |> Map.get("data") |> Map.get("transaction_hash")}
+
+        {:ok, tx_hash} ->
+          # ENTERPRISE 0
+          {:ok, Encoding.to_hex(tx_hash)}
+
+        other ->
+          # this should be logged by the invoker
+          other
+      end
     end
   end
 

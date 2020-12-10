@@ -34,7 +34,7 @@ defmodule API.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:spandex, "~> 3.0.1"},
       {:spandex_datadog, "~> 1.0.0"},
-      {:spandex_phoenix, "~> 0.4.2"}
+      {:spandex_phoenix, "~> 1.0.5"}
     ]
   end
 end

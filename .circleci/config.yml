@@ -145,7 +145,7 @@ jobs:
   build:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.4
+      - image: circleci/elixir:1.11.2
       - image: circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: omisego_dev
@@ -174,7 +174,9 @@ jobs:
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
           key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
-      - run: mix do deps.get, compile --warnings-as-errors --force
+      - run: mix deps.get
+      - run: mix deps.compile
+      - run: mix do compile --warnings-as-errors --force
       - save_cache:
           key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
           paths:
@@ -185,7 +187,7 @@ jobs:
   test:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.4
+      - image: circleci/elixir:1.11.2
       - image: circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: omisego_dev
@@ -193,7 +195,7 @@ jobs:
           POSTGRES_DB: engine_repo_test
           CIRLCECI: true
     environment:
-      MIX_ENV=test
+      MIX_ENV: test
     steps:
       - add_rust_to_path
       - checkout
@@ -207,7 +209,7 @@ jobs:
     machine:
       image: ubuntu-2004:202010-01
     environment:
-      MIX_ENV=test
+      MIX_ENV: test
     steps:
       - checkout
       - install_rust
@@ -236,9 +238,70 @@ jobs:
           environment:
             ENTERPRISE: 1
           command: mix test.integration_block_submission_vault
-      # - run: rm -rf deps/ _build/
-      # - run: ENTERPRISE=0 mix deps.get
-      # - run: mix test.integration_block_submission
+      - run: rm -rf deps/ _build/
+      - run: make init-contracts
+      - run:
+          name: Get deps
+          environment:
+            ENTERPRISE: 0
+          command: mix deps.get
+      - run:
+          name: Run integration test
+          environment:
+            ENTERPRISE: 0
+          command: mix test.integration_block_submission
+
+  integration_vault:
+    working_directory: ~/childchain
+    machine:
+      image: ubuntu-2004:202010-01
+    environment:
+      MIX_ENV: test
+      ENTERPRISE: 1
+    steps:
+      - checkout
+      - install_rust
+      - run: docker-compose up -d postgres
+      - install_elixir:
+          cache: "integration"
+          dir: "~/childchain"
+      - gcloud_login
+      - run:
+          name: Get enteprise deps
+          command: mix deps.get
+      - run: make init-contracts-vault
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
+      - run:
+          name: Run Vault integration test
+          command: mix test.integration_block_submission_vault
+
+  integration_send_raw_eth_transaction:
+    working_directory: ~/childchain
+    machine:
+      image: ubuntu-2004:202010-01
+    environment:
+      MIX_ENV: test
+      ENTERPRISE: 0
+    steps:
+      - checkout
+      - install_rust
+      - run: docker-compose up -d postgres
+      - install_elixir:
+          cache: "integration"
+          dir: "~/childchain"
+      - gcloud_login
+      - run: make init-contracts
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
+      - run:
+          name: Get deps
+          command: mix deps.get
+      - run:
+          name: Run integration test
+          command: mix test.integration_block_submission
 
   test_docker_compose_release_public:
     machine:
@@ -396,9 +459,9 @@ jobs:
   credo:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.4
+      - image: circleci/elixir:1.11.2
     environment:
-      MIX_ENV=test
+      MIX_ENV: test
     steps:
       - checkout
       - add_rust_to_path
@@ -441,9 +504,9 @@ jobs:
   dialyzer:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.4
+      - image: circleci/elixir:1.11.2
     environment:
-      MIX_ENV=dev
+      MIX_ENV: dev
     steps:
       - checkout
       - install_rust
@@ -508,9 +571,9 @@ workflows:
           requires:
             - build
 
-      - integration:
-          requires:
-            - build
+      - integration
+      - integration_send_raw_eth_transaction
+      - integration_vault
 
       - test_docker_compose_release_private:
           requires:
