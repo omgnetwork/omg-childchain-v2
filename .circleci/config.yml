@@ -266,8 +266,6 @@ jobs:
       - gcloud_login
       - run:
           name: Get enteprise deps
-          environment:
-            ENTERPRISE: 1
           command: mix deps.get
       - run: make init-contracts-vault
       - run:
@@ -275,8 +273,6 @@ jobs:
           command: chmod -R 777 data
       - run:
           name: Run Vault integration test
-          environment:
-            ENTERPRISE: 1
           command: mix test.integration_block_submission_vault
 
   integration_send_raw_eth_transaction:

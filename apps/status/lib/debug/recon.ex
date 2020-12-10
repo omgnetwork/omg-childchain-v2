@@ -221,11 +221,11 @@ defmodule Status.Debug.Recon do
   end
 
   defp pre_process_pid_term(<<"#PID", pid_term::binary>>) do
-    to_char_list(pid_term)
+    Kernel.to_charlist(pid_term)
   end
 
   defp pre_process_pid_term(pid_term) when is_binary(pid_term) do
-    to_char_list(pid_term)
+    Kernel.to_charlist(pid_term)
   end
 
   defp pre_process_pid_term(pid_term) do
