@@ -78,6 +78,7 @@ defmodule Engine.ReleaseTasks.Contract do
 
   defp get_config_from_root_chain(plasma_framework, tx_hash, rpc_url) do
     payment_exit_game = External.exit_game_contract_address(plasma_framework, ExPlasma.payment_v1(), url: rpc_url)
+
     eth_vault = External.vault(plasma_framework, @ether_vault_id, url: rpc_url)
     erc20_vault = External.vault(plasma_framework, @erc20_vault_id, url: rpc_url)
     min_exit_period_seconds = External.min_exit_period(plasma_framework, url: rpc_url)

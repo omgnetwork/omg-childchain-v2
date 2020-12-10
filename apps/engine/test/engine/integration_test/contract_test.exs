@@ -60,10 +60,11 @@ defmodule ContractTest do
           )
         end)
 
-      assert config |> Keyword.get(:engine) |> Enum.sort() == engine_setup3 |> Keyword.get(:engine) |> Enum.sort()
+      assert config |> Keyword.get(:engine) |> upcase_hexes() |> Enum.sort() ==
+               engine_setup3 |> Keyword.get(:engine) |> upcase_hexes() |> Enum.sort()
 
       # config is stored in database
-      contracts_config = ContractsConfig.get(Engine.Repo)
+      contracts_config = ContractsConfig.get(Repo)
 
       assert contracts_config == [
                child_block_interval: 1000,
@@ -87,7 +88,7 @@ defmodule ContractTest do
         contract_deployment_height: 120
       }
 
-      {:ok, _} = ContractsConfig.insert(Engine.Repo, config_in_db)
+      {:ok, _} = ContractsConfig.insert(Repo, config_in_db)
 
       expected = [
         ethereumex: [url: "not used because env var"],
@@ -109,4 +110,13 @@ defmodule ContractTest do
       assert actual == expected
     end
   end
+
+  defp upcase_hexes(config) do
+    config
+    |> Keyword.update!(:payment_exit_game, &upcase_hex/1)
+    |> Keyword.update!(:erc20_vault, &upcase_hex/1)
+    |> Keyword.update!(:eth_vault, &upcase_hex/1)
+  end
+
+  defp upcase_hex("0x" <> rest), do: "0x" <> String.upcase(rest)
 end

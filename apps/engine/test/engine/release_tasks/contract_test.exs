@@ -1,5 +1,5 @@
 defmodule Engine.ReleaseTasks.ContractTest do
-  use ExUnit.Case, async: true
+  use Engine.DB.DataCase, async: false
 
   alias __MODULE__.EthereumClient
   alias Engine.ReleaseTasks.Contract
