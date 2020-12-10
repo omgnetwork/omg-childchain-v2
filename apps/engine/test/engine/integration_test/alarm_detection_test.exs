@@ -57,7 +57,6 @@ defmodule AlarmDetectionTest do
     assert_receive {:trace, ^height_observer_pid, :receive, {:"$gen_cast", {:set_alarm, :ethereum_connection_error}}},
                    16_000
 
-    IO.inspect(:sys.get_state(height_observer_pid), label: "yolo!!!")
     %{ethereum_connection_error: true} = :sys.get_state(height_observer_pid)
     :erlang.trace(height_observer_pid, false, [:receive])
   end
