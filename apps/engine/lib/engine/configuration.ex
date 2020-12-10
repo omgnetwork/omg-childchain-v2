@@ -46,9 +46,19 @@ defmodule Engine.Configuration do
     Application.fetch_env!(@app, :eth_vault)
   end
 
+  @spec erc20_vault() :: String.t()
+  def erc20_vault() do
+    Application.fetch_env!(@app, :erc20_vault)
+  end
+
   @spec rpc_url() :: String.t()
   def rpc_url() do
     Application.fetch_env!(@app, :rpc_url)
+  end
+
+  @spec payment_exit_game() :: String.t()
+  def payment_exit_game() do
+    Application.fetch_env!(@app, :payment_exit_game)
   end
 
   @spec vault_url() :: String.t()

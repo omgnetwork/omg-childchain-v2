@@ -1,5 +1,11 @@
 version: 2.1
 commands:
+  gcloud_login:
+    steps:
+      - run: |
+          echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+          gcloud auth configure-docker --quiet
+
   docker_compose_release:
     parameters:
       enterprise:
@@ -8,7 +14,11 @@ commands:
     description: "Builds a docker image"
     steps:
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - run: ENTERPRISE=<<parameters.enterprise>> make docker-childchain
+      - gcloud_login
+      - run:
+          environment:
+            ENTERPRISE: <<parameters.enterprise>>
+          command: make docker-childchain
       - run:
           name: "Pull Submodules"
           command: |
@@ -135,7 +145,7 @@ jobs:
   build:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.4
+      - image: circleci/elixir:1.11.2
       - image: circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: omisego_dev
@@ -164,7 +174,9 @@ jobs:
       - run: mix local.rebar --force && mix local.hex --force
       - restore_cache:
           key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
-      - run: mix do deps.get, compile --warnings-as-errors --force
+      - run: mix deps.get
+      - run: mix deps.compile
+      - run: mix do compile --warnings-as-errors --force
       - save_cache:
           key: v4-mix-cache-{{ .Branch }}-{{ checksum "mix.lock" }}
           paths:
@@ -175,7 +187,7 @@ jobs:
   test:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.4
+      - image: circleci/elixir:1.11.2
       - image: circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: omisego_dev
@@ -183,7 +195,7 @@ jobs:
           POSTGRES_DB: engine_repo_test
           CIRLCECI: true
     environment:
-      MIX_ENV=test
+      MIX_ENV: test
     steps:
       - add_rust_to_path
       - checkout
@@ -197,7 +209,7 @@ jobs:
     machine:
       image: ubuntu-2004:202010-01
     environment:
-      MIX_ENV=test
+      MIX_ENV: test
     steps:
       - checkout
       - install_rust
@@ -205,9 +217,91 @@ jobs:
       - install_elixir:
           cache: "integration"
           dir: "~/childchain"
+      - gcloud_login
       - run: make init-contracts
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
       - run: mix deps.get
       - run: mix test.integration
+      - run:
+          name: Get enteprise deps
+          environment:
+            ENTERPRISE: 1
+          command: mix deps.get
+      - run: make init-contracts-vault
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
+      - run:
+          name: Run Vault integration test
+          environment:
+            ENTERPRISE: 1
+          command: mix test.integration_block_submission_vault
+      - run: rm -rf deps/ _build/
+      - run: make init-contracts
+      - run:
+          name: Get deps
+          environment:
+            ENTERPRISE: 0
+          command: mix deps.get
+      - run:
+          name: Run integration test
+          environment:
+            ENTERPRISE: 0
+          command: mix test.integration_block_submission
+
+  integration_vault:
+    working_directory: ~/childchain
+    machine:
+      image: ubuntu-2004:202010-01
+    environment:
+      MIX_ENV: test
+      ENTERPRISE: 1
+    steps:
+      - checkout
+      - install_rust
+      - run: docker-compose up -d postgres
+      - install_elixir:
+          cache: "integration"
+          dir: "~/childchain"
+      - gcloud_login
+      - run:
+          name: Get enteprise deps
+          command: mix deps.get
+      - run: make init-contracts-vault
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
+      - run:
+          name: Run Vault integration test
+          command: mix test.integration_block_submission_vault
+
+  integration_send_raw_eth_transaction:
+    working_directory: ~/childchain
+    machine:
+      image: ubuntu-2004:202010-01
+    environment:
+      MIX_ENV: test
+      ENTERPRISE: 0
+    steps:
+      - checkout
+      - install_rust
+      - run: docker-compose up -d postgres
+      - install_elixir:
+          cache: "integration"
+          dir: "~/childchain"
+      - gcloud_login
+      - run: make init-contracts
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
+      - run:
+          name: Get deps
+          command: mix deps.get
+      - run:
+          name: Run integration test
+          command: mix test.integration_block_submission
 
   test_docker_compose_release_public:
     machine:
@@ -272,7 +366,7 @@ jobs:
       - run:
           name: Restart all services
           background: true
-          command: docker-compose up -d nginx postgres geth feefeed
+          command: docker-compose up nginx postgres geth feefeed
       - pull_childchain_health
       # at this point we reverse the startup order, first childchain then all services
       - run: sudo pkill beam
@@ -291,7 +385,7 @@ jobs:
       - run:
           name: Start all services
           background: true
-          command: docker-compose up -d nginx postgres geth
+          command: docker-compose up nginx postgres geth feefeed
       - run: sleep 20
       - pull_childchain_health
 
@@ -304,6 +398,7 @@ jobs:
       - checkout
       - install_rust
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - gcloud_login
       - run:
           name: "Pull Submodules"
           command: |
@@ -364,9 +459,9 @@ jobs:
   credo:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.4
+      - image: circleci/elixir:1.11.2
     environment:
-      MIX_ENV=test
+      MIX_ENV: test
     steps:
       - checkout
       - add_rust_to_path
@@ -409,9 +504,9 @@ jobs:
   dialyzer:
     working_directory: ~/childchain
     docker:
-      - image: circleci/elixir:1.10.4
+      - image: circleci/elixir:1.11.2
     environment:
-      MIX_ENV=dev
+      MIX_ENV: dev
     steps:
       - checkout
       - install_rust
@@ -447,15 +542,25 @@ jobs:
     machine:
       image: ubuntu-2004:202010-01
     environment:
-      CHILDCHAIN_IMAGE_NAME: "omisego/childchain"
+      CHILDCHAIN_IMAGE_NAME: "childchain"
+      DOCKER_HUB_REPO: "omisego"
+      GCS_REPO: "gcr.io/omisego-production"
     steps:
       - checkout
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run:
           environment:
             ENTERPRISE: 0
-          command: make docker-childchain CHILDCHAIN_IMAGE_NAME=$CHILDCHAIN_IMAGE_NAME
-      - run: IMAGE_NAME=$CHILDCHAIN_IMAGE_NAME sh .circleci/ci_publish.sh
+          command: make docker-childchain CHILDCHAIN_IMAGE_NAME=$DOCKER_HUB_REPO/$CHILDCHAIN_IMAGE_NAME
+      - run: IMAGE_NAME=$DOCKER_HUB_REPO/$CHILDCHAIN_IMAGE_NAME sh .circleci/ci_publish.sh
+      - run: |
+          echo $PRODUCTION_DOCKER_GCLOUD_KEY | gcloud auth activate-service-account --key-file=-
+          gcloud -q auth configure-docker
+      - run:
+          environment:
+            ENTERPRISE: 1
+          command: make docker-childchain CHILDCHAIN_IMAGE_NAME=$GCS_REPO/$CHILDCHAIN_IMAGE_NAME
+      - run: IMAGE_NAME=$GCS_REPO/$CHILDCHAIN_IMAGE_NAME sh .circleci/ci_publish.sh
 
 workflows:
   version: 2
@@ -466,9 +571,9 @@ workflows:
           requires:
             - build
 
-      - integration:
-          requires:
-            - build
+      - integration
+      - integration_send_raw_eth_transaction
+      - integration_vault
 
       - test_docker_compose_release_private:
           requires:
@@ -495,8 +600,11 @@ workflows:
             - build
 
       - publish_childchain:
+          context:
+            - production-docker-push
           requires:
             [
+              development,
               dialyzer,
               credo,
               integration,

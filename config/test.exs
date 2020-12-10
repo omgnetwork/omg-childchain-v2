@@ -14,7 +14,7 @@ config :engine, Engine.Repo,
 
 config :engine, ecto_repos: [Engine.Repo]
 
-config :briefly, directory: ["/tmp/omgisego/childchain"]
+config :briefly, directory: ["/tmp/omisego/childchain"]
 
 config :engine,
   url: "http://localhost:8545",

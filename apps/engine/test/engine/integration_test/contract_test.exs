@@ -11,12 +11,16 @@ defmodule ContractTest do
   setup_all do
     {:ok, _briefly} = Application.ensure_all_started(:briefly)
     port = Enum.random(35_000..40_000)
-    {:ok, {_geth_pid, _container_id}} = Geth.start(port)
+    {:ok, {geth_pid, _container_id}} = Geth.start(port)
 
     System.put_env("CONTRACT_ADDRESS_PLASMA_FRAMEWORK", Configuration.plasma_framework())
     System.put_env("AUTHORITY_ADDRESS", Configuration.authority_address())
     System.put_env("TX_HASH_CONTRACT", Configuration.tx_hash_contract())
     System.put_env("ETHEREUM_RPC_URL", "http://localhost:#{port}")
+
+    on_exit(fn ->
+      GenServer.stop(geth_pid)
+    end)
 
     %{port: port}
   end
@@ -27,20 +31,36 @@ defmodule ContractTest do
         ethereumex: [url: "not used because env var"],
         engine: [
           rpc_url: "http://localhost:#{port}",
-          authority_address: "0xf91d00cc5906c355b6c8a04d9d940c4adc64cb1c",
-          plasma_framework: "0x97ba80836092c734d400acb79e310bcd4776dddb",
-          eth_vault: "0xf39aba0a60dd1be8f9ddf2cc2104e8c3a8ba5670",
-          erc20_vault: "0xe520b5e3df580f9015141152e152ea5edf119a74",
-          payment_exit_game: "0xdd2860dd8f182f90870383a98ddaf63fdb00573e",
+          authority_address: Configuration.authority_address(),
+          plasma_framework: Configuration.plasma_framework(),
+          eth_vault: Configuration.eth_vault(),
+          erc20_vault: Configuration.erc20_vault(),
+          payment_exit_game: Configuration.payment_exit_game(),
           min_exit_period_seconds: 20,
-          contract_semver: "2.0.0+ddbd40b",
+          contract_semver: "UPDATED",
           child_block_interval: 1000,
-          contract_deployment_height: 120
+          contract_deployment_height: "UPDATED"
         ]
       ]
 
       config = Contract.load([{:ethereumex, [url: "not used because env var"]}], [])
-      assert engine_setup == config
+      # update contract deployment height
+      engine_setup2 =
+        Keyword.update!(engine_setup, :engine, fn existing_value ->
+          Keyword.merge(existing_value,
+            contract_deployment_height: Keyword.get(Keyword.get(config, :engine), :contract_deployment_height)
+          )
+        end)
+
+      # update contract semver
+      engine_setup3 =
+        Keyword.update!(engine_setup2, :engine, fn existing_value ->
+          Keyword.merge(existing_value,
+            contract_semver: Keyword.get(Keyword.get(config, :engine), :contract_semver)
+          )
+        end)
+
+      assert config |> Keyword.get(:engine) |> Enum.sort() == engine_setup3 |> Keyword.get(:engine) |> Enum.sort()
     end
 
     test "contract data is fetched from the db", %{port: port} do

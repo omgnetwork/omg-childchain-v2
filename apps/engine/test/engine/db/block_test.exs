@@ -104,14 +104,14 @@ defmodule Engine.DB.BlockTest do
       # this would be our vault
       integration_point = fn hash, nonce, gas ->
         Kernel.send(parent, {hash, nonce, gas})
-        :ok
+        vault_response_mock()
       end
 
       ref = make_ref()
 
       gas_integration = fn ->
         Kernel.send(parent, ref)
-        1
+        %{standard: 1}
       end
 
       # at this height, I'm looking at what was submitted and what wasn't
@@ -124,12 +124,12 @@ defmodule Engine.DB.BlockTest do
 
       assert [%{nonce: 7}, %{nonce: 8}, %{nonce: 9}] = blocks
       # assert that our integration point was called with these blocks
-      [7, 8, 9] = receive_all_blocks_nonces()
+      ["7", "8", "9"] = receive_all_blocks_nonces()
       ^ref = get_gas_ref()
 
       sql =
         from(plasma_block in Block,
-          where: plasma_block.nonce == 8 or plasma_block.nonce == 9 or plasma_block.nonce == 10
+          where: plasma_block.nonce == 7 or plasma_block.nonce == 8 or plasma_block.nonce == 9
         )
 
       sql
@@ -170,14 +170,14 @@ defmodule Engine.DB.BlockTest do
       # this would be our vault
       integration_point = fn hash, nonce, gas ->
         Kernel.send(parent, {hash, nonce, gas})
-        :ok
+        {:ok, "0x254ea979ba78f6adec707a97bc2dab8612c52b9047ffd47c81c2575e2373b699"}
       end
 
       ref = make_ref()
 
       gas_integration = fn ->
         Kernel.send(parent, ref)
-        1
+        %{standard: 1}
       end
 
       # at this height, I'm looking at what was submitted and what wasn't
@@ -192,7 +192,7 @@ defmodule Engine.DB.BlockTest do
 
       assert [%{nonce: 7}, %{nonce: 8}, %{nonce: 9}, %{nonce: 10}] = blocks
       # assert that our integration point was called with these blocks
-      [7, 8, 9, 10] = receive_all_blocks_nonces()
+      ["7", "8", "9", "10"] = receive_all_blocks_nonces()
       ^ref = get_gas_ref()
 
       sql =
@@ -244,7 +244,7 @@ defmodule Engine.DB.BlockTest do
       # this would be our vault
       integration_point = fn hash, nonce, gas ->
         Kernel.send(parent, {hash, nonce, gas})
-        :ok
+        {:ok, "0x254ea979ba78f6adec707a97bc2dab8612c52b9047ffd47c81c2575e2373b699"}
       end
 
       ref = make_ref()
@@ -288,7 +288,7 @@ defmodule Engine.DB.BlockTest do
       # this would be our vault
       integration_point = fn hash, nonce, gas ->
         Kernel.send(parent, {hash, nonce, gas})
-        :ok
+        {:ok, "0x254ea979ba78f6adec707a97bc2dab8612c52b9047ffd47c81c2575e2373b699"}
       end
 
       ref = make_ref()
@@ -337,14 +337,14 @@ defmodule Engine.DB.BlockTest do
       # this would be our vault
       integration_point = fn hash, nonce, gas ->
         Kernel.send(parent, {hash, nonce, gas})
-        :ok
+        {:ok, "0x254ea979ba78f6adec707a97bc2dab8612c52b9047ffd47c81c2575e2373b699"}
       end
 
       ref = make_ref()
 
       gas_integration_point = fn ->
         Kernel.send(parent, ref)
-        1
+        %{standard: 1}
       end
 
       # at this height, I'm looking at what was submitted and what wasn't
@@ -370,7 +370,7 @@ defmodule Engine.DB.BlockTest do
 
       # if submission was executed once, it was executed by one of the childchains
       # that WON the race, hence, we should receive nonces as messages only once
-      [7, 8, 9, 10] = receive_all_blocks_nonces()
+      ["7", "8", "9", "10"] = receive_all_blocks_nonces()
       ^ref = get_gas_ref()
     end
   end
@@ -697,5 +697,35 @@ defmodule Engine.DB.BlockTest do
         # list appending adds at the tail so we need to reverse it once done
         :no_gas_reference
     end
+  end
+
+  defp vault_response_mock() do
+    {:ok,
+     %HTTPoison.Response{
+       body:
+         "{\"request_id\":\"210fed77-15f8-7b11-b8a3-9628b97cd716\",\"lease_id\":\"\",\"renewable\":false,\"lease_duration\":0,\"data\":{\"contract\":\"0x23764956B3FC5f3d86586b1422Ca528559A07161\",\"from\":\"0x7F76d4380Fe855C7E215aA0ca9DeDEAeD0680359\",\"gas_limit\":72803,\"gas_price\":31000000000,\"nonce\":0,\"signed_transaction\":\"0xf88980850737be760083011c639423764956b3fc5f3d86586b1422ca528559a0716180a4baa47694463f9b9cfbb3efd3284b8f72e0786de08e7d2aab26745335ab8495d2cfa0635e1ca093aff875b1e328865972256868d87dd3611a40411351346b510320cfb5a5cd4aa07b7b8ef7897ffc0d203f3626ec271a4aaa26f656de4da7bf54c7584977b1c7c5\",\"transaction_hash\":\"0x2cc6777a4ec6ab4ceeec23aa5ec355bbab84fc5f1208d87f3ca893f17e3e7fe2\"},\"wrap_info\":null,\"warnings\":null,\"auth\":null}\n",
+       headers: [
+         {"Cache-Control", "no-store"},
+         {"Content-Type", "application/json"},
+         {"Date", "Wed, 09 Dec 2020 17:53:03 GMT"},
+         {"Content-Length", "711"}
+       ],
+       request: %HTTPoison.Request{
+         body:
+           "{\"block_root\":\"Rj+bnPuz79MoS49y4Hht4I59KqsmdFM1q4SV0s+gY14=\",\"contract\":\"0x23764956B3FC5f3d86586b1422Ca528559A07161\",\"gas_price\":\"31000000000\",\"nonce\":\"0\"}",
+         headers: [
+           {"X-Vault-Request", true},
+           {"X-Vault-Token", "s.tLPnLvpaRtYYsLAxPpCT6lHn"}
+         ],
+         method: :put,
+         options: [hackney: [:insecure]],
+         params: %{},
+         url:
+           "https://127.0.0.1:8200/v1/immutability-eth-plugin/wallets/plasma-deployer/accounts/0x7F76d4380Fe855C7E215aA0ca9DeDEAeD0680359/plasma/submitBlock"
+       },
+       request_url:
+         "https://127.0.0.1:8200/v1/immutability-eth-plugin/wallets/plasma-deployer/accounts/0x7F76d4380Fe855C7E215aA0ca9DeDEAeD0680359/plasma/submitBlock",
+       status_code: 200
+     }}
   end
 end

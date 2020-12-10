@@ -24,16 +24,26 @@ defmodule Engine.Supervisor do
 
     enterprise = apply(SubmitBlock, :enterprise, [])
 
-    url =
+    vault_url =
       case enterprise do
-        0 -> Configuration.rpc_url()
+        0 -> nil
         1 -> Configuration.vault_url()
       end
+
+    rpc_url = Configuration.rpc_url()
+
+    integration_opts = [
+      module: SubmitBlock,
+      function: :submit_block,
+      url: rpc_url,
+      vault_url: vault_url,
+      http_request_options: []
+    ]
 
     submitter_opts = [
       plasma_framework: Configuration.plasma_framework(),
       child_block_interval: Configuration.child_block_interval(),
-      opts: [module: SubmitBlock, function: :submit_block, url: url, http_request_options: []],
+      opts: integration_opts,
       gas_integration_fallback_order: [
         Gas.Integration.Etherscan,
         Gas.Integration.GasPriceOracle,

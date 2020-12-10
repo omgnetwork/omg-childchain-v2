@@ -18,6 +18,10 @@ defmodule AlarmDetectionTest do
     port = Enum.random(35_000..40_000)
     {:ok, {geth_pid, _container_id}} = Geth.start(port)
 
+    on_exit(fn ->
+      GenServer.stop(geth_pid)
+    end)
+
     url = "http://127.0.0.1:#{port}"
 
     {:ok, height_observer_pid} =
