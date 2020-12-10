@@ -170,7 +170,7 @@ defmodule Engine.DB.BlockTest do
       # this would be our vault
       integration_point = fn hash, nonce, gas ->
         Kernel.send(parent, {hash, nonce, gas})
-        {:ok, "yolo!"}
+        {:ok, "0x254ea979ba78f6adec707a97bc2dab8612c52b9047ffd47c81c2575e2373b699"}
       end
 
       ref = make_ref()
@@ -244,7 +244,7 @@ defmodule Engine.DB.BlockTest do
       # this would be our vault
       integration_point = fn hash, nonce, gas ->
         Kernel.send(parent, {hash, nonce, gas})
-        {:ok, "yolo!"}
+        {:ok, "0x254ea979ba78f6adec707a97bc2dab8612c52b9047ffd47c81c2575e2373b699"}
       end
 
       ref = make_ref()
@@ -288,7 +288,7 @@ defmodule Engine.DB.BlockTest do
       # this would be our vault
       integration_point = fn hash, nonce, gas ->
         Kernel.send(parent, {hash, nonce, gas})
-        {:ok, "yolo!"}
+        {:ok, "0x254ea979ba78f6adec707a97bc2dab8612c52b9047ffd47c81c2575e2373b699"}
       end
 
       ref = make_ref()
@@ -337,7 +337,7 @@ defmodule Engine.DB.BlockTest do
       # this would be our vault
       integration_point = fn hash, nonce, gas ->
         Kernel.send(parent, {hash, nonce, gas})
-        {:ok, "yolo!"}
+        {:ok, "0x254ea979ba78f6adec707a97bc2dab8612c52b9047ffd47c81c2575e2373b699"}
       end
 
       ref = make_ref()
