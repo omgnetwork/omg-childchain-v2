@@ -54,7 +54,7 @@ defmodule ContractTest do
         contract_deployment_height: 120
       }
 
-      {:ok, _} = ContractsConfig.insert(params)
+      {:ok, _} = ContractsConfig.insert(Engine.Repo, params)
 
       engine_setup = [
         ethereumex: [url: "not used because env var"],

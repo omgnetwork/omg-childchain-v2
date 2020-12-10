@@ -18,8 +18,6 @@ defmodule Engine.DB.ContractsConfig do
   import Ecto.Changeset
   import Ecto.Query, only: [from: 2]
 
-  alias Engine.Repo
-
   @guard 1
 
   @required_fields [
@@ -60,13 +58,13 @@ defmodule Engine.DB.ContractsConfig do
     |> validate_required(@required_fields)
   end
 
-  def insert(params) do
+  def insert(repo, params) do
     %__MODULE__{}
     |> changeset(params)
-    |> Repo.insert()
+    |> repo.insert()
   end
 
-  def get() do
-    Repo.one(from(b in __MODULE__, select: b))
+  def get(repo) do
+    repo.one(from(b in __MODULE__, select: b))
   end
 end

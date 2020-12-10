@@ -48,7 +48,7 @@ defmodule Engine.ReleaseTasks.Contract do
   end
 
   defp get_contracts_config(plasma_framework, tx_hash, rpc_url) do
-    case ContractsConfig.get() do
+    case get_contracts_config_from_db() do
       nil ->
         config = get_config_from_root_chain(plasma_framework, tx_hash, rpc_url)
         :ok = store_contracts_config_in_db(config)
@@ -61,9 +61,20 @@ defmodule Engine.ReleaseTasks.Contract do
     end
   end
 
+  defp get_contracts_config_from_db() do
+    parent = self()
+
+    spawn_link(fn ->
+      {:ok, contracts_config, _} = Ecto.Migrator.with_repo(Engine.Repo, &ContractsConfig.get/1)
+      Kernel.send(parent, {:done, contracts_config})
+    end)
+
+    result_or_wait()
+  end
+
   defp store_contracts_config_in_db(config) do
     params = Enum.into(config, %{})
-    {:ok, _} = ContractsConfig.insert(params)
+    {:ok, _, _} = Ecto.Migrator.with_repo(Engine.Repo, fn repo -> ContractsConfig.insert(repo, params) end)
     :ok
   end
 
@@ -96,7 +107,7 @@ defmodule Engine.ReleaseTasks.Contract do
     {:ok, _} = Application.ensure_all_started(:logger)
     {:ok, _} = Application.ensure_all_started(:ethereumex)
     {:ok, _} = Application.ensure_all_started(:telemetry)
-    {:ok, _} = Application.ensure_all_started(:ecto_sql)
+    _ = Application.load(:engine)
   end
 
   @spec get_env(String.t()) :: String.t()
@@ -106,5 +117,19 @@ defmodule Engine.ReleaseTasks.Contract do
 
   defp system_adapter() do
     Process.get(:system_adapter)
+  end
+
+  defp result_or_wait() do
+    receive do
+      {:EXIT, _, :shutdown} ->
+        _ = Logger.error("Can't connect to database. Retrying.")
+        get_contracts_config_from_db()
+
+      {:done, contracts_config} ->
+        contracts_config
+    after
+      10_000 ->
+        get_contracts_config_from_db()
+    end
   end
 end
