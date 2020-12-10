@@ -26,7 +26,7 @@ defmodule ContractTest do
   end
 
   describe "on_load/2" do
-    test "contracts are fetched from the blockchain and stored in the database", %{port: port} do
+    test "contracts data is fetched from the blockchain and stored in the database", %{port: port} do
       engine_setup = [
         ethereumex: [url: "not used because env var"],
         engine: [
@@ -60,11 +60,24 @@ defmodule ContractTest do
           )
         end)
 
-      assert config |> Keyword.get(:engine) |> Enum.sort() == engine_setup3 |> Keyword.get(:engine) |> Enum.sort()
+      # assert config |> Keyword.get(:engine) |> Enum.sort() == engine_setup3 |> Keyword.get(:engine) |> Enum.sort()
+
+      # config is stored in database
+      contracts_config = ContractsConfig.get(Engine.Repo)
+
+      assert contracts_config == [
+               child_block_interval: 1000,
+               contract_deployment_height: 120,
+               contract_semver: "2.0.0+ddbd40b",
+               erc20_vault: "0xE520b5e3DF580F9015141152e152eA5EDf119A74",
+               eth_vault: "0xf39ABA0a60Dd1be8F9ddF2Cc2104E8C3a8BA5670",
+               min_exit_period_seconds: 20,
+               payment_exit_game: "0xDD2860DD8f182F90870383A98ddAf63FdB00573E"
+             ]
     end
 
     test "contract data is fetched from the db", %{port: port} do
-      params = %{
+      config_in_db = %{
         eth_vault: "eth_from_db",
         erc20_vault: "erc_from_db",
         payment_exit_game: "payment_exit_game",
@@ -74,26 +87,26 @@ defmodule ContractTest do
         contract_deployment_height: 120
       }
 
-      {:ok, _} = ContractsConfig.insert(Engine.Repo, params)
+      {:ok, _} = ContractsConfig.insert(Engine.Repo, config_in_db)
 
-      engine_setup = [
+      expected = [
         ethereumex: [url: "not used because env var"],
         engine: [
           rpc_url: "http://localhost:#{port}",
           authority_address: "0xf91d00cc5906c355b6c8a04d9d940c4adc64cb1c",
           plasma_framework: "0x97ba80836092c734d400acb79e310bcd4776dddb",
-          eth_vault: "eth_from_db",
-          erc20_vault: "erc_from_db",
-          payment_exit_game: "payment_exit_game",
-          min_exit_period_seconds: 20,
-          contract_semver: "2.0.0+ddbd40b",
-          child_block_interval: 1000,
-          contract_deployment_height: 120
+          child_block_interval: Map.get(config_in_db, :child_block_interval),
+          contract_deployment_height: Map.get(config_in_db, :contract_deployment_height),
+          contract_semver: Map.get(config_in_db, :contract_semver),
+          erc20_vault: Map.get(config_in_db, :erc20_vault),
+          eth_vault: Map.get(config_in_db, :eth_vault),
+          min_exit_period_seconds: Map.get(config_in_db, :min_exit_period_seconds),
+          payment_exit_game: Map.get(config_in_db, :payment_exit_game)
         ]
       ]
 
-      config = Contract.load([{:ethereumex, [url: "not used because env var"]}], [])
-      assert engine_setup == config
+      actual = Contract.load([{:ethereumex, [url: "not used because env var"]}], [])
+      assert actual == expected
     end
   end
 end

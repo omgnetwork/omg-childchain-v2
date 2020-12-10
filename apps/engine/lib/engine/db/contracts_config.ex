@@ -78,8 +78,7 @@ defmodule Engine.DB.ContractsConfig do
       config ->
         config
         |> Map.from_struct()
-        |> Map.delete(:__meta__)
-        |> Map.delete(:guard)
+        |> Map.drop([:__meta__, :guard, :inserted_at, :node_inserted_at, :updated_at])
         |> Keyword.new()
     end
   end
