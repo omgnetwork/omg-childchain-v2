@@ -150,29 +150,28 @@ defmodule Engine.Ethereum.Event.Listener do
   end
 
   defp sync_height(state, callbacks, sync_guide) do
-    {:ok, events, height_to_check_in, new_state} =
+    {events, new_state} =
       state
-      |> Core.get_events_range_for_download(sync_guide)
-      |> update_event_cache(callbacks.get_events_callback)
-      |> Core.get_events(sync_guide.sync_height)
+      |> Core.calc_events_range_set_height(sync_guide)
+      |> get_events(callbacks.get_events_callback)
 
     # process_events_callback sorts persistence!
     {:ok, _} = callbacks.process_events_callback.(events, state.service_name)
     :ok = :telemetry.execute([:process, __MODULE__], %{events: events}, new_state)
     :ok = publish_events(events)
-    :ok = Storage.update_synced_height(new_state.service_name, height_to_check_in, new_state.ets)
-    :ok = Coordinator.check_in(height_to_check_in, state.service_name)
+    :ok = Storage.update_synced_height(new_state.service_name, new_state.synced_height, new_state.ets)
+    :ok = Coordinator.check_in(new_state.synced_height, state.service_name)
 
     new_state
   end
 
-  defp update_event_cache({:get_events, {from, to}, state}, get_events_callback) do
+  defp get_events({{from, to}, state}, get_events_callback) do
     {:ok, new_events} = get_events_callback.(from, to)
-    Core.add_new_events(state, new_events)
+    {new_events, state}
   end
 
-  defp update_event_cache({:dont_fetch_events, state}, _callback) do
-    state
+  defp get_events({:dont_fetch_events, state}, _callback) do
+    {[], state}
   end
 
   @spec publish_events(list(Event.t())) :: :ok

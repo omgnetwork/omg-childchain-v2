@@ -53,9 +53,9 @@ defmodule Engine.Ethereum.HeightObserverTest do
 
   test "handling messages for raising and lowering alarms", %{height_observer: height_observer} do
     GenServer.cast(height_observer, {:set_alarm, :ethereum_connection_error})
-    %{connection_alarm_raised: true} = :sys.get_state(height_observer)
+    %{ethereum_connection_error: true} = :sys.get_state(height_observer)
     GenServer.cast(height_observer, {:clear_alarm, :ethereum_connection_error})
-    %{connection_alarm_raised: false} = :sys.get_state(height_observer)
+    %{ethereum_connection_error: false} = :sys.get_state(height_observer)
     GenServer.cast(height_observer, {:set_alarm, :ethereum_stalled_sync})
     %{stall_alarm_raised: true} = :sys.get_state(height_observer)
     GenServer.cast(height_observer, {:clear_alarm, :ethereum_stalled_sync})

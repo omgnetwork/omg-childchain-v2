@@ -69,7 +69,7 @@ defmodule Engine.BlockFormation.PrepareForSubmissionTest do
 
     {:ok, pid} = PrepareForSubmission.start_link(config)
     :ok = GenServer.cast(pid, {:set_alarm, :db_connection_lost})
-    assert %{connection_alarm_raised: true} = :sys.get_state(pid)
+    assert %{db_connection_lost: true} = :sys.get_state(pid)
 
     state_forming = Block.state_forming()
     state_finalizing = Block.state_finalizing()
@@ -85,7 +85,7 @@ defmodule Engine.BlockFormation.PrepareForSubmissionTest do
     _ = ethereum_height_tick(3)
 
     Process.sleep(@sleep_time_ms)
-    assert %{connection_alarm_raised: false} = :sys.get_state(pid)
+    assert %{db_connection_lost: false} = :sys.get_state(pid)
 
     state_pending = Block.state_pending_submission()
     assert %Block{state: ^state_pending} = Repo.get(Block, block1.id)

@@ -13,7 +13,7 @@ defmodule Engine.Ethereum.HeightObserver.AlarmManagement do
 
   # Raise or clear the :ethereum_client_connnection alarm
   @spec connection_alarm(module(), boolean(), non_neg_integer() | :error) :: :ok | :duplicate
-  def connection_alarm(alarm_module, connection_alarm_raised, raise_alarm)
+  def connection_alarm(alarm_module, ethereum_connection_error, raise_alarm)
 
   def connection_alarm(alarm_module, false, :error) do
     alarm_module.set(Module.safe_concat(alarm_module, Types).ethereum_connection_error(__MODULE__))
