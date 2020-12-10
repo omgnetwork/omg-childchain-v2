@@ -56,8 +56,6 @@ defmodule Engine.ReleaseTasks.Contract do
 
       config ->
         config
-        |> Map.from_struct()
-        |> Keyword.new()
     end
   end
 

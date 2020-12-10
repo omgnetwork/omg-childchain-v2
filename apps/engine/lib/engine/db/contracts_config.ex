@@ -64,7 +64,23 @@ defmodule Engine.DB.ContractsConfig do
     |> repo.insert()
   end
 
+  @doc """
+  Returns contracts config as a keyword list
+  """
+  @spec get(module) :: keyword() | nil
   def get(repo) do
-    repo.one(from(b in __MODULE__, select: b))
+    config = repo.one(from(b in __MODULE__, select: b))
+
+    case config do
+      nil ->
+        nil
+
+      config ->
+        config
+        |> Map.from_struct()
+        |> Map.delete(:__meta__)
+        |> Map.delete(:guard)
+        |> Keyword.new()
+    end
   end
 end
