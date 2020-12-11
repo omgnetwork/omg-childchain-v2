@@ -32,7 +32,16 @@ defmodule Engine.ReleaseTasks.Contract do
     default_url = config |> Keyword.fetch!(:ethereumex) |> Keyword.fetch!(:url)
     rpc_url = "ETHEREUM_RPC_URL" |> get_env() |> Validators.url("ETHEREUM_RPC_URL", default_url)
 
-    contracts_config = get_contracts_config(plasma_framework, tx_hash, rpc_url)
+    contracts_config =
+      case get_contracts_config_from_db() do
+        nil ->
+          config = get_config_from_root_chain(plasma_framework, tx_hash, rpc_url)
+          :ok = store_contracts_config_in_db(config)
+          config
+
+        config ->
+          config
+      end
 
     engine_config =
       Keyword.merge(
@@ -45,18 +54,6 @@ defmodule Engine.ReleaseTasks.Contract do
       )
 
     Config.Reader.merge(config, engine: engine_config)
-  end
-
-  defp get_contracts_config(plasma_framework, tx_hash, rpc_url) do
-    case get_contracts_config_from_db() do
-      nil ->
-        config = get_config_from_root_chain(plasma_framework, tx_hash, rpc_url)
-        :ok = store_contracts_config_in_db(config)
-        config
-
-      config ->
-        config
-    end
   end
 
   defp get_contracts_config_from_db() do

@@ -5,6 +5,7 @@ defmodule ContractTest do
   alias Engine.DB.ContractsConfig
   alias Engine.Geth
   alias Engine.ReleaseTasks.Contract
+  alias Engine.ReleaseTasks.Contract.EIP55
 
   @moduletag :integration
 
@@ -33,9 +34,9 @@ defmodule ContractTest do
           rpc_url: "http://localhost:#{port}",
           authority_address: Configuration.authority_address(),
           plasma_framework: Configuration.plasma_framework(),
-          eth_vault: Configuration.eth_vault(),
-          erc20_vault: Configuration.erc20_vault(),
-          payment_exit_game: Configuration.payment_exit_game(),
+          eth_vault: EIP55.encode!(Configuration.eth_vault()),
+          erc20_vault: EIP55.encode!(Configuration.erc20_vault()),
+          payment_exit_game: EIP55.encode!(Configuration.payment_exit_game()),
           min_exit_period_seconds: 20,
           contract_semver: "UPDATED",
           child_block_interval: 1000,
@@ -60,8 +61,8 @@ defmodule ContractTest do
           )
         end)
 
-      assert config |> Keyword.get(:engine) |> upcase_hexes() |> Enum.sort() ==
-               engine_setup3 |> Keyword.get(:engine) |> upcase_hexes() |> Enum.sort()
+      assert config |> Keyword.get(:engine) |> Enum.sort() ==
+               engine_setup3 |> Keyword.get(:engine) |> Enum.sort()
 
       # config is stored in database
       contracts_config = ContractsConfig.get(Repo)
@@ -110,13 +111,4 @@ defmodule ContractTest do
       assert actual == expected
     end
   end
-
-  defp upcase_hexes(config) do
-    config
-    |> Keyword.update!(:payment_exit_game, &upcase_hex/1)
-    |> Keyword.update!(:erc20_vault, &upcase_hex/1)
-    |> Keyword.update!(:eth_vault, &upcase_hex/1)
-  end
-
-  defp upcase_hex("0x" <> rest), do: "0x" <> String.upcase(rest)
 end

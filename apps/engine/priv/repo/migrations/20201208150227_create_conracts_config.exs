@@ -1,4 +1,4 @@
-defmodule Engine.Repo.Migrations.AddConractsConfig do
+defmodule Engine.Repo.Migrations.CreateConractsConfig do
   use Ecto.Migration
 
   def change do
