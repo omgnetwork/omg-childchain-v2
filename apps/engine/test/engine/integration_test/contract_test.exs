@@ -46,19 +46,19 @@ defmodule ContractTest do
 
       config = Contract.load([{:ethereumex, [url: "not used because env var"]}], [])
       # update contract deployment height
+      contract_deployment_height = config |> Keyword.get(:engine) |> Keyword.get(:contract_deployment_height)
+
       engine_setup2 =
         Keyword.update!(engine_setup, :engine, fn existing_value ->
-          Keyword.merge(existing_value,
-            contract_deployment_height: Keyword.get(Keyword.get(config, :engine), :contract_deployment_height)
-          )
+          Keyword.merge(existing_value, contract_deployment_height: contract_deployment_height)
         end)
 
       # update contract semver
+      semver = config |> Keyword.get(:engine) |> Keyword.get(:contract_semver)
+
       engine_setup3 =
         Keyword.update!(engine_setup2, :engine, fn existing_value ->
-          Keyword.merge(existing_value,
-            contract_semver: Keyword.get(Keyword.get(config, :engine), :contract_semver)
-          )
+          Keyword.merge(existing_value, contract_semver: semver)
         end)
 
       assert config |> Keyword.get(:engine) |> Enum.sort() ==
@@ -68,13 +68,13 @@ defmodule ContractTest do
       contracts_config = ContractsConfig.get(Repo)
 
       assert contracts_config == [
-               payment_exit_game: "0xDD2860DD8f182F90870383A98ddAf63FdB00573E",
-               eth_vault: "0xf39ABA0a60Dd1be8F9ddF2Cc2104E8C3a8BA5670",
-               erc20_vault: "0xE520b5e3DF580F9015141152e152eA5EDf119A74",
+               payment_exit_game: EIP55.encode!(Configuration.payment_exit_game()),
+               eth_vault: EIP55.encode!(Configuration.eth_vault()),
+               erc20_vault: EIP55.encode!(Configuration.erc20_vault()),
                min_exit_period_seconds: 20,
-               contract_semver: "2.0.0+ddbd40b",
+               contract_semver: semver,
                child_block_interval: 1000,
-               contract_deployment_height: 120
+               contract_deployment_height: contract_deployment_height
              ]
     end
 
@@ -95,8 +95,8 @@ defmodule ContractTest do
         ethereumex: [url: "not used because env var"],
         engine: [
           rpc_url: "http://localhost:#{port}",
-          authority_address: "0xf91d00cc5906c355b6c8a04d9d940c4adc64cb1c",
-          plasma_framework: "0x97ba80836092c734d400acb79e310bcd4776dddb",
+          authority_address: Configuration.authority_address(),
+          plasma_framework: Configuration.plasma_framework(),
           payment_exit_game: Map.get(config_in_db, :payment_exit_game),
           eth_vault: Map.get(config_in_db, :eth_vault),
           erc20_vault: Map.get(config_in_db, :erc20_vault),
