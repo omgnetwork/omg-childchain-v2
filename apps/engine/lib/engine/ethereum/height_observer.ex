@@ -30,7 +30,7 @@ defmodule Engine.Ethereum.HeightObserver do
           alarm_module: module(),
           ethereum_height: integer(),
           synced_at: DateTime.t(),
-          connection_alarm_raised: boolean(),
+          ethereum_connection_error: boolean(),
           stall_alarm_raised: boolean(),
           bus: module(),
           opts: keyword()
@@ -41,7 +41,7 @@ defmodule Engine.Ethereum.HeightObserver do
     :eth_module,
     :alarm_module,
     :synced_at,
-    :connection_alarm_raised,
+    :ethereum_connection_error,
     :stall_alarm_raised,
     :bus,
     :opts
@@ -53,7 +53,7 @@ defmodule Engine.Ethereum.HeightObserver do
             alarm_module: nil,
             ethereum_height: 0,
             synced_at: nil,
-            connection_alarm_raised: false,
+            ethereum_connection_error: false,
             stall_alarm_raised: false,
             bus: nil,
             opts: []
@@ -76,7 +76,7 @@ defmodule Engine.Ethereum.HeightObserver do
 
     alarm_handler = Keyword.get(init_arg, :alarm_handler, __MODULE__.AlarmHandler)
     sasl_alarm_handler = Keyword.get(init_arg, :sasl_alarm_handler, :alarm_handler)
-    :ok = AlarmManagement.subscribe_to_alarms(sasl_alarm_handler, alarm_handler, self())
+    :ok = AlarmManagement.subscribe_to_alarms(sasl_alarm_handler, alarm_handler, __MODULE__)
 
     state = %__MODULE__{
       check_interval_ms: Keyword.fetch!(init_arg, :check_interval_ms),
@@ -84,7 +84,7 @@ defmodule Engine.Ethereum.HeightObserver do
       synced_at: DateTime.utc_now(),
       eth_module: Keyword.fetch!(init_arg, :eth_module),
       alarm_module: Keyword.fetch!(init_arg, :alarm_module),
-      connection_alarm_raised: false,
+      ethereum_connection_error: false,
       stall_alarm_raised: false,
       bus: Keyword.get(init_arg, :bus, Bus),
       opts: Keyword.fetch!(init_arg, :opts)
@@ -108,11 +108,11 @@ defmodule Engine.Ethereum.HeightObserver do
   # its internal state according to the raised alarms.
   #
   def handle_cast({:set_alarm, :ethereum_connection_error}, state) do
-    {:noreply, %{state | connection_alarm_raised: true}}
+    {:noreply, %{state | ethereum_connection_error: true}}
   end
 
   def handle_cast({:clear_alarm, :ethereum_connection_error}, state) do
-    {:noreply, %{state | connection_alarm_raised: false}}
+    {:noreply, %{state | ethereum_connection_error: false}}
   end
 
   def handle_cast({:set_alarm, :ethereum_stalled_sync}, state) do
@@ -128,7 +128,7 @@ defmodule Engine.Ethereum.HeightObserver do
     height = HeightManagement.fetch_height_and_publish(state)
     stalled? = HeightManagement.stalled?(height, state.ethereum_height, state.synced_at, state.stall_threshold_ms)
 
-    _ = AlarmManagement.connection_alarm(state.alarm_module, state.connection_alarm_raised, height)
+    _ = AlarmManagement.connection_alarm(state.alarm_module, state.ethereum_connection_error, height)
     _ = AlarmManagement.stall_alarm(state.alarm_module, state.stall_alarm_raised, stalled?)
 
     state = HeightManagement.update_height(state, height)

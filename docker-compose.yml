@@ -65,7 +65,7 @@ services:
         ipv4_address: 172.27.0.110
 
   childchain:
-    image: omisego/childchain:latest
+    image: omisego/childchain-v2:latest
     command: "full_local"
     container_name: childchain
     env_file:
@@ -112,7 +112,7 @@ services:
         ipv4_address: 172.27.0.101
 
   watcher:
-    image: omisego/watcher:latest
+    image: omisego/watcher-v2:latest
     command: "full_local"
     container_name: watcher
     env_file:
@@ -155,7 +155,7 @@ services:
         ipv4_address: 172.27.0.104
 
   watcher_info:
-    image: omisego/watcher_info:latest
+    image: omisego/watcher_info-v2:latest
     command: "full_local"
     container_name: watcher_info
     env_file:

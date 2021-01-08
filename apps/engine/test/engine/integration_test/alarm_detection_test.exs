@@ -4,7 +4,6 @@ defmodule AlarmDetectionTest do
   alias Engine.Ethereum.HeightObserver
   alias Engine.Ethereum.RootChain.Rpc
   alias Engine.Geth
-  alias Engine.Repo.Monitor, as: RepoMonitor
   alias Status.Alert.Alarm
   @moduletag :integration
 
@@ -19,7 +18,10 @@ defmodule AlarmDetectionTest do
     {:ok, {geth_pid, _container_id}} = Geth.start(port)
 
     on_exit(fn ->
-      GenServer.stop(geth_pid)
+      case Process.alive?(geth_pid) do
+        true -> GenServer.stop(geth_pid)
+        false -> :ok
+      end
     end)
 
     url = "http://127.0.0.1:#{port}"
@@ -44,17 +46,18 @@ defmodule AlarmDetectionTest do
     # repo_monitor_pid: repo_monitor_pid,
     geth_pid: geth_pid
   } do
+    Process.link(geth_pid)
     Process.flag(:trap_exit, true)
     # geth traps exits as well, we get back :parent
     Process.exit(geth_pid, :killed)
 
-    assert_receive {:EXIT, ^geth_pid, :parent}, 60_000
+    assert_receive {:EXIT, ^geth_pid, _}, 10_000
     :erlang.trace(height_observer_pid, true, [:receive])
 
     assert_receive {:trace, ^height_observer_pid, :receive, {:"$gen_cast", {:set_alarm, :ethereum_connection_error}}},
-                   8000
+                   16_000
 
-    %{connection_alarm_raised: true} = :sys.get_state(height_observer_pid)
+    %{ethereum_connection_error: true} = :sys.get_state(height_observer_pid)
     :erlang.trace(height_observer_pid, false, [:receive])
   end
 end

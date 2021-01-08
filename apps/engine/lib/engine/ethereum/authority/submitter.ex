@@ -4,12 +4,22 @@ defmodule Engine.Ethereum.Authority.Submitter do
   """
 
   alias Engine.DB.Block
+  alias Engine.Ethereum.Authority.Submitter.AlarmHandler
   alias Engine.Ethereum.Authority.Submitter.Core
   alias Engine.Ethereum.Authority.Submitter.External
 
   require Logger
 
-  defstruct [:plasma_framework, :child_block_interval, :height, :enterprise, :gas_integration_fallback_order, :opts]
+  defstruct [
+    :plasma_framework,
+    :child_block_interval,
+    :height,
+    :enterprise,
+    :db_connection_lost,
+    :ethereum_connection_error,
+    :gas_integration_fallback_order,
+    :opts
+  ]
 
   def child_spec(opts) do
     %{
@@ -32,14 +42,18 @@ defmodule Engine.Ethereum.Authority.Submitter do
     child_block_interval = Keyword.fetch!(init_arg, :child_block_interval)
     gas_integration_fallback_order = Keyword.fetch!(init_arg, :gas_integration_fallback_order)
     opts = Keyword.fetch!(init_arg, :opts)
-    event_bus = Keyword.get(init_arg, :event_bus, Bus)
-    :ok = event_bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
+    alarm_handler = Keyword.get(init_arg, :alarm_handler, AlarmHandler)
+    sasl_alarm_handler = Keyword.get(init_arg, :sasl_alarm_handler, :alarm_handler)
+    :ok = subscribe_to_alarm(sasl_alarm_handler, alarm_handler, __MODULE__)
+    :ok = Bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
 
     state = %__MODULE__{
       plasma_framework: plasma_framework,
       child_block_interval: child_block_interval,
       enterprise: enterprise,
       gas_integration_fallback_order: gas_integration_fallback_order,
+      db_connection_lost: false,
+      ethereum_connection_error: false,
       opts: opts
     }
 
@@ -48,8 +62,29 @@ defmodule Engine.Ethereum.Authority.Submitter do
 
   def handle_info({:internal_event_bus, :ethereum_new_height, new_height}, state) do
     new_state = %{state | height: new_height}
-    submit(new_height, new_state)
+
+    case {new_state.db_connection_lost, new_state.ethereum_connection_error} do
+      {false, false} -> submit(new_height, new_state)
+      _ -> :ok
+    end
+
     {:noreply, new_state}
+  end
+
+  def handle_cast({:set_alarm, :db_connection_lost}, state) do
+    {:noreply, %{state | db_connection_lost: true}}
+  end
+
+  def handle_cast({:clear_alarm, :db_connection_lost}, state) do
+    {:noreply, %{state | db_connection_lost: false}}
+  end
+
+  def handle_cast({:set_alarm, :ethereum_connection_error}, state) do
+    {:noreply, %{state | ethereum_connection_error: true}}
+  end
+
+  def handle_cast({:clear_alarm, :ethereum_connection_error}, state) do
+    {:noreply, %{state | ethereum_connection_error: false}}
   end
 
   # This is the submitting part of block. At this point, a blocks are already formed.
@@ -64,5 +99,12 @@ defmodule Engine.Ethereum.Authority.Submitter do
     gas_fun = External.gas(state.gas_integration_fallback_order)
     {:ok, _} = Block.get_all_and_submit(height, mined_child_block, submit_fn, gas_fun)
     :ok
+  end
+
+  defp subscribe_to_alarm(sasl_alarm_handler, handler, consumer) do
+    case Enum.member?(:gen_event.which_handlers(sasl_alarm_handler), handler) do
+      true -> :ok
+      _ -> :gen_event.add_handler(sasl_alarm_handler, handler, consumer: consumer)
+    end
   end
 end

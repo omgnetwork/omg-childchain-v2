@@ -13,28 +13,28 @@ defmodule Engine.BlockFormation.PrepareForSubmission do
 
   require Logger
 
-  defstruct [:block_submit_every_nth, :block_module, :connection_alarm_raised]
+  defstruct [:block_submit_every_nth, :block_module, :db_connection_lost]
 
-  def start_link(args) do
-    GenServer.start_link(__MODULE__, args, name: __MODULE__)
+  def start_link(init_arg) do
+    GenServer.start_link(__MODULE__, init_arg, name: __MODULE__)
   end
 
-  def init(args) do
-    block_submit_every_nth = Keyword.fetch!(args, :block_submit_every_nth)
+  def init(init_arg) do
+    block_submit_every_nth = Keyword.fetch!(init_arg, :block_submit_every_nth)
 
-    alarm_handler = Keyword.get(args, :alarm_handler, AlarmHandler)
-    sasl_alarm_handler = Keyword.get(args, :sasl_alarm_handler, :alarm_handler)
-    :ok = subscribe_to_alarm(sasl_alarm_handler, alarm_handler, self())
+    alarm_handler = Keyword.get(init_arg, :alarm_handler, AlarmHandler)
+    sasl_alarm_handler = Keyword.get(init_arg, :sasl_alarm_handler, :alarm_handler)
+    :ok = subscribe_to_alarm(sasl_alarm_handler, alarm_handler, __MODULE__)
     :ok = Bus.subscribe({:root_chain, "ethereum_new_height"}, link: true)
 
     {:ok,
      %__MODULE__{
        block_submit_every_nth: block_submit_every_nth,
-       connection_alarm_raised: false
+       db_connection_lost: false
      }}
   end
 
-  def handle_info({:internal_event_bus, :ethereum_new_height, new_height}, %{connection_alarm_raised: false} = state) do
+  def handle_info({:internal_event_bus, :ethereum_new_height, new_height}, %{db_connection_lost: false} = state) do
     _ = Logger.debug("Preparing blocks for submission")
 
     last_formed_block_at_height =
@@ -54,17 +54,17 @@ defmodule Engine.BlockFormation.PrepareForSubmission do
     {:noreply, state}
   end
 
-  def handle_info(_, %{connection_alarm_raised: true} = state) do
+  def handle_info(_, %{db_connection_lost: true} = state) do
     _ = Logger.debug("Skipping preparing blocks for submission - no database connection")
     {:noreply, state}
   end
 
   def handle_cast({:set_alarm, :db_connection_lost}, state) do
-    {:noreply, %{state | connection_alarm_raised: true}}
+    {:noreply, %{state | db_connection_lost: true}}
   end
 
   def handle_cast({:clear_alarm, :db_connection_lost}, state) do
-    {:noreply, %{state | connection_alarm_raised: false}}
+    {:noreply, %{state | db_connection_lost: false}}
   end
 
   defp subscribe_to_alarm(sasl_alarm_handler, handler, consumer) do

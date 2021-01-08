@@ -28,52 +28,34 @@ commands:
           name: Setup data dir
           command: |
             [ -d data ] || mkdir data && chmod 777 data
-      #- run:
-      #    name: Start daemon services
-      #    command: |
-      #      cd priv/cabbage
-      #      make start_daemon_services || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
-      #- run:
-      #    name: Log
-      #    command: |
-      #      docker-compose logs -f childchain nginx
-      #    background: true
-      #- run:
-      #    name: Print docker states
-      #    command: |
-      #      docker image ls
-      #     docker-compose ps
-      # - run: sh .circleci/status.sh
-      # we can uncomment this part once we're confident cabbage tests will work with
-      # our new childchain
-
-      # - install_elixir:
-      #     cache: "specs"
-      #     dir: "priv/cabbage"
-      # - install_rust
-      # - run:
-      #     name: Run specs
-      #     command: |
-      #       cd priv/cabbage
-      #       make install
-      #       make generate_api_code
-      #       mix deps.get
-      #       mix test
-      # - run:
-      #     name: (Cabbage) Format generated code and check for warnings
-      #     command: |
-      #       cd priv/cabbage
-      #       # run format ONLY on formatted code so that it cleans up quoted atoms because
-      #       # we cannot exclude folders to --warnings-as-errors
-      #       mix format apps/child_chain_api/lib/child_chain_api/model/*.ex
-      #       mix format apps/watcher_info_api/lib/watcher_info_api/model/*.ex
-      #       mix format apps/watcher_security_critical_api/lib/watcher_security_critical_api/model/*.ex
-      #       MIX_ENV=test mix do compile --warnings-as-errors --ignore-module-conflict --force, test --exclude test
-      # - run:
-      #     name: (Cabbage) Credo and formatting
-      #     command: |
-      #       cd priv/cabbage
-      #       mix do credo, format --check-formatted --dry-run
+      - run:
+          name: Start daemon services
+          command: |
+            cp ./localchain_contract_addresses.env ./priv/cabbage/apps/itest/localchain_contract_addresses.env
+            docker-compose up -d || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
+      - run:
+          name: Log
+          command: |
+            docker-compose logs -f
+          background: true
+      - run:
+          name: Print docker states
+          command: |
+            docker image ls
+            docker-compose ps
+      - pull_childchain_health
+      - install_elixir:
+          cache: "specs"
+          dir: "priv/cabbage"
+      - install_rust
+      - run:
+          name: Run specs
+          command: |
+            cd priv/cabbage
+            make install
+            make generate_api_code
+            mix deps.get
+            mix test
 
   pull_childchain_health:
     steps:
@@ -223,33 +205,8 @@ jobs:
           name: Setup data dir
           command: chmod -R 777 data
       - run: mix deps.get
+      - run: docker-compose pull geth
       - run: mix test.integration
-      - run:
-          name: Get enteprise deps
-          environment:
-            ENTERPRISE: 1
-          command: mix deps.get
-      - run: make init-contracts-vault
-      - run:
-          name: Setup data dir
-          command: chmod -R 777 data
-      - run:
-          name: Run Vault integration test
-          environment:
-            ENTERPRISE: 1
-          command: mix test.integration_block_submission_vault
-      - run: rm -rf deps/ _build/
-      - run: make init-contracts
-      - run:
-          name: Get deps
-          environment:
-            ENTERPRISE: 0
-          command: mix deps.get
-      - run:
-          name: Run integration test
-          environment:
-            ENTERPRISE: 0
-          command: mix test.integration_block_submission
 
   integration_vault:
     working_directory: ~/childchain
@@ -367,6 +324,10 @@ jobs:
           name: Restart all services
           background: true
           command: docker-compose up nginx postgres geth feefeed
+      - run:
+          name: Print running containers
+          background: true
+          command: docker ps
       - pull_childchain_health
       # at this point we reverse the startup order, first childchain then all services
       - run: sudo pkill beam
@@ -542,7 +503,7 @@ jobs:
     machine:
       image: ubuntu-2004:202010-01
     environment:
-      CHILDCHAIN_IMAGE_NAME: "childchain"
+      CHILDCHAIN_IMAGE_NAME: "childchain-v2"
       DOCKER_HUB_REPO: "omisego"
       GCS_REPO: "gcr.io/omisego-production"
     steps:
