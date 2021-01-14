@@ -12,7 +12,7 @@ defmodule Engine.Configuration do
   end
 
   def collect_fees() do
-    Application.fetch_env!(@app, :collect_fees)
+    Application.get_env(@app, :collect_fees)
   end
 
   def finality_margin() do
