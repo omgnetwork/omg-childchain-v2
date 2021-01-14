@@ -12,7 +12,7 @@ services:
       - 8546:81
       - 443:443
     healthcheck:
-      test: curl geth:8545
+      test: curl geth:80
       interval: 5s
       timeout: 3s
       retries: 5
@@ -45,8 +45,7 @@ services:
       - GITHUB_ORGANISATION=omgnetwork
       - GITHUB_REPO=fee-rules-public
       - GITHUB_BRANCH=master
-      - RULES_FETCH_INTERVAL=20
-      - RATES_FETCH_INTERVAL=20
+      - RULES_FETCH_INTERVAL=300
       - GITHUB_FILENAME=fee_rules
       - DATABASE_URL=postgresql://feefeed:feefeed@172.27.0.107:5432/feefeed
       - SECRET_KEY_BASE="Y8naENMR8b+vbPHILjwNtEfWFrnbGi2k+UYWm75VnKHfsavmyGLtTmmeJxAGK+zJ"

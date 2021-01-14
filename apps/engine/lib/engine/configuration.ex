@@ -11,6 +11,10 @@ defmodule Engine.Configuration do
     Application.fetch_env!(@app, :child_block_interval)
   end
 
+  def collect_fees() do
+    Application.fetch_env!(@app, :collect_fees)
+  end
+
   def finality_margin() do
     Application.fetch_env!(@app, :finality_margin)
   end

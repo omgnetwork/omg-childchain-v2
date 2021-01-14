@@ -17,11 +17,6 @@ defmodule Engine.Supervisor do
   end
 
   def init(_args) do
-    # we did not fetch fees yet
-    FeeServer.raise_no_fees_alarm()
-
-    fee_server_opts = Configuration.fee_server_opts()
-
     enterprise = apply(SubmitBlock, :enterprise, [])
 
     vault_url =
@@ -57,15 +52,30 @@ defmodule Engine.Supervisor do
       block_submit_every_nth: Configuration.block_submit_every_nth()
     ]
 
-    children = [
-      {FeeServer, fee_server_opts},
-      {Submitter, submitter_opts},
-      {PrepareForSubmission, prepare_block_for_submission_opts}
-    ]
+    children =
+      fee_server() ++
+        [
+          {Submitter, submitter_opts},
+          {PrepareForSubmission, prepare_block_for_submission_opts}
+        ]
 
     opts = [strategy: :one_for_one]
 
     _ = Logger.info("Starting #{inspect(__MODULE__)}")
     Supervisor.init(children, opts)
+  end
+
+  defp fee_server() do
+    case Configuration.collect_fees() do
+      "0" ->
+        []
+
+      _ ->
+        # we did not fetch fees yet
+        FeeServer.raise_no_fees_alarm()
+
+        fee_server_opts = Configuration.fee_server_opts()
+        [{FeeServer, fee_server_opts}]
+    end
   end
 end

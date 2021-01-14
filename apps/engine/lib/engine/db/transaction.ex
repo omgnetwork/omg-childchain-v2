@@ -98,7 +98,11 @@ defmodule Engine.DB.Transaction do
   """
   def insert(tx_bytes) do
     case decode(tx_bytes) do
-      {:ok, changeset} ->
+      {:ok, decoded} ->
+        {:ok, fees} = load_fees(decoded.tx_type)
+        decoded_with_fees = Map.put(decoded, :fees, fees)
+        changeset = TransactionChangeset.new_transaction_changeset(%__MODULE__{}, decoded_with_fees)
+
         Multi.new()
         |> Multi.run(:current_forming_block, &Block.get_forming_block_for_update/2)
         |> Multi.run(:block_with_next_tx_index, &Block.get_block_and_tx_index_for_transaction/2)
@@ -111,6 +115,7 @@ defmodule Engine.DB.Transaction do
             result
 
           {:error, _, changeset, _} ->
+            _ = Logger.error("Error when inserting transaction changeset #{inspect(changeset)}")
             {:error, changeset}
 
           error ->
@@ -119,6 +124,7 @@ defmodule Engine.DB.Transaction do
         end
 
       decode_error ->
+        _ = Logger.error("Error when inserting transaction decode_error #{inspect(decode_error)}")
         decode_error
     end
   end
@@ -136,15 +142,13 @@ defmodule Engine.DB.Transaction do
   @spec decode(tx_bytes) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
   defp decode(tx_bytes) do
     with {:ok, decoded} <- ExPlasma.decode(tx_bytes),
-         {:ok, recovered} <- ExPlasmaTx.with_witnesses(decoded),
-         {:ok, fees} <- load_fees(recovered.tx_type) do
+         {:ok, recovered} <- ExPlasmaTx.with_witnesses(decoded) do
       params =
         recovered
         |> recovered_to_map()
-        |> Map.put(:fees, fees)
         |> Map.put(:tx_bytes, tx_bytes)
 
-      {:ok, TransactionChangeset.new_transaction_changeset(%__MODULE__{}, params)}
+      {:ok, params}
     end
   end
 
