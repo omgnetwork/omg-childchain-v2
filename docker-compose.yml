@@ -37,7 +37,7 @@ services:
         ipv4_address: 172.27.0.107
 
   feefeed:
-    image: "omisego/feefeed:latest"
+    image: gcr.io/omisego-development/feefeed:latest
     command: "start"
     container_name: feefeed
     environment:
