@@ -14,6 +14,7 @@ commands:
     description: "Builds a docker image"
     steps:
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run: pip3 install docker-compose --upgrade
       - gcloud_login
       - run:
           environment:
