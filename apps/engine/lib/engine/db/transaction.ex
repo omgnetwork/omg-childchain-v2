@@ -22,7 +22,6 @@ defmodule Engine.DB.Transaction do
 
   alias __MODULE__.TransactionChangeset
   alias Ecto.Multi
-  alias Engine.Configuration
   alias Engine.DB.Block
   alias Engine.DB.Output
   alias Engine.DB.TransactionFee
