@@ -29,7 +29,9 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
   @required_fields [:witnesses, :tx_hash, :signed_tx, :tx_bytes, :tx_type]
   @required_fee_transaction_fields [:tx_hash, :tx_bytes, :tx_type]
 
-  def new_transaction_changeset(struct, params) do
+  def new_transaction_changeset(struct, tx_bytes, decoded, fees) do
+    params = decoded |> recovered_to_map() |> Map.put(:tx_bytes, tx_bytes) |> Map.put(:fees, fees)
+
     struct
     |> cast(params, @required_fields)
     |> validate_required(@required_fields)
@@ -86,5 +88,20 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
 
     fee_transaction_bytes = ExPlasma.encode!(fee_tx, signed: true)
     {fee_transaction_bytes, output}
+  end
+
+  defp recovered_to_map(transaction) do
+    inputs = Enum.map(transaction.inputs, &Map.from_struct/1)
+    outputs = Enum.map(transaction.outputs, &Map.from_struct/1)
+    {:ok, tx_hash} = ExPlasma.hash(transaction)
+
+    %{
+      signed_tx: transaction,
+      inputs: inputs,
+      outputs: outputs,
+      tx_hash: tx_hash,
+      tx_type: transaction.tx_type,
+      witnesses: transaction.witnesses
+    }
   end
 end

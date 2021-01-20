@@ -283,10 +283,10 @@ jobs:
       image: ubuntu-2004:202010-01
     steps:
       - checkout
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run: |
           echo $PRODUCTION_DOCKER_GCLOUD_KEY | gcloud auth activate-service-account --key-file=-
           gcloud -q auth configure-docker
-      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run:
           command: make init-contracts
           background: true

@@ -20,26 +20,26 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
 
   describe "new_transaction_changeset/2" do
     test "assigns values to fields" do
-      params = valid_payment_transaction_changeset_params()
-      assert changeset = TransactionChangeset.new_transaction_changeset(%Transaction{}, params)
+      {{tx_bytes, decoded_t, fees}, tx_hash} = valid_payment_transaction_changeset_params()
+      assert changeset = TransactionChangeset.new_transaction_changeset(%Transaction{}, tx_bytes, decoded_t, fees)
       assert changeset.valid?
 
       transaction = Changeset.apply_changes(changeset)
-      assert params[:tx_type] == transaction.tx_type
-      assert params[:tx_hash] == transaction.tx_hash
-      assert params[:tx_bytes] == transaction.tx_bytes
-      assert params[:witnesses] == transaction.witnesses
+      assert decoded_t.tx_type == transaction.tx_type
+      assert tx_hash == transaction.tx_hash
+      assert tx_bytes == transaction.tx_bytes
+      assert decoded_t.witnesses == transaction.witnesses
 
       assert [%{output_data: output_data}] = transaction.outputs
       assert [%{output_id: input_id}] = transaction.inputs
 
       expected_output_data =
-        params[:outputs]
+        decoded_t.outputs
         |> hd()
         |> encoded_output_data()
 
       expected_input_data =
-        params[:inputs]
+        decoded_t.inputs
         |> hd()
         |> encoded_output_id()
 
@@ -52,9 +52,8 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
     test "sets block number, transaction index and output positions" do
       tx_index = 1
       block = build(:block)
-
-      changeset =
-        TransactionChangeset.new_transaction_changeset(%Transaction{}, valid_payment_transaction_changeset_params())
+      {{tx_bytes, decoded_t, fees}, _tx_hash} = valid_payment_transaction_changeset_params()
+      changeset = TransactionChangeset.new_transaction_changeset(%Transaction{}, tx_bytes, decoded_t, fees)
 
       update = TransactionChangeset.set_blknum_and_tx_index(changeset, %{block: block, next_tx_index: tx_index})
 
@@ -107,7 +106,7 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
       assert [%{output_data: output_data}] = fee_transaction.outputs
 
       expected_output_data =
-        params[:outputs]
+        fee_tx.outputs
         |> hd()
         |> encoded_output_data()
 
@@ -132,32 +131,17 @@ defmodule Engine.DB.Transaction.TransactionChangesetTest do
     tx_bytes = ExPlasma.encode!(transaction)
     {:ok, tx_hash} = ExPlasma.Transaction.hash(transaction)
 
-    %{
-      tx_type: transaction.tx_type,
-      tx_bytes: tx_bytes,
-      tx_hash: tx_hash,
-      signed_tx: transaction,
-      witnesses: transaction.witnesses,
-      inputs: Enum.map(transaction.inputs, &Map.from_struct/1),
-      outputs: Enum.map(transaction.outputs, &Map.from_struct/1),
-      fees: %{@eth => [1]}
-    }
+    {{tx_bytes, transaction, %{@eth => [1]}}, tx_hash}
   end
 
   defp encoded_output_data(params) do
-    {:ok, encoded_output_data} =
-      %ExPlasma.Output{}
-      |> struct(params)
-      |> ExPlasma.Output.encode()
+    {:ok, encoded_output_data} = ExPlasma.Output.encode(params)
 
     encoded_output_data
   end
 
   defp encoded_output_id(params) do
-    {:ok, encoded_output_id} =
-      %ExPlasma.Output{}
-      |> struct(params)
-      |> ExPlasma.Output.encode(as: :input)
+    {:ok, encoded_output_id} = ExPlasma.Output.encode(params, as: :input)
 
     encoded_output_id
   end

@@ -100,8 +100,7 @@ defmodule Engine.DB.Transaction do
     case decode(tx_bytes) do
       {:ok, decoded} ->
         {:ok, fees} = load_fees(decoded.tx_type)
-        decoded_with_fees = Map.put(decoded, :fees, fees)
-        changeset = TransactionChangeset.new_transaction_changeset(%__MODULE__{}, decoded_with_fees)
+        changeset = TransactionChangeset.new_transaction_changeset(%__MODULE__{}, tx_bytes, decoded, fees)
 
         Multi.new()
         |> Multi.run(:current_forming_block, &Block.get_forming_block_for_update/2)
@@ -139,16 +138,11 @@ defmodule Engine.DB.Transaction do
     |> repo.insert()
   end
 
-  @spec decode(tx_bytes) :: {:ok, map()} | {:error, atom()}
+  @spec decode(tx_bytes) :: {:ok, ExPlasma.Transaction.t()} | {:error, atom()}
   defp decode(tx_bytes) do
     with {:ok, decoded} <- ExPlasma.decode(tx_bytes),
          {:ok, recovered} <- ExPlasmaTx.with_witnesses(decoded) do
-      params =
-        recovered
-        |> recovered_to_map()
-        |> Map.put(:tx_bytes, tx_bytes)
-
-      {:ok, params}
+      {:ok, recovered}
     end
   end
 
@@ -156,20 +150,5 @@ defmodule Engine.DB.Transaction do
     {:ok, all_fees} = Fee.accepted_fees()
     fees_for_type = Map.get(all_fees, type, {:error, :invalid_transaction_type})
     {:ok, fees_for_type}
-  end
-
-  defp recovered_to_map(transaction) do
-    inputs = Enum.map(transaction.inputs, &Map.from_struct/1)
-    outputs = Enum.map(transaction.outputs, &Map.from_struct/1)
-    {:ok, tx_hash} = ExPlasma.hash(transaction)
-
-    %{
-      signed_tx: transaction,
-      inputs: inputs,
-      outputs: outputs,
-      tx_hash: tx_hash,
-      tx_type: transaction.tx_type,
-      witnesses: transaction.witnesses
-    }
   end
 end
