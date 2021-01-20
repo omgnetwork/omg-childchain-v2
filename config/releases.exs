@@ -16,7 +16,6 @@ mandatory = fn env, exception ->
 end
 
 config :engine,
-  collect_fees: String.to_integer(System.get_env("COLLECT_FEES") || "1"),
   finality_margin: String.to_integer(System.get_env("FINALITY_MARGIN") || "10"),
   rpc_url: rpc_url,
   vault_url: vault_url,

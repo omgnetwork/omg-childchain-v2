@@ -66,16 +66,10 @@ defmodule Engine.Supervisor do
   end
 
   defp fee_server() do
-    case Configuration.collect_fees() do
-      0 ->
-        []
+    # we did not fetch fees yet
+    FeeServer.raise_no_fees_alarm()
 
-      _ ->
-        # we did not fetch fees yet
-        FeeServer.raise_no_fees_alarm()
-
-        fee_server_opts = Configuration.fee_server_opts()
-        [{FeeServer, fee_server_opts}]
-    end
+    fee_server_opts = Configuration.fee_server_opts()
+    [{FeeServer, fee_server_opts}]
   end
 end

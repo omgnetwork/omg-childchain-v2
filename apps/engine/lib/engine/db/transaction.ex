@@ -154,15 +154,9 @@ defmodule Engine.DB.Transaction do
   end
 
   defp load_fees(type) do
-    case Configuration.collect_fees() do
-      0 ->
-        {:ok, :no_fees_required}
-
-      _ ->
-        {:ok, all_fees} = Fee.accepted_fees()
-        fees_for_type = Map.get(all_fees, type, {:error, :invalid_transaction_type})
-        {:ok, fees_for_type}
-    end
+    {:ok, all_fees} = Fee.accepted_fees()
+    fees_for_type = Map.get(all_fees, type, {:error, :invalid_transaction_type})
+    {:ok, fees_for_type}
   end
 
   defp recovered_to_map(transaction) do
