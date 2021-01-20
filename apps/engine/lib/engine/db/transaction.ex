@@ -139,7 +139,7 @@ defmodule Engine.DB.Transaction do
     |> repo.insert()
   end
 
-  @spec decode(tx_bytes) :: {:ok, Ecto.Changeset.t()} | {:error, atom()}
+  @spec decode(tx_bytes) :: {:ok, map()} | {:error, atom()}
   defp decode(tx_bytes) do
     with {:ok, decoded} <- ExPlasma.decode(tx_bytes),
          {:ok, recovered} <- ExPlasmaTx.with_witnesses(decoded) do
