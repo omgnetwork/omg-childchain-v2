@@ -67,7 +67,7 @@ defmodule Engine.Supervisor do
 
   defp fee_server() do
     case Configuration.collect_fees() do
-      "0" ->
+      0 ->
         []
 
       _ ->

@@ -14,9 +14,12 @@ defmodule Engine.DB.Output.OutputQuery do
     Output |> usable() |> by_position(positions)
   end
 
+  # enabled transaction chaining would allow the state to also be pending!
+  # what needs to be done to avoid `o.state == ^:pending` is to
+  # mark all pending outputs to confirmed after their origin block gets mined (or submitted to contracts)
   defp usable(query) do
     from(o in query,
-      where: is_nil(o.spending_transaction_id) and o.state == ^:confirmed
+      where: (is_nil(o.spending_transaction_id) and o.state == ^:confirmed) or o.state == ^:pending
     )
   end
 

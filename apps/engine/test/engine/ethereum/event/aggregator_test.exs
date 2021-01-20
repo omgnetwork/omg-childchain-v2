@@ -62,7 +62,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
                  signature: "InFlightExitInputPiggybacked(address,bytes32,uint16)",
                  name: :in_flight_exit_input_piggybacked
                ],
-               [signature: "ExitStarted(address,uint168,uint256)", name: :exit_started],
+               [signature: "ExitStarted(address,uint168,uint256,bytes)", name: :exit_started],
                [signature: "DepositCreated(address,uint256,address,uint256)", name: :deposit_created]
              ]
     end
@@ -73,7 +73,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
                  "InFlightExitStarted(address,bytes32,bytes,uint256[],bytes[])",
                  "InFlightExitOutputPiggybacked(address,bytes32,uint16)",
                  "InFlightExitInputPiggybacked(address,bytes32,uint16)",
-                 "ExitStarted(address,uint168,uint256)",
+                 "ExitStarted(address,uint168,uint256,bytes)",
                  "DepositCreated(address,uint256,address,uint256)"
                ])
     end
@@ -433,18 +433,18 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
 
   def exit_started_log(block_number) do
     %{
-      "address" => "0x92ce4d7773c57d96210c46a07b89acf725057f21",
-      "blockHash" => "0x1bee6f75c74ceeb4817dc160e2fb56dd1337a9fc2980a2b013252cf1e620f246",
+      "address" => "0x0d39f15b6432c7e8a028dc5bd8c874f54852265f",
+      "blockHash" => "0x9269e6dbfe6fb8fc2a7fd088b63bce77ce37f01798544ffdd5273b9a85803fe5",
       "blockNumber" => "0x" <> Integer.to_string(block_number, 16),
       "data" =>
-        "0x000000000000000000000000002b191e750d8d4d3dcad14a9c8e5a5cf0c81761000000000000000000000000000000000000000000000000000001d1e4e4ea00",
+        "0x0000000000000000000000047b7c1bf35c82a6b6a91465ce5469fe235c6f5479000000000000000000000000000000000000000000000000000000e8d4a5100000000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000076f87401e1a0000000000000000000000000000000000000000000000000000000003b9aca00eeed01eb943b9f4c1dd26e0be593373b1d36cee2008cbeb8379400000000000000000000000000000000000000000980a0000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
       "logIndex" => "0x1",
       "removed" => false,
       "topics" => [
-        "0xe0ffc2e7d623cb04e12318e11dd2c9df46dbfba8ac0c429dd49885f35785cf63",
-        "0x00000000000000000000000008858124b3b880c68b360fd319cc61da27545e9a"
+        "0xbe1fcee8d584647b0ce80e56f62c950e0cb2126418f52cc052a665e5f85a5d93",
+        "0x0000000000000000000000003b9f4c1dd26e0be593373b1d36cee2008cbeb837"
       ],
-      "transactionHash" => "0x4a8248b88a17b2be4c6086a1984622de1a60dda3c9dd9ece1ef97ed18efa028c",
+      "transactionHash" => "0x37d0ee1c1df5f2ee0874218461d396e20723d63dcc57e01c8516b880066428c3",
       "transactionIndex" => "0x0"
     }
   end
@@ -522,7 +522,8 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
       "0xa93c0e9b202feaf554acf6ef1185b898c9f214da16e51740b06b5f7487b018e5" =>
         "InFlightExitInputPiggybacked(address,bytes32,uint16)",
       "0xd5f1fe9d48880b57daa227004b16d320c0eb885d6c49d472d54c16a05fa3179e" => "InFlightExitStarted(address,bytes32)",
-      "0xe0ffc2e7d623cb04e12318e11dd2c9df46dbfba8ac0c429dd49885f35785cf63" => "ExitStarted(address,uint168,uint256)"
+      "0xbe1fcee8d584647b0ce80e56f62c950e0cb2126418f52cc052a665e5f85a5d93" =>
+        "ExitStarted(address,uint168,uint256,bytes)"
     }
   end
 

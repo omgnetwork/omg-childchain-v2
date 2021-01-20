@@ -233,6 +233,7 @@ defmodule Engine.DB.Block do
       |> Kernel.round()
 
     submission_result = submit_fn.(plasma_block.hash, "#{plasma_block.nonce}", "#{gas}")
+    Logger.info("Submission result for block #{inspect(plasma_block.hash)} #{inspect(submission_result)}")
 
     case submission_result do
       {:ok, tx_hash} ->

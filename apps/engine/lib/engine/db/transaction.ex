@@ -22,10 +22,10 @@ defmodule Engine.DB.Transaction do
 
   alias __MODULE__.TransactionChangeset
   alias Ecto.Multi
+  alias Engine.Configuration
   alias Engine.DB.Block
   alias Engine.DB.Output
   alias Engine.DB.TransactionFee
-  alias Engine.Configuration
   alias Engine.Fee
   alias Engine.Repo
   alias ExPlasma.Transaction, as: ExPlasmaTx
@@ -155,7 +155,7 @@ defmodule Engine.DB.Transaction do
 
   defp load_fees(type) do
     case Configuration.collect_fees() do
-      "0" ->
+      0 ->
         {:ok, :no_fees_required}
 
       _ ->

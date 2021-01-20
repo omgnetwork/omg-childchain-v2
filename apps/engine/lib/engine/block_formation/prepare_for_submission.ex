@@ -50,7 +50,12 @@ defmodule Engine.BlockFormation.PrepareForSubmission do
       end
 
     {:ok, %{blocks_for_submission: blocks}} = Block.prepare_for_submission(new_height)
-    _ = Logger.info("Prepared #{inspect(Enum.count(blocks))} blocks for submision")
+
+    case Enum.count(blocks) > 0 do
+      true -> _ = Logger.info("Prepared #{inspect(Enum.count(blocks))} blocks for submision")
+      _ -> :ok
+    end
+
     {:noreply, state}
   end
 
