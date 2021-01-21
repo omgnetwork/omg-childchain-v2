@@ -284,9 +284,8 @@ jobs:
     steps:
       - checkout
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - run: |
-          echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
-          gcloud -q auth configure-docker
+      - run: pip3 install docker-compose --upgrade
+      - gcloud_login
       - run:
           command: make init-contracts
           background: true
