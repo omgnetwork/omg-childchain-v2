@@ -36,6 +36,18 @@ services:
       chain_net:
         ipv4_address: 172.27.0.107
 
+  # feefeed:
+  #   image: omisego/feefeed_mock:latest
+  #   volumes:
+  #     - ./docker/static_feefeed/:/www-data/
+  #   ports:
+  #     - "4000:80"
+  #   expose:
+  #     - "4000"
+  #   networks:
+  #     chain_net:
+  #       ipv4_address: 172.27.0.110
+
   feefeed:
     image: gcr.io/omisego-development/feefeed:latest
     command: "start"
@@ -70,15 +82,16 @@ services:
     env_file:
       - ./localchain_contract_addresses.env
     environment:
-      DATABASE_URL: postgresql://engine_repo:engine_repo@172.27.0.107:5432/engine_repo
-      ETHEREUM_RPC_URL: http://172.27.0.108:80
-      LOGGER_BACKEND: console
-      ETHEREUM_EVENTS_CHECK_INTERVAL_MS: 800
-      FEE_FEED_URL: http://172.27.0.110:4000/api/v1/fees
-      FEE_CHANGE_TOLERANCE_PERCENT: 20
-      FEE_ADAPTER: FEED
-      STORED_FEE_UPDATE_INTERVAL_MINUTES: 2
-      FEE_CLAIMER_ADDRESS: 0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1
+      - DATABASE_URL=postgresql://engine_repo:engine_repo@172.27.0.107:5432/engine_repo
+      - ETHEREUM_RPC_URL=http://172.27.0.108:80
+      - LOGGER_BACKEND=console
+      - ETHEREUM_EVENTS_CHECK_INTERVAL_MS=800
+      - FEE_FEED_URL=http://172.27.0.110:4000/api/v1/fees
+      #- FEE_FEED_URL=http://172.27.0.110/file.json #mock feefeed
+      - FEE_CHANGE_TOLERANCE_PERCENT=20
+      - FEE_ADAPTER=FEED
+      - STORED_FEE_UPDATE_INTERVAL_MINUTES=2
+      - FEE_CLAIMER_ADDRESS=0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1
     depends_on:
       - feefeed
       - nginx
