@@ -4,6 +4,7 @@ defmodule Engine.ReleaseTasks.InitPostgresqlDB do
   @app :engine
 
   def migrate() do
+    Logger.info("Starting migration.")
     Process.flag(:trap_exit, true)
     do_migrate()
     Process.flag(:trap_exit, false)
@@ -25,6 +26,19 @@ defmodule Engine.ReleaseTasks.InitPostgresqlDB do
 
     for repo <- repos do
       spawn_link(fn ->
+        Logger.info("Engine: #{inspect(Application.get_all_env(:engine))}")
+
+        case System.get_env("DATABASE_URL") do
+          nil ->
+            :ok
+
+          url ->
+            Logger.info("Setting DB url from DATABASE_URL env var.")
+            repo_config = Application.get_env(:engine, repo)
+            _ = Application.put_env(@app, repo, Keyword.merge(repo_config, url: url))
+            Logger.info("Updated Engine #{repo} config: #{inspect(Application.get_env(:engine, repo))}")
+        end
+
         {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
         Kernel.send(parent, {:done, repo})
       end)

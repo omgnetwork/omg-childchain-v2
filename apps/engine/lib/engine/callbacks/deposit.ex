@@ -22,12 +22,15 @@ defmodule Engine.Callbacks.Deposit do
   alias Engine.DB.Output
   alias Engine.Repo
 
+  require Logger
+
   @doc """
   Inserts deposit events, forming the associated UTXOs.
   This will wrap all the build deposits into one DB transaction.
   """
   @impl Callback
   @decorate trace(service: :ecto, type: :backend)
+  # to me it seems like we need to call update_listener_height/3 here!
   def callback([], _listener), do: {:ok, :noop}
 
   def callback(events, listener) do
@@ -43,6 +46,13 @@ defmodule Engine.Callbacks.Deposit do
   defp build_deposit(multi, event) do
     deposit_blknum = event.data["blknum"]
     changeset = Output.deposit(deposit_blknum, event.data["depositor"], event.data["token"], event.data["amount"])
+
+    _ =
+      Logger.info(
+        "Recognized deposit blknum #{deposit_blknum} event from #{inspect(event.data["depositor"])} of #{
+          inspect(event.data["token"])
+        } amount #{event.data["amount"]}"
+      )
 
     Multi.insert(multi, "deposit-#{deposit_blknum}", changeset,
       on_conflict: :nothing,

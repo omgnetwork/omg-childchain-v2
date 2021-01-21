@@ -172,32 +172,35 @@ defmodule Engine.Ethereum.RootChain.AbiTest do
 
   test "if exit started can be decoded" do
     exit_started_log = %{
-      :event_signature => "ExitStarted(address,uint160)",
-      "address" => "0x92ce4d7773c57d96210c46a07b89acf725057f21",
-      "blockHash" => "0x1bee6f75c74ceeb4817dc160e2fb56dd1337a9fc2980a2b013252cf1e620f246",
-      "blockNumber" => "0x2f7",
+      :event_signature => "ExitStarted(address,uint168,uint256,bytes)",
+      "address" => "0x0d39f15b6432c7e8a028dc5bd8c874f54852265f",
+      "blockHash" => "0x9269e6dbfe6fb8fc2a7fd088b63bce77ce37f01798544ffdd5273b9a85803fe5",
+      "blockNumber" => "0x349",
       "data" =>
-        "0x000000000000000000000000002b191e750d8d4d3dcad14a9c8e5a5cf0c81761000000000000000000000000000000000000000000000000000001d1e4e4ea00",
+        "0x0000000000000000000000047b7c1bf35c82a6b6a91465ce5469fe235c6f5479000000000000000000000000000000000000000000000000000000e8d4a5100000000000000000000000000000000000000000000000000000000000000000600000000000000000000000000000000000000000000000000000000000000076f87401e1a0000000000000000000000000000000000000000000000000000000003b9aca00eeed01eb943b9f4c1dd26e0be593373b1d36cee2008cbeb8379400000000000000000000000000000000000000000980a0000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
       "logIndex" => "0x1",
       "removed" => false,
       "topics" => [
-        "0xe0ffc2e7d623cb04e12318e11dd2c9df46dbfba8ac0c429dd49885f35785cf63",
-        "0x00000000000000000000000008858124b3b880c68b360fd319cc61da27545e9a"
+        "0xbe1fcee8d584647b0ce80e56f62c950e0cb2126418f52cc052a665e5f85a5d93",
+        "0x0000000000000000000000003b9f4c1dd26e0be593373b1d36cee2008cbeb837"
       ],
-      "transactionHash" => "0x4a8248b88a17b2be4c6086a1984622de1a60dda3c9dd9ece1ef97ed18efa028c",
+      "transactionHash" => "0x37d0ee1c1df5f2ee0874218461d396e20723d63dcc57e01c8516b880066428c3",
       "transactionIndex" => "0x0"
     }
 
     assert Abi.decode_log(exit_started_log, keccak_signatures_pair()) == %Engine.Ethereum.RootChain.Event{
              data: %{
-               "exit_id" => 961_120_214_746_159_734_848_620_722_848_998_552_444_082_017,
-               "owner" => "\b\x85\x81$\xB3\xB8\x80Ƌ6\x0F\xD3\x19\xCCa\xDA'T^\x9A",
-               "utxo_pos" => 2_001_000_000_000
+               "exit_id" => 6_550_980_141_382_864_406_435_341_734_958_993_618_605_523_817_593,
+               "owner" => ";\x9FL\x1D\xD2n\v\xE5\x937;\x1D6\xCE\xE2\0\x8C\xBE\xB87",
+               "utxo_pos" => 1_000_000_000_000,
+               "output_tx" =>
+                 "\xF8t\x01\xE1\xA0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0;\x9A\xCA\0\xEE\xED\x01\xEB\x94;\x9FL\x1D\xD2n\v\xE5\x937;\x1D6\xCE\xE2\0\x8C\xBE\xB87\x94\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\t\x80\xA0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
              },
-             eth_height: 759,
-             event_signature: "ExitStarted(address,uint168,uint256)",
+             eth_height: 841,
+             event_signature: "ExitStarted(address,uint168,uint256,bytes)",
              log_index: 1,
-             root_chain_tx_hash: "J\x82H\xB8\x8A\x17\xB2\xBEL`\x86\xA1\x98F\"\xDE\x1A`ݣ\xC9ݞ\xCE\x1E\xF9~ю\xFA\x02\x8C"
+             root_chain_tx_hash:
+               "7\xD0\xEE\x1C\x1D\xF5\xF2\xEE\bt!\x84aӖ\xE2\a#\xD6=\xCCW\xE0\x1C\x85\x16\xB8\x80\x06d(\xC3"
            }
   end
 
@@ -265,7 +268,8 @@ defmodule Engine.Ethereum.RootChain.AbiTest do
         "InFlightExitInputPiggybacked(address,bytes32,uint16)",
       "0x254a634e2edb606f4eb11675bef950159020723005e1c1c60a4199c68640d7c2" =>
         "InFlightExitStarted(address,bytes32,bytes,uint256[],bytes[])",
-      "0xe0ffc2e7d623cb04e12318e11dd2c9df46dbfba8ac0c429dd49885f35785cf63" => "ExitStarted(address,uint168,uint256)"
+      "0xbe1fcee8d584647b0ce80e56f62c950e0cb2126418f52cc052a665e5f85a5d93" =>
+        "ExitStarted(address,uint168,uint256,bytes)"
     }
   end
 end

@@ -12,6 +12,8 @@ defmodule Engine.ReleaseTasks.Contract do
   alias Engine.DB.ContractsConfig
   alias Engine.ReleaseTasks.Contract.External
   alias Engine.ReleaseTasks.Contract.Validators
+  alias Engine.ReleaseTasks.InitPostgresqlDB
+
   require Logger
 
   @ether_vault_id 1
@@ -22,6 +24,7 @@ defmodule Engine.ReleaseTasks.Contract do
   end
 
   def load(config, args) do
+    Logger.info("Init #{__MODULE__}.")
     _ = on_load(args)
 
     plasma_framework =
@@ -60,6 +63,9 @@ defmodule Engine.ReleaseTasks.Contract do
     parent = self()
 
     spawn_link(fn ->
+      engine_config = :engine |> Application.get_env(Engine.Repo) |> Keyword.put(:url, System.get_env("DATABASE_URL"))
+      Application.put_env(:engine, Engine.Repo, engine_config)
+      InitPostgresqlDB.migrate()
       {:ok, contracts_config, _} = Ecto.Migrator.with_repo(Engine.Repo, &ContractsConfig.get/1)
       Kernel.send(parent, {:done, contracts_config})
     end)

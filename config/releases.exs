@@ -40,7 +40,6 @@ config :gas, Gas.Integration.Web3Api,
 config :gas, Gas.Integration.Etherscan, api_key: System.get_env("ETHERSCAN_API_KEY")
 
 config :engine, Engine.Repo,
-  url: System.get_env("DATABASE_URL"),
   backoff_type: :stop,
   # Have at most `:pool_size` DB connections on standby and serving DB queries.
   pool_size: String.to_integer(System.get_env("ENGINE_DB_POOL_SIZE") || "10"),
@@ -48,8 +47,11 @@ config :engine, Engine.Repo,
   # a `:queue_interval` takes more than `:queue_target`, then we double the `:queue_target`.
   # If checking out connections take longer than the new target, a DBConnection.ConnectionError is raised.
   # See: https://hexdocs.pm/db_connection/DBConnection.html#start_link/2-queue-config
-  queue_target: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_TARGET_MS") || "100"),
-  queue_interval: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_INTERVAL_MS") || "2000")
+  queue_target: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_TARGET_MS") || "200"),
+  telemetry_prefix: [:engine, :repo],
+  queue_interval: String.to_integer(System.get_env("ENGINE_DB_POOL_QUEUE_INTERVAL_MS") || "2000"),
+  show_sensitive_data_on_connection_error: true,
+  url: System.get_env("DATABASE_URL")
 
 config :engine, Engine.Fee,
   fee_feed_url: System.get_env("FEE_FEED_URL") || "http://localhost:4000/api/v1",

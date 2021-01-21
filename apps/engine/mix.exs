@@ -28,6 +28,7 @@ defmodule Engine.MixProject do
     [
       {:status, in_umbrella: true},
       {:bus, in_umbrella: true},
+      {:hackney, "~> 1.17"},
       {:ex_abi, "~> 0.5.1"},
       {:ethereumex, "0.6.4"},
       {:ecto_sql, "~> 3.5"},

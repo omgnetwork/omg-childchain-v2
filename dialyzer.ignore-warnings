@@ -1,7 +1,7 @@
 #broken ethereumex
-lib/engine/release_tasks/contract.ex:70
 lib/engine/release_tasks/contract.ex:76
-lib/engine/release_tasks/contract.ex:77
+lib/engine/release_tasks/contract.ex:82
+lib/engine/release_tasks/contract.ex:83
 
 #broken mix/lib/mix/tasks
 lib/mix/tasks/childchain.ex:24
