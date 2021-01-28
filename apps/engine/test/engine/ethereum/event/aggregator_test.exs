@@ -51,7 +51,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
     test "that events are correctly initialized ", %{aggregator: aggregator} do
       assert aggregator |> :sys.get_state() |> Map.get(:events) == [
                [
-                 signature: "InFlightExitStarted(address,bytes32,bytes,uint256[],bytes[])",
+                 signature: "InFlightExitStarted(address,bytes32,bytes,uint256[],bytes[],bytes[])",
                  name: :in_flight_exit_started
                ],
                [
@@ -70,7 +70,7 @@ defmodule Engine.Ethereum.Event.AggregatorTest do
     test "that signatures are correctly initialized ", %{aggregator: aggregator} do
       assert aggregator |> :sys.get_state() |> Map.get(:event_signatures) |> Enum.sort() ==
                Enum.sort([
-                 "InFlightExitStarted(address,bytes32,bytes,uint256[],bytes[])",
+                 "InFlightExitStarted(address,bytes32,bytes,uint256[],bytes[],bytes[])",
                  "InFlightExitOutputPiggybacked(address,bytes32,uint16)",
                  "InFlightExitInputPiggybacked(address,bytes32,uint16)",
                  "ExitStarted(address,uint168,uint256,bytes)",
