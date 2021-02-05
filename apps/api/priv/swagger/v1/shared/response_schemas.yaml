@@ -18,7 +18,7 @@ BaseResponseSchema:
   example:
     success: true
     service_name: childchain
-    version: '1.0'
+    version: 1.0
     data: {}
 
 BaseListResponseSchema:
@@ -42,7 +42,7 @@ BaseListResponseSchema:
     - data
   example:
     service_name: childchain
-    version: '1.0'
+    version: 1.0
     success: true
     data: []
 
