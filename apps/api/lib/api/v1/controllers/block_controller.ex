@@ -18,7 +18,7 @@ defmodule API.V1.Controller.BlockController do
   @decorate trace(service: :ecto, type: :backend)
   def get_by_hash(hash) do
     with {:ok, decoded_hash} <- Encoding.to_binary(hash),
-         {:ok, block} <- Block.get_by_hash(decoded_hash, :transactions) do
+         {:ok, block} <- Block.get_transactions_by_block_hash(decoded_hash) do
       {:ok, BlockView.serialize(block)}
     end
   end

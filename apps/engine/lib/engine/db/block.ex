@@ -21,6 +21,7 @@ defmodule Engine.DB.Block do
 
   use Ecto.Schema
   use Spandex.Decorators
+  import Ecto.Query, only: [from: 2]
 
   alias __MODULE__.BlockChangeset
   alias __MODULE__.BlockQuery
@@ -146,11 +147,11 @@ defmodule Engine.DB.Block do
   @doc """
   Get a block by its hash.
   """
-  @spec get_by_hash(binary(), atom() | list(atom())) :: {:ok, t()} | {:error, :no_block_matching_hash}
-  def get_by_hash(hash, preloads) do
+  @spec get_transactions_by_block_hash(binary()) :: {:ok, t()} | {:error, :no_block_matching_hash}
+  def get_transactions_by_block_hash(hash) do
     __MODULE__
     |> Repo.get_by(hash: hash)
-    |> Repo.preload(preloads)
+    |> Repo.preload(transactions: from(transaction in Transaction, order_by: [desc: transaction.tx_index]))
     |> case do
       nil -> {:error, :no_block_matching_hash}
       block -> {:ok, block}
@@ -233,7 +234,12 @@ defmodule Engine.DB.Block do
       |> Kernel.round()
 
     submission_result = submit_fn.(plasma_block.hash, "#{plasma_block.nonce}", "#{gas}")
-    Logger.info("Submission result for block #{inspect(plasma_block.hash)} #{inspect(submission_result)}")
+
+    Logger.info(
+      "Submission result for block #{inspect(plasma_block.hash)} with nonce #{plasma_block.nonce} #{
+        inspect(submission_result)
+      }"
+    )
 
     case submission_result do
       {:ok, tx_hash} ->
@@ -251,7 +257,7 @@ defmodule Engine.DB.Block do
       error ->
         # we encountered an error with one of the block submissions
         # we'll stop here and continue later
-        _ = Logger.warn("Block submission stopped at block with nonce #{plasma_block.nonce}. Error: #{inspect(error)}")
+        _ = Logger.info("Block submission stopped at block with nonce #{plasma_block.nonce}. Error: #{inspect(error)}")
         process_submission(repo, [], new_height, mined_child_block, submit_fn, gas_fn)
     end
   end
@@ -309,11 +315,15 @@ defmodule Engine.DB.Block do
   defp fetch_tx_bytes_in_block(block_id) do
     query = TransactionQuery.fetch_transactions_from_block(block_id)
 
-    query
-    |> Repo.all()
-    |> Enum.map(fn tx ->
-      Transaction.encode_unsigned(tx)
-    end)
+    transactions =
+      query
+      |> Repo.all()
+      |> Enum.map(fn tx ->
+        Transaction.encode_unsigned(tx)
+      end)
+
+    _ = Logger.debug("All transactions in a block #{inspect(transactions)}")
+    transactions
   end
 
   defp get_or_insert_forming_block(repo, params) do

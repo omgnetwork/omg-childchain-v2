@@ -25,26 +25,17 @@ defmodule Engine.DB.BlockTest do
   end
 
   describe "get_by_hash/2" do
-    test "returns the block without preloads" do
-      _ = insert(:block, %{state: Block.state_finalizing()})
-
-      {:ok, %{blocks_for_submission: [block]}} = Block.prepare_for_submission(@eth_height)
-
-      assert {:ok, block_result} = Block.get_by_hash(block.hash, [])
-      refute Ecto.assoc_loaded?(block_result.transactions)
-      assert block_result.hash == block.hash
-    end
 
     test "returns the block with preloads" do
       %{tx_hash: tx_hash, block: block} = insert(:payment_v1_transaction, %{block: insert(:block)})
 
-      assert {:ok, block_result} = Block.get_by_hash(block.hash, :transactions)
+      assert {:ok, block_result} = Block.get_transactions_by_block_hash(block.hash)
       assert [%{tx_hash: ^tx_hash}] = block_result.transactions
       assert block_result.hash == block.hash
     end
 
     test "returns {:error, :no_block_matching_hash} if not found" do
-      assert {:error, :no_block_matching_hash} = Block.get_by_hash(<<0>>, [])
+      assert {:error, :no_block_matching_hash} = Block.get_transactions_by_block_hash(<<0>>)
     end
 
     test "fails to insert two block with the same hash" do
