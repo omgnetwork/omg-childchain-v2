@@ -46,7 +46,7 @@ defmodule Engine.DB.Transaction.TransactionQueryTest do
         |> Repo.all()
         |> Enum.map(fn %{id: id} -> id end)
 
-      assert [first, middle, last] == selected_ids
+      assert [last, middle, first] == selected_ids
     end
   end
 

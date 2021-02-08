@@ -25,7 +25,6 @@ defmodule Engine.DB.BlockTest do
   end
 
   describe "get_by_hash/2" do
-
     test "returns the block with preloads" do
       %{tx_hash: tx_hash, block: block} = insert(:payment_v1_transaction, %{block: insert(:block)})
 
@@ -467,9 +466,7 @@ defmodule Engine.DB.BlockTest do
 
       assert {:ok, %{blocks_for_submission: [block_for_submission]}} = Block.prepare_for_submission(@eth_height)
 
-      assert block_for_submission.hash ==
-               <<189, 245, 69, 5, 94, 45, 148, 210, 5, 89, 98, 245, 201, 111, 222, 48, 61, 114, 145, 55, 122, 84, 196,
-                 156, 254, 80, 85, 184, 3, 205, 163, 233>>
+      assert block_for_submission.hash == "6\x9E\xA7X\xF7b\x1E\x89Qx\xE5\f\b\xF3\xA4\d\xE2\xA6Aդ6Ņ0\x8819w\x88q\xF1"
     end
 
     @tag timeout: :infinity
@@ -617,8 +614,8 @@ defmodule Engine.DB.BlockTest do
         |> Repo.all()
         |> Enum.filter(fn %Transaction{tx_type: tx_type} -> tx_type == ExPlasma.fee() end)
 
-      assert 2 == fee_transaction1.tx_index
-      assert 3 == fee_transaction2.tx_index
+      assert 3 == fee_transaction1.tx_index
+      assert 2 == fee_transaction2.tx_index
     end
 
     test "handles conflicts for concurrent calls" do
