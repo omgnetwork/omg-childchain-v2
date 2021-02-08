@@ -219,6 +219,10 @@ jobs:
     steps:
       - checkout
       - install_rust
+      - run: make init-contracts-vault
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
       - run: docker-compose up -d postgres
       - install_elixir:
           cache: "integration"
@@ -227,10 +231,6 @@ jobs:
       - run:
           name: Get enteprise deps
           command: mix deps.get
-      - run: make init-contracts-vault
-      - run:
-          name: Setup data dir
-          command: chmod -R 777 data
       - run:
           name: Run Vault integration test
           command: mix test.integration_block_submission_vault
@@ -245,15 +245,15 @@ jobs:
     steps:
       - checkout
       - install_rust
+      - run: make init-contracts
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
       - run: docker-compose up -d postgres
       - install_elixir:
           cache: "integration"
           dir: "~/childchain"
       - gcloud_login
-      - run: make init-contracts
-      - run:
-          name: Setup data dir
-          command: chmod -R 777 data
       - run:
           name: Get deps
           command: mix deps.get
