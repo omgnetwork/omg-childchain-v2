@@ -63,7 +63,7 @@ defmodule EventTest do
   defp deposit(port) do
     opts = [url: "http://127.0.0.1:#{port}"]
     vault_address = Configuration.eth_vault()
-    {:ok, [output_address | _]} = Ethereumex.HttpClient.eth_accounts(opts)
+    {:ok, [output_address | _]} = get_first_account(opts)
     {:ok, true} = Ethereumex.HttpClient.request("personal_unlockAccount", [output_address, "", 0], opts)
     amount_in_wei = 1_000_000
     currency = ether()
@@ -93,5 +93,24 @@ defmodule EventTest do
     |> Encoding.to_binary!()
     |> Deposit.new(currency, amount_in_wei)
     |> ExPlasma.encode!(signed: false)
+  end
+
+  defp get_first_account(opts) do
+    get_first_account(opts, 10)
+  end
+
+  defp get_first_account(opts, 0) do
+    Ethereumex.HttpClient.eth_accounts(opts)
+  end
+
+  defp get_first_account(opts, counter) do
+    case Ethereumex.HttpClient.eth_accounts(opts) do
+      {:error, :closed} ->
+        Process.sleep(200)
+        get_first_account(opts, counter - 1)
+
+      {:ok, [_output_address | _]} = result ->
+        result
+    end
   end
 end
