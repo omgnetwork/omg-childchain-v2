@@ -469,8 +469,6 @@ defmodule Engine.DB.BlockTest do
       assert block_for_submission.hash == "6\x9E\xA7X\xF7b\x1E\x89Qx\xE5\f\b\xF3\xA4\d\xE2\xA6Aդ6Ņ0\x8819w\x88q\xF1"
     end
 
-    @tag timeout: :infinity
-    @tag :integration
     test "correctly calculates hash for a lot of transactions", %{block: block} do
       alice_priv_key =
         "0x" <>
@@ -482,27 +480,55 @@ defmodule Engine.DB.BlockTest do
 
       bob_address = <<207, 194, 79, 222, 88, 128, 171, 217, 153, 41, 195, 239, 138, 178, 227, 16, 72, 173, 118, 35>>
 
-      _ =
-        Enum.each(1..64_000, fn index ->
-          tx_bytes =
-            ExPlasma.payment_v1()
-            |> ExPlasma.Builder.new()
-            |> ExPlasma.Builder.add_input(blknum: 1, txindex: index, oindex: index)
-            |> ExPlasma.Builder.add_output(
-              output_type: 1,
-              output_data: %{output_guard: bob_address, token: <<0::160>>, amount: 100}
-            )
-            |> ExPlasma.Builder.sign!([alice_priv_key])
-            |> ExPlasma.encode!()
+      create_transaction = fn index ->
+        tx_bytes =
+          ExPlasma.payment_v1()
+          |> ExPlasma.Builder.new()
+          |> ExPlasma.Builder.add_input(blknum: 1, txindex: index, oindex: index)
+          |> ExPlasma.Builder.add_output(
+            output_type: 1,
+            output_data: %{output_guard: bob_address, token: <<0::160>>, amount: 100}
+          )
+          |> ExPlasma.Builder.sign!([alice_priv_key])
+          |> ExPlasma.encode!()
 
-          _ = insert(:payment_v1_transaction, %{block: block, tx_index: index, tx_bytes: tx_bytes})
+        attr = %{block: block, tx_index: index, tx_bytes: tx_bytes}
+
+        {:ok, tx_hash} = ExPlasma.Transaction.hash(tx_bytes)
+
+        [
+          tx_bytes: Map.get(attr, :tx_bytes, tx_bytes),
+          tx_hash: tx_hash,
+          tx_type: ExPlasma.payment_v1(),
+          tx_index: Map.get(attr, :tx_index, 0),
+          inserted_at: DateTime.truncate(DateTime.utc_now(), :second),
+          updated_at: DateTime.truncate(DateTime.utc_now(), :second),
+          node_inserted_at: NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second),
+          node_updated_at: NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second)
+        ]
+      end
+
+      transactions =
+        1..64_000
+        |> Enum.chunk_every(8000)
+        |> Enum.map(fn chunk ->
+          Task.async_stream(chunk, fn index -> create_transaction.(index) end,
+            ordered: false,
+            timeout: 600_000,
+            on_timeout: :exit,
+            max_concurrency: System.schedulers_online() * 3
+          )
+          |> Enum.map(fn {:ok, result} -> result end)
         end)
+
+      Enum.each(transactions, fn chunk_of_8000_transactions ->
+        {8000, nil} = Repo.insert_all(Engine.DB.Transaction, chunk_of_8000_transactions, [])
+      end)
 
       assert {:ok, %{blocks_for_submission: [block_for_submission]}} = Block.prepare_for_submission(@eth_height)
 
       assert block_for_submission.hash ==
-               <<12, 40, 202, 7, 16, 175, 119, 138, 7, 95, 8, 3, 148, 93, 162, 168, 136, 226, 196, 236, 83, 62, 220, 75,
-                 59, 52, 6, 18, 249, 52, 124, 228>>
+               "\xF6\t\xBE\xFD\xFE\x90f\xFE\x14\xE7C\xB3b>\xAE\x87\x8F\xBCF\x80\x05`\x88\x16\x83,\x9DF\x0F*\x95\xD2"
     end
 
     test "affects only blocks in finalizing state" do

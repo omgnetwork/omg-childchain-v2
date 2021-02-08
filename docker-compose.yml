@@ -28,7 +28,7 @@ services:
       - "5432:5432"
     volumes:
       - ./docker/create_databases.sql:/docker-entrypoint-initdb.d/create_databases.sql
-      - ./docker/postgres/data:/var/lib/postgresql/data
+      - ./data/postgres/data:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=omisegodev
       - POSTGRES_PASSWORD=omisegodev
