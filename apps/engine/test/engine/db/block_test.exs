@@ -466,7 +466,7 @@ defmodule Engine.DB.BlockTest do
 
       assert {:ok, %{blocks_for_submission: [block_for_submission]}} = Block.prepare_for_submission(@eth_height)
 
-      assert block_for_submission.hash == "6\x9E\xA7X\xF7b\x1E\x89Qx\xE5\f\b\xF3\xA4\d\xE2\xA6Aդ6Ņ0\x8819w\x88q\xF1"
+      assert block_for_submission.hash == "\xBD\xF5E\x05^-\x94\xD2\x05Yb\xF5\xC9o\xDE0=r\x917zTĜ\xFEPU\xB8\x03ͣ\xE9"
     end
 
     test "correctly calculates hash for a lot of transactions", %{block: block} do
@@ -641,16 +641,23 @@ defmodule Engine.DB.BlockTest do
         |> Repo.all()
         |> Enum.filter(fn %Transaction{tx_type: tx_type} -> tx_type == ExPlasma.fee() end)
 
-      assert 3 == fee_transaction1.tx_index
-      assert 2 == fee_transaction2.tx_index
+      assert 2 == fee_transaction1.tx_index
+      assert 3 == fee_transaction2.tx_index
     end
 
     test "handles conflicts for concurrent calls" do
+      parent = self()
+
       :ok = Enum.each(1..50, fn _ -> insert_non_empty_block(Block.state_finalizing()) end)
 
       no_conflicts =
         1..50
-        |> Enum.map(fn _ -> Task.async(fn -> Block.prepare_for_submission(@eth_height) end) end)
+        |> Enum.map(fn _ ->
+          Task.async(fn ->
+            Ecto.Adapters.SQL.Sandbox.allow(Repo, parent, self())
+            Block.prepare_for_submission(@eth_height)
+          end)
+        end)
         |> Enum.map(fn task -> Task.await(task) end)
         |> Enum.all?(fn
           {:ok, _} -> true
