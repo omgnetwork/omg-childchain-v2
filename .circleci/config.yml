@@ -196,15 +196,15 @@ jobs:
     steps:
       - checkout
       - install_rust
+      - run: make init-contracts
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
       - run: docker-compose up -d postgres
       - install_elixir:
           cache: "integration"
           dir: "~/childchain"
       - gcloud_login
-      - run: make init-contracts
-      - run:
-          name: Setup data dir
-          command: chmod -R 777 data
       - run: mix deps.get
       - run: docker-compose pull geth
       - run: mix test.integration
