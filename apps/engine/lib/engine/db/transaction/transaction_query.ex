@@ -32,10 +32,11 @@ defmodule Engine.DB.Transaction.TransactionQuery do
   end
 
   @doc """
-  Querries for all transaction in a block
+  Querries for all transaction in a block.
+  Order by default is asc.
   """
   def fetch_transactions_from_block(block_id) do
-    from(transaction in Transaction, where: transaction.block_id == ^block_id, order_by: transaction.tx_index)
+    from(transaction in Transaction, where: transaction.block_id == ^block_id, order_by: [desc: transaction.tx_index])
   end
 
   @doc """
