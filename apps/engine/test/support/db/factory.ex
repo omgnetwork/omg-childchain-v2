@@ -175,14 +175,14 @@ defmodule Engine.DB.Factory do
   end
 
   def payment_v1_transaction_factory(attr) do
-    entity = TestEntity.alice()
-
     %{output_id: output_id} = input = :deposit_output |> build() |> set_state(:spent)
     %{output_data: output_data} = output = build(:output)
 
     tx_bytes =
       case attr[:tx_bytes] do
         nil ->
+          entity = TestEntity.alice()
+
           ExPlasma.payment_v1()
           |> Builder.new(%{
             inputs: [ExPlasma.Output.decode_id!(output_id)],
