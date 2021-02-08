@@ -512,7 +512,8 @@ defmodule Engine.DB.BlockTest do
         1..64_000
         |> Enum.chunk_every(8000)
         |> Enum.map(fn chunk ->
-          Task.async_stream(chunk, fn index -> create_transaction.(index) end,
+          chunk
+          |> Task.async_stream(fn index -> create_transaction.(index) end,
             ordered: false,
             timeout: 600_000,
             on_timeout: :exit,
