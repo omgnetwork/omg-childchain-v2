@@ -151,7 +151,7 @@ defmodule Engine.DB.Block do
   def get_transactions_by_block_hash(hash) do
     __MODULE__
     |> Repo.get_by(hash: hash)
-    |> Repo.preload(transactions: from(transaction in Transaction, order_by: [desc: transaction.tx_index]))
+    |> Repo.preload(transactions: from(transaction in Transaction, order_by: [asc: transaction.tx_index]))
     |> case do
       nil -> {:error, :no_block_matching_hash}
       block -> {:ok, block}
