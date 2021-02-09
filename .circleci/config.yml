@@ -228,9 +228,27 @@ jobs:
           cache: "integration"
           dir: "~/childchain"
       - gcloud_login
+      - restore_cache:
+          keys:
+            - v2-mix-cache-test-integration_vault-{{ checksum "mix.lock" }}
       - run:
           name: Get enteprise deps
           command: mix deps.get
+      - run:
+          name: Compile
+          environment:
+            MIX_ENV: test
+          command: mix compile
+      - save_cache:
+          key: v2-mix-cache-test-integration_vault-{{ checksum "mix.lock" }}
+          paths:
+            - deps
+            - _build
+      - run: rm -rf _build/test/lib/engine
+      - run: rm -rf _build/test/lib/api
+      - run: rm -rf _build/test/lib/bus
+      - run: rm -rf _build/test/lib/status
+      - run: rm -rf _build/test/lib/tasks
       - run:
           name: Run Vault integration test
           command: mix test.integration_block_submission_vault

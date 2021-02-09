@@ -654,6 +654,7 @@ defmodule Engine.DB.BlockTest do
         1..50
         |> Enum.map(fn _ ->
           Task.async(fn ->
+            # credo:disable-for-next-line Credo.Check.Design.AliasUsage
             Ecto.Adapters.SQL.Sandbox.allow(Repo, parent, self())
             Block.prepare_for_submission(@eth_height)
           end)
