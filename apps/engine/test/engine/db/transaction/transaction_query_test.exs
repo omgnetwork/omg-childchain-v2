@@ -39,6 +39,9 @@ defmodule Engine.DB.Transaction.TransactionQueryTest do
       %{id: first} = insert(:payment_v1_transaction, %{block: block, tx_index: 0})
       %{id: last} = insert(:payment_v1_transaction, %{block: block, tx_index: 2})
       %{id: middle} = insert(:payment_v1_transaction, %{block: block, tx_index: 1})
+      %{id: three} = insert(:payment_v1_transaction, %{block: block, tx_index: 3})
+      %{id: four} = insert(:payment_v1_transaction, %{block: block, tx_index: 4})
+      %{id: five} = insert(:payment_v1_transaction, %{block: block, tx_index: 5})
 
       selected_ids =
         block.id
@@ -46,7 +49,7 @@ defmodule Engine.DB.Transaction.TransactionQueryTest do
         |> Repo.all()
         |> Enum.map(fn %{id: id} -> id end)
 
-      assert [last, middle, first] == selected_ids
+      [^first, ^middle, ^last, ^three, ^four, ^five] = selected_ids
     end
   end
 

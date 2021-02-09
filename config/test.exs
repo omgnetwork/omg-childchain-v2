@@ -8,7 +8,7 @@ config :engine, Engine.Repo,
   ownership_timeout: 400_000,
   pool_size: 10,
   queue_target: 100,
-  queue_interval: 2000,
+  queue_interval: 5000,
   pool: Ecto.Adapters.SQL.Sandbox,
   log_level: :warn
 
