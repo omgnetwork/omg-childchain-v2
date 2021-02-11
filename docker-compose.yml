@@ -82,7 +82,6 @@ services:
     env_file:
       - ./localchain_contract_addresses.env
     environment:
-      - PORT=
       - DATABASE_URL=postgresql://engine_repo:engine_repo@172.27.0.107:5432/engine_repo
       - ETHEREUM_RPC_URL=http://172.27.0.108:80
       - LOGGER_BACKEND=console
@@ -177,19 +176,20 @@ services:
       - ETHEREUM_NETWORK=LOCALCHAIN
       - ETHEREUM_RPC_URL=http://172.27.0.108:80
       - CHILD_CHAIN_URL=http://172.27.0.108:9656/v1
-      - DATABASE_URL=postgresql://omisego_dev:omisego_dev@172.27.0.107:5432/omisego_dev
       - PORT=7534
       - APP_ENV=local_docker_development
       - DD_HOSTNAME=datadog
       - DD_DISABLED=true
       - DB_PATH=/data
       - ETHEREUM_EVENTS_CHECK_INTERVAL_MS=800
+      - ETHEREUM_STALLED_SYNC_THRESHOLD_MS=20000
       - ETHEREUM_BLOCK_TIME_SECONDS=1
       - EXIT_PROCESSOR_SLA_MARGIN=5520
       - EXIT_PROCESSOR_SLA_MARGIN_FORCED=TRUE
       - LOGGER_BACKEND=console
       - RELEASE_COOKIE=development
       - NODE_HOST=127.0.0.1
+      - DATABASE_URL=postgresql://omisego_dev:omisego_dev@172.27.0.107:5432/omisego_dev
     restart: always
     ports:
       - "7534:7534"

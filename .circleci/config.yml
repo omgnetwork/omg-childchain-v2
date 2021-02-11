@@ -346,10 +346,22 @@ jobs:
             sudo apt-get install esl-erlang=1:23.0.3-1
             sudo apt-get install elixir=1.10.4-1
             mix local.rebar --force && mix local.hex --force
+      - restore_cache:
+          key: v4-deps-0-{{ checksum "mix.lock" }}
+      - run: rm -rf _build/*/lib/engine
+      - run: rm -rf _build/*/lib/api
+      - run: rm -rf _build/*/lib/bus
+      - run: rm -rf _build/*/lib/status
+      - run: rm -rf _build/*/lib/tasks
       - run:
           environment:
             ENTERPRISE: 0
           command: mix deps.get && mix ecto.create && mix ecto.migrate
+      - save_cache:
+          key: v4-deps-0-{{ checksum "mix.lock" }}
+          paths:
+            - deps
+            - _build
       - run:
           name: Start the childchain via development entrypoint
           environment:
