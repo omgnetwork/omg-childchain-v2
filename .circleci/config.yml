@@ -315,6 +315,8 @@ jobs:
       image: ubuntu-2004:202010-01
     environment:
       FEE_FEED_URL: http://172.27.0.110/file.json
+      ENTERPRISE: 0
+      PORT: 9756
     steps:
       - checkout
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
@@ -340,14 +342,9 @@ jobs:
             sudo apt-get install elixir=1.10.4-1
             mix local.rebar --force && mix local.hex --force
       - run:
-          environment:
-            ENTERPRISE: 0
           command: mix deps.get && mix ecto.create && mix ecto.migrate
       - run:
           name: Start the childchain via development entrypoint
-          environment:
-            ENTERPRISE: 0
-            PORT: 9756
           command: iex -S mix
           background: true
       - run: sleep 10
@@ -375,9 +372,6 @@ jobs:
             sleep 20
       - run:
           name: Start the childchain via development entrypoint
-          environment:
-            ENTERPRISE: 0
-            PORT: 9756
           command: iex -S mix
           background: true
       - run:
