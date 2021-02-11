@@ -18,11 +18,11 @@ commands:
       - gcloud_login
       - restore_cache:
           key: v4-docker-deps-<<parameters.enterprise>>-{{ checksum "mix.lock" }}
-      - run: rm -rf _build_docker/test/lib/engine
-      - run: rm -rf _build_docker/test/lib/api
-      - run: rm -rf _build_docker/test/lib/bus
-      - run: rm -rf _build_docker/test/lib/status
-      - run: rm -rf _build_docker/test/lib/tasks
+      - run: rm -rf _build_docker/*/lib/engine
+      - run: rm -rf _build_docker/*/lib/api
+      - run: rm -rf _build_docker/*/lib/bus
+      - run: rm -rf _build_docker/*/lib/status
+      - run: rm -rf _build_docker/*/lib/tasks
       - run:
           environment:
             ENTERPRISE: <<parameters.enterprise>>
@@ -267,11 +267,11 @@ jobs:
           paths:
             - deps
             - _build
-      - run: rm -rf _build/test/lib/engine
-      - run: rm -rf _build/test/lib/api
-      - run: rm -rf _build/test/lib/bus
-      - run: rm -rf _build/test/lib/status
-      - run: rm -rf _build/test/lib/tasks
+      - run: rm -rf _build/*/lib/engine
+      - run: rm -rf _build/*/lib/api
+      - run: rm -rf _build/*/lib/bus
+      - run: rm -rf _build/*/lib/status
+      - run: rm -rf _build/*/lib/tasks
       - run:
           name: Run Vault integration test
           command: mix test.integration_block_submission_vault
@@ -418,11 +418,11 @@ jobs:
             [ -d data ] || mkdir data && chmod 777 data
       - restore_cache:
           key: v4-docker-deps-$ENTERPRISE-{{ checksum "mix.lock" }}
-      - run: rm -rf _build_docker/test/lib/engine
-      - run: rm -rf _build_docker/test/lib/api
-      - run: rm -rf _build_docker/test/lib/bus
-      - run: rm -rf _build_docker/test/lib/status
-      - run: rm -rf _build_docker/test/lib/tasks
+      - run: rm -rf _build_docker/*/lib/engine
+      - run: rm -rf _build_docker/*/lib/api
+      - run: rm -rf _build_docker/*/lib/bus
+      - run: rm -rf _build_docker/*/lib/status
+      - run: rm -rf _build_docker/*/lib/tasks
       - run: make docker-childchain
       - save_cache:
           key: v4-docker-deps-$ENTERPRISE-{{ checksum "mix.lock" }}
@@ -574,12 +574,12 @@ jobs:
       - checkout
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - restore_cache:
-          key: v4-docker-deps-<<parameters.enterprise>>-{{ checksum "mix.lock" }}
-      - run: rm -rf _build_docker/test/lib/engine
-      - run: rm -rf _build_docker/test/lib/api
-      - run: rm -rf _build_docker/test/lib/bus
-      - run: rm -rf _build_docker/test/lib/status
-      - run: rm -rf _build_docker/test/lib/tasks
+          key: v4-docker-deps-0-{{ checksum "mix.lock" }}
+      - run: rm -rf _build_docker/*/lib/engine
+      - run: rm -rf _build_docker/*/lib/api
+      - run: rm -rf _build_docker/*/lib/bus
+      - run: rm -rf _build_docker/*/lib/status
+      - run: rm -rf _build_docker/*/lib/tasks
       - run:
           environment:
             ENTERPRISE: 0
@@ -591,12 +591,12 @@ jobs:
       - run: rm -rf _build_docker
       - run: rm -rf deps_docker
       - restore_cache:
-          key: v4-docker-deps-<<parameters.enterprise>>-{{ checksum "mix.lock" }}
-      - run: rm -rf _build_docker/test/lib/engine
-      - run: rm -rf _build_docker/test/lib/api
-      - run: rm -rf _build_docker/test/lib/bus
-      - run: rm -rf _build_docker/test/lib/status
-      - run: rm -rf _build_docker/test/lib/tasks
+          key: v4-docker-deps-1-{{ checksum "mix.lock" }}
+      - run: rm -rf _build_docker/*/lib/engine
+      - run: rm -rf _build_docker/*/lib/api
+      - run: rm -rf _build_docker/*/lib/bus
+      - run: rm -rf _build_docker/*/lib/status
+      - run: rm -rf _build_docker/*/lib/tasks
       - run:
           environment:
             ENTERPRISE: 1
