@@ -255,11 +255,6 @@ jobs:
           paths:
             - deps
             - _build
-      - run: rm -rf _build/*/lib/engine
-      - run: rm -rf _build/*/lib/api
-      - run: rm -rf _build/*/lib/bus
-      - run: rm -rf _build/*/lib/status
-      - run: rm -rf _build/*/lib/tasks
       - run:
           name: Run Vault integration test
           command: mix test.integration_block_submission_vault
@@ -318,6 +313,8 @@ jobs:
     working_directory: ~/childchain
     machine:
       image: ubuntu-2004:202010-01
+    environment:
+      FEE_FEED_URL: http://172.27.0.110/file.json
     steps:
       - checkout
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
@@ -342,22 +339,10 @@ jobs:
             sudo apt-get install esl-erlang=1:23.0.3-1
             sudo apt-get install elixir=1.10.4-1
             mix local.rebar --force && mix local.hex --force
-      - restore_cache:
-          key: v4-deps-0-{{ checksum "mix.lock" }}
-      - run: rm -rf _build/*/lib/engine
-      - run: rm -rf _build/*/lib/api
-      - run: rm -rf _build/*/lib/bus
-      - run: rm -rf _build/*/lib/status
-      - run: rm -rf _build/*/lib/tasks
       - run:
           environment:
             ENTERPRISE: 0
           command: mix deps.get && mix ecto.create && mix ecto.migrate
-      - save_cache:
-          key: v4-deps-0-{{ checksum "mix.lock" }}
-          paths:
-            - deps
-            - _build
       - run:
           name: Start the childchain via development entrypoint
           environment:
@@ -424,24 +409,13 @@ jobs:
             [ -d data1 ] || mkdir data1 && chmod 777 data1
             [ -d data2 ] || mkdir data2 && chmod 777 data2
             [ -d data ] || mkdir data && chmod 777 data
-      - restore_cache:
-          key: v4-docker-deps-$ENTERPRISE-{{ checksum "mix.lock" }}
-      - run: rm -rf _build_docker/*/lib/engine
-      - run: rm -rf _build_docker/*/lib/api
-      - run: rm -rf _build_docker/*/lib/bus
-      - run: rm -rf _build_docker/*/lib/status
-      - run: rm -rf _build_docker/*/lib/tasks
       - run: make docker-childchain
-      - save_cache:
-          key: v4-docker-deps-$ENTERPRISE-{{ checksum "mix.lock" }}
-          paths:
-            - deps_docker
-            - _build_docker
       - run:
           name: Start daemon services
           command: |
-            cd priv/cabbage
-            make start_daemon_services_reorg || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
+            make init_test_reorg
+            cp ./localchain_contract_addresses.env ./priv/cabbage/apps/itest/localchain_contract_addresses.env
+            docker-compose -f docker-compose.yml -f docker-compose.reorg.yml -f docker-compose.specs.yml up -d || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
       - run:
           name: Print docker states
           command: |
@@ -581,13 +555,6 @@ jobs:
     steps:
       - checkout
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
-      - restore_cache:
-          key: v4-docker-deps-0-{{ checksum "mix.lock" }}
-      - run: rm -rf _build_docker/*/lib/engine
-      - run: rm -rf _build_docker/*/lib/api
-      - run: rm -rf _build_docker/*/lib/bus
-      - run: rm -rf _build_docker/*/lib/status
-      - run: rm -rf _build_docker/*/lib/tasks
       - run:
           environment:
             ENTERPRISE: 0
@@ -596,15 +563,6 @@ jobs:
       - run: |
           echo $PRODUCTION_DOCKER_GCLOUD_KEY | gcloud auth activate-service-account --key-file=-
           gcloud -q auth configure-docker
-      - run: rm -rf _build_docker
-      - run: rm -rf deps_docker
-      - restore_cache:
-          key: v4-docker-deps-1-{{ checksum "mix.lock" }}
-      - run: rm -rf _build_docker/*/lib/engine
-      - run: rm -rf _build_docker/*/lib/api
-      - run: rm -rf _build_docker/*/lib/bus
-      - run: rm -rf _build_docker/*/lib/status
-      - run: rm -rf _build_docker/*/lib/tasks
       - run:
           environment:
             ENTERPRISE: 1
