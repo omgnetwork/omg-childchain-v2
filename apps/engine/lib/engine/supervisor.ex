@@ -40,8 +40,8 @@ defmodule Engine.Supervisor do
       child_block_interval: Configuration.child_block_interval(),
       opts: integration_opts,
       gas_integration_fallback_order: [
-        Gas.Integration.Etherscan,
         Gas.Integration.GasPriceOracle,
+        Gas.Integration.Etherscan,
         Gas.Integration.Pulse,
         Gas.Integration.Web3Api
       ],
