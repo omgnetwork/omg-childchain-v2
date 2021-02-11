@@ -16,10 +16,22 @@ commands:
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run: pip3 install docker-compose --upgrade
       - gcloud_login
+      - restore_cache:
+          key: v4-docker-deps-<<parameters.enterprise>>-{{ checksum "mix.lock" }}
+      - run: rm -rf _build_docker/test/lib/engine
+      - run: rm -rf _build_docker/test/lib/api
+      - run: rm -rf _build_docker/test/lib/bus
+      - run: rm -rf _build_docker/test/lib/status
+      - run: rm -rf _build_docker/test/lib/tasks
       - run:
           environment:
             ENTERPRISE: <<parameters.enterprise>>
           command: make docker-childchain
+      - save_cache:
+          key: v4-docker-deps-<<parameters.enterprise>>-{{ checksum "mix.lock" }}
+          paths:
+            - deps_docker
+            - _build_docker
       - run:
           name: "Pull Submodules"
           command: |
@@ -44,7 +56,8 @@ commands:
           command: |
             docker image ls
             docker-compose ps
-      - pull_childchain_health
+      - pull_childchain_health:
+          port: 9656
       - install_elixir:
           cache: "specs"
           dir: "priv/cabbage"
@@ -65,15 +78,19 @@ commands:
             mix test
 
   pull_childchain_health:
+    parameters:
+      port:
+        default: 9756
+        type: integer
     steps:
       - run:
           name: Check if Childchain got back up
           command: |
             attempt_counter=0
             max_attempts=25
-            until $(curl -v --silent http://localhost:9756/v1/health.check 2>&1 | grep -q 200); do
+            until $(curl -v --silent http://localhost:<<parameters.port>>/v1/health.check 2>&1 | grep -q 200); do
               echo "Response was:"
-              curl -is -X GET http://localhost:9756/v1/health.check
+              curl -is -X GET http://localhost:<<parameters.port>>/v1/health.check
               if [ ${attempt_counter} -eq ${max_attempts} ];then
                 echo "Max attempts reached"
                 exit 1
@@ -83,7 +100,7 @@ commands:
               attempt_counter=$(($attempt_counter+1))
               sleep 5
             done
-            curl -is -X GET http://localhost:9756/v1/health.check
+            curl -is -X GET http://localhost:<<parameters.port>>/v1/health.check
 
   install_elixir:
     parameters:
@@ -382,6 +399,7 @@ jobs:
       image: ubuntu-2004:202010-01
     environment:
       REORG: true
+      ENTERPRISE: 0
     steps:
       - checkout
       - install_rust
@@ -398,7 +416,19 @@ jobs:
             [ -d data1 ] || mkdir data1 && chmod 777 data1
             [ -d data2 ] || mkdir data2 && chmod 777 data2
             [ -d data ] || mkdir data && chmod 777 data
+      - restore_cache:
+          key: v4-docker-deps-<<parameters.enterprise>>-{{ checksum "mix.lock" }}
+      - run: rm -rf _build_docker/test/lib/engine
+      - run: rm -rf _build_docker/test/lib/api
+      - run: rm -rf _build_docker/test/lib/bus
+      - run: rm -rf _build_docker/test/lib/status
+      - run: rm -rf _build_docker/test/lib/tasks
       - run: make docker-childchain
+      - save_cache:
+          key: v4-docker-deps-<<parameters.enterprise>>-{{ checksum "mix.lock" }}
+          paths:
+            - deps_docker
+            - _build_docker
       - run:
           name: Start daemon services
           command: |
@@ -412,7 +442,8 @@ jobs:
       - install_elixir:
           cache: "specs"
           dir: "priv/cabbage"
-      - run: sh .circleci/status.sh
+      - pull_childchain_health:
+          port: 9656
       - run:
           name: Print watcher logs
           command: make cabbage-reorg-watcher-logs
@@ -542,6 +573,13 @@ jobs:
     steps:
       - checkout
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - restore_cache:
+          key: v4-docker-deps-<<parameters.enterprise>>-{{ checksum "mix.lock" }}
+      - run: rm -rf _build_docker/test/lib/engine
+      - run: rm -rf _build_docker/test/lib/api
+      - run: rm -rf _build_docker/test/lib/bus
+      - run: rm -rf _build_docker/test/lib/status
+      - run: rm -rf _build_docker/test/lib/tasks
       - run:
           environment:
             ENTERPRISE: 0
@@ -550,6 +588,15 @@ jobs:
       - run: |
           echo $PRODUCTION_DOCKER_GCLOUD_KEY | gcloud auth activate-service-account --key-file=-
           gcloud -q auth configure-docker
+      - run: rm -rf _build_docker
+      - run: rm -rf deps_docker
+      - restore_cache:
+          key: v4-docker-deps-<<parameters.enterprise>>-{{ checksum "mix.lock" }}
+      - run: rm -rf _build_docker/test/lib/engine
+      - run: rm -rf _build_docker/test/lib/api
+      - run: rm -rf _build_docker/test/lib/bus
+      - run: rm -rf _build_docker/test/lib/status
+      - run: rm -rf _build_docker/test/lib/tasks
       - run:
           environment:
             ENTERPRISE: 1
@@ -577,9 +624,9 @@ workflows:
           requires:
             - build
 
-      # - test_docker_compose_reorg:
-      #     requires:
-      #       - build
+      - test_docker_compose_reorg:
+          requires:
+            - build
 
       - development:
           requires:
