@@ -16,22 +16,10 @@ commands:
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run: pip3 install docker-compose --upgrade
       - gcloud_login
-      - restore_cache:
-          key: v4-docker-deps-<<parameters.enterprise>>-{{ checksum "mix.lock" }}
-      - run: rm -rf _build_docker/*/lib/engine
-      - run: rm -rf _build_docker/*/lib/api
-      - run: rm -rf _build_docker/*/lib/bus
-      - run: rm -rf _build_docker/*/lib/status
-      - run: rm -rf _build_docker/*/lib/tasks
       - run:
           environment:
             ENTERPRISE: <<parameters.enterprise>>
           command: make docker-childchain
-      - save_cache:
-          key: v4-docker-deps-<<parameters.enterprise>>-{{ checksum "mix.lock" }}
-          paths:
-            - deps_docker
-            - _build_docker
       - run:
           name: "Pull Submodules"
           command: |
@@ -307,6 +295,10 @@ jobs:
       image: ubuntu-2004:202010-01
     steps:
       - checkout
+      - run: make init-contracts
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
       - docker_compose_release:
           enterprise: "0"
 
@@ -315,6 +307,10 @@ jobs:
       image: ubuntu-2004:202010-01
     steps:
       - checkout
+      - run: make init-contracts-vault
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
       - docker_compose_release:
           enterprise: "1"
 
