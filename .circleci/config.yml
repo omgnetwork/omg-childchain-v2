@@ -30,11 +30,15 @@ commands:
           command: |
             [ -d data ] || mkdir data && chmod 777 data
       - run:
-          name: Start daemon services
+          name: Setup for ENTERPRISE=1
           command: |
+            echo "WALLET_NAME=plasma-deployer" >> dynamic_env_vars.env
             echo "VAULT_URL=https://172.27.0.111:8200" >> dynamic_env_vars.env
             echo "INSECURE_VAULT_TLS=true" >> dynamic_env_vars.env
             echo "ENTERPRISE=<<parameters.enterprise>>" >> dynamic_env_vars.env
+      - run:
+          name: Start daemon services
+          command: |
             docker-compose -f docker-compose.yml -f docker-compose.specs.yml up -d || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
       - run:
           name: Log
@@ -436,6 +440,10 @@ jobs:
             echo "ENTERPRISE=0" >> dynamic_env_vars.env
             docker-compose -f docker-compose.yml -f docker-compose.reorg.yml -f docker-compose.specs.yml up -d || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
       - run:
+          name: Log
+          command: docker-compose logs -f
+          background: true
+      - run:
           name: Print docker states
           command: |
             docker image ls
@@ -443,8 +451,6 @@ jobs:
       - install_elixir:
           cache: "specs"
           dir: "priv/cabbage"
-      - pull_childchain_health:
-          port: 9656
       - run:
           name: Print watcher logs
           command: make cabbage-reorg-watcher-logs
@@ -465,6 +471,8 @@ jobs:
           name: Print reorg logs
           command: make cabbage-reorgs-logs
           background: true
+      - pull_childchain_health:
+          port: 9656
       - run:
           name: Setup specs
           environment:
