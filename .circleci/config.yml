@@ -497,7 +497,7 @@ jobs:
             FEE_CLAIMER_ADDRESS: "0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1"
           command: |
             cd priv/cabbage
-            mix test --only reorg
+            mix test --only deposit --trace
           no_output_timeout: 30m
 
 
