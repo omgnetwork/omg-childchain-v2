@@ -32,11 +32,13 @@ commands:
       - run:
           name: Start daemon services
           command: |
+            echo "VAULT_URL=https://172.27.0.111:8200" >> dynamic_env_vars.env
+            echo "INSECURE_VAULT_TLS=true" >> dynamic_env_vars.env
+            echo "ENTERPRISE=<<parameters.enterprise>>" >> dynamic_env_vars.env
             docker-compose -f docker-compose.yml -f docker-compose.specs.yml up -d || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
       - run:
           name: Log
-          command: |
-            docker-compose logs -f
+          command: docker-compose logs -f
           background: true
       - run:
           name: Print docker states
@@ -429,7 +431,9 @@ jobs:
           name: Start daemon services
           command: |
             make init_test_reorg
-            cp ./localchain_contract_addresses.env ./priv/cabbage/apps/itest/localchain_contract_addresses.env
+            # echo "VAULT_URL=https://172.27.0.111:8200" >> dynamic_env_vars.env
+            # echo "INSECURE_VAULT_TLS=true" >> dynamic_env_vars.env
+            echo "ENTERPRISE=0" >> dynamic_env_vars.env
             docker-compose -f docker-compose.yml -f docker-compose.reorg.yml -f docker-compose.specs.yml up -d || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
       - run:
           name: Print docker states
@@ -462,7 +466,7 @@ jobs:
           command: make cabbage-reorgs-logs
           background: true
       - run:
-          name: Run specs
+          name: Setup specs
           environment:
             CHILD_CHAIN_URL: http://127.0.0.1:9656/v1
             EXIT_ID_SIZE: "168"
@@ -474,6 +478,17 @@ jobs:
             make install
             make generate_api_code
             mix deps.get
+          no_output_timeout: 30m
+      - run:
+          name: Run specs
+          environment:
+            CHILD_CHAIN_URL: http://127.0.0.1:9656/v1
+            EXIT_ID_SIZE: "168"
+            LOCALCHAIN_CONTRACT_ADDRESSES: "/home/circleci/project/localchain_contract_addresses.env"
+            PLASMA_CONTRACTS_DIR: "/home/circleci/project/data/plasma-contracts/contracts/"
+            FEE_CLAIMER_ADDRESS: "0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1"
+          command: |
+            cd priv/cabbage
             mix test --only reorg
           no_output_timeout: 30m
 
