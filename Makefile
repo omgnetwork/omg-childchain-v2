@@ -148,19 +148,19 @@ generate_v1_api_specs:
 ### Cabbage reorg docker logs
 
 cabbage-reorg-watcher-logs:
-	docker-compose -f docker-compose.yml -f docker-compose-reorg.yml -f docker-compose-specs.yml logs --follow watcher
+	docker-compose -f docker-compose.yml -f docker-compose.reorg.yml -f docker-compose-specs.yml logs --follow watcher
 
 cabbage-reorg-watcher_info-logs:
-	docker-compose -f docker-compose.yml -f docker-compose-reorg.yml -f docker-compose-specs.yml logs --follow watcher_info
+	docker-compose -f docker-compose.yml -f docker-compose.reorg.yml -f docker-compose-specs.yml logs --follow watcher_info
 
 cabbage-reorg-childchain-logs:
-	docker-compose -f docker-compose.yml -f docker-compose-reorg.yml -f docker-compose-specs.yml logs --follow childchain
+	docker-compose -f docker-compose.yml -f docker-compose.reorg.yml -f docker-compose-specs.yml logs --follow childchain
 
 cabbage-reorg-geth-logs:
-	docker-compose -f docker-compose.yml -f docker-compose-reorg.yml -f docker-compose-specs.yml logs --follow | grep "geth-"
+	docker-compose -f docker-compose.yml -f docker-compose.reorg.yml -f docker-compose-specs.yml logs --follow | grep "geth-"
 
 cabbage-reorgs-logs:
-	docker-compose -f docker-compose.yml -f docker-compose-reorg.yml -f docker-compose-specs.yml logs --follow | grep "reorg"
+	docker-compose -f docker-compose.yml -f docker-compose.reorg.yml -f docker-compose-specs.yml logs --follow | grep "reorg"
 
 ### git setup
 hooks:
