@@ -63,7 +63,19 @@ commands:
             make install
             make generate_api_code
             mix deps.get
-            mix test
+      - run:
+          name: Run specs
+          environment:
+            CHILD_CHAIN_URL: http://127.0.0.1:9656/v1
+            EXIT_ID_SIZE: "168"
+            LOCALCHAIN_CONTRACT_ADDRESSES: "/home/circleci/project/localchain_contract_addresses.env"
+            PLASMA_CONTRACTS_DIR: "/home/circleci/project/data/plasma-contracts/contracts/"
+            FEE_CLAIMER_ADDRESS: "0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1"
+          command: |
+            grep -r "@moduletag" ./apps/itest/ | awk '{print "--include " $3}' | tr -d ':' > tags.txt
+            echo $(circleci tests split ./tags.txt)
+            circleci tests split ./tags.txt > /tmp/tests-to-run
+            mix test --exclude test $(cat /tmp/tests-to-run)
 
   pull_childchain_health:
     parameters:
@@ -288,6 +300,9 @@ jobs:
   test_docker_compose_release_public:
     machine:
       image: ubuntu-2004:202010-01
+    environment:
+      SNAPSHOT: SNAPSHOT_MIX_EXIT_PERIOD_SECONDS_120
+    parallelism: 4
     steps:
       - checkout
       - run: make init-contracts
@@ -300,6 +315,9 @@ jobs:
   test_docker_compose_release_private:
     machine:
       image: ubuntu-2004:202010-01
+    environment:
+      SNAPSHOT: SNAPSHOT_MIX_EXIT_PERIOD_SECONDS_120
+    parallelism: 4
     steps:
       - checkout
       - run: make init-contracts-vault
