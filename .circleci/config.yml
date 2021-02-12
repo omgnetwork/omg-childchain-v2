@@ -32,8 +32,7 @@ commands:
       - run:
           name: Start daemon services
           command: |
-            cp ./localchain_contract_addresses.env ./priv/cabbage/apps/itest/localchain_contract_addresses.env
-            docker-compose up -d || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
+            docker-compose -f docker-compose.yml -f docker-compose.specs.yml up -d || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
       - run:
           name: Log
           command: |
@@ -51,18 +50,20 @@ commands:
           dir: "priv/cabbage"
       - install_rust
       - run:
-          name: Run specs
+          name: Setup specs
           environment:
             CHILD_CHAIN_URL: http://127.0.0.1:9656/v1
             EXIT_ID_SIZE: "168"
             LOCALCHAIN_CONTRACT_ADDRESSES: "/home/circleci/project/localchain_contract_addresses.env"
             PLASMA_CONTRACTS_DIR: "/home/circleci/project/data/plasma-contracts/contracts/"
             FEE_CLAIMER_ADDRESS: "0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1"
+            MIX_ENV: test
           command: |
             cd priv/cabbage
             make install
             make generate_api_code
             mix deps.get
+            mix compile
       - run:
           name: Run specs
           environment:
