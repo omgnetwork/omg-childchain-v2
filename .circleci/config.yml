@@ -410,6 +410,7 @@ jobs:
     steps:
       - checkout
       - install_rust
+      - run: pip3 install docker-compose --upgrade
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - gcloud_login
       - run:
