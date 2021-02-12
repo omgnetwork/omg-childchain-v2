@@ -471,8 +471,6 @@ jobs:
           name: Print reorg logs
           command: make cabbage-reorgs-logs
           background: true
-      - pull_childchain_health:
-          port: 9656
       - run:
           name: Setup specs
           environment:
@@ -481,11 +479,13 @@ jobs:
             LOCALCHAIN_CONTRACT_ADDRESSES: "/home/circleci/project/localchain_contract_addresses.env"
             PLASMA_CONTRACTS_DIR: "/home/circleci/project/data/plasma-contracts/contracts/"
             FEE_CLAIMER_ADDRESS: "0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1"
+            MIX_ENV: test
           command: |
             cd priv/cabbage
             make install
             make generate_api_code
             mix deps.get
+            mix compile
           no_output_timeout: 30m
       - run:
           name: Run specs
