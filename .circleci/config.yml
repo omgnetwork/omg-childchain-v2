@@ -72,6 +72,7 @@ commands:
             PLASMA_CONTRACTS_DIR: "/home/circleci/project/data/plasma-contracts/contracts/"
             FEE_CLAIMER_ADDRESS: "0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1"
           command: |
+            cd priv/cabbage
             grep -r "@moduletag" ./apps/itest/ | awk '{print "--include " $3}' | tr -d ':' > tags.txt
             echo $(circleci tests split ./tags.txt)
             circleci tests split ./tags.txt > /tmp/tests-to-run
