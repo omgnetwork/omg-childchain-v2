@@ -61,9 +61,9 @@ defmodule Engine.Configuration do
     Application.fetch_env!(@app, :payment_exit_game)
   end
 
-  @spec vault_url() :: String.t()
+  @spec vault_url() :: String.t() | nil
   def vault_url() do
-    Application.fetch_env!(@app, :vault_url)
+    Application.get_env(@app, :vault_url)
   end
 
   @spec plasma_framework() :: String.t()
