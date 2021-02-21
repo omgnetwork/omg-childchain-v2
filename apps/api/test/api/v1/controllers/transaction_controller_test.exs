@@ -70,8 +70,8 @@ defmodule API.V1.Controllere.TransactionControllerTest do
 
       {:ok, tx_hash} = ExPlasma.Transaction.hash(transaction)
 
-      assert TransactionController.submit(tx_bytes) ==
-               {:ok, %{tx_hash: Encoding.to_hex(tx_hash), tx_index: 0, blknum: 2000}}
+      assert {:ok, transaction} = TransactionController.submit(tx_bytes)
+      assert Encoding.to_hex(tx_hash) == transaction.tx_hash
 
       found_transaction = Transaction.get_by(%{tx_hash: tx_hash}, [:fees])
       assert [] == found_transaction.fees
