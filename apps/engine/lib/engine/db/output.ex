@@ -43,6 +43,7 @@ defmodule Engine.DB.Output do
           position: pos_integer() | nil,
           spending_transaction: Transaction.t() | nil,
           spending_transaction_id: pos_integer() | nil,
+          blknum: pos_integer() | nil,
           state: String.t(),
           updated_at: DateTime.t()
         }
@@ -61,6 +62,7 @@ defmodule Engine.DB.Output do
     field(:output_data, :binary)
 
     field(:state, Atom)
+    field(:blknum, :integer)
 
     belongs_to(:spending_transaction, Engine.DB.Transaction)
     belongs_to(:creating_transaction, Engine.DB.Transaction)
@@ -104,9 +106,18 @@ defmodule Engine.DB.Output do
   Generates an output changeset corresponding to an output being spent.
   The output state is `:spent`.
   """
-  @spec spend(%__MODULE__{}, map()) :: Ecto.Changeset.t()
-  def spend(struct, _params) do
+  @spec spend(%__MODULE__{}) :: Ecto.Changeset.t()
+  def spend(struct) do
     OutputChangeset.state(struct, %{state: :spent})
+  end
+
+  @doc """
+  Generates an output changeset corresponding to an output being spent.
+  The output state is `:spent`.
+  """
+  @spec confirmed(%__MODULE__{}) :: Ecto.Changeset.t()
+  def confirmed(struct) do
+    OutputChangeset.state(struct, %{state: :confirmed})
   end
 
   @doc """

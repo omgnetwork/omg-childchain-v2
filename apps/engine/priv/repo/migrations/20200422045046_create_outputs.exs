@@ -11,6 +11,7 @@ defmodule Engine.Repo.Migrations.CreateOutputs do
 
       add(:state, :string, default: "pending")
 
+      add(:blknum, :integer)
       add(:creating_transaction_id, references(:transactions))
       add(:spending_transaction_id, references(:transactions))
 

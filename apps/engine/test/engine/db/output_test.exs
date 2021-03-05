@@ -68,7 +68,7 @@ defmodule Engine.DB.OutputTest do
     test "returns a changeset with a state updated to :spent" do
       assert %{state: :confirmed} = output = insert(:deposit_output)
 
-      changeset = Output.spend(output, %{})
+      changeset = Output.spend(output)
 
       assert changeset.valid?
       assert %Output{state: :spent} = Changeset.apply_changes(changeset)
@@ -89,7 +89,7 @@ defmodule Engine.DB.OutputTest do
   describe "exit/2" do
     test "returns an updated multi with state of outputs for positions updated to :exiting" do
       %{position: p_1} = insert(:deposit_output)
-      %{position: p_2} = :deposit_output |> insert() |> Output.spend(%{}) |> Engine.Repo.update!()
+      %{position: p_2} = :deposit_output |> insert() |> Output.spend() |> Engine.Repo.update!()
       :output |> insert() |> Output.piggyback() |> Repo.update!()
       insert(:deposit_output)
 

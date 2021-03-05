@@ -158,6 +158,30 @@ defmodule Engine.DB.Block do
     end
   end
 
+  @doc """
+  Updates all outputs that were created in a specific block to confirimed (so that they're spendable)
+  """
+
+  # find all ouputs where blknum is **
+  # and change state: :pending to state: :confirmed
+  # oNLY IF :pending!!!
+  # @spec confirm(Engine.DB.Block.t()) :: Query.t()
+  # def confirm(block) do
+  #   outputs = __MODULE__
+  #   |> Repo.get_by(hash: block.hash)
+  #   |> Repo.preload(transactions: [:outputs])
+  #   |> Map.get(:transactions)
+  #   |> Enum.map(fn transaction ->
+  #     Enum.map(transaction.outputs, fn output ->
+  #       Engine.DB.Output.confirmed(output)
+  #     end)
+  #   end)
+  #   |> List.flatten()
+  #   |> IO.inspect
+
+  #   Repo.update_all(Engine.DB.Output, outputs)
+  # end
+
   def get_forming_block_for_update(repo, _params) do
     # we expect forming block to always exists in the database when this is called
     block = repo.one(BlockQuery.select_forming_block_for_update())
@@ -226,13 +250,19 @@ defmodule Engine.DB.Block do
     :ok
   end
 
-  defp process_submission(repo, [plasma_block | plasma_blocks], new_height, mined_child_block, submit_fn, gas_fn) do
+  defp process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas_fn)
+       when is_function(gas_fn) do
     gas =
       gas_fn.()
       |> Map.get(:standard)
       |> Kernel.*(1_000_000_000)
       |> Kernel.round()
 
+    process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas)
+  end
+
+  defp process_submission(repo, [plasma_block | plasma_blocks], new_height, mined_child_block, submit_fn, gas)
+       when is_integer(gas) do
     submission_result = submit_fn.(plasma_block.hash, "#{plasma_block.nonce}", "#{gas}")
 
     Logger.info(
@@ -252,13 +282,13 @@ defmodule Engine.DB.Block do
         })
         |> repo.update!([])
 
-        process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas_fn)
+        process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas)
 
       error ->
         # we encountered an error with one of the block submissions
         # we'll stop here and continue later
         _ = Logger.info("Block submission stopped at block with nonce #{plasma_block.nonce}. Error: #{inspect(error)}")
-        process_submission(repo, [], new_height, mined_child_block, submit_fn, gas_fn)
+        process_submission(repo, [], new_height, mined_child_block, submit_fn, gas)
     end
   end
 
