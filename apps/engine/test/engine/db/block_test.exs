@@ -56,7 +56,7 @@ defmodule Engine.DB.BlockTest do
 
     gas_integration = fn ->
       Kernel.send(parent, ref)
-      1
+      %{standard: 1}
     end
 
     assert Block.get_all_and_submit(1000, 1000, integration, gas_integration) ==
@@ -241,7 +241,7 @@ defmodule Engine.DB.BlockTest do
 
       gas_integration = fn ->
         Kernel.send(parent, ref)
-        1
+        %{standard: 1}
       end
 
       # at this height, I'm looking at what was submitted and what wasn't

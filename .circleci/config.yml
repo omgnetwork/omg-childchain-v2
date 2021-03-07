@@ -55,6 +55,8 @@ commands:
           cache: "specs"
           dir: "priv/cabbage"
       - install_rust
+      - pull_childchain_health:
+          port: "9656"
       - run:
           name: Setup specs
           environment:

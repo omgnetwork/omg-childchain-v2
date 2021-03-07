@@ -222,6 +222,11 @@ defmodule Engine.DB.Block do
     {:ok, submitted_blocks}
   end
 
+  defp process_submission(_repo, [], _new_height, _mined_child_block, _submit_fn, gas_fn)
+       when is_function(gas_fn) do
+    []
+  end
+
   defp process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas_fn)
        when is_function(gas_fn) do
     gas =

@@ -146,7 +146,7 @@ defmodule Engine.DB.Output do
   def confirm(mined_child_block) do
     Repo.update_all(
       from(p in __MODULE__,
-        where: p.blknum < ^mined_child_block and p.state == :pending,
+        where: p.blknum <= ^mined_child_block and p.state == :pending,
         update: [set: [state: :confirmed]]
       ),
       []
