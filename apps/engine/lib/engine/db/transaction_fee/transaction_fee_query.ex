@@ -17,7 +17,8 @@ defmodule Engine.DB.TransactionFee.TransactionFeeQuery do
       on: f.transaction_id == t.id,
       where: t.block_id == ^block_id,
       select: {f.currency, sum(f.amount)},
-      group_by: f.currency
+      group_by: f.currency,
+      order_by: f.currency
     )
   end
 end

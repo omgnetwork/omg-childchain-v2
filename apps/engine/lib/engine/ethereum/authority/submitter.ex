@@ -4,6 +4,7 @@ defmodule Engine.Ethereum.Authority.Submitter do
   """
 
   alias Engine.DB.Block
+  alias Engine.DB.Output
   alias Engine.Ethereum.Authority.Submitter.AlarmHandler
   alias Engine.Ethereum.Authority.Submitter.Core
   alias Engine.Ethereum.Authority.Submitter.External
@@ -97,7 +98,17 @@ defmodule Engine.Ethereum.Authority.Submitter do
     mined_child_block = Core.mined(next_child_block, state.child_block_interval)
     submit_fn = External.submit_block(state.plasma_framework, state.enterprise, state.opts)
     gas_fun = External.gas(state.gas_integration_fallback_order)
-    {:ok, _} = Block.get_all_and_submit(height, mined_child_block, submit_fn, gas_fun)
+
+    {:ok, result} = Block.get_all_and_submit(height, mined_child_block, submit_fn, gas_fun)
+
+    case Map.get(result, :get_gas_and_submit) do
+      [] ->
+        :ok
+
+      _submitted_blocks ->
+        Output.confirm(mined_child_block)
+    end
+
     :ok
   end
 

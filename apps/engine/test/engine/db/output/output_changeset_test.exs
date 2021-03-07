@@ -7,7 +7,7 @@ defmodule Engine.DB.Output.OutputChangesetTest do
   alias ExPlasma.Output.Position
 
   describe "deposit/2" do
-    test "generates a deposit changeset with input data, posision, output data and state" do
+    test "generates a deposit changeset with input data, position, output data and state" do
       params = %{
         state: :confirmed,
         output_type: ExPlasma.payment_v1(),
@@ -16,7 +16,8 @@ defmodule Engine.DB.Output.OutputChangesetTest do
           token: <<0::160>>,
           amount: 10
         },
-        output_id: Position.new(1, 0, 0)
+        output_id: Position.new(1, 0, 0),
+        blknum: 1
       }
 
       changeset = OutputChangeset.deposit(%Output{}, params)

@@ -72,7 +72,8 @@ defmodule Engine.DB.Transaction.TransactionChangeset do
         output_changeset
         |> OutputChangeset.assign_position(position)
         # the simple reason why we assign a block number to a newly created output is because
-        # when a plasma block is submitted, this output needs to be marked as :confirmed (at this point it's state: :pending)
+        # when a plasma block is submitted, this output needs to be marked as :confirmed
+        # (at this point it's state: :pending)
         # and referencing it via blknum makes the SQL update much easier and faster!
         |> OutputChangeset.assign_blknum(%{blknum: block.blknum})
       end)

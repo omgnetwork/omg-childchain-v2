@@ -158,30 +158,6 @@ defmodule Engine.DB.Block do
     end
   end
 
-  @doc """
-  Updates all outputs that were created in a specific block to confirimed (so that they're spendable)
-  """
-
-  # find all ouputs where blknum is **
-  # and change state: :pending to state: :confirmed
-  # oNLY IF :pending!!!
-  # @spec confirm(Engine.DB.Block.t()) :: Query.t()
-  # def confirm(block) do
-  #   outputs = __MODULE__
-  #   |> Repo.get_by(hash: block.hash)
-  #   |> Repo.preload(transactions: [:outputs])
-  #   |> Map.get(:transactions)
-  #   |> Enum.map(fn transaction ->
-  #     Enum.map(transaction.outputs, fn output ->
-  #       Engine.DB.Output.confirmed(output)
-  #     end)
-  #   end)
-  #   |> List.flatten()
-  #   |> IO.inspect
-
-  #   Repo.update_all(Engine.DB.Output, outputs)
-  # end
-
   def get_forming_block_for_update(repo, _params) do
     # we expect forming block to always exists in the database when this is called
     block = repo.one(BlockQuery.select_forming_block_for_update())
@@ -242,12 +218,8 @@ defmodule Engine.DB.Block do
   end
 
   defp get_gas_and_submit(repo, %{get_all: plasma_blocks}, new_height, mined_child_block, submit_fn, gas_fn) do
-    :ok = process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas_fn)
-    {:ok, []}
-  end
-
-  defp process_submission(_repo, [], _new_height, _mined_child_block, _submit_fn, _gas_fn) do
-    :ok
+    submitted_blocks = process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas_fn)
+    {:ok, submitted_blocks}
   end
 
   defp process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas_fn)
@@ -258,10 +230,15 @@ defmodule Engine.DB.Block do
       |> Kernel.*(1_000_000_000)
       |> Kernel.round()
 
-    process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas)
+    acc = []
+    process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas, acc)
   end
 
-  defp process_submission(repo, [plasma_block | plasma_blocks], new_height, mined_child_block, submit_fn, gas)
+  defp process_submission(_repo, [], _new_height, _mined_child_block, _submit_fn, _gas, acc) do
+    Enum.reverse(acc)
+  end
+
+  defp process_submission(repo, [plasma_block | plasma_blocks], new_height, mined_child_block, submit_fn, gas, acc)
        when is_integer(gas) do
     submission_result = submit_fn.(plasma_block.hash, "#{plasma_block.nonce}", "#{gas}")
 
@@ -273,22 +250,23 @@ defmodule Engine.DB.Block do
 
     case submission_result do
       {:ok, tx_hash} ->
-        plasma_block
-        |> BlockChangeset.submitted(%{
-          attempts_counter: plasma_block.attempts_counter + 1,
-          gas: gas,
-          submitted_at_ethereum_height: new_height,
-          tx_hash: tx_hash
-        })
-        |> repo.update!([])
+        block =
+          plasma_block
+          |> BlockChangeset.submitted(%{
+            attempts_counter: plasma_block.attempts_counter + 1,
+            gas: gas,
+            submitted_at_ethereum_height: new_height,
+            tx_hash: tx_hash
+          })
+          |> repo.update!([])
 
-        process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas)
+        process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas, [block | acc])
 
       error ->
         # we encountered an error with one of the block submissions
         # we'll stop here and continue later
         _ = Logger.info("Block submission stopped at block with nonce #{plasma_block.nonce}. Error: #{inspect(error)}")
-        process_submission(repo, [], new_height, mined_child_block, submit_fn, gas)
+        process_submission(repo, [], new_height, mined_child_block, submit_fn, gas, acc)
     end
   end
 

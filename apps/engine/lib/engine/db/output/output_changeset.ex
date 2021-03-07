@@ -20,6 +20,7 @@ defmodule Engine.DB.Output.OutputChangeset do
     output
     |> state(params)
     |> output_position(params)
+    |> assign_blknum(params)
     |> output_data(params)
   end
 
