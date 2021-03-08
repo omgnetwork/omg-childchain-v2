@@ -30,25 +30,46 @@ commands:
           command: |
             [ -d data ] || mkdir data && chmod 777 data
       - run:
+          name: Setup for ENTERPRISE=1
+          command: |
+            echo "WALLET_NAME=plasma-deployer" >> dynamic_env_vars.env
+            echo "VAULT_URL=https://172.27.0.111:8200" >> dynamic_env_vars.env
+            echo "INSECURE_VAULT_TLS=true" >> dynamic_env_vars.env
+            echo "ENTERPRISE=<<parameters.enterprise>>" >> dynamic_env_vars.env
+      - run:
           name: Start daemon services
           command: |
-            cp ./localchain_contract_addresses.env ./priv/cabbage/apps/itest/localchain_contract_addresses.env
-            docker-compose up -d || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
+            docker-compose -f docker-compose.yml -f docker-compose.specs.yml up -d || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
       - run:
           name: Log
-          command: |
-            docker-compose logs -f
+          command: docker-compose logs -f
           background: true
       - run:
           name: Print docker states
           command: |
             docker image ls
             docker-compose ps
-      - pull_childchain_health
+      - pull_childchain_health:
+          port: 9656
       - install_elixir:
           cache: "specs"
           dir: "priv/cabbage"
       - install_rust
+      - run:
+          name: Setup specs
+          environment:
+            CHILD_CHAIN_URL: http://127.0.0.1:9656/v1
+            EXIT_ID_SIZE: "168"
+            LOCALCHAIN_CONTRACT_ADDRESSES: "/home/circleci/project/localchain_contract_addresses.env"
+            PLASMA_CONTRACTS_DIR: "/home/circleci/project/data/plasma-contracts/contracts/"
+            FEE_CLAIMER_ADDRESS: "0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1"
+            MIX_ENV: test
+          command: |
+            cd priv/cabbage
+            make install
+            make generate_api_code
+            mix deps.get
+            mix compile
       - run:
           name: Run specs
           environment:
@@ -59,21 +80,25 @@ commands:
             FEE_CLAIMER_ADDRESS: "0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1"
           command: |
             cd priv/cabbage
-            make install
-            make generate_api_code
-            mix deps.get
-            mix test
+            grep -r "@moduletag" ./apps/itest/ | awk '{print "--include " $3}' | tr -d ':' > tags.txt
+            echo $(circleci tests split ./tags.txt)
+            circleci tests split ./tags.txt > /tmp/tests-to-run
+            mix test --exclude test $(cat /tmp/tests-to-run)
 
   pull_childchain_health:
+    parameters:
+      port:
+        default: 9756
+        type: integer
     steps:
       - run:
           name: Check if Childchain got back up
           command: |
             attempt_counter=0
             max_attempts=25
-            until $(curl -v --silent http://localhost:9756/v1/health.check 2>&1 | grep -q 200); do
+            until $(curl -v --silent http://localhost:<<parameters.port>>/v1/health.check 2>&1 | grep -q 200); do
               echo "Response was:"
-              curl -is -X GET http://localhost:9756/v1/health.check
+              curl -is -X GET http://localhost:<<parameters.port>>/v1/health.check
               if [ ${attempt_counter} -eq ${max_attempts} ];then
                 echo "Max attempts reached"
                 exit 1
@@ -83,7 +108,7 @@ commands:
               attempt_counter=$(($attempt_counter+1))
               sleep 5
             done
-            curl -is -X GET http://localhost:9756/v1/health.check
+            curl -is -X GET http://localhost:<<parameters.port>>/v1/health.check
 
   install_elixir:
     parameters:
@@ -250,11 +275,6 @@ jobs:
           paths:
             - deps
             - _build
-      - run: rm -rf _build/test/lib/engine
-      - run: rm -rf _build/test/lib/api
-      - run: rm -rf _build/test/lib/bus
-      - run: rm -rf _build/test/lib/status
-      - run: rm -rf _build/test/lib/tasks
       - run:
           name: Run Vault integration test
           command: mix test.integration_block_submission_vault
@@ -288,16 +308,30 @@ jobs:
   test_docker_compose_release_public:
     machine:
       image: ubuntu-2004:202010-01
+    environment:
+      SNAPSHOT: SNAPSHOT_MIX_EXIT_PERIOD_SECONDS_120
+    parallelism: 4
     steps:
       - checkout
+      - run: make init-contracts
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
       - docker_compose_release:
           enterprise: "0"
 
   test_docker_compose_release_private:
     machine:
       image: ubuntu-2004:202010-01
+    environment:
+      SNAPSHOT: SNAPSHOT_MIX_EXIT_PERIOD_SECONDS_120
+    parallelism: 4
     steps:
       - checkout
+      - run: make init-contracts-vault
+      - run:
+          name: Setup data dir
+          command: chmod -R 777 data
       - docker_compose_release:
           enterprise: "1"
 
@@ -305,6 +339,10 @@ jobs:
     working_directory: ~/childchain
     machine:
       image: ubuntu-2004:202010-01
+    environment:
+      FEE_FEED_URL: http://172.27.0.110/file.json
+      ENTERPRISE: 0
+      PORT: 9756
     steps:
       - checkout
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
@@ -330,14 +368,9 @@ jobs:
             sudo apt-get install elixir=1.10.4-1
             mix local.rebar --force && mix local.hex --force
       - run:
-          environment:
-            ENTERPRISE: 0
           command: mix deps.get && mix ecto.create && mix ecto.migrate
       - run:
           name: Start the childchain via development entrypoint
-          environment:
-            ENTERPRISE: 0
-            PORT: 9756
           command: iex -S mix
           background: true
       - run: sleep 10
@@ -365,9 +398,6 @@ jobs:
             sleep 20
       - run:
           name: Start the childchain via development entrypoint
-          environment:
-            ENTERPRISE: 0
-            PORT: 9756
           command: iex -S mix
           background: true
       - run:
@@ -382,9 +412,11 @@ jobs:
       image: ubuntu-2004:202010-01
     environment:
       REORG: true
+      ENTERPRISE: 0
     steps:
       - checkout
       - install_rust
+      - run: pip3 install docker-compose --upgrade
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - gcloud_login
       - run:
@@ -402,8 +434,15 @@ jobs:
       - run:
           name: Start daemon services
           command: |
-            cd priv/cabbage
-            make start_daemon_services_reorg || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
+            make init_test_reorg
+            # echo "VAULT_URL=https://172.27.0.111:8200" >> dynamic_env_vars.env
+            # echo "INSECURE_VAULT_TLS=true" >> dynamic_env_vars.env
+            echo "ENTERPRISE=0" >> dynamic_env_vars.env
+            docker-compose -f docker-compose.yml -f docker-compose.reorg.yml -f docker-compose.specs.yml up -d || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
+      - run:
+          name: Log
+          command: docker-compose logs -f
+          background: true
       - run:
           name: Print docker states
           command: |
@@ -412,7 +451,6 @@ jobs:
       - install_elixir:
           cache: "specs"
           dir: "priv/cabbage"
-      - run: sh .circleci/status.sh
       - run:
           name: Print watcher logs
           command: make cabbage-reorg-watcher-logs
@@ -434,6 +472,22 @@ jobs:
           command: make cabbage-reorgs-logs
           background: true
       - run:
+          name: Setup specs
+          environment:
+            CHILD_CHAIN_URL: http://127.0.0.1:9656/v1
+            EXIT_ID_SIZE: "168"
+            LOCALCHAIN_CONTRACT_ADDRESSES: "/home/circleci/project/localchain_contract_addresses.env"
+            PLASMA_CONTRACTS_DIR: "/home/circleci/project/data/plasma-contracts/contracts/"
+            FEE_CLAIMER_ADDRESS: "0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1"
+            MIX_ENV: test
+          command: |
+            cd priv/cabbage
+            make install
+            make generate_api_code
+            mix deps.get
+            mix compile
+          no_output_timeout: 30m
+      - run:
           name: Run specs
           environment:
             CHILD_CHAIN_URL: http://127.0.0.1:9656/v1
@@ -443,10 +497,7 @@ jobs:
             FEE_CLAIMER_ADDRESS: "0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1"
           command: |
             cd priv/cabbage
-            make install
-            make generate_api_code
-            mix deps.get
-            mix test --only reorg
+            mix test --only deposit --trace
           no_output_timeout: 30m
 
 
@@ -577,9 +628,9 @@ workflows:
           requires:
             - build
 
-      # - test_docker_compose_reorg:
-      #     requires:
-      #       - build
+      - test_docker_compose_reorg:
+          requires:
+            - build
 
       - development:
           requires:

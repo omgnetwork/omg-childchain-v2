@@ -36,44 +36,44 @@ services:
       chain_net:
         ipv4_address: 172.27.0.107
 
-  # feefeed:
-  #   image: omisego/feefeed_mock:latest
-  #   volumes:
-  #     - ./docker/static_feefeed/:/www-data/
-  #   ports:
-  #     - "4000:80"
-  #   expose:
-  #     - "4000"
-  #   networks:
-  #     chain_net:
-  #       ipv4_address: 172.27.0.110
-
   feefeed:
-    image: gcr.io/omisego-development/feefeed:latest
-    command: "start"
-    container_name: feefeed
-    environment:
-      - GITHUB_TOKEN=""
-      - GITHUB_ORGANISATION=omgnetwork
-      - GITHUB_REPO=fee-rules-public
-      - GITHUB_BRANCH=master
-      - RULES_FETCH_INTERVAL=300
-      - GITHUB_FILENAME=fee_rules
-      - DATABASE_URL=postgresql://feefeed:feefeed@172.27.0.107:5432/feefeed
-      - SECRET_KEY_BASE="Y8naENMR8b+vbPHILjwNtEfWFrnbGi2k+UYWm75VnKHfsavmyGLtTmmeJxAGK+zJ"
-      - DATADOG_DISABLED=true
-      - DATADOG_HOST="localhost"
-      - ETHEREUM_NODE_URL=http://172.27.0.108:80
+    image: omisego/feefeed_mock:latest
+    volumes:
+      - ./docker/static_feefeed/:/www-data/
     ports:
-      - "4000:4000"
+      - "4000:80"
     expose:
       - "4000"
-    depends_on:
-      - postgres
-    restart: always
     networks:
       chain_net:
         ipv4_address: 172.27.0.110
+
+  # feefeed:
+  #   image: gcr.io/omisego-development/feefeed:latest
+  #   command: "start"
+  #   container_name: feefeed
+  #   environment:
+  #     - GITHUB_TOKEN=""
+  #     - GITHUB_ORGANISATION=omgnetwork
+  #     - GITHUB_REPO=fee-rules-public
+  #     - GITHUB_BRANCH=master
+  #     - RULES_FETCH_INTERVAL=300
+  #     - GITHUB_FILENAME=fee_rules
+  #     - DATABASE_URL=postgresql://feefeed:feefeed@172.27.0.107:5432/feefeed
+  #     - SECRET_KEY_BASE="Y8naENMR8b+vbPHILjwNtEfWFrnbGi2k+UYWm75VnKHfsavmyGLtTmmeJxAGK+zJ"
+  #     - DATADOG_DISABLED=true
+  #     - DATADOG_HOST="localhost"
+  #     - ETHEREUM_NODE_URL=http://172.27.0.108:80
+  #   ports:
+  #     - "4000:4000"
+  #   expose:
+  #     - "4000"
+  #   depends_on:
+  #     - postgres
+  #   restart: always
+  #   networks:
+  #     chain_net:
+  #       ipv4_address: 172.27.0.110
 
   childchain:
     image: omisego/childchain-v2:latest
@@ -81,17 +81,20 @@ services:
     container_name: childchain
     env_file:
       - ./localchain_contract_addresses.env
+      - ./dynamic_env_vars.env
     environment:
+      - ETHEREUM_NETWORK=LOCALCHAIN
       - DATABASE_URL=postgresql://engine_repo:engine_repo@172.27.0.107:5432/engine_repo
       - ETHEREUM_RPC_URL=http://172.27.0.108:80
       - LOGGER_BACKEND=console
       - ETHEREUM_EVENTS_CHECK_INTERVAL_MS=800
-      - FEE_FEED_URL=http://172.27.0.110:4000/api/v1/fees
-      #- FEE_FEED_URL=http://172.27.0.110/file.json #mock feefeed
+      #- FEE_FEED_URL=http://172.27.0.110:4000/api/v1/fees
+      - FEE_FEED_URL=http://172.27.0.110/file.json #mock feefeed
       - FEE_CHANGE_TOLERANCE_PERCENT=20
       - FEE_ADAPTER=FEED
       - STORED_FEE_UPDATE_INTERVAL_MINUTES=2
       - FEE_CLAIMER_ADDRESS=0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1
+      - PRIVATE_KEY=7f30f140fd4724519e5017c0895f158d68bbbe4a81c0c10dbb25a0006e348807
     depends_on:
       - feefeed
       - nginx
@@ -176,19 +179,20 @@ services:
       - ETHEREUM_NETWORK=LOCALCHAIN
       - ETHEREUM_RPC_URL=http://172.27.0.108:80
       - CHILD_CHAIN_URL=http://172.27.0.108:9656/v1
-      - DATABASE_URL=postgresql://omisego_dev:omisego_dev@172.27.0.107:5432/omisego_dev
       - PORT=7534
       - APP_ENV=local_docker_development
       - DD_HOSTNAME=datadog
       - DD_DISABLED=true
       - DB_PATH=/data
       - ETHEREUM_EVENTS_CHECK_INTERVAL_MS=800
+      - ETHEREUM_STALLED_SYNC_THRESHOLD_MS=20000
       - ETHEREUM_BLOCK_TIME_SECONDS=1
       - EXIT_PROCESSOR_SLA_MARGIN=5520
       - EXIT_PROCESSOR_SLA_MARGIN_FORCED=TRUE
       - LOGGER_BACKEND=console
       - RELEASE_COOKIE=development
       - NODE_HOST=127.0.0.1
+      - DATABASE_URL=postgresql://omisego_dev:omisego_dev@172.27.0.107:5432/omisego_dev
     restart: always
     ports:
       - "7534:7534"

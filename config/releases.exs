@@ -54,7 +54,7 @@ config :engine, Engine.Repo,
   url: System.get_env("DATABASE_URL")
 
 config :engine, Engine.Fee,
-  fee_feed_url: System.get_env("FEE_FEED_URL") || "http://localhost:4000/api/v1",
+  fee_feed_url: System.get_env("FEE_FEED_URL", "http://localhost:4000/api/v1"),
   fee_change_tolerance_percent: String.to_integer(System.get_env("FEE_CHANGE_TOLERANCE_PERCENT") || "25"),
   stored_fee_update_interval_minutes: String.to_integer(System.get_env("STORED_FEE_UPDATE_INTERVAL_MINUTES") || "1")
 

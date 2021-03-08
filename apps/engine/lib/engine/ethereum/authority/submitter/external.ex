@@ -50,12 +50,12 @@ defmodule Engine.Ethereum.Authority.Submitter.External do
           # ENTERPRISE 1
           {:ok, body |> Jason.decode!() |> Map.get("data") |> Map.get("transaction_hash")}
 
-        {:ok, tx_hash} ->
+        {:ok, tx_hash} when is_binary(tx_hash) ->
           # ENTERPRISE 0
           {:ok, Encoding.to_hex(tx_hash)}
 
         other ->
-          # this should be logged by the invoker
+          # this should be logged by the invoker, and submission should stop at this plasma block
           other
       end
     end
