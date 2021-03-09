@@ -19,6 +19,7 @@ defmodule Engine.Ethereum.Authority.Submitter do
     :db_connection_lost,
     :ethereum_connection_error,
     :gas_integration_fallback_order,
+    :ufo,
     :opts
   ]
 
@@ -42,6 +43,7 @@ defmodule Engine.Ethereum.Authority.Submitter do
     plasma_framework = Keyword.fetch!(init_arg, :plasma_framework)
     child_block_interval = Keyword.fetch!(init_arg, :child_block_interval)
     gas_integration_fallback_order = Keyword.fetch!(init_arg, :gas_integration_fallback_order)
+    ufo = Keyword.fetch!(init_arg, :ufo)
     opts = Keyword.fetch!(init_arg, :opts)
     alarm_handler = Keyword.get(init_arg, :alarm_handler, AlarmHandler)
     sasl_alarm_handler = Keyword.get(init_arg, :sasl_alarm_handler, :alarm_handler)
@@ -53,6 +55,7 @@ defmodule Engine.Ethereum.Authority.Submitter do
       child_block_interval: child_block_interval,
       enterprise: enterprise,
       gas_integration_fallback_order: gas_integration_fallback_order,
+      ufo: ufo,
       db_connection_lost: false,
       ethereum_connection_error: false,
       opts: opts

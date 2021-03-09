@@ -72,6 +72,11 @@ commands:
             docker-compose ps
       - pull_childchain_health:
           port: 9656
+      - when:
+          condition:
+            equal: [ "1", <<parameters.enterprise>> ]
+          steps:
+            - run: docker-compose down vault
       - run:
           command: |
             TESTFILES=$(circleci tests glob "~/project/priv/cabbage/apps/itest/test/itest/*_test.exs" | circleci tests split --split-by=timings --show-counts)
