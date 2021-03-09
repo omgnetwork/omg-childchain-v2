@@ -56,7 +56,8 @@ defmodule Engine.DB.OutputTest do
                output_id: nil,
                output_type: 1,
                position: nil,
-               state: :pending
+               # if engine UFO is set to true we immediately allow the OUTPUT to be spent
+               state: :confirmed
              } = Changeset.apply_changes(changeset)
 
       assert %{output_data: %{amount: ^amount, output_guard: ^output_guard, token: ^token}} =
