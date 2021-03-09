@@ -32,6 +32,7 @@ defmodule Engine.DB.Output do
   alias __MODULE__.OutputQuery
   alias Ecto.Atom
   alias Ecto.Multi
+  alias Engine.Configuration
   alias Engine.DB.Transaction
   alias Engine.Repo
   alias ExPlasma.Output.Position
@@ -104,7 +105,13 @@ defmodule Engine.DB.Output do
   """
   @spec new(%__MODULE__{}, map()) :: Ecto.Changeset.t()
   def new(struct, params) do
-    OutputChangeset.new(struct, Map.put(params, :state, :pending))
+    case Configuration.ufo() do
+      true ->
+        OutputChangeset.new(struct, Map.put(params, :state, :confirmed))
+
+      false ->
+        OutputChangeset.new(struct, Map.put(params, :state, :pending))
+    end
   end
 
   @doc """

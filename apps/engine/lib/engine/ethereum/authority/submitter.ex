@@ -101,13 +101,11 @@ defmodule Engine.Ethereum.Authority.Submitter do
 
     {:ok, result} = Block.get_all_and_submit(height, mined_child_block, submit_fn, gas_fun)
 
-    case Map.get(result, :get_gas_and_submit) do
-      [] ->
-        :ok
-
-      _submitted_blocks ->
+    _ =
+      with true <- state.ufo,
+           [_ | _] <- Map.get(result, :get_gas_and_submit) do
         Output.confirm(mined_child_block)
-    end
+      end
 
     :ok
   end
