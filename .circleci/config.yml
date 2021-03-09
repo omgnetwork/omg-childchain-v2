@@ -53,7 +53,7 @@ commands:
             - run: echo "INSECURE_VAULT_TLS=true" >> dynamic_env_vars.env
       - run:
           name: Setup dynamic vars
-          run: echo "ENTERPRISE=<<parameters.enterprise>>" >> dynamic_env_vars.env
+          command: echo "ENTERPRISE=<<parameters.enterprise>>" >> dynamic_env_vars.env
       - run:
           name: Start daemon services
           command: |
