@@ -18,6 +18,7 @@ commands:
       - gcloud_login
       # checksum changes after mix.deps is ran (public and private deps controlled by ENTERPRISE var)
       - run: echo 'export CHECKSUM='$(cat ~/project/mix.lock | openssl dgst -binary -sha1 | openssl base64) >> $BASH_ENV
+      - run: source $BASH_ENV
       - restore_cache:
           key: docker_compose_release-{{ .Environment.CHECKSUM }}
       - run:
