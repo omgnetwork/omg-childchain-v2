@@ -87,6 +87,7 @@ commands:
             -e WATCHER_INFO_URL=http://172.27.0.105:7534 \
             -e CHILD_CHAIN_URL=http://172.27.0.108:9656/v1 \
             -e ETHEREUM_RPC_URL=http://172.27.0.108:80 \
+            -e ETHEREUM_WS_URL=ws://172.27.0.108:81 \
             -e EXIT_ID_SIZE=168 \
             -e SHELL=/bin/sh \
             -v $(pwd):/app \
