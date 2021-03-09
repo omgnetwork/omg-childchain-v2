@@ -44,13 +44,16 @@ commands:
           name: Setup data dir
           command: |
             [ -d data ] || mkdir data && chmod 777 data
+      - when:
+          condition:
+            equal: [ "1", <<parameters.enterprise>> ]
+          steps:
+            - run: echo "WALLET_NAME=plasma-deployer" >> dynamic_env_vars.env
+            - run: echo "VAULT_URL=https://172.27.0.111:8200" >> dynamic_env_vars.env
+            - run: echo "INSECURE_VAULT_TLS=true" >> dynamic_env_vars.env
       - run:
-          name: Setup for ENTERPRISE=1
-          command: |
-            echo "WALLET_NAME=plasma-deployer" >> dynamic_env_vars.env
-            echo "VAULT_URL=https://172.27.0.111:8200" >> dynamic_env_vars.env
-            echo "INSECURE_VAULT_TLS=true" >> dynamic_env_vars.env
-            echo "ENTERPRISE=<<parameters.enterprise>>" >> dynamic_env_vars.env
+          name: Setup dynamic vars
+          run: echo "ENTERPRISE=<<parameters.enterprise>>" >> dynamic_env_vars.env
       - run:
           name: Start daemon services
           command: |
@@ -70,10 +73,10 @@ commands:
           command: |
             TESTFILES=$(circleci tests glob "~/project/priv/cabbage/apps/itest/test/itest/*_test.exs" | circleci tests split --split-by=timings --show-counts)
             echo ${TESTFILES}
-            docker run --rm -it --network=project_chain_net \
+            docker run --rm -it --network=chain_net \
             --user=root \
             -e FEE_CLAIMER_ADDRESS=0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1 \
-            -e MIX_ENV=test\
+            -e MIX_ENV=test \
             -e PLASMA_CONTRACTS_DIR=/app/data/plasma-contracts/contracts/ \
             -e LOCALCHAIN_CONTRACT_ADDRESSES=/app/localchain_contract_addresses.env \
             -e DOCKER=true \
@@ -82,15 +85,8 @@ commands:
             -e EXIT_ID_SIZE=168 \
             -e SHELL=/bin/sh \
             -v $(pwd):/app \
-            --entrypoint /bin/sh "omisego/childchain-builder:dev-6b9e25f" \
-            -c "cd /app/priv/cabbage &&
-            apk add maven &&
-            apk add jq &&
-            make install &&
-            make generate_api_code &&
-            mix deps.get &&
-            mix compile &&
-            mix test ${TESTFILES} --trace"
+            --entrypoint /bin/sh \
+            "omisego/childchain-builder:dev-6b9e25f" -c "cd /app/priv/cabbage && apk add maven && apk add jq && make install && make generate_api_code && mix deps.get && mix test --trace"
       - store_test_results:
           path: ~/project/priv/cabbage/_build/test/lib/itest/
 
