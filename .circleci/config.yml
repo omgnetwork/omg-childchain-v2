@@ -83,6 +83,8 @@ commands:
             -e PLASMA_CONTRACTS_DIR=/app/data/plasma-contracts/contracts/ \
             -e LOCALCHAIN_CONTRACT_ADDRESSES=/app/localchain_contract_addresses.env \
             -e DOCKER=true \
+            -e WATCHER_URL=http://172.27.0.104:7434 \
+            -e WATCHER_INFO_URL=http://172.27.0.105:7534 \
             -e CHILD_CHAIN_URL=http://172.27.0.108:9656/v1 \
             -e ETHEREUM_RPC_URL=http://172.27.0.108:80 \
             -e EXIT_ID_SIZE=168 \
