@@ -74,13 +74,19 @@ commands:
           port: 9656
       - when:
           condition:
-            equal: [ "1", <<parameters.enterprise>> ]
+            equal: [ "0", <<parameters.enterprise>> ]
           steps:
             - run: docker-compose down vault
+      - run: |
+          cd ~/project/priv/cabbage
+          TESTFILES=$(circleci tests glob "apps/itest/test/itest/*_test.exs" | circleci tests split --split-by=timings --show-counts)
+          echo ${TESTFILES}
       - run:
           command: |
-            TESTFILES=$(circleci tests glob "~/project/priv/cabbage/apps/itest/test/itest/*_test.exs" | circleci tests split --split-by=timings --show-counts)
+            cd ~/project/priv/cabbage
+            TESTFILES=$(circleci tests glob "apps/itest/test/itest/*_test.exs" | circleci tests split --split-by=timings --show-counts)
             echo ${TESTFILES}
+            cd ~/project/
             docker run --rm -it --network=chain_net \
             --user=root \
             -e FEE_CLAIMER_ADDRESS=0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1 \
