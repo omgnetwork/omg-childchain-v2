@@ -16,9 +16,10 @@ commands:
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run: pip3 install docker-compose --upgrade
       - gcloud_login
-      - run: echo 'export CHECKSUM={{checksum "mix.lock"}}' >> $BASH_ENV
+      # checksum changes after mix.deps is ran (public and private deps controlled by ENTERPRISE var)
+      - run: echo 'export CHECKSUM={{ checksum "mix.lock" }}' >> $BASH_ENV
       - restore_cache:
-          key: docker_compose_release-{{ checksum "mix.lock" }}
+          key: docker_compose_release-{{ .Environment.CHECKSUM }}
       - run:
           environment:
             ENTERPRISE: <<parameters.enterprise>>
