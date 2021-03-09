@@ -44,6 +44,7 @@ defmodule SubmitBlockTest do
         http_request_options: []
       ],
       gas_integration_fallback_order: [nil],
+      ufo: true,
       enterprise: enterprise
     ]
 
