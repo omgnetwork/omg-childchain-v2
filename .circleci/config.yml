@@ -16,6 +16,7 @@ commands:
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run: pip3 install docker-compose --upgrade
       - gcloud_login
+      - run: echo 'export CHECKSUM={{checksum "mix.lock"}}' >> $BASH_ENV
       - restore_cache:
           key: docker_compose_release-{{ checksum "mix.lock" }}
       - run:
@@ -31,7 +32,7 @@ commands:
             sudo rm -rf ~/project/_build_docker/prod/lib/tasks
             sudo rm -rf ~/project/_build_docker/prod/lib/status
       - save_cache:
-          key: docker_compose_release-{{ checksum "mix.lock" }}
+          key: docker_compose_release-{{ .Environment.CHECKSUM }}
           paths:
             - ~/project/deps_docker
             - ~/project/_build_docker/prod/lib/
@@ -617,34 +618,19 @@ workflows:
   build-test-lint:
     jobs:
       - build
-      - test:
-          requires:
-            - build
-
       - integration
       - integration_send_raw_eth_transaction
       - integration_vault
-
-      - test_docker_compose_release_private:
+      - test_docker_compose_release_private
+      - test_docker_compose_release_public
+      - test_docker_compose_reorg
+      - development
+      - test:
           requires:
             - build
-
-      - test_docker_compose_release_public:
-          requires:
-            - build
-
-      - test_docker_compose_reorg:
-          requires:
-            - build
-
-      - development:
-          requires:
-            - build
-
       - credo:
           requires:
             - build
-
       - dialyzer:
           requires:
             - build
