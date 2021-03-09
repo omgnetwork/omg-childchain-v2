@@ -16,11 +16,11 @@ commands:
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - run: pip3 install docker-compose --upgrade
       - gcloud_login
-      # checksum changes after mix.deps is ran (public and private deps controlled by ENTERPRISE var)
-      - run: echo 'export CHECKSUM='$(cat ~/project/mix.lock | openssl dgst -binary -sha1 | openssl base64) >> $BASH_ENV
-      - run: source $BASH_ENV
+      # checksum of mix.lock changes after mix.deps is ran (public and private deps controlled by ENTERPRISE var)
+      # so we make a clone of old one :)
+      - run: cp ~/project/mix.lock ~/project/mix_cache.lock
       - restore_cache:
-          key: docker_compose_release-{{ .Environment.CHECKSUM }}
+          key: docker_compose_release-{{ checksum "~/project/mix_cache.lock" }}
       - run:
           environment:
             ENTERPRISE: <<parameters.enterprise>>
@@ -34,7 +34,7 @@ commands:
             sudo rm -rf ~/project/_build_docker/prod/lib/tasks
             sudo rm -rf ~/project/_build_docker/prod/lib/status
       - save_cache:
-          key: docker_compose_release-{{ .Environment.CHECKSUM }}
+          key: docker_compose_release-{{ checksum "~/project/mix_cache.lock" }}
           paths:
             - ~/project/deps_docker
             - ~/project/_build_docker/prod/lib/
