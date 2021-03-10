@@ -76,11 +76,13 @@ commands:
           condition:
             equal: [ "0", <<parameters.enterprise>> ]
           steps:
-            - run: docker-compose down vault
+            - run: docker-compose stop vault
+      - restore_cache:
+          key: docker_compose_release-cabbage-{{ checksum "~/project/priv/cabbage/mix.lock" }}
       - run:
           command: |
             cd ~/project/priv/cabbage
-            TESTFILES=$(circleci tests glob "apps/itest/test/itest/*_test.exs" | circleci tests split --split-by=timings --show-counts)
+            TESTFILES=$(circleci tests glob "apps/itest/test/itest/*_test.exs" | circleci tests split --split-by=timings --show-counts | tr -d '\r' | tr -d '\n')
             echo ${TESTFILES}
             cd ~/project/
             docker run --rm -it --network=chain_net \
@@ -102,6 +104,11 @@ commands:
             "omisego/childchain-builder:dev-6b9e25f" -c "cd /app/priv/cabbage && apk add maven && apk add jq && make install && make generate_api_code && mix deps.get && mix test ${TESTFILES} --trace"
       - store_test_results:
           path: ~/project/priv/cabbage/_build/test/lib/itest/
+      - save_cache:
+          key: docker_compose_release-cabbage-{{ checksum "~/project/priv/cabbage/mix.lock" }}
+          paths:
+            - ~/project/priv/cabbage/deps
+            - ~/project/priv/cabbage/_build
 
   pull_childchain_health:
     parameters:
