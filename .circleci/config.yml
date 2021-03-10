@@ -82,7 +82,7 @@ commands:
       - run:
           command: |
             cd ~/project/priv/cabbage
-            TESTFILES=$(circleci tests glob "apps/itest/test/itest/*_test.exs" | circleci tests split --split-by=timings --show-counts | tr -d '\r' | tr -d '\n')
+            TESTFILES=$(circleci tests glob "apps/itest/test/itest/*_test.exs" | circleci tests split --split-by=timings --show-counts | tr '\r\n' ' ')
             echo ${TESTFILES}
             cd ~/project/
             docker run --rm -it --network=chain_net \
