@@ -54,7 +54,7 @@ defmodule Engine.DB.Transaction.Validator do
           Enum.map(given_input_positions, fn given_input_position ->
             usable_inputs
             |> Enum.find(&(&1.position == given_input_position))
-            |> Output.spend(%{})
+            |> Output.spend()
           end)
 
         put_assoc(changeset, :inputs, ordered_spent_inputs)

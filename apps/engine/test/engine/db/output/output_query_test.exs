@@ -8,7 +8,7 @@ defmodule Engine.DB.Output.OutputQueryTest do
   describe "usable_for_positions/1" do
     test "returns :confirmed output without a spending_transaction and with matching position" do
       %{position: p_1} = insert(:deposit_output)
-      %{position: p_2} = :deposit_output |> insert() |> Output.spend(%{}) |> Engine.Repo.update!()
+      %{position: p_2} = :deposit_output |> insert() |> Output.spend() |> Engine.Repo.update!()
       :output |> insert() |> Output.piggyback() |> Repo.update!()
       insert(:deposit_output)
 

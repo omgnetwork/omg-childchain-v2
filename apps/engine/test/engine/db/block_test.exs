@@ -56,7 +56,7 @@ defmodule Engine.DB.BlockTest do
 
     gas_integration = fn ->
       Kernel.send(parent, ref)
-      1
+      %{standard: 1}
     end
 
     assert Block.get_all_and_submit(1000, 1000, integration, gas_integration) ==
@@ -241,7 +241,7 @@ defmodule Engine.DB.BlockTest do
 
       gas_integration = fn ->
         Kernel.send(parent, ref)
-        1
+        %{standard: 1}
       end
 
       # at this height, I'm looking at what was submitted and what wasn't
@@ -372,7 +372,9 @@ defmodule Engine.DB.BlockTest do
       expected = %Block{block_forming | state: Block.state_finalizing()}
       assert :ok = Block.finalize_forming_block()
       actual = Repo.one(from(b in Block, where: b.id == ^id_forming))
-      assert actual == expected
+      # deleting node_updated_at because there might be a time glitch and
+      # comparing these two maps could fail
+      assert Map.delete(actual, :node_updated_at) == Map.delete(expected, :node_updated_at)
     end
 
     test "changes block state to finalizing only for a forming block" do

@@ -233,6 +233,7 @@ services:
 
 networks:
   chain_net:
+    name: "chain_net"
     driver: bridge
     ipam:
       config:

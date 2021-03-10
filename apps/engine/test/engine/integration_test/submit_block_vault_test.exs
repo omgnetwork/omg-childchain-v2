@@ -73,6 +73,7 @@ defmodule SubmitBlockVaultTest do
         Gas.Integration.Pulse,
         Gas.Integration.Web3Api
       ],
+      ufo: true,
       enterprise: enterprise
     ]
 

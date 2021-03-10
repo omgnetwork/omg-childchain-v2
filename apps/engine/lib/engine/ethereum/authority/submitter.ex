@@ -4,6 +4,7 @@ defmodule Engine.Ethereum.Authority.Submitter do
   """
 
   alias Engine.DB.Block
+  alias Engine.DB.Output
   alias Engine.Ethereum.Authority.Submitter.AlarmHandler
   alias Engine.Ethereum.Authority.Submitter.Core
   alias Engine.Ethereum.Authority.Submitter.External
@@ -18,6 +19,7 @@ defmodule Engine.Ethereum.Authority.Submitter do
     :db_connection_lost,
     :ethereum_connection_error,
     :gas_integration_fallback_order,
+    :ufo,
     :opts
   ]
 
@@ -41,6 +43,7 @@ defmodule Engine.Ethereum.Authority.Submitter do
     plasma_framework = Keyword.fetch!(init_arg, :plasma_framework)
     child_block_interval = Keyword.fetch!(init_arg, :child_block_interval)
     gas_integration_fallback_order = Keyword.fetch!(init_arg, :gas_integration_fallback_order)
+    ufo = Keyword.fetch!(init_arg, :ufo)
     opts = Keyword.fetch!(init_arg, :opts)
     alarm_handler = Keyword.get(init_arg, :alarm_handler, AlarmHandler)
     sasl_alarm_handler = Keyword.get(init_arg, :sasl_alarm_handler, :alarm_handler)
@@ -52,6 +55,7 @@ defmodule Engine.Ethereum.Authority.Submitter do
       child_block_interval: child_block_interval,
       enterprise: enterprise,
       gas_integration_fallback_order: gas_integration_fallback_order,
+      ufo: ufo,
       db_connection_lost: false,
       ethereum_connection_error: false,
       opts: opts
@@ -97,7 +101,15 @@ defmodule Engine.Ethereum.Authority.Submitter do
     mined_child_block = Core.mined(next_child_block, state.child_block_interval)
     submit_fn = External.submit_block(state.plasma_framework, state.enterprise, state.opts)
     gas_fun = External.gas(state.gas_integration_fallback_order)
-    {:ok, _} = Block.get_all_and_submit(height, mined_child_block, submit_fn, gas_fun)
+
+    {:ok, result} = Block.get_all_and_submit(height, mined_child_block, submit_fn, gas_fun)
+
+    _ =
+      with true <- state.ufo,
+           [_ | _] <- Map.get(result, :get_gas_and_submit) do
+        Output.confirm(mined_child_block)
+      end
+
     :ok
   end
 

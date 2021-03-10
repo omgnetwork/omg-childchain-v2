@@ -29,6 +29,7 @@ defmodule Engine.Ethereum.Authority.SubmitterTest do
       plasma_framework: "",
       child_block_interval: 1000,
       gas_integration_fallback_order: [nil],
+      ufo: true,
       opts: []
     ]
 

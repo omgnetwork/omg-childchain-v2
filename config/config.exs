@@ -26,6 +26,10 @@ end
 contracts = parse_contracts.()
 
 config :engine,
+  # UFO spends flag. The consequence of this is that
+  # all incoming transactions created outputs are instantly set to
+  # state: confirmed
+  ufo: true,
   finality_margin: 10,
   network: "TEST",
   child_block_interval: 1000,

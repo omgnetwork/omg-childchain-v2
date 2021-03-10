@@ -124,7 +124,8 @@ defmodule Engine.DB.Factory do
       output_type: ExPlasma.payment_v1(),
       output_data: encoded_output_data,
       output_id: encoded_output_id,
-      position: output_id.position
+      position: output_id.position,
+      blknum: blknum
     }
   end
 
@@ -276,7 +277,8 @@ defmodule Engine.DB.Factory do
       output_type: ExPlasma.payment_v1(),
       output_data: encoded_output_data,
       output_id: encoded_output_id,
-      position: default_output_id.position
+      position: default_output_id.position,
+      blknum: default_blknum
     }
   end
 

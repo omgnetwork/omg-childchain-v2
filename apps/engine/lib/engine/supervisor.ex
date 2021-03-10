@@ -47,6 +47,7 @@ defmodule Engine.Supervisor do
       end
 
     rpc_url = Configuration.rpc_url()
+    ufo = Configuration.ufo()
 
     integration_opts = [
       module: SubmitBlock,
@@ -66,6 +67,7 @@ defmodule Engine.Supervisor do
         Gas.Integration.Pulse,
         Gas.Integration.Web3Api
       ],
+      ufo: ufo,
       enterprise: enterprise
     ]
   end

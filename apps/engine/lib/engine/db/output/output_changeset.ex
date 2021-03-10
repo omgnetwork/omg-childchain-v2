@@ -20,6 +20,7 @@ defmodule Engine.DB.Output.OutputChangeset do
     output
     |> state(params)
     |> output_position(params)
+    |> assign_blknum(params)
     |> output_data(params)
   end
 
@@ -56,6 +57,11 @@ defmodule Engine.DB.Output.OutputChangeset do
   """
   def assign_position(changeset, params), do: output_position(changeset, params)
 
+  @doc """
+  Changeset for temporary blknum change.
+  """
+  def assign_blknum(changeset, params), do: blknum(changeset, params)
+
   defp output_data(output, params) do
     output
     |> cast(params, [:output_type])
@@ -68,6 +74,16 @@ defmodule Engine.DB.Output.OutputChangeset do
     |> put_position(params)
     |> put_output_id(params)
     |> validate_required([:output_id, :position])
+  end
+
+  defp blknum(output, params) do
+    output
+    |> put_blknum(params)
+    |> validate_required([:blknum])
+  end
+
+  defp put_blknum(changeset, %{blknum: blknum}) do
+    put_change(changeset, :blknum, blknum)
   end
 
   # Extract the position from the output id and store it on the table.

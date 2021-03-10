@@ -7,6 +7,10 @@ defmodule Engine.Configuration do
 
   @app :engine
 
+  def ufo() do
+    Application.fetch_env!(@app, :ufo)
+  end
+
   def child_block_interval() do
     Application.fetch_env!(@app, :child_block_interval)
   end

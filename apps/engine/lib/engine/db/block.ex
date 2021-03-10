@@ -218,21 +218,33 @@ defmodule Engine.DB.Block do
   end
 
   defp get_gas_and_submit(repo, %{get_all: plasma_blocks}, new_height, mined_child_block, submit_fn, gas_fn) do
-    :ok = process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas_fn)
-    {:ok, []}
+    submitted_blocks = process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas_fn)
+    {:ok, submitted_blocks}
   end
 
-  defp process_submission(_repo, [], _new_height, _mined_child_block, _submit_fn, _gas_fn) do
-    :ok
+  defp process_submission(_repo, [], _new_height, _mined_child_block, _submit_fn, gas_fn)
+       when is_function(gas_fn) do
+    []
   end
 
-  defp process_submission(repo, [plasma_block | plasma_blocks], new_height, mined_child_block, submit_fn, gas_fn) do
+  defp process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas_fn)
+       when is_function(gas_fn) do
     gas =
       gas_fn.()
       |> Map.get(:standard)
       |> Kernel.*(1_000_000_000)
       |> Kernel.round()
 
+    acc = []
+    process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas, acc)
+  end
+
+  defp process_submission(_repo, [], _new_height, _mined_child_block, _submit_fn, _gas, acc) do
+    Enum.reverse(acc)
+  end
+
+  defp process_submission(repo, [plasma_block | plasma_blocks], new_height, mined_child_block, submit_fn, gas, acc)
+       when is_integer(gas) do
     submission_result = submit_fn.(plasma_block.hash, "#{plasma_block.nonce}", "#{gas}")
 
     Logger.info(
@@ -243,22 +255,23 @@ defmodule Engine.DB.Block do
 
     case submission_result do
       {:ok, tx_hash} ->
-        plasma_block
-        |> BlockChangeset.submitted(%{
-          attempts_counter: plasma_block.attempts_counter + 1,
-          gas: gas,
-          submitted_at_ethereum_height: new_height,
-          tx_hash: tx_hash
-        })
-        |> repo.update!([])
+        block =
+          plasma_block
+          |> BlockChangeset.submitted(%{
+            attempts_counter: plasma_block.attempts_counter + 1,
+            gas: gas,
+            submitted_at_ethereum_height: new_height,
+            tx_hash: tx_hash
+          })
+          |> repo.update!([])
 
-        process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas_fn)
+        process_submission(repo, plasma_blocks, new_height, mined_child_block, submit_fn, gas, [block | acc])
 
       error ->
         # we encountered an error with one of the block submissions
         # we'll stop here and continue later
         _ = Logger.info("Block submission stopped at block with nonce #{plasma_block.nonce}. Error: #{inspect(error)}")
-        process_submission(repo, [], new_height, mined_child_block, submit_fn, gas_fn)
+        process_submission(repo, [], new_height, mined_child_block, submit_fn, gas, acc)
     end
   end
 
