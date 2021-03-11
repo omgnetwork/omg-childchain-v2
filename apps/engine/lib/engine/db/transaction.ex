@@ -27,11 +27,13 @@ defmodule Engine.DB.Transaction do
   alias Engine.DB.TransactionFee
   alias Engine.Fee
   alias Engine.Repo
+  alias ExPlasma.Encoding
   alias ExPlasma.Transaction, as: ExPlasmaTx
 
   require Logger
 
   @type tx_bytes :: binary
+  @type hex_tx_bytes :: list(binary)
 
   @type t() :: %{
           block: Block.t(),
@@ -96,18 +98,41 @@ defmodule Engine.DB.Transaction do
   If including a new transaction in forming block violates maximum number of transaction per block
   then the transaction is associated with a newly inserted forming block.
   """
-  def insert(tx_bytes) do
-    case decode(tx_bytes) do
-      {:ok, decoded} ->
-        {:ok, fees} = load_fees(decoded.tx_type)
-        changeset = TransactionChangeset.new_transaction_changeset(%__MODULE__{}, tx_bytes, decoded, fees)
+  def insert(hex_tx_bytes) do
+    case decode(hex_tx_bytes) do
+      {:ok, {tx_bytes, decoded}} ->
+        [{"1-of-1", tx_bytes, decoded}]
+        |> handle_transactions()
+        |> Repo.transaction()
+        |> case do
+          {:ok, result} ->
+            {:ok, Map.get(result, "transaction-1-of-1")}
 
-        Multi.new()
-        |> Multi.run(:current_forming_block, &Block.get_forming_block_for_update/2)
-        |> Multi.run(:block_with_next_tx_index, &Block.get_block_and_tx_index_for_transaction/2)
-        |> Multi.insert(:transaction, fn %{block_with_next_tx_index: block_with_next_tx_index} ->
-          TransactionChangeset.set_blknum_and_tx_index(changeset, block_with_next_tx_index)
-        end)
+          {:error, _, changeset, _} ->
+            _ = Logger.error("Error when inserting transaction changeset #{inspect(changeset)}")
+            {:error, changeset}
+
+          error ->
+            _ = Logger.error("Error when inserting transaction #{inspect(error)}")
+            error
+        end
+
+      decode_error ->
+        _ = Logger.error("Error when inserting transaction decode_error #{inspect(decode_error)}")
+        decode_error
+    end
+  end
+
+  @doc """
+  Inserts a new batch of transactions and associates it with currently forming block.
+  If including a new transaction in forming block violates maximum number of transaction per block
+  then the transaction is associated with a newly inserted forming block.
+  """
+  def insert_batch(txs_bytes) do
+    case decode_batch(txs_bytes) do
+      {:ok, batch} ->
+        batch
+        |> handle_transactions()
         |> Repo.transaction()
         |> case do
           {:ok, _} = result ->
@@ -138,16 +163,62 @@ defmodule Engine.DB.Transaction do
     |> repo.insert()
   end
 
-  @spec decode(tx_bytes) :: {:ok, ExPlasma.Transaction.t()} | {:error, atom()}
-  defp decode(tx_bytes) do
-    with {:ok, decoded} <- ExPlasma.decode(tx_bytes),
+  defp handle_transactions(batch) do
+    all_fees = load_fees()
+
+    batch
+    |> Enum.reduce(Multi.new(), fn {index, tx_bytes, decoded}, multi ->
+      {:ok, fees} = load_fee(all_fees, decoded.tx_type)
+
+      changeset = TransactionChangeset.new_transaction_changeset(%__MODULE__{}, tx_bytes, decoded, fees)
+
+      block_with_next_tx_index = "block_with_next_tx_index-#{index}"
+
+      multi
+      |> Multi.run("current_forming_block-#{index}", fn repo, _ -> Block.get_forming_block_for_update(repo) end)
+      |> Multi.run(block_with_next_tx_index, fn repo, params ->
+        Block.get_block_and_tx_index_for_transaction(repo, params, index)
+      end)
+      |> Multi.insert("transaction-#{index}", fn %{^block_with_next_tx_index => block_with_next_tx_index} ->
+        TransactionChangeset.set_blknum_and_tx_index(changeset, block_with_next_tx_index)
+      end)
+    end)
+  end
+
+  @spec decode(hex_tx_bytes) :: {:ok, ExPlasma.Transaction.t()} | {:error, atom()}
+  defp decode(hex_tx_bytes) do
+    with {:ok, tx_bytes} <- Encoding.to_binary(hex_tx_bytes),
+         {:ok, decoded} <- ExPlasma.decode(tx_bytes),
          {:ok, recovered} <- ExPlasmaTx.with_witnesses(decoded) do
-      {:ok, recovered}
+      {:ok, {tx_bytes, recovered}}
     end
   end
 
-  defp load_fees(type) do
+  @spec decode_batch(list(hex_tx_bytes)) :: {:ok, list(ExPlasma.Transaction.t())} | {:error, atom()}
+  defp decode_batch(hexs_tx_bytes) do
+    acc = []
+    index = 0
+    decode_batch(hexs_tx_bytes, acc, index)
+  end
+
+  defp decode_batch([], acc, _) do
+    {:ok, Enum.reverse(acc)}
+  end
+
+  defp decode_batch([hex_tx_bytes | hexs_tx_bytes], acc, index) do
+    with {:ok, tx_bytes} <- Encoding.to_binary(hex_tx_bytes),
+         {:ok, decoded} <- ExPlasma.decode(tx_bytes),
+         {:ok, recovered} <- ExPlasmaTx.with_witnesses(decoded) do
+      decode_batch(hexs_tx_bytes, [{index, tx_bytes, recovered} | acc], index + 1)
+    end
+  end
+
+  defp load_fees() do
     {:ok, all_fees} = Fee.accepted_fees()
+    all_fees
+  end
+
+  defp load_fee(all_fees, type) do
     fees_for_type = Map.get(all_fees, type, {:error, :invalid_transaction_type})
     {:ok, fees_for_type}
   end

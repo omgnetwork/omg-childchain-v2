@@ -158,7 +158,7 @@ defmodule Engine.DB.Block do
     end
   end
 
-  def get_forming_block_for_update(repo, _params) do
+  def get_forming_block_for_update(repo) do
     # we expect forming block to always exists in the database when this is called
     block = repo.one(BlockQuery.select_forming_block_for_update())
 
@@ -168,8 +168,9 @@ defmodule Engine.DB.Block do
     end
   end
 
-  def get_block_and_tx_index_for_transaction(repo, params) do
-    %{current_forming_block: block} = params
+  def get_block_and_tx_index_for_transaction(repo, params, index) do
+    key = "current_forming_block-#{index}"
+    %{^key => block} = params
     # this is safe as long as we lock on currently forming block
     last_tx_index_for_block = last_tx_index_for_block(repo, block.id)
 

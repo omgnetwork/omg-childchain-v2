@@ -69,6 +69,11 @@ defmodule API.V1.Router do
     put_conn_response(conn, data)
   end
 
+  post "/transaction.batch_submit" do
+    data = TransactionController.batch_submit(conn.params["transactions"])
+    put_conn_response(conn, data)
+  end
+
   post "fees.all" do
     data = FeeController.all(conn.params)
     put_conn_response(conn, data)

@@ -80,6 +80,7 @@ commands:
       - restore_cache:
           key: docker_compose_release-cabbage-{{ checksum "~/project/priv/cabbage/mix.lock" }}
       - run:
+          no_output_timeout: 30m
           command: |
             cd ~/project/priv/cabbage
             TESTFILES=$(circleci tests glob "apps/itest/test/itest/*_test.exs" | circleci tests split --split-by=timings --show-counts | tr '\r\n' ' ')
@@ -445,23 +446,37 @@ jobs:
       - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
       - gcloud_login
       - run:
-          name: "Pull Submodules"
-          command: |
-            git submodule init
-            git submodule update --remote
-      - run:
           name: Setup data dir
           command: |
             [ -d data1 ] || mkdir data1 && chmod 777 data1
             [ -d data2 ] || mkdir data2 && chmod 777 data2
             [ -d data ] || mkdir data && chmod 777 data
+      - run: cp ~/project/mix.lock ~/project/mix_cache.lock
+      - restore_cache:
+          key: docker_compose_release-{{ checksum "~/project/mix_cache.lock" }}
       - run: make docker-childchain
+      - run:
+          name: "Cleanup docker builds for cache"
+          command: |
+            sudo rm -rf ~/project/_build_docker/prod/lib/engine
+            sudo rm -rf ~/project/_build_docker/prod/lib/api
+            sudo rm -rf ~/project/_build_docker/prod/lib/bus
+            sudo rm -rf ~/project/_build_docker/prod/lib/tasks
+            sudo rm -rf ~/project/_build_docker/prod/lib/status
+      - save_cache:
+          key: docker_compose_release-{{ checksum "~/project/mix_cache.lock" }}
+          paths:
+            - ~/project/deps_docker
+            - ~/project/_build_docker/prod/lib/
+      - run:
+          name: "Pull Submodules"
+          command: |
+            git submodule init
+            git submodule update --remote
       - run:
           name: Start daemon services
           command: |
             make init_test_reorg
-            # echo "VAULT_URL=https://172.27.0.111:8200" >> dynamic_env_vars.env
-            # echo "INSECURE_VAULT_TLS=true" >> dynamic_env_vars.env
             echo "ENTERPRISE=0" >> dynamic_env_vars.env
             docker-compose -f docker-compose.yml -f docker-compose.reorg.yml -f docker-compose.specs.yml up -d || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
       - run:
@@ -473,9 +488,7 @@ jobs:
           command: |
             docker image ls
             docker-compose ps
-      - install_elixir:
-          cache: "specs"
-          dir: "priv/cabbage"
+      - run: docker-compose stop vault
       - run:
           name: Print watcher logs
           command: make cabbage-reorg-watcher-logs
@@ -496,35 +509,33 @@ jobs:
           name: Print reorg logs
           command: make cabbage-reorgs-logs
           background: true
+      - restore_cache:
+          key: docker_compose_release-cabbage-{{ checksum "~/project/priv/cabbage/mix.lock" }}
       - run:
-          name: Setup specs
-          environment:
-            CHILD_CHAIN_URL: http://127.0.0.1:9656/v1
-            EXIT_ID_SIZE: "168"
-            LOCALCHAIN_CONTRACT_ADDRESSES: "/home/circleci/project/localchain_contract_addresses.env"
-            PLASMA_CONTRACTS_DIR: "/home/circleci/project/data/plasma-contracts/contracts/"
-            FEE_CLAIMER_ADDRESS: "0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1"
-            MIX_ENV: test
           command: |
-            cd priv/cabbage
-            make install
-            make generate_api_code
-            mix deps.get
-            mix compile
-          no_output_timeout: 30m
-      - run:
-          name: Run specs
-          environment:
-            CHILD_CHAIN_URL: http://127.0.0.1:9656/v1
-            EXIT_ID_SIZE: "168"
-            LOCALCHAIN_CONTRACT_ADDRESSES: "/home/circleci/project/localchain_contract_addresses.env"
-            PLASMA_CONTRACTS_DIR: "/home/circleci/project/data/plasma-contracts/contracts/"
-            FEE_CLAIMER_ADDRESS: "0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1"
-          command: |
-            cd priv/cabbage
-            mix test --only deposit --trace
-          no_output_timeout: 30m
-
+            cd ~/project/
+            docker run --rm -it --network=chain_net \
+            --user=root \
+            -e FEE_CLAIMER_ADDRESS=0x24F3402Cd22F03ff81B56941fE048AD0F4EED5A1 \
+            -e MIX_ENV=test \
+            -e PLASMA_CONTRACTS_DIR=/app/data/plasma-contracts/contracts/ \
+            -e LOCALCHAIN_CONTRACT_ADDRESSES=/app/localchain_contract_addresses.env \
+            -e DOCKER=true \
+            -e WATCHER_URL=http://172.27.0.104:7434 \
+            -e WATCHER_INFO_URL=http://172.27.0.105:7534 \
+            -e CHILD_CHAIN_URL=http://172.27.0.108:9656/v1 \
+            -e ETHEREUM_RPC_URL=http://172.27.0.108:80 \
+            -e ETHEREUM_WS_URL=ws://172.27.0.108:81 \
+            -e EXIT_ID_SIZE=168 \
+            -e SHELL=/bin/sh \
+            -v $(pwd):/app \
+            --entrypoint /bin/sh \
+            "omisego/childchain-builder:dev-6b9e25f" -c "cd /app/priv/cabbage && apk add maven && apk add jq && make install && make generate_api_code && mix deps.get && mix test --only deposit --trace"
+      - save_cache:
+          key: docker_compose_release-cabbage-{{ checksum "~/project/priv/cabbage/mix.lock" }}
+          paths:
+            - ~/project/priv/cabbage/deps
+            - ~/project/priv/cabbage/_build
 
   credo:
     working_directory: ~/childchain
