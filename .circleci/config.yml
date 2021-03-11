@@ -437,7 +437,6 @@ jobs:
     machine:
       image: ubuntu-2004:202010-01
     environment:
-      REORG: true
       ENTERPRISE: 0
     steps:
       - checkout
@@ -477,7 +476,7 @@ jobs:
           name: Start daemon services
           command: |
             make init_test_reorg
-            echo "ENTERPRISE=0" >> dynamic_env_vars.env
+            echo "ENTERPRISE=${ENTERPRISE}" >> dynamic_env_vars.env
             docker-compose -f docker-compose.yml -f docker-compose.reorg.yml -f docker-compose.specs.yml up -d || (START_RESULT=$?; docker-compose logs; exit $START_RESULT;)
       - run:
           name: Log
@@ -528,6 +527,7 @@ jobs:
             -e ETHEREUM_WS_URL=ws://172.27.0.108:81 \
             -e EXIT_ID_SIZE=168 \
             -e SHELL=/bin/sh \
+            -e REORG=true \
             -v $(pwd):/app \
             --entrypoint /bin/sh \
             "omisego/childchain-builder:dev-6b9e25f" -c "cd /app/priv/cabbage && apk add maven && apk add jq && make install && make generate_api_code && mix deps.get && mix test --only deposit --trace"
