@@ -508,6 +508,10 @@ jobs:
           name: Print reorg logs
           command: make cabbage-reorgs-logs
           background: true
+      - run:
+          name: Stop vault
+          command: docker stop vault
+          background: true
       - restore_cache:
           key: docker_compose_release-cabbage-{{ checksum "~/project/priv/cabbage/mix.lock" }}
       - run:

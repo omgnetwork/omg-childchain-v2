@@ -17,6 +17,7 @@ services:
       - 30303
     ports:
       - 9000:8545
+      - 9002:8546
     volumes:
       - ./data1:/data
       - ./data/ethash:/root/.ethash
@@ -40,11 +41,12 @@ services:
       - INIT=false
     entrypoint: /bin/sh -c ". data/geth/command"
     expose:
-      - 8546
       - 8545
+      - 8546
       - 30303
     ports:
       - 9001:8545
+      - 9003:8546
     volumes:
       - ./data2:/data
       - ./data/ethash:/root/.ethash
