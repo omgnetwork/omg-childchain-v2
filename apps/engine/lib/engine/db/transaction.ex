@@ -35,6 +35,8 @@ defmodule Engine.DB.Transaction do
   @type tx_bytes :: binary
   @type hex_tx_bytes :: list(binary)
 
+  @type batch :: {non_neg_integer, binary, list(ExPlasma.Transaction.t())}
+
   @type t() :: %{
           block: Block.t(),
           block_id: pos_integer(),
@@ -100,8 +102,8 @@ defmodule Engine.DB.Transaction do
   """
   def insert(hex_tx_bytes) do
     case decode(hex_tx_bytes) do
-      {:ok, {tx_bytes, decoded}} ->
-        [{"1-of-1", tx_bytes, decoded}]
+      {:ok, data} ->
+        [data]
         |> handle_transactions()
         |> Repo.transaction()
         |> case do
@@ -166,8 +168,7 @@ defmodule Engine.DB.Transaction do
   defp handle_transactions(batch) do
     all_fees = load_fees()
 
-    batch
-    |> Enum.reduce(Multi.new(), fn {index, tx_bytes, decoded}, multi ->
+    Enum.reduce(batch, Multi.new(), fn {index, tx_bytes, decoded}, multi ->
       {:ok, fees} = load_fee(all_fees, decoded.tx_type)
 
       changeset = TransactionChangeset.new_transaction_changeset(%__MODULE__{}, tx_bytes, decoded, fees)
@@ -185,16 +186,16 @@ defmodule Engine.DB.Transaction do
     end)
   end
 
-  @spec decode(hex_tx_bytes) :: {:ok, ExPlasma.Transaction.t()} | {:error, atom()}
+  @spec decode(tx_bytes()) :: {:ok, {<<_::48>>, binary(), ExPlasma.Transaction.t()}} | {:error, atom()}
   defp decode(hex_tx_bytes) do
     with {:ok, tx_bytes} <- Encoding.to_binary(hex_tx_bytes),
          {:ok, decoded} <- ExPlasma.decode(tx_bytes),
          {:ok, recovered} <- ExPlasmaTx.with_witnesses(decoded) do
-      {:ok, {tx_bytes, recovered}}
+      {:ok, {"1-of-1", tx_bytes, recovered}}
     end
   end
 
-  @spec decode_batch(list(hex_tx_bytes)) :: {:ok, list(ExPlasma.Transaction.t())} | {:error, atom()}
+  @spec decode_batch(hex_tx_bytes()) :: {:ok, list(batch())} | {:error, atom()}
   defp decode_batch(hexs_tx_bytes) do
     acc = []
     index = 0

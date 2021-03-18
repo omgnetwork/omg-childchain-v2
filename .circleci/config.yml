@@ -523,12 +523,17 @@ jobs:
             -e WATCHER_URL=http://172.27.0.104:7434 \
             -e WATCHER_INFO_URL=http://172.27.0.105:7534 \
             -e CHILD_CHAIN_URL=http://172.27.0.108:9656/v1 \
-            -e ETHEREUM_RPC_URL=http://172.27.0.108:80 \
-            -e ETHEREUM_WS_URL=ws://172.27.0.108:81 \
+            -e ETHEREUM_RPC_URL=http://172.27.0.201:8545 \
+            -e ETHEREUM_WS_URL=ws://172.27.0.201:8546 \
+            -e ETHEREUM_RPC_URL_1=http://172.27.0.201:8545 \
+            -e ETHEREUM_WS_URL_1=ws://172.27.0.201:8546 \
+            -e ETHEREUM_RPC_URL_2=http://172.27.0.202:8545 \
+            -e ETHEREUM_WS_URL_2=ws://172.27.0.202:8546 \
             -e EXIT_ID_SIZE=168 \
             -e SHELL=/bin/sh \
             -e REORG=true \
             -v $(pwd):/app \
+            -v /var/run/docker.sock:/var/run/docker.sock \
             --entrypoint /bin/sh \
             "omisego/childchain-builder:dev-6b9e25f" -c "cd /app/priv/cabbage && apk add maven && apk add jq && make install && make generate_api_code && mix deps.get && mix test --only deposit --trace"
       - save_cache:
