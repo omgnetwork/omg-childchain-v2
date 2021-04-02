@@ -10,6 +10,7 @@ defmodule Engine.DB.TransactionTest do
   alias Engine.Repo
   alias Engine.Support.TestEntity
   alias ExPlasma.Builder
+  alias ExPlasma.Encoding
   alias ExPlasma.Output, as: ExPlasmaOutput
   alias ExPlasma.Output.Position
   alias ExPlasma.Transaction, as: ExPlasmaTx
@@ -45,7 +46,7 @@ defmodule Engine.DB.TransactionTest do
 
       {:ok, tx_hash} = ExPlasma.Transaction.hash(transaction)
 
-      assert {:ok, %{transaction: inserted_transaction}} = Transaction.insert(tx_bytes)
+      assert {:ok, inserted_transaction} = tx_bytes |> Encoding.to_hex() |> Transaction.insert()
 
       assert inserted_transaction.tx_type == 1
       assert inserted_transaction.tx_bytes == tx_bytes
@@ -69,7 +70,7 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.sign!([entity.priv_encoded])
         |> ExPlasma.encode!()
 
-      assert {:ok, %{transaction: transaction}} = Transaction.insert(tx_bytes)
+      assert {:ok, transaction} = tx_bytes |> Encoding.to_hex() |> Transaction.insert()
 
       assert [%Output{output_data: o_1_data_enc}, %Output{output_data: o_2_data_enc}] = transaction.outputs
       assert ExPlasmaOutput.decode!(o_1_data_enc).output_data == Enum.into(o_1_data, %{})
@@ -92,7 +93,7 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.sign!([entity.priv_encoded, entity.priv_encoded])
         |> ExPlasma.encode!()
 
-      assert {:ok, %{transaction: transaction}} = Transaction.insert(tx_bytes)
+      assert {:ok, transaction} = tx_bytes |> Encoding.to_hex() |> Transaction.insert()
 
       assert [input1, input2] = transaction.inputs
       assert input1.id == id1
@@ -118,7 +119,7 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.sign!([entity.priv_encoded, entity.priv_encoded])
         |> ExPlasma.encode!()
 
-      assert {:ok, %{transaction: transaction}} = Transaction.insert(tx_bytes)
+      assert {:ok, transaction} = tx_bytes |> Encoding.to_hex() |> Transaction.insert()
 
       assert [%TransactionFee{amount: 1, currency: <<0::160>>}] =
                Repo.all(from(f in TransactionFee, where: f.transaction_id == ^transaction.id))
@@ -140,7 +141,7 @@ defmodule Engine.DB.TransactionTest do
         |> Builder.sign!([priv_encoded_2, priv_encoded_1])
         |> ExPlasma.encode!()
 
-      assert {:error, changeset} = Transaction.insert(tx_bytes)
+      assert {:error, changeset} = tx_bytes |> Encoding.to_hex() |> Transaction.insert()
       assert("Given signatures do not match the inputs owners" in errors_on(changeset).witnesses)
       assert 0 = Repo.one(from(t in Transaction, select: count(t.id)))
     end
@@ -148,7 +149,7 @@ defmodule Engine.DB.TransactionTest do
     test "attaches transaction to a forming block" do
       block = insert(:block)
       tx_bytes = transaction_bytes()
-      {:ok, %{transaction: tx}} = Transaction.insert(tx_bytes)
+      {:ok, tx} = Transaction.insert(tx_bytes)
 
       assert tx.block.id == block.id
       assert tx.tx_index == 0
@@ -179,10 +180,10 @@ defmodule Engine.DB.TransactionTest do
       _ = insert(:block)
 
       tx_bytes1 = transaction_bytes()
-      {:ok, %{transaction: tx1}} = Transaction.insert(tx_bytes1)
+      {:ok, tx1} = Transaction.insert(tx_bytes1)
 
       tx_bytes2 = transaction_bytes()
-      {:ok, %{transaction: tx2}} = Transaction.insert(tx_bytes2)
+      {:ok, tx2} = Transaction.insert(tx_bytes2)
 
       assert tx1.tx_index + 1 == tx2.tx_index
     end
@@ -214,7 +215,7 @@ defmodule Engine.DB.TransactionTest do
           outputs: [build(:output, %{amount: 1}), build(:output, %{amount: 1})]
         })
 
-      {:ok, %{transaction: transaction}} = Transaction.insert(tx_bytes)
+      {:ok, transaction} = Transaction.insert(tx_bytes)
 
       expected_position = [
         Position.pos(%{blknum: transaction.block.blknum, txindex: transaction.tx_index, oindex: 0}),
@@ -233,7 +234,7 @@ defmodule Engine.DB.TransactionTest do
       _ = insert(:payment_v1_transaction, %{block: block, tx_index: @max_txcount})
 
       tx_bytes = transaction_bytes()
-      {:ok, %{transaction: transaction}} = Transaction.insert(tx_bytes)
+      {:ok, transaction} = Transaction.insert(tx_bytes)
 
       refute transaction.block.id == block.id
 
@@ -319,5 +320,6 @@ defmodule Engine.DB.TransactionTest do
     |> Builder.new(%{inputs: [ExPlasmaOutput.decode_id!(output_id)], outputs: outputs})
     |> Builder.sign!([entity.priv_encoded])
     |> ExPlasma.encode!()
+    |> Encoding.to_hex()
   end
 end

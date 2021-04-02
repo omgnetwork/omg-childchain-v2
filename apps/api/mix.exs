@@ -27,7 +27,7 @@ defmodule API.MixProject do
   defp deps do
     [
       {:engine, in_umbrella: true},
-      {:ex_plasma, "~> 0.2.0"},
+      {:ex_plasma, git: "https://github.com/omgnetwork/ex_plasma", branch: "inomurko/v0.4.0"},
       {:decorator, "~> 1.2"},
       {:cors_plug, "~> 2.0"},
       {:jason, "~> 1.2"},

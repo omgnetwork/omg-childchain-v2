@@ -32,7 +32,7 @@ defmodule Engine.MixProject do
       {:ex_abi, "~> 0.5.1"},
       {:ethereumex, "0.6.4"},
       {:ecto_sql, "~> 3.5"},
-      {:ex_plasma, "~> 0.2.0"},
+      {:ex_plasma, git: "https://github.com/omgnetwork/ex_plasma", branch: "inomurko/v0.4.0"},
       {:postgrex, "~> 0.15"},
       {:telemetry, "~> 0.4"},
       {:httpoison, "~> 1.7.0"},
