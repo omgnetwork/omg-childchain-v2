@@ -8,7 +8,6 @@ defmodule Engine.DB.Transaction.Validator do
   import Ecto.Changeset, only: [get_field: 2, add_error: 3, put_assoc: 3]
 
   alias Engine.DB.Output
-  alias Engine.DB.Transaction.PaymentV1
   alias Engine.Repo
 
   @type_validators %{
