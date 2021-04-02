@@ -12,7 +12,7 @@ defmodule Engine.DB.Transaction.Validator do
   alias Engine.Repo
 
   @type_validators %{
-    1 => PaymentV1.Validator
+    1 => Engine.DB.Transaction.PaymentV1.Validator
   }
 
   @type accepted_fee_t() :: %{required(<<_::160>>) => list(pos_integer())}
