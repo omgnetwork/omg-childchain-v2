@@ -1,4 +1,5 @@
 [submodule "priv/cabbage"]
       path = priv/cabbage
       url = git@github.com:omgnetwork/specs.git
-      branch = inomurko/reorg-v2
+      branch = master-v2
+
