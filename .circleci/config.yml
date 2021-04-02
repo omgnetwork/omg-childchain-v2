@@ -660,9 +660,9 @@ workflows:
       - integration
       - integration_send_raw_eth_transaction
       - integration_vault
-      - test_docker_compose_release_private
-      - test_docker_compose_release_public
-      - test_docker_compose_reorg
+      #- test_docker_compose_release_private
+      #- test_docker_compose_release_public
+      #- test_docker_compose_reorg
       - development
       - test:
           requires:
