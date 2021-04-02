@@ -32,4 +32,4 @@ data/
 apps/api/priv/swagger/.DS_Store
 
 localchain_contract_addresses.env
-priv/cabbage
+/priv/cabbage/
